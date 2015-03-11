@@ -38,7 +38,13 @@ namespace Cube.Net.Http.Tests
         public void TestOpenRead()
         {
             Assert.DoesNotThrow(() => {
-                Assert.Pass();
+                var uri = new Uri("http://www.cube-soft.jp/");
+                var client = new Cube.Net.Http.Client();
+                client.UserAgent  = "Cube.Net.Http.ClientTester";
+                client.EnableGzip = true;
+                client.EnableETag = true;
+
+                using (var stream = client.OpenRead(uri)) { }
             });
         }
     }

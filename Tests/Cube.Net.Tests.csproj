@@ -45,6 +45,12 @@
     <Compile Include="Http\ClientTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cube.Net.csproj">
+      <Project>{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}</Project>
+      <Name>Cube.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
