@@ -219,7 +219,8 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private void GetETag(System.Net.HttpWebResponse response)
         {
-            var etag = response.Headers.Get(System.Net.HttpResponseHeader.ETag.ToString());
+            var name = System.Net.HttpResponseHeader.ETag.ToString();
+            var etag = response.GetResponseHeader(name);
             _etag = (!string.IsNullOrEmpty(etag) && EnableETag) ? etag : string.Empty;
         }
 
