@@ -18,6 +18,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
 
@@ -70,6 +71,17 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         public HttpMessageHandler HttpHandler { get; set; }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Version
+        ///
+        /// <summary>
+        /// アプリケーションの現在のバージョンを設定または取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Version { get; set; }
+
         #endregion
 
         #region Methods
@@ -83,9 +95,9 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public async Task RunAsync()
+        public Task RunAsync()
         {
-            await Task.Factory.StartNew(() => { });
+            return Task.Factory.StartNew(() => { });
         }
 
         /* ----------------------------------------------------------------- */
@@ -97,10 +109,61 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public async Task<string> GetMessageAsync()
+        public async Task<UpdateMessage> GetMessageAsync()
         {
-            await Task.Factory.StartNew(() => { });
-            return string.Empty;
+            try
+            {
+                var response = await CreateHttpClient().GetAsync(MessageUri);
+                if (!response.IsSuccessStatusCode) return null;
+
+                var encoding = System.Text.Encoding.GetEncoding("UTF-8"); // TODO: auto detect
+                using (var stream = await response.Content.ReadAsStreamAsync())
+                using (var reader = new System.IO.StreamReader(stream, encoding))
+                {
+                    for (var s = reader.ReadLine(); s != null; s = reader.ReadLine())
+                    {
+                        var message = CreateMessage(s);
+                        if (message.Version == Version) return message;
+                    }
+                }
+            }
+            catch (Exception err) { System.Diagnostics.Trace.TraceError(err.ToString()); }
+
+            return null;
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CreateHttpClient
+        ///
+        /// <summary>
+        /// HttpClient オブジェクトを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private HttpClient CreateHttpClient()
+        {
+            return HttpHandler != null ?
+                   new HttpClient(HttpHandler) :
+                   new HttpClient();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ParseMessage
+        ///
+        /// <summary>
+        /// 文字列を解析して UpdateMessage オブジェクトを生成します。。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private UpdateMessage CreateMessage(string str)
+        {
+            return new UpdateMessage();
         }
 
         #endregion
