@@ -51,6 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ntp\FixedPoint.cs" />
+    <Compile Include="Ntp\LeapIndicator.cs" />
+    <Compile Include="Ntp\Mode.cs" />
+    <Compile Include="Ntp\Packet.cs" />
+    <Compile Include="Ntp\Stratum.cs" />
+    <Compile Include="Ntp\Timestamp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UpdateClient.cs" />
     <Compile Include="UpdateMessage.cs" />
