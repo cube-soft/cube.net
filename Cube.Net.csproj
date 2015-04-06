@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ntp\Client.cs" />
     <Compile Include="Ntp\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
     <Compile Include="Ntp\Mode.cs" />
