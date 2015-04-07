@@ -34,6 +34,15 @@ namespace Cube.Tests.Net.Ntp
     [TestFixture]
     public class ClientTester
     {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TestGetAsync
+        /// 
+        /// <summary>
+        /// NTP サーバとの通信のテストを行います。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
         [Test]
         public void TestGetAsync()
         {
@@ -48,6 +57,27 @@ namespace Cube.Tests.Net.Ntp
                 var task = client.GetAsync();
                 Assert.That(task.Result.IsValid, Is.True);
             });
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TestTimeout
+        /// 
+        /// <summary>
+        /// タイムアウト処理のテストを行います。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void TestTimeout()
+        {
+            var ex = Assert.Throws<AggregateException>(() =>
+            {
+                var client = new Cube.Net.Ntp.Client("ntp.cube-soft.jp");
+                client.Timeout = TimeSpan.FromMilliseconds(1);
+                client.GetAsync().Wait();
+            });
+            Assert.That(ex.InnerException, Is.TypeOf<TimeoutException>());
         }
     }
 }
