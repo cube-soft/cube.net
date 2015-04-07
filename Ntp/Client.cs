@@ -120,30 +120,14 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public async Task<Packet> GetAsync()
         {
-            var socket = CreateSocket();
-            var bytes = await SendToAsync(socket);
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            await SendToAsync(socket);
             return await ReceiveFromAsync(socket).Timeout(Timeout);
         }
 
         #endregion
 
         #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CreateSocket
-        /// 
-        /// <summary>
-        /// 新しい UDP ソケットを生成します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private Socket CreateSocket()
-        {
-            var dest = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            //dest.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, (int)Timeout.TotalMilliseconds);
-            return dest;
-        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -156,7 +140,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private Task<int> SendToAsync(Socket socket)
         {
-            return Task<int>.Factory.StartNew(() =>
+            return Cube.TaskEx.Run<int>(() =>
             {
                 var packet = new Ntp.Packet();
                 return socket.SendTo(packet.RawData, _endpoint);
@@ -174,7 +158,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private Task<Packet> ReceiveFromAsync(Socket socket)
         {
-            return Task<Packet>.Factory.StartNew(() =>
+            return Cube.TaskEx.Run<Packet>(() =>
             {
                 byte[] raw = new byte[48 + (32 + 128) / 8];
                 EndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
