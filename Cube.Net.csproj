@@ -35,6 +35,9 @@
     <Reference Include="AsyncBridge.Net35">
       <HintPath>..\packages\AsyncBridge.Net35.0.2.0\lib\net35-Client\AsyncBridge.Net35.dll</HintPath>
     </Reference>
+    <Reference Include="Cube.Core">
+      <HintPath>..\lib\Cube.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Rackspace.Threading">
       <HintPath>..\packages\Rackspace.Threading.2.0.0-alpha001\lib\net35-client\Rackspace.Threading.dll</HintPath>
     </Reference>

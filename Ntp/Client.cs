@@ -21,6 +21,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Cube.Extensions;
 
 namespace Cube.Net.Ntp
 {
@@ -49,6 +50,7 @@ namespace Cube.Net.Ntp
         public Client(string host_or_ipaddr, int port = 123)
         {
             Host = Dns.GetHostEntry(host_or_ipaddr);
+            Timeout = TimeSpan.FromSeconds(5);
             _endpoint = new IPEndPoint(Host.AddressList[0], port);
         }
 
@@ -94,14 +96,14 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ReceiveTimeout
+        /// Timeout
         /// 
         /// <summary>
         /// NTP パケット受信時のタイムアウト時間を取得、または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TimeSpan ReceiveTimeout { get; set; }
+        public TimeSpan Timeout { get; set; }
 
         #endregion
 
@@ -109,18 +111,18 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Receive
+        /// GetAsync
         /// 
         /// <summary>
         /// NTP サーバと通信を行い、NTP パケットを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public async Task<Packet> Receive()
+        public async Task<Packet> GetAsync()
         {
             var socket = CreateSocket();
-            await SendTo(socket);
-            return await ReceiveFrom(socket);
+            var bytes = await SendToAsync(socket);
+            return await ReceiveFromAsync(socket).Timeout(Timeout);
         }
 
         #endregion
@@ -139,38 +141,38 @@ namespace Cube.Net.Ntp
         private Socket CreateSocket()
         {
             var dest = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            dest.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, (int)ReceiveTimeout.TotalMilliseconds);
+            //dest.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, (int)Timeout.TotalMilliseconds);
             return dest;
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SendTo
+        /// SendToAsync
         /// 
         /// <summary>
         /// NTP サーバへパケットを送信します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Task SendTo(Socket socket)
+        private Task<int> SendToAsync(Socket socket)
         {
-            return Task.Factory.StartNew(() =>
+            return Task<int>.Factory.StartNew(() =>
             {
                 var packet = new Ntp.Packet();
-                socket.SendTo(packet.RawData, _endpoint);
+                return socket.SendTo(packet.RawData, _endpoint);
             });
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ReceiveFrom
+        /// ReceiveFromAsync
         /// 
         /// <summary>
         /// NTP サーバからパケットを受信します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Task<Packet> ReceiveFrom(Socket socket)
+        private Task<Packet> ReceiveFromAsync(Socket socket)
         {
             return Task<Packet>.Factory.StartNew(() =>
             {
