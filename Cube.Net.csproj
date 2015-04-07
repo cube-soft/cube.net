@@ -58,6 +58,7 @@
     <Compile Include="Ntp\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
     <Compile Include="Ntp\Mode.cs" />
+    <Compile Include="Ntp\Observer.cs" />
     <Compile Include="Ntp\Packet.cs" />
     <Compile Include="Ntp\Stratum.cs" />
     <Compile Include="Ntp\Timestamp.cs" />

@@ -24,7 +24,7 @@ namespace Cube.Tests.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ClientTester
+    /// Cube.Tests.Net.Ntp.ClientTester
     ///
     /// <summary>
     /// Client クラスのテストをするためのクラスです。
