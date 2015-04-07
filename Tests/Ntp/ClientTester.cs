@@ -61,7 +61,7 @@ namespace Cube.Tests.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TestTimeout
+        /// TestTimeoutException
         /// 
         /// <summary>
         /// タイムアウト処理のテストを行います。
@@ -69,7 +69,7 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TestTimeout()
+        public void TestTimeoutException()
         {
             var ex = Assert.Throws<AggregateException>(() =>
             {
@@ -78,6 +78,24 @@ namespace Cube.Tests.Net.Ntp
                 client.GetAsync().Wait();
             });
             Assert.That(ex.InnerException, Is.TypeOf<TimeoutException>());
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TestSocketException
+        /// 
+        /// <summary>
+        /// 存在しない NTP サーバを指定した時のテストを行います。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void TestSocketException()
+        {
+            Assert.Throws<System.Net.Sockets.SocketException>(() =>
+            {
+                var client = new Cube.Net.Ntp.Client("404.not.found");
+            });
         }
     }
 }
