@@ -118,16 +118,30 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public async Task<Packet> GetAsync()
+        public Task<Packet> GetAsync()
         {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            await SendToAsync(socket);
-            return await ReceiveFromAsync(socket).Timeout(Timeout);
+            return GetAsyncCore().Timeout(Timeout);
         }
 
         #endregion
 
         #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsyncCore
+        /// 
+        /// <summary>
+        /// NTP サーバと通信を行い、NTP パケットを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task<Packet> GetAsyncCore()
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            await SendToAsync(socket);
+            return await ReceiveFromAsync(socket);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
