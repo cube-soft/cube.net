@@ -47,12 +47,8 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Client(string hostNameOrAddress, int port = 123)
-        {
-            Host = Dns.GetHostEntry(hostNameOrAddress);
-            Timeout = TimeSpan.FromSeconds(5);
-            _endpoint = new IPEndPoint(Host.AddressList[0], port);
-        }
+        public Client(IPAddress ipaddr)
+            : this(ipaddr.ToString(), DefaultPort) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -63,11 +59,51 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Client(IPAddress ipaddr, int port = 123) : this(ipaddr.ToString(), port) { }
-        
+        public Client(IPAddress ipaddr, int port)
+            : this(ipaddr.ToString(), port) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Client
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Client(string hostNameOrAddress)
+            : this(hostNameOrAddress, DefaultPort) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Client
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Client(string hostNameOrAddress, int port)
+        {
+            Host = Dns.GetHostEntry(hostNameOrAddress);
+            Timeout = TimeSpan.FromSeconds(5);
+            _endpoint = new IPEndPoint(Host.AddressList[0], port);
+        }
+
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DefaultPort
+        /// 
+        /// <summary>
+        /// NTP 通信のデフォルトポート番号を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static readonly int DefaultPort = 123;
 
         /* ----------------------------------------------------------------- */
         ///
