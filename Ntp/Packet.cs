@@ -68,6 +68,7 @@ namespace Cube.Net.Ntp
                     string.Format("data size should be more than {0} bytes", _MinimumPacketSize
                 ));
             }
+            CreationTime = DateTime.Now;
             RawData = rawdata;
         }
 
@@ -277,7 +278,7 @@ namespace Cube.Net.Ntp
             get
             {
                 var value = BitConverter.ToInt64(RawData, 16);
-                return Timestamp.ToDateTime(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
+                return Timestamp.Convert(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
             }
         }
 
@@ -296,7 +297,7 @@ namespace Cube.Net.Ntp
             get
             {
                 var value = BitConverter.ToInt64(RawData, 24);
-                return Timestamp.ToDateTime(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
+                return Timestamp.Convert(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
             }
         }
 
@@ -315,7 +316,7 @@ namespace Cube.Net.Ntp
             get
             {
                 var value = BitConverter.ToInt64(RawData, 32);
-                return Timestamp.ToDateTime(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
+                return Timestamp.Convert(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
             }
         }
 
@@ -334,7 +335,7 @@ namespace Cube.Net.Ntp
             get
             {
                 var value = BitConverter.ToInt64(RawData, 40);
-                return Timestamp.ToDateTime(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
+                return Timestamp.Convert(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
             }
         }
 
@@ -490,7 +491,7 @@ namespace Cube.Net.Ntp
             var dest = new byte[_MinimumPacketSize];
             dest[0] = (byte)(_ClientLeapIndicator | _ClientVersion << 3 | _ClientMode);
 
-            var timestamp = Timestamp.ToTimestamp(CreationTime.ToUniversalTime());
+            var timestamp = Timestamp.Convert(CreationTime.ToUniversalTime());
             var bytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(timestamp));
             Array.ConstrainedCopy(bytes, 0, dest, 40, 8);
 

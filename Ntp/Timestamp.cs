@@ -45,18 +45,18 @@ namespace Cube.Net.Ntp
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    internal abstract class Timestamp
+    public abstract class Timestamp
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// ToDateTime
+        /// Convert
         /// 
         /// <summary>
         /// NTP タイムスタンプから DateTime オブジェクトへ変換します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static DateTime ToDateTime(Int64 timestamp)
+        public static DateTime Convert(Int64 timestamp)
         {
             var seconds = (UInt32)(timestamp >> 32);
             var fraction = (double)((UInt64)(timestamp & UInt32.MaxValue));
@@ -69,14 +69,14 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ToTimestamp
+        /// Convert
         /// 
         /// <summary>
         /// DateTime オブジェクトから NTP タイムスタンプへ変換します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static Int64 ToTimestamp(DateTime datetime)
+        public static Int64 Convert(DateTime datetime)
         {
             var origin = (_ReverseTerm <= datetime) ? _ReverseTerm : _BaseTerm;
             var ticks = (datetime - origin).TotalMilliseconds;
