@@ -61,6 +61,31 @@ namespace Cube.Tests.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
+        /// TestLocalClockOffset
+        /// 
+        /// <summary>
+        /// 正しい時刻のずれが取得できているかどうかをテストします。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// このテストは、テスト実行環境の時計がある程度正確な時刻を示して
+        /// いる (±1 分以内) 事を前提としています。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void TestLocalClockOffset()
+        {
+            Assert.DoesNotThrow(() =>
+            {
+                var client = new Cube.Net.Ntp.Client("ntp.cube-soft.jp");
+                var task = client.GetAsync();
+                Assert.That(task.Result.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(60));
+            });
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// TestTimeoutException
         /// 
         /// <summary>
