@@ -52,6 +52,7 @@
     <Compile Include="Ntp\ClientTester.cs" />
     <Compile Include="Ntp\ObserverTester.cs" />
     <Compile Include="Ntp\PacketTester.cs" />
+    <Compile Include="Ntp\TimestampTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UpdateClientTester.cs" />
   </ItemGroup>
