@@ -45,7 +45,7 @@ namespace Cube.Net.Ntp
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class Timestamp
+    internal abstract class Timestamp
     {
         /* ----------------------------------------------------------------- */
         ///

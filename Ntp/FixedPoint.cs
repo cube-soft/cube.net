@@ -31,7 +31,7 @@ namespace Cube.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class FixedPoint
+    internal abstract class FixedPoint
     {
         /* ----------------------------------------------------------------- */
         ///
