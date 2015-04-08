@@ -60,6 +60,7 @@
     <Compile Include="Ntp\Mode.cs" />
     <Compile Include="Ntp\Observer.cs" />
     <Compile Include="Ntp\Packet.cs" />
+    <Compile Include="Ntp\PacketEventArgs.cs" />
     <Compile Include="Ntp\Stratum.cs" />
     <Compile Include="Ntp\Timestamp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

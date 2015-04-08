@@ -174,9 +174,8 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private async Task<Packet> GetAsyncCore()
         {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            await SendToAsync(socket);
-            return await ReceiveFromAsync(socket);
+            await SendToAsync();
+            return await ReceiveFromAsync();
         }
 
         /* ----------------------------------------------------------------- */
@@ -188,12 +187,12 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Task<int> SendToAsync(Socket socket)
+        private Task<int> SendToAsync()
         {
             return Cube.TaskEx.Run<int>(() =>
             {
                 var packet = new Ntp.Packet();
-                return socket.SendTo(packet.RawData, _endpoint);
+                return _socket.SendTo(packet.RawData, _endpoint);
             });
         }
 
@@ -206,13 +205,13 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Task<Packet> ReceiveFromAsync(Socket socket)
+        private Task<Packet> ReceiveFromAsync()
         {
             return Cube.TaskEx.Run<Packet>(() =>
             {
                 byte[] raw = new byte[48 + (32 + 128) / 8];
                 EndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
-                var bytes = socket.ReceiveFrom(raw, ref endpoint);
+                var bytes = _socket.ReceiveFrom(raw, ref endpoint);
                 return new Packet(raw);
             });
         }
@@ -220,6 +219,7 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Fields
+        private Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         private IPEndPoint _endpoint = null;
         #endregion
     }
