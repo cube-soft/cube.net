@@ -59,9 +59,9 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public Observer(string hostNameOrAddress, int port)
         {
-            ResetEndPoint(hostNameOrAddress, port);
             _timer.Elapsed += (s, e) => { var _ = GetAsync(); };
             Interval = TimeSpan.FromHours(1);
+            ResetEndPoint(hostNameOrAddress, port);
         }
 
         #endregion
@@ -196,7 +196,6 @@ namespace Cube.Net.Ntp
         public void Start()
         {
             if (Enabled) return;
-            //var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             GetAsync().ContinueWith(_ => { lock (_lock) _timer.Start(); });
         }
 

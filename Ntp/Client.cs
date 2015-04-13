@@ -85,8 +85,8 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public Client(string hostNameOrAddress, int port)
         {
-            Host = Dns.GetHostEntry(hostNameOrAddress);
             Timeout = TimeSpan.FromSeconds(5);
+            Host = Dns.GetHostEntry(hostNameOrAddress);
             _endpoint = new IPEndPoint(Host.AddressList[0], port);
         }
 
