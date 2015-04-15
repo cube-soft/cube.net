@@ -49,7 +49,10 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected NetworkAwareObserver() { }
+        protected NetworkAwareObserver()
+        {
+            NetworkChange.NetworkAvailabilityChanged += (s, e) => OnNetworkChanged(e);
+        }
 
         #endregion
 
