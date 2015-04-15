@@ -47,8 +47,8 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Client(IPAddress ipaddr)
-            : this(ipaddr.ToString(), DefaultPort) { }
+        public Client(IPAddress server)
+            : this(server.ToString(), DefaultPort) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -59,8 +59,8 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Client(IPAddress ipaddr, int port)
-            : this(ipaddr.ToString(), port) { }
+        public Client(IPAddress server, int port)
+            : this(server.ToString(), port) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -71,8 +71,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Client(string hostNameOrAddress)
-            : this(hostNameOrAddress, DefaultPort) { }
+        public Client(string server) : this(server, DefaultPort) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -83,11 +82,11 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Client(string hostNameOrAddress, int port)
+        public Client(string server, int port)
         {
             Timeout = TimeSpan.FromSeconds(5);
-            Host = Dns.GetHostEntry(hostNameOrAddress);
-            _endpoint = new IPEndPoint(Host.AddressList[0], port);
+            Host = Dns.GetHostEntry(server);
+            Port = port;
         }
 
         #endregion
@@ -125,10 +124,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public int Port
-        {
-            get { return _endpoint.Port; }
-        }
+        public int Port { get; private set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -192,7 +188,8 @@ namespace Cube.Net.Ntp
             return Cube.TaskEx.Run<int>(() =>
             {
                 var packet = new Ntp.Packet();
-                return _socket.SendTo(packet.RawData, _endpoint);
+                var endpoint = new IPEndPoint(Host.AddressList[0], Port);
+                return _socket.SendTo(packet.RawData, endpoint);
             });
         }
 
@@ -220,7 +217,6 @@ namespace Cube.Net.Ntp
 
         #region Fields
         private Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        private IPEndPoint _endpoint = null;
         #endregion
     }
 }

@@ -45,8 +45,8 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Observer(string hostNameOrAddress)
-            : this(hostNameOrAddress, Client.DefaultPort) { }
+        public Observer(string server)
+            : this(server, Client.DefaultPort) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -57,11 +57,12 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Observer(string hostNameOrAddress, int port)
+        public Observer(string server, int port)
         {
-            _timer.Elapsed += (s, e) => { var _ = GetAsync(); };
             Interval = TimeSpan.FromHours(1);
-            ResetEndPoint(hostNameOrAddress, port);
+            _server = server;
+            _port = port;
+            _timer.Elapsed += (s, e) => { var _ = GetAsync(); };
         }
 
         #endregion
@@ -85,6 +86,47 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Server
+        /// 
+        /// <summary>
+        /// サーバのアドレス (ホスト名または IP アドレス) を取得または
+        /// 設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Server
+        {
+            get { return _server; }
+            set
+            {
+                if (_server == value) return;
+                _server = value;
+                Reset();
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Port
+        /// 
+        /// <summary>
+        /// ポート番号を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public int Port
+        {
+            get { return _port; }
+            set
+            {
+                if (_port == value) return;
+                _port = value;
+                Reset();
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Timeout
         /// 
         /// <summary>
@@ -94,8 +136,8 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public TimeSpan Timeout
         {
-            get { return _client.Timeout; }
-            set { _client.Timeout = value; }
+            get { return _timeout; }
+            set { _timeout = value; }
         }
 
         /* ----------------------------------------------------------------- */
@@ -159,6 +201,22 @@ namespace Cube.Net.Ntp
         {
             get { return IsValid ? Result.LocalClockOffset : TimeSpan.Zero; }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FailedCount
+        /// 
+        /// <summary>
+        /// サーバとの通信に失敗した回数を取得します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// この値は Server や Port を変更した時、または Reset() を
+        /// 実行した時に 0 になります。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public int FailedCount { get; private set; }
 
         #endregion
 
@@ -226,40 +284,13 @@ namespace Cube.Net.Ntp
         public void Reset()
         {
             Result = null;
+            FailedCount = 0;
+
             if (Enabled)
             {
                 Stop();
                 Start();
             }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ResetEndPoint
-        /// 
-        /// <summary>
-        /// 通信する NTP サーバを再設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void ResetEndPoint(string hostNameOrAddress)
-        {
-            ResetEndPoint(hostNameOrAddress, Client.DefaultPort);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ResetEndPoint
-        /// 
-        /// <summary>
-        /// 通信する NTP サーバを再設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void ResetEndPoint(string hostNameOrAddress, int port)
-        {
-            lock (_lock) _client = new Client(hostNameOrAddress, port);
-            Reset();
         }
 
         #endregion
@@ -299,12 +330,17 @@ namespace Cube.Net.Ntp
             {
                 try
                 {
-                    var packet = await _client.GetAsync();
-                    if (packet == null || !packet.IsValid) continue;
-                    Result = packet;
-                    break;
+                    var client = new Client(Server, Port);
+                    client.Timeout = Timeout;
+                    var packet = await client.GetAsync();
+                    if (packet != null || packet.IsValid)
+                    {
+                        Result = packet;
+                        return;
+                    }
                 }
                 catch (Exception err) { System.Diagnostics.Trace.TraceError(err.ToString()); }
+                ++FailedCount;
                 await Cube.TaskEx.Delay(_RetryInterval);
             }
         }
@@ -312,15 +348,17 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Fields
-        private Client _client = null;
-        private Timer _timer = new Timer();
+        private string _server = string.Empty;
+        private int _port = Client.DefaultPort;
         private Packet _packet = null;
+        private TimeSpan _timeout = TimeSpan.FromSeconds(5);
+        private Timer _timer = new Timer();
         private object _lock = new object();
         #endregion
 
         #region Constant fields
         private static readonly int _RetryCount = 5;
-        private static readonly int _RetryInterval = 2000; // [ms]
+        private static readonly int _RetryInterval = 5000; // [ms]
         #endregion
     }
 }
