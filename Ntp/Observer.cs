@@ -32,7 +32,7 @@ namespace Cube.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Observer
+    public class Observer : Cube.Net.NetworkAwareObserver
     {
         #region Constructors
 
@@ -58,6 +58,7 @@ namespace Cube.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         public Observer(string server, int port)
+            : base()
         {
             Interval = TimeSpan.FromHours(1);
             _server = server;
@@ -239,40 +240,6 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
-        /// 
-        /// <summary>
-        /// サーバと定期的に通信し、ローカルの時刻を監視します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// Timer を開始する前に 1 度 NTP サーバと通信を行います。そのため、
-        /// Enabled プロパティが直ちに true に変更されない場合があります。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Start()
-        {
-            if (Enabled) return;
-            GetAsync().ContinueWith(_ => { lock (_lock) _timer.Start(); });
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Stop
-        /// 
-        /// <summary>
-        /// 時刻の監視を中断します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Stop()
-        {
-            lock (_lock) _timer.Stop();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Reset
         /// 
         /// <summary>
@@ -309,6 +276,41 @@ namespace Cube.Net.Ntp
         protected virtual void OnResultChanged(PacketEventArgs e)
         {
             if (ResultChanged != null) ResultChanged(this, e);
+        }
+
+        #endregion
+
+        #region Override methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ExecuteStart
+        /// 
+        /// <summary>
+        /// サーバと定期的に通信し、ローカルの時刻を監視します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected override void ExecuteStart()
+        {
+            if (Enabled) return;
+            var _ = GetAsync();
+            lock (_lock) _timer.Start();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ExecuteStop
+        /// 
+        /// <summary>
+        /// 時刻の監視を中断します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void ExecuteStop()
+        {
+            if (!Enabled) return;
+            lock (_lock) _timer.Stop();
         }
 
         #endregion
