@@ -52,10 +52,11 @@ namespace Cube.Net
             var version = string.Empty;
             var args = new Dictionary<string, string>();
 
-            var encoding = Encoding.GetEncoding("UTF-8"); // TODO: auto detect
-            using (var r = new StreamReader(stream, encoding))
-            for (var line = r.ReadLine(); !r.EndOfStream; line = r.ReadLine())
+            // TODO: auto detect encoding
+            using (var reader = new StreamReader(stream, Encoding.GetEncoding("UTF-8")))
+            while (!reader.EndOfStream)
             {
+                var line = reader.ReadLine();
                 if (string.IsNullOrEmpty(line)) continue;
 
                 if (line[0] == '[' && line[line.Length - 1] == ']')
@@ -68,6 +69,11 @@ namespace Cube.Net
                 else Split(line, args);
             }
 
+            if (!string.IsNullOrEmpty(version) && args.Count > 0)
+            {
+                var m = Create(version, args);
+                if (m != null) dest.Add(m);
+            }
             return dest;
         }
 
