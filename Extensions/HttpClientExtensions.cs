@@ -19,9 +19,11 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Runtime.Serialization.Json;
+using Cube.Extensions;
 
 namespace Cube.Extensions.Net
 {
@@ -53,6 +55,69 @@ namespace Cube.Extensions.Net
             var stream = await response.Content.ReadAsStreamAsync();
             var json = new DataContractJsonSerializer(typeof(T));
             return json.ReadObject(stream) as T;
+        }
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// GetUpdateMessageAsync
+        /// 
+        /// <summary>
+        /// 対象とするバージョンのアップデートに関するメッセージを
+        /// 非同期で取得します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public static Task<Cube.Net.UpdateMessage> GetUpdateMessageAsync(this HttpClient client,
+            Uri uri, string version)
+        {
+            var query = new Dictionary<string, string>();
+            return GetUpdateMessageAsync(client, uri, version, query);
+        }
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// GetUpdateMessageAsync
+        /// 
+        /// <summary>
+        /// 対象とするバージョンのアップデートに関するメッセージを
+        /// 非同期で取得します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public static Task<Cube.Net.UpdateMessage> GetUpdateMessageAsync(this HttpClient client,
+            Uri uri, string version, string key, string value)
+        {
+            var query = new Dictionary<string, string>();
+            query.Add(key, value);
+            return GetUpdateMessageAsync(client, uri, version, query);
+        }
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// GetUpdateMessageAsync
+        /// 
+        /// <summary>
+        /// 対象とするバージョンのアップデートに関するメッセージを
+        /// 非同期で取得します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public static async Task<Cube.Net.UpdateMessage> GetUpdateMessageAsync(this HttpClient client,
+            Uri uri, string version, IDictionary<string, string> query)
+        {
+            var request = uri.With("ver", version).With(query);
+            var response = await client.GetAsync(request);
+            if (!response.IsSuccessStatusCode) return null;
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            var items = Cube.Net.UpdateMessageFactory.Create(stream);
+            if (items == null) return null;
+
+            foreach (var item in items)
+            {
+                if (item.Version == version) return item;
+            }
+            return null;
         }
     }
 }
