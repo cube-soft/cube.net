@@ -335,7 +335,7 @@ namespace Cube.Net.Ntp
                     var client = new Client(Server, Port);
                     client.Timeout = Timeout;
                     var packet = await client.GetAsync();
-                    if (packet != null || packet.IsValid)
+                    if (packet != null && packet.IsValid)
                     {
                         Result = packet;
                         return;
