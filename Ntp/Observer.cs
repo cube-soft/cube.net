@@ -290,16 +290,12 @@ namespace Cube.Net.Ntp
         /// サーバと定期的に通信し、ローカルの時刻を監視します。
         /// </summary>
         /// 
-        /// <remarks>
-        /// Timer を開始する前に 1 度 NTP サーバと通信を行います。そのため、
-        /// Enabled プロパティが直ちに true に変更されない場合があります。
-        /// </remarks>
-        ///
         /* ----------------------------------------------------------------- */
         protected override void ExecuteStart()
         {
             if (Enabled) return;
-            GetAsync().ContinueWith(_ => { lock (_lock) _timer.Start(); });
+            var _ = GetAsync();
+            lock (_lock) _timer.Start();
         }
 
         /* ----------------------------------------------------------------- */
