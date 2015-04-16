@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// FixedPoint.cs
+/// ClientHandleTester.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -18,39 +18,51 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using NUnit.Framework;
 
-namespace Cube.Net.Ntp
+namespace Cube.Tests.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.Ntp.FixedPoint
-    /// 
+    /// Cube.Tests.Net.Http.ClientHandleTester
+    ///
     /// <summary>
-    /// 符号付き 32bit 固定小数点数から double への変換機能を提供するための
-    /// クラスです。
+    /// Http.ClientHandler のテストを行うためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal abstract class FixedPoint
+    [TestFixture]
+    public class ClientHandleTester
     {
+        #region Test methods
+
         /* ----------------------------------------------------------------- */
         ///
-        /// ToDouble
-        /// 
+        /// TestEntityTag
+        ///
         /// <summary>
-        /// 符号付き 32bit 固定小数点数から double へ変換します。
+        /// EntityTag (ETag) のテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static double ToDouble(Int32 value)
+        [Test]
+        public void TestEntityTag()
         {
-            var number = (Int16)(value >> 16);
-            var fraction = (UInt16)(value & Int16.MaxValue);
-            return number + fraction / _CompensatingRate16;
+            var uri = new Uri("http://news.cube-soft.jp/app/notice/all.json");
+            var handler = new Cube.Net.Http.ClientHandler();
+            handler.UseProxy = false;
+
+            var client = new System.Net.Http.HttpClient(handler);
+            var first = client.GetAsync(uri).Result;
+            Assert.That(first.IsSuccessStatusCode, Is.True);
+
+            var second = client.GetAsync(uri).Result;
+            Assert.That(second.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
         }
 
-        #region Constant variables
-        private static readonly double _CompensatingRate16 = 0x10000d;
         #endregion
     }
 }

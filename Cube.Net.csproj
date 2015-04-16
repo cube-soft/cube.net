@@ -58,9 +58,10 @@
   <ItemGroup>
     <Compile Include="Detail\UpdateMessageFactory.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
+    <Compile Include="Http\ClientHandler.cs" />
     <Compile Include="NetworkAwareObserver.cs" />
     <Compile Include="Ntp\Client.cs" />
-    <Compile Include="Ntp\FixedPoint.cs" />
+    <Compile Include="Detail\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
     <Compile Include="Ntp\Mode.cs" />
     <Compile Include="Ntp\Observer.cs" />
