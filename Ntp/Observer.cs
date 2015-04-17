@@ -232,7 +232,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event Action<object, PacketEventArgs> ResultChanged;
+        public event EventHandler<PacketEventArgs> ResultChanged;
 
         #endregion
 
