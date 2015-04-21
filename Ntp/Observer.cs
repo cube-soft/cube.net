@@ -20,6 +20,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Timers;
+using Microsoft.Win32;
 
 namespace Cube.Net.Ntp
 {
@@ -64,6 +65,13 @@ namespace Cube.Net.Ntp
             _server = server;
             _port = port;
             _timer.Elapsed += (s, e) => { var _ = GetAsync(); };
+
+            SystemEvents.PowerModeChanged += (s, e) => { _power = e.Mode; };
+            SystemEvents.TimeChanged += (s, e) =>
+            {
+                if (_power == PowerModes.Suspend) return;
+                Reset();
+            };
         }
 
         #endregion
@@ -167,10 +175,10 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public Packet Result
         {
-            get { return _packet; }
+            get { return _result; }
             private set
             {
-                lock (_lock) _packet = value;
+                lock (_lock) _result = value;
                 OnResultChanged(new PacketEventArgs(value));
             }
         }
@@ -352,9 +360,10 @@ namespace Cube.Net.Ntp
         #region Fields
         private string _server = string.Empty;
         private int _port = Client.DefaultPort;
-        private Packet _packet = null;
+        private Packet _result = null;
         private TimeSpan _timeout = TimeSpan.FromSeconds(5);
         private Timer _timer = new Timer();
+        private PowerModes _power = PowerModes.Resume;
         private object _lock = new object();
         #endregion
 
