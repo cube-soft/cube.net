@@ -187,8 +187,8 @@ namespace Cube.Net.Ntp
         {
             return Cube.TaskEx.Run<int>(() =>
             {
-                var packet = new Ntp.Packet();
                 var endpoint = new IPEndPoint(Host.AddressList[0], Port);
+                var packet = new Ntp.Packet();
                 return _socket.SendTo(packet.RawData, endpoint);
             });
         }
@@ -206,8 +206,8 @@ namespace Cube.Net.Ntp
         {
             return Cube.TaskEx.Run<Packet>(() =>
             {
-                byte[] raw = new byte[48 + (32 + 128) / 8];
-                EndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
+                var endpoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
+                var raw = new byte[48 + (32 + 128) / 8];
                 var bytes = _socket.ReceiveFrom(raw, ref endpoint);
                 return new Packet(raw);
             });
