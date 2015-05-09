@@ -179,7 +179,7 @@ namespace Cube.Net.Ntp
             private set
             {
                 lock (_lock) _result = value;
-                OnResultChanged(new PacketEventArgs(value));
+                OnResultChanged(new DataEventArgs<Packet>(value));
             }
         }
 
@@ -240,7 +240,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event EventHandler<PacketEventArgs> ResultChanged;
+        public event EventHandler<DataEventArgs<Packet>> ResultChanged;
 
         #endregion
 
@@ -281,7 +281,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnResultChanged(PacketEventArgs e)
+        protected virtual void OnResultChanged(DataEventArgs<Packet> e)
         {
             if (ResultChanged != null) ResultChanged(this, e);
         }
@@ -351,7 +351,7 @@ namespace Cube.Net.Ntp
                 }
                 catch (Exception err) { System.Diagnostics.Trace.TraceError(err.ToString()); }
                 ++FailedCount;
-                await Cube.TaskEx.Delay(_RetryInterval);
+                await TaskEx.Delay(_RetryInterval);
             }
         }
 

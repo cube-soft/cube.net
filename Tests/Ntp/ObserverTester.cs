@@ -21,6 +21,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using TaskEx = Cube.TaskEx;
 
 namespace Cube.Tests.Net.Ntp
 {
@@ -55,7 +56,7 @@ namespace Cube.Tests.Net.Ntp
                 observer.ResultChanged += (s, e) => cts.Cancel();
                 observer.Timeout = TimeSpan.FromSeconds(1);
                 observer.Start();
-                Cube.TaskEx.Delay(2000, cts.Token).Wait();
+                TaskEx.Delay(2000, cts.Token).Wait();
             });
             Assert.That(ex.InnerException, Is.TypeOf<TaskCanceledException>());
             Assert.That(observer.IsValid, Is.True);

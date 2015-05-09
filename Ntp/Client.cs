@@ -22,6 +22,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Cube.Extensions;
+using TaskEx = Cube.TaskEx;
 
 namespace Cube.Net.Ntp
 {
@@ -185,7 +186,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private Task<int> SendToAsync()
         {
-            return Cube.TaskEx.Run<int>(() =>
+            return TaskEx.Run<int>(() =>
             {
                 var endpoint = new IPEndPoint(Host.AddressList[0], Port);
                 var packet = new Ntp.Packet();
@@ -204,7 +205,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private Task<Packet> ReceiveFromAsync()
         {
-            return Cube.TaskEx.Run<Packet>(() =>
+            return TaskEx.Run<Packet>(() =>
             {
                 var endpoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
                 var raw = new byte[48 + (32 + 128) / 8];
