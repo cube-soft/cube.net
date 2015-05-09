@@ -21,6 +21,7 @@ using System;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Win32;
+using TaskEx = Cube.TaskEx;
 
 namespace Cube.Net.Ntp
 {
