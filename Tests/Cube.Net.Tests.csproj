@@ -49,6 +49,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Rackspace.HttpClient35.1.0.0-beta003\lib\net35\System.Net.Http.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Threading">
       <HintPath>..\..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
     </Reference>
@@ -58,12 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Http\ClientHandleTester.cs" />
+    <Compile Include="Http\GetAsyncTester.cs" />
     <Compile Include="Ntp\ClientTester.cs" />
     <Compile Include="Ntp\ObserverTester.cs" />
     <Compile Include="Ntp\PacketTester.cs" />
     <Compile Include="Ntp\TimestampTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UpdateMessageTester.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cube.Net.csproj">

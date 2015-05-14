@@ -1,0 +1,18 @@
+{
+    "people" : [
+        {
+            "id" : "0001",
+            "name" : "Jack Daniel",
+            "age" : 40,
+            "sex" : "Male",
+            "contact" : "jack@example.com"
+        },
+        {
+            "id" : "0002",
+            "name" : "山田 花子",
+            "age" : 25,
+            "sex" : "Female",
+            "contact" : "hanako@example.jp"
+        }
+    ]
+}
