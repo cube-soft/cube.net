@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using System.Runtime.Serialization.Json;
 using Cube.Extensions;
 
@@ -55,6 +56,25 @@ namespace Cube.Extensions.Net
             var stream = await response.Content.ReadAsStreamAsync();
             var json = new DataContractJsonSerializer(typeof(T));
             return json.ReadObject(stream) as T;
+        }
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// GetXmlAsync
+        /// 
+        /// <summary>
+        /// XML 形式のデータを非同期で取得します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public static async Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri) where T : class
+        {
+            var response = await client.GetAsync(uri);
+            if (!response.IsSuccessStatusCode) return null;
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            var xml = new XmlSerializer(typeof(T));
+            return xml.Deserialize(stream) as T;
         }
 
         /* --------------------------------------------------------------------- */
