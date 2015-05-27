@@ -60,6 +60,7 @@
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Http\ClientHandler.cs" />
     <Compile Include="NetworkAwareObserver.cs" />
+    <Compile Include="NetworkAwareMonitor.cs" />
     <Compile Include="Ntp\Client.cs" />
     <Compile Include="Detail\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
