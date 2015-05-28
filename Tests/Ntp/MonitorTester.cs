@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// ObserverTester.cs
+/// MonitorTester.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -27,39 +27,39 @@ namespace Cube.Tests.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Tests.Net.Ntp.ObserverTester
+    /// Cube.Tests.Net.Ntp.MonitorTester
     ///
     /// <summary>
-    /// Observer クラスのテストをするためのクラスです。
+    /// Ntp.Monitor クラスのテストを行うためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    public class ObserverTester
+    public class MonitorTester
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// TestObserve
+        /// TestRun
         /// 
         /// <summary>
-        /// NTP サーバとの通信のテストを行います。
+        /// NTP サーバを監視するテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TestObserve()
+        public void TestRun()
         {
-            var observer = new Cube.Net.Ntp.Observer("ntp.cube-soft.jp");
+            var monitor = new Cube.Net.Ntp.Monitor("ntp.cube-soft.jp", DateTime.MinValue);
             var ex = Assert.Throws<AggregateException>(() =>
             {
                 var cts = new CancellationTokenSource();
-                observer.ResultChanged += (s, e) => cts.Cancel();
-                observer.Timeout = TimeSpan.FromSeconds(1);
-                observer.Start();
-                TaskEx.Delay(2000, cts.Token).Wait();
+                monitor.ResultChanged += (s, e) => cts.Cancel();
+                monitor.Timeout  = TimeSpan.FromMilliseconds(1000);
+                monitor.Start();
+                TaskEx.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token).Wait();
             });
             Assert.That(ex.InnerException, Is.TypeOf<TaskCanceledException>());
-            Assert.That(observer.IsValid, Is.True);
+            Assert.That(monitor.IsValid, Is.True);
         }
     }
 }
