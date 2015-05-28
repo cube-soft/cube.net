@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// NetworkAwareObserver.cs
+/// NetworkAwareMonitor.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -20,36 +20,44 @@
 using System;
 using System.Net.NetworkInformation;
 
+
 namespace Cube.Net
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.NetworkAwareObserver
+    /// Cube.Net.NetworkAwareMonitor
     ///
     /// <summary>
-    /// ネットワークの状況変化に反応する Observer の基底となるクラスです。
+    /// ネットワーク状況の変化に反応するモニタリング用クラスです。
     /// </summary>
     /// 
-    /// <remarks>
-    /// このクラスは直接オブジェクト化する事はできません。継承クラスを
-    /// 利用して下さい。
-    /// </remarks>
-    ///
     /* --------------------------------------------------------------------- */
-    public class NetworkAwareObserver
+    public class NetworkAwareMonitor : Cube.Scheduler
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// NetworkAwareObserver
+        /// NetworkAwareMonitor
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected NetworkAwareObserver()
+        public NetworkAwareMonitor() : this(DateTime.Now) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// NetworkAwareMonitor
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public NetworkAwareMonitor(DateTime lastExecuted)
+            : base(lastExecuted)
         {
             NetworkChange.NetworkAvailabilityChanged += (s, e) => OnNetworkChanged(e);
         }
@@ -71,71 +79,7 @@ namespace Cube.Net
 
         #endregion
 
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Start
-        /// 
-        /// <summary>
-        /// 監視を開始します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// 継承クラスでは ExecuteStart() をオーバーライドし、必要な実装を
-        /// 行って下さい。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Start()
-        {
-            ExecuteStart();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ExecuteStop
-        /// 
-        /// <summary>
-        /// 監視を中止します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// 継承クラスでは ExecuteStop() をオーバーライドし、必要な実装を
-        /// 行って下さい。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Stop()
-        {
-            ExecuteStop();
-        }
-
-        #endregion
-
         #region Virtual methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ExecuteStart
-        /// 
-        /// <summary>
-        /// 監視を開始します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void ExecuteStart() { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ExecuteStop
-        /// 
-        /// <summary>
-        /// 監視を中止します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void ExecuteStop() { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -148,10 +92,36 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
-            if (e.IsAvailable) Start();
-            else Stop();
+            if (State == SchedulerState.Stop) return;
+
+            if (!e.IsAvailable && State == SchedulerState.Run) Suspend();
+            else if (e.IsAvailable && State == SchedulerState.Suspend) Resume();
 
             if (NetworkChanged != null) NetworkChanged(this, e);
+        }
+
+        #endregion
+
+        #region Override methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnExecute
+        /// 
+        /// <summary>
+        /// モニタリングのための操作を実行するタイミングになった時に
+        /// 発生するイベントです。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// ネットワークが利用不可能な状態の場合 Suspend を実行します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnExecute(EventArgs e)
+        {
+            if (!NetworkInterface.GetIsNetworkAvailable()) Suspend();
+            else base.OnExecute(e);
         }
 
         #endregion
