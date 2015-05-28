@@ -35,7 +35,8 @@
     <Reference Include="AsyncBridge.Net35">
       <HintPath>..\packages\AsyncBridge.Net35.0.2.0\lib\net35-Client\AsyncBridge.Net35.dll</HintPath>
     </Reference>
-    <Reference Include="Cube.Core">
+    <Reference Include="Cube.Core, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Rackspace.Threading">
@@ -65,7 +66,7 @@
     <Compile Include="Detail\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
     <Compile Include="Ntp\Mode.cs" />
-    <Compile Include="Ntp\Observer.cs" />
+    <Compile Include="Ntp\Monitor.cs" />
     <Compile Include="Ntp\Packet.cs" />
     <Compile Include="Ntp\Stratum.cs" />
     <Compile Include="Ntp\Timestamp.cs" />
