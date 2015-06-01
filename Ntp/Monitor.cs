@@ -238,35 +238,6 @@ namespace Cube.Net.Ntp
 
         #endregion
 
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Reset
-        /// 
-        /// <summary>
-        /// 現在の LastResult プロパティの値を破棄し、NTP サーバに
-        /// 問い合わせます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Reset()
-        {
-            var current = State;
-            if (State == SchedulerState.Run) Stop();
-
-            Result = null;
-            FailedCount = 0;
-
-            if (current == SchedulerState.Run)
-            {
-                var _ = GetAsync();
-                Start();
-            }
-        }
-
-        #endregion
-
         #region Virtual methods
 
         /* ----------------------------------------------------------------- */
@@ -286,6 +257,31 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Override methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnReset
+        /// 
+        /// <summary>
+        /// 現在の LastResult プロパティの値を破棄し、NTP サーバに
+        /// 問い合わせます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnReset(EventArgs e)
+        {
+            var current = State;
+            if (State == SchedulerState.Run) Stop();
+
+            Result = null;
+            FailedCount = 0;
+
+            if (current == SchedulerState.Run)
+            {
+                var _ = GetAsync();
+                Start();
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
