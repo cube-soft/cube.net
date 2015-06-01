@@ -271,7 +271,7 @@ namespace Cube.Net.Ntp
         protected override void OnReset(EventArgs e)
         {
             var current = State;
-            if (State == SchedulerState.Run) Stop();
+            base.OnReset(e);
 
             Result = null;
             FailedCount = 0;
