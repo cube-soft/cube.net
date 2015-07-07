@@ -66,7 +66,7 @@ namespace Cube.Net.Http
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             SetEntityTag(request.Headers);
-
+            
             var response = await base.SendAsync(request, cancellationToken);
 
             GetEntityTag(response.Headers);

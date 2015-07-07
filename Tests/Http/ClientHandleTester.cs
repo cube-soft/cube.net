@@ -63,6 +63,37 @@ namespace Cube.Tests.Net.Http
             Assert.That(second.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TestConnectionClose
+        ///
+        /// <summary>
+        /// ConnectionClose を設定するテストを行います。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// NuGet に公開されている System.Net.Http for .NET 3.5 には
+        /// ConnectionClose に関するバグが存在する模様。
+        /// 現在は、AddRequestHeaders で Connection プロパティに値を
+        /// 設定しないように修正したものを利用している。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void TestConnectionClose()
+        {
+            Assert.DoesNotThrow(() =>
+            {
+                var uri = new Uri("http://www.cube-soft.jp/");
+                var handler = new Cube.Net.Http.ClientHandler();
+                handler.UseProxy = false;
+
+                var client = new System.Net.Http.HttpClient(handler);
+                client.DefaultRequestHeaders.ConnectionClose = true;
+                Assert.That(client.GetAsync(uri).Result.IsSuccessStatusCode, Is.True);
+            });
+        }
+
         #endregion
     }
 }
