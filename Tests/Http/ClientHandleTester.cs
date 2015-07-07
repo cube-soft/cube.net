@@ -53,6 +53,7 @@ namespace Cube.Tests.Net.Http
         {
             var uri = new Uri("http://news.cube-soft.jp/app/notice/all.json");
             var handler = new Cube.Net.Http.ClientHandler();
+            handler.Proxy = null;
             handler.UseProxy = false;
 
             var client = new System.Net.Http.HttpClient(handler);
@@ -86,11 +87,13 @@ namespace Cube.Tests.Net.Http
             {
                 var uri = new Uri("http://www.cube-soft.jp/");
                 var handler = new Cube.Net.Http.ClientHandler();
+                handler.Proxy = null;
                 handler.UseProxy = false;
 
                 var client = new System.Net.Http.HttpClient(handler);
                 client.DefaultRequestHeaders.ConnectionClose = true;
-                Assert.That(client.GetAsync(uri).Result.IsSuccessStatusCode, Is.True);
+                var response = client.GetAsync(uri).Result;
+                Assert.That(response.IsSuccessStatusCode, Is.True);
             });
         }
 
