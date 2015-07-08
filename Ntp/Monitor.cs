@@ -90,11 +90,7 @@ namespace Cube.Net.Ntp
             _server = server;
             _port = port;
 
-            SystemEvents.TimeChanged += (s, e) =>
-            {
-                if (PowerMode == PowerModes.Suspend) return;
-                Reset();
-            };
+            SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
 
         #endregion
@@ -235,6 +231,17 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public event EventHandler<DataEventArgs<Packet>> ResultChanged;
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TimeChanged
+        /// 
+        /// <summary>
+        /// システムの時刻が変更された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler TimeChanged;
+
         #endregion
 
         #region Virtual methods
@@ -251,6 +258,23 @@ namespace Cube.Net.Ntp
         protected virtual void OnResultChanged(DataEventArgs<Packet> e)
         {
             if (ResultChanged != null) ResultChanged(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnTimeChanged
+        /// 
+        /// <summary>
+        /// システムの時刻が変更された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnTimeChanged(EventArgs e)
+        {
+            if (PowerMode == PowerModes.Suspend) return;
+            Reset();
+
+            if (TimeChanged != null) TimeChanged(this, e);
         }
 
         #endregion
