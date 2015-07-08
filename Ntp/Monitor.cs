@@ -90,7 +90,7 @@ namespace Cube.Net.Ntp
             _server = server;
             _port = port;
 
-            SystemEvents.PowerModeChanged += (s, e) => { PowerMode = e.Mode; };
+            SystemEvents.PowerModeChanged += System_PowerModeChanged;
             SystemEvents.TimeChanged += (s, e) =>
             {
                 if (PowerMode == PowerModes.Suspend) return;
@@ -317,7 +317,30 @@ namespace Cube.Net.Ntp
 
         #endregion
 
-        #region Implementations
+        #region Event handlers
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// System_PowerModeChanged
+        /// 
+        /// <summary>
+        /// 電源モードが変更された時に実行されるハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void System_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            PowerMode = e.Mode;
+
+            var available = (PowerMode == PowerModes.Resume) &&
+                System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
+            if (available && State == SchedulerState.Suspend) Resume();
+            else if (!available && State == SchedulerState.Run) Suspend();
+        }
+
+        #endregion
+
+        #region Other private methods
 
         /* ----------------------------------------------------------------- */
         ///
