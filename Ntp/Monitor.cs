@@ -90,12 +90,7 @@ namespace Cube.Net.Ntp
             _server = server;
             _port = port;
 
-            SystemEvents.PowerModeChanged += System_PowerModeChanged;
-            SystemEvents.TimeChanged += (s, e) =>
-            {
-                if (PowerMode == PowerModes.Suspend) return;
-                Reset();
-            };
+            SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
 
         #endregion
@@ -156,21 +151,6 @@ namespace Cube.Net.Ntp
         {
             get { return _timeout; }
             set { _timeout = value; }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// PowerMode
-        /// 
-        /// <summary>
-        /// 現在の電源モードを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public PowerModes PowerMode
-        {
-            get { return _power; }
-            private set { _power = value; }
         }
 
         /* ----------------------------------------------------------------- */
@@ -251,6 +231,17 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public event EventHandler<DataEventArgs<Packet>> ResultChanged;
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TimeChanged
+        /// 
+        /// <summary>
+        /// システムの時刻が変更された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler TimeChanged;
+
         #endregion
 
         #region Virtual methods
@@ -267,6 +258,23 @@ namespace Cube.Net.Ntp
         protected virtual void OnResultChanged(DataEventArgs<Packet> e)
         {
             if (ResultChanged != null) ResultChanged(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnTimeChanged
+        /// 
+        /// <summary>
+        /// システムの時刻が変更された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnTimeChanged(EventArgs e)
+        {
+            if (PowerMode == PowerModes.Suspend) return;
+            Reset();
+
+            if (TimeChanged != null) TimeChanged(this, e);
         }
 
         #endregion
@@ -317,29 +325,6 @@ namespace Cube.Net.Ntp
 
         #endregion
 
-        #region Event handlers
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// System_PowerModeChanged
-        /// 
-        /// <summary>
-        /// 電源モードが変更された時に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void System_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
-        {
-            PowerMode = e.Mode;
-
-            var available = (PowerMode == PowerModes.Resume) &&
-                System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
-            if (available && State == SchedulerState.Suspend) Resume();
-            else if (!available && State == SchedulerState.Run) Suspend();
-        }
-
-        #endregion
-
         #region Other private methods
 
         /* ----------------------------------------------------------------- */
@@ -379,7 +364,6 @@ namespace Cube.Net.Ntp
         private int _port = Client.DefaultPort;
         private Packet _result = null;
         private TimeSpan _timeout = TimeSpan.FromSeconds(5);
-        private PowerModes _power = PowerModes.Resume;
         private object _lock = new object();
         #endregion
 
