@@ -19,6 +19,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net.NetworkInformation;
+using Microsoft.Win32;
 
 
 namespace Cube.Net
@@ -59,7 +60,38 @@ namespace Cube.Net
         public NetworkAwareMonitor(DateTime lastExecuted)
             : base(lastExecuted)
         {
+            PowerMode = PowerModes.Resume;
             NetworkChange.NetworkAvailabilityChanged += (s, e) => OnNetworkChanged(e);
+            SystemEvents.PowerModeChanged += (s, e) => OnPowerModeChanged(e);
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PowerMode
+        /// 
+        /// <summary>
+        /// 現在の電源モードを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public PowerModes PowerMode { get; private set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsNetworkAvailable
+        /// 
+        /// <summary>
+        /// ネットワークが使用可能な状態かどうかを表す値を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool IsNetworkAvailable
+        {
+            get { return NetworkInterface.GetIsNetworkAvailable(); }
         }
 
         #endregion
@@ -77,6 +109,17 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         public event EventHandler<NetworkAvailabilityEventArgs> NetworkChanged;
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PowerModeChanged
+        /// 
+        /// <summary>
+        /// 電源の状態が変化した時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<PowerModeChangedEventArgs> PowerModeChanged;
+
         #endregion
 
         #region Virtual methods
@@ -92,12 +135,24 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
-            if (State == SchedulerState.Stop) return;
-
-            if (!e.IsAvailable && State == SchedulerState.Run) Suspend();
-            else if (e.IsAvailable && State == SchedulerState.Suspend) Resume();
-
+            ChangeState();
             if (NetworkChanged != null) NetworkChanged(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PowerModeChanged
+        /// 
+        /// <summary>
+        /// 電源の状態が変化した時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnPowerModeChanged(PowerModeChangedEventArgs e)
+        {
+            PowerMode = e.Mode;
+            ChangeState();
+            if (PowerModeChanged != null) PowerModeChanged(this, e);
         }
 
         #endregion
@@ -122,6 +177,28 @@ namespace Cube.Net
         {
             if (!NetworkInterface.GetIsNetworkAvailable()) Suspend();
             else base.OnExecute(e);
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ChangeState
+        /// 
+        /// <summary>
+        /// ネットワークや電源の状態に応じて State を切り替えます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void ChangeState()
+        {
+            if (State == SchedulerState.Stop) return;
+
+            var available = (PowerMode == PowerModes.Resume) && IsNetworkAvailable;
+            if (available && State == SchedulerState.Suspend) Resume();
+            else if (!available && State == SchedulerState.Run) Suspend();
         }
 
         #endregion
