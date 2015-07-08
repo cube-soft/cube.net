@@ -90,10 +90,10 @@ namespace Cube.Net.Ntp
             _server = server;
             _port = port;
 
-            SystemEvents.PowerModeChanged += (s, e) => { _power = e.Mode; };
+            SystemEvents.PowerModeChanged += (s, e) => { PowerMode = e.Mode; };
             SystemEvents.TimeChanged += (s, e) =>
             {
-                if (_power == PowerModes.Suspend) return;
+                if (PowerMode == PowerModes.Suspend) return;
                 Reset();
             };
         }
@@ -156,6 +156,21 @@ namespace Cube.Net.Ntp
         {
             get { return _timeout; }
             set { _timeout = value; }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PowerMode
+        /// 
+        /// <summary>
+        /// 現在の電源モードを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public PowerModes PowerMode
+        {
+            get { return _power; }
+            private set { _power = value; }
         }
 
         /* ----------------------------------------------------------------- */

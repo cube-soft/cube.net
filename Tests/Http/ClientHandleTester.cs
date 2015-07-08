@@ -54,7 +54,7 @@ namespace Cube.Tests.Net.Http
             var uri = new Uri("http://news.cube-soft.jp/app/notice/all.json");
             var handler = new Cube.Net.Http.ClientHandler();
             handler.Proxy = null;
-            handler.UseProxy = false;
+            handler.UseProxy = true;
 
             var client = new System.Net.Http.HttpClient(handler);
             var first = client.GetAsync(uri).Result;
@@ -85,7 +85,7 @@ namespace Cube.Tests.Net.Http
         {
             Assert.DoesNotThrow(() =>
             {
-                var uri = new Uri("http://www.cube-soft.jp/");
+                var uri = new Uri("http://www.google.co.jp/");
                 var handler = new Cube.Net.Http.ClientHandler();
                 handler.Proxy = null;
                 handler.UseProxy = false;
@@ -94,6 +94,29 @@ namespace Cube.Tests.Net.Http
                 client.DefaultRequestHeaders.ConnectionClose = true;
                 var response = client.GetAsync(uri).Result;
                 Assert.That(response.IsSuccessStatusCode, Is.True);
+            });
+        }
+
+        [Test]
+        public void TestDummy()
+        {
+            Assert.DoesNotThrow(() =>
+            {
+                System.Diagnostics.Debug.WriteLine("first");
+                var enc = System.Text.Encoding.GetEncoding("UTF-8");
+                string url = "http://www.google.co.jp/";
+
+                System.Diagnostics.Debug.WriteLine("start");
+                WebRequest req = WebRequest.Create(url);
+                req.Proxy = null;
+                WebResponse res = req.GetResponse();
+                System.Diagnostics.Debug.WriteLine("end");
+
+                //var st = res.GetResponseStream();
+                //var sr = new System.IO.StreamReader(st, enc);
+                //string html = sr.ReadToEnd();
+                //sr.Close();
+                //st.Close();
             });
         }
 
