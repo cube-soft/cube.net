@@ -49,7 +49,7 @@ namespace Cube.Tests.Net.Ntp
         [Test]
         public void TestRun()
         {
-            var monitor = new Cube.Net.Ntp.Monitor("ntp.cube-soft.jp", DateTime.MinValue);
+            var monitor = new Cube.Net.Ntp.Monitor("ntp.cube-soft.jp");
             var ex = Assert.Throws<AggregateException>(() =>
             {
                 var cts = new CancellationTokenSource();
