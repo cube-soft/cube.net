@@ -125,7 +125,7 @@ namespace Cube.Tests.Net.Http
                 Assert.That(message, Is.Not.Null);
                 Assert.That(message.Version, Is.EqualTo(version));
                 Assert.That(message.Notify, Is.False);
-                Assert.That(message.Uri, Is.EqualTo(new Uri("http://www.cube-soft.jp/cubelab/#news")));
+                Assert.That(message.Uri, Is.EqualTo(new Uri("http://s.cube-soft.jp/widget/")));
                 Assert.That(message.Text.Length, Is.AtLeast(1));
             });
         }

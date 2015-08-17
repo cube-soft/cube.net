@@ -60,31 +60,7 @@ namespace Cube.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         public Monitor(string server, int port)
-            : this(server, port, DateTime.Now) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Monitor
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Monitor(string server, DateTime lastExecuted)
-            : this(server, Client.DefaultPort, lastExecuted) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Monitor
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Monitor(string server, int port, DateTime lastExecuted)
-            : base(lastExecuted)
+            : base()
         {
             Interval = TimeSpan.FromHours(1);
             _server = server;

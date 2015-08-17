@@ -46,19 +46,8 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public NetworkAwareMonitor() : this(DateTime.Now) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// NetworkAwareMonitor
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public NetworkAwareMonitor(DateTime lastExecuted)
-            : base(lastExecuted)
+        public NetworkAwareMonitor()
+            : base()
         {
             PowerMode = PowerModes.Resume;
             NetworkChange.NetworkAvailabilityChanged += (s, e) => OnNetworkChanged(e);
