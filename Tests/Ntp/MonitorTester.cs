@@ -21,7 +21,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using TaskEx = Cube.TaskEx;
+using TaskEx = System.Threading.Tasks.Task;
 
 namespace Cube.Tests.Net.Ntp
 {

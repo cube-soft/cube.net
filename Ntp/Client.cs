@@ -22,7 +22,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Cube.Extensions;
-using TaskEx = Cube.TaskEx;
+using TaskEx = System.Threading.Tasks.Task;
 
 namespace Cube.Net.Ntp
 {
