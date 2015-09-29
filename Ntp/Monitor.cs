@@ -19,7 +19,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Threading.Tasks;
-using System.Timers;
 using Microsoft.Win32;
 using TaskEx = Cube.TaskEx;
 
@@ -327,7 +326,7 @@ namespace Cube.Net.Ntp
                         return;
                     }
                 }
-                catch (Exception err) { System.Diagnostics.Trace.TraceError(err.ToString()); }
+                catch (Exception err) { Logger.Error(err); }
                 ++FailedCount;
                 await TaskEx.Delay(_RetryInterval);
             }
