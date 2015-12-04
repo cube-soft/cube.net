@@ -20,7 +20,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Win32;
-using TaskEx = Cube.TaskEx;
+using TaskEx = System.Threading.Tasks.Task;
 
 namespace Cube.Net.Ntp
 {
