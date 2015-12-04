@@ -37,7 +37,7 @@
     </Reference>
     <Reference Include="Cube.Core, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Cube.Core.dll</HintPath>
+      <HintPath>..\lib\net35\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.14.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
