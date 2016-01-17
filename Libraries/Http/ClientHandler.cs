@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// UpdateMessage.cs
+/// ClientHandler.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -17,67 +17,101 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
-namespace Cube.Net
+namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.UpdateMessage
+    /// ClientHandler
     /// 
     /// <summary>
-    /// アップデートメッセージを格納するためのクラスです。
+    /// System.Net.Http.HttpClient を拡張するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class UpdateMessage
+    public class ClientHandler : HttpClientHandler
     {
-        #region Properties
+        #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Notify
+        /// ClientHandler
         ///
         /// <summary>
-        /// メッセージを通知すべきかどうかを表す値を取得または設定します。
+        /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Notify { get; set; }
+        public ClientHandler() : base() { }
+
+        #endregion
+
+        #region Override methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Version
+        /// SendAsync
         ///
         /// <summary>
-        /// メッセージの対象となるバージョンを取得または設定します。
+        /// HTTP リクエストを非同期で送信します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Version { get; set; }
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            SetEntityTag(request.Headers);
+            
+            var response = await base.SendAsync(request, cancellationToken);
+
+            GetEntityTag(response.Headers);
+
+            return response;
+        }
+
+        #endregion
+
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Text
+        /// SetEntityTag
         ///
         /// <summary>
-        /// アップデートメッセージを取得または設定します。
+        /// エンティティタグ (ETag) をリクエストヘッダに設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Text { get; set; }
+        private void SetEntityTag(HttpRequestHeaders headers)
+        {
+            if (string.IsNullOrEmpty(_etag)) return;
+            var value = EntityTagHeaderValue.Parse(_etag);
+            headers.IfNoneMatch.Add(value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Uri
+        /// GetEntityTag
         ///
         /// <summary>
-        /// アップデートを行うための URL を取得または設定します。
+        /// エンティティタグ (ETag) をリクエストヘッダから取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Uri Uri { get; set; }
+        private void GetEntityTag(HttpResponseHeaders headers)
+        {
+            _etag = (headers.ETag != null) ? headers.ETag.Tag : string.Empty;
+        }
 
+        #endregion
+
+        #region Fields
+        private IList<string> _acceptEncoding = new List<string>();
+        private string _etag = string.Empty;
         #endregion
     }
 }

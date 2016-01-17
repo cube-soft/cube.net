@@ -51,16 +51,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\ClientHandleTester.cs" />
-    <Compile Include="Http\GetAsyncTester.cs" />
-    <Compile Include="Ntp\ClientTester.cs" />
-    <Compile Include="Ntp\MonitorTester.cs" />
-    <Compile Include="Ntp\PacketTester.cs" />
-    <Compile Include="Ntp\TimestampTester.cs" />
+    <Compile Include="Http\ClientHandlerTest.cs" />
+    <Compile Include="Http\ClientTest.cs" />
+    <Compile Include="Ntp\ClientTest.cs" />
+    <Compile Include="Ntp\MonitorTest.cs" />
+    <Compile Include="Ntp\PacketTest.cs" />
+    <Compile Include="Ntp\TimestampTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cube.Net.csproj">
+    <ProjectReference Include="..\Libraries\Cube.Net.csproj">
       <Project>{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}</Project>
       <Name>Cube.Net</Name>
     </ProjectReference>
@@ -68,6 +68,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

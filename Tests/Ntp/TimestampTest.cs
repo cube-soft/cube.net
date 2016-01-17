@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// TimestampTester.cs
+/// TimestampTest.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -24,19 +24,19 @@ namespace Cube.Tests.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Tests.Net.Ntp.TimestampTester
+    /// TimestampTest
     ///
     /// <summary>
-    /// Client クラスのテストをするためのクラスです。
+    /// Cube.Net.Ntp.Timestamp クラスのテストをするためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    public class TimestampTester
+    public class TimestampTest
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// TestToDateTime
+        /// ToDateTime
         /// 
         /// <summary>
         /// NTP タイムスタンプを DateTime オブジェクトに変更するテストを
@@ -46,7 +46,7 @@ namespace Cube.Tests.Net.Ntp
         /* ----------------------------------------------------------------- */
         [TestCase(2036, 2, 7, 6, 28, 15, -0x100000000L)]
         [TestCase(2036, 2, 7, 6, 28, 16, 0)]
-        public void TestToDateTime(int y, int m, int d, int hh, int mm, int ss, Int64 ts)
+        public void ToDateTime(int y, int m, int d, int hh, int mm, int ss, long ts)
         {
             var converted = Cube.Net.Ntp.Timestamp.Convert(ts);
             Assert.That(converted.Year, Is.EqualTo(y));
@@ -59,7 +59,7 @@ namespace Cube.Tests.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TestToTimestamp
+        /// ToTimestamp
         /// 
         /// <summary>
         /// DateTime オブジェクトを NTP タイムスタンプに変更するテストを
@@ -69,7 +69,7 @@ namespace Cube.Tests.Net.Ntp
         /* ----------------------------------------------------------------- */
         [TestCase(2036, 2, 7, 6, 28, 15, -0x100000000L)]
         [TestCase(2036, 2, 7, 6, 28, 16, 0)]
-        public void TestToTimestamp(int y, int m, int d, int hh, int mm, int ss, Int64 ts)
+        public void ToTimestamp(int y, int m, int d, int hh, int mm, int ss, long ts)
         {
             var src = new DateTime(y, m, d, hh, mm, ss, DateTimeKind.Utc);
             var converted = Cube.Net.Ntp.Timestamp.Convert(src);
@@ -78,7 +78,7 @@ namespace Cube.Tests.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TestConvert
+        /// Convert
         /// 
         /// <summary>
         /// 引数に指定された日時をいったん NTP タイムスタンプに変換し、
@@ -92,17 +92,17 @@ namespace Cube.Tests.Net.Ntp
         [TestCase(2036,  2,  7,  6, 28, 15, 999)]
         [TestCase(2036,  2,  7,  6, 28, 16,   0)]
         [TestCase(2104,  1,  1,  0,  0,  0,   0)]
-        public void TestConvert(int y, int m, int d, int hh, int mm, int ss, int ms)
+        public void Convert(int y, int m, int d, int hh, int mm, int ss, int ms)
         {
             var src = new DateTime(y, m, d, hh, mm, ss, ms, DateTimeKind.Utc);
             var tmp = Cube.Net.Ntp.Timestamp.Convert(src);
             var converted = Cube.Net.Ntp.Timestamp.Convert(tmp);
-            Assert.That(converted.Year, Is.EqualTo(y));
-            Assert.That(converted.Month, Is.EqualTo(m));
-            Assert.That(converted.Day, Is.EqualTo(d));
-            Assert.That(converted.Hour, Is.EqualTo(hh));
-            Assert.That(converted.Minute, Is.EqualTo(mm));
-            Assert.That(converted.Second, Is.EqualTo(ss));
+            Assert.That(converted.Year,        Is.EqualTo(y));
+            Assert.That(converted.Month,       Is.EqualTo(m));
+            Assert.That(converted.Day,         Is.EqualTo(d));
+            Assert.That(converted.Hour,        Is.EqualTo(hh));
+            Assert.That(converted.Minute,      Is.EqualTo(mm));
+            Assert.That(converted.Second,      Is.EqualTo(ss));
             Assert.That(converted.Millisecond, Is.EqualTo(ms));
         }
     }

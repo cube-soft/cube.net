@@ -20,20 +20,19 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Win32;
-using TaskEx = System.Threading.Tasks.Task;
 
 namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.Ntp.Monitor
+    /// Monitor
     ///
     /// <summary>
     /// NTP サーバと定期的に通信を行い、時刻のずれを監視するクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Monitor : Cube.Net.NetworkAwareMonitor
+    public class Monitor : NetworkAwareMonitor
     {
         #region Constructors
 
@@ -328,7 +327,7 @@ namespace Cube.Net.Ntp
                 }
                 catch (Exception err) { Logger.Error(err); }
                 ++FailedCount;
-                await TaskEx.Delay(_RetryInterval);
+                await Task.Delay(_RetryInterval);
             }
         }
 

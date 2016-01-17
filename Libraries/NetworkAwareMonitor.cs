@@ -21,19 +21,18 @@ using System;
 using System.Net.NetworkInformation;
 using Microsoft.Win32;
 
-
 namespace Cube.Net
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.NetworkAwareMonitor
+    /// NetworkAwareMonitor
     ///
     /// <summary>
     /// ネットワーク状況の変化に反応するモニタリング用クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class NetworkAwareMonitor : Cube.Scheduler
+    public class NetworkAwareMonitor : Scheduler
     {
         #region Constructors
 

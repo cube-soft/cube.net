@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// Mode.cs
+/// FixedPoint.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -23,20 +23,34 @@ namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.Ntp.Mode
+    /// FixedPoint
     /// 
     /// <summary>
-    /// 動作モードの状態を定義した列挙型です。
+    /// 符号付き 32bit 固定小数点数から double への変換機能を提供するための
+    /// クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public enum Mode : uint
+    internal abstract class FixedPoint
     {
-        Unknown          = 0,   // 0, 6, 7 - Reserved
-        SymmetricActive  = 1,   // 1 - Symmetric active
-        SymmetricPassive = 2,   // 2 - Symmetric pasive
-        Client           = 3,   // 3 - Client
-        Server           = 4,   // 4 - Server
-        Broadcast        = 5,   // 5 - Broadcast
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ToDouble
+        /// 
+        /// <summary>
+        /// 符号付き 32bit 固定小数点数から double へ変換します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static double ToDouble(Int32 value)
+        {
+            var number = (Int16)(value >> 16);
+            var fraction = (UInt16)(value & Int16.MaxValue);
+            return number + fraction / _CompensatingRate16;
+        }
+
+        #region Constant variables
+        private static readonly double _CompensatingRate16 = 0x10000d;
+        #endregion
     }
 }
