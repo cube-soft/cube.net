@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// PacketTester.cs
+/// PacketTest.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -24,19 +24,19 @@ namespace Cube.Tests.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// TimestampTester
+    /// PacketTest
     ///
     /// <summary>
-    /// Packet クラスのテストをするためのクラスです。
+    /// Cube.Net.Ntp.Packet のテストをするためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    public class PacketTester
+    public class PacketTest
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// TestCreatePacket
+        /// CreatePacket
         /// 
         /// <summary>
         /// 送信用の NTP パケットを生成するテストを行います。
@@ -44,7 +44,7 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TestCreatePacket()
+        public void CreatePacket()
         {
             Assert.DoesNotThrow(() =>
             {
@@ -67,7 +67,7 @@ namespace Cube.Tests.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TestCreatePacketError
+        /// CreatePacketException
         /// 
         /// <summary>
         /// NTP パケットの初期化に失敗するテストを行います。
@@ -75,13 +75,12 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TestCreatePacketError()
+        public void CreatePacketException()
         {
             var err = Assert.Throws<ArgumentException>(() =>
             {
                 var packet = new Cube.Net.Ntp.Packet(new byte[47]);
             });
-            Assert.Pass(err.ToString());
         }
     }
 }

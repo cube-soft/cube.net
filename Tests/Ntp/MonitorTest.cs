@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// MonitorTester.cs
+/// MonitorTest.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -21,25 +21,24 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using TaskEx = System.Threading.Tasks.Task;
 
 namespace Cube.Tests.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Tests.Net.Ntp.MonitorTester
+    /// MonitorTest
     ///
     /// <summary>
-    /// Ntp.Monitor クラスのテストを行うためのクラスです。
+    /// Cube.Net.Ntp.Monitor のテストを行うためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    public class MonitorTester
+    public class MonitorTest
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// TestRun
+        /// RunOnce
         /// 
         /// <summary>
         /// NTP サーバを監視するテストを行います。
@@ -47,16 +46,16 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TestRun()
+        public void RunOnce()
         {
             var monitor = new Cube.Net.Ntp.Monitor("ntp.cube-soft.jp");
             var ex = Assert.Throws<AggregateException>(() =>
             {
                 var cts = new CancellationTokenSource();
                 monitor.ResultChanged += (s, e) => cts.Cancel();
-                monitor.Timeout  = TimeSpan.FromMilliseconds(1000);
+                monitor.Timeout  = TimeSpan.FromMilliseconds(100);
                 monitor.Start();
-                TaskEx.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token).Wait();
+                Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token).Wait();
             });
             Assert.That(ex.InnerException, Is.TypeOf<TaskCanceledException>());
             Assert.That(monitor.IsValid, Is.True);

@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// ClientHandleTester.cs
+/// ClientHandlerTest.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -19,7 +19,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -27,7 +26,7 @@ namespace Cube.Tests.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Tests.Net.Http.ClientHandleTester
+    /// ClientHandlerTest
     ///
     /// <summary>
     /// Http.ClientHandler のテストを行うためのクラスです。
@@ -35,13 +34,13 @@ namespace Cube.Tests.Net.Http
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    public class ClientHandleTester
+    public class ClientHandlerTest
     {
         #region Test methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TestEntityTag
+        /// EntityTag
         ///
         /// <summary>
         /// EntityTag (ETag) のテストを行います。
@@ -49,7 +48,7 @@ namespace Cube.Tests.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TestEntityTag()
+        public async Task EntityTag()
         {
             var uri = new Uri("http://news.cube-soft.jp/app/notice/all.json");
             var handler = new Cube.Net.Http.ClientHandler();
@@ -57,16 +56,16 @@ namespace Cube.Tests.Net.Http
             handler.UseProxy = true;
 
             var client = new System.Net.Http.HttpClient(handler);
-            var first = client.GetAsync(uri).Result;
+            var first = await client.GetAsync(uri);
             Assert.That(first.IsSuccessStatusCode, Is.True);
 
-            var second = client.GetAsync(uri).Result;
+            var second = await client.GetAsync(uri);
             Assert.That(second.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TestConnectionClose
+        /// ConnectionClose
         ///
         /// <summary>
         /// ConnectionClose を設定するテストを行います。
@@ -81,43 +80,17 @@ namespace Cube.Tests.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TestConnectionClose()
+        public async Task ConnectionClose()
         {
-            Assert.DoesNotThrow(() =>
-            {
-                var uri = new Uri("http://www.google.co.jp/");
-                var handler = new Cube.Net.Http.ClientHandler();
-                handler.Proxy = null;
-                handler.UseProxy = false;
+            var uri = new Uri("http://www.google.co.jp/");
+            var handler = new Cube.Net.Http.ClientHandler();
+            handler.Proxy = null;
+            handler.UseProxy = false;
 
-                var client = new System.Net.Http.HttpClient(handler);
-                client.DefaultRequestHeaders.ConnectionClose = true;
-                var response = client.GetAsync(uri).Result;
-                Assert.That(response.IsSuccessStatusCode, Is.True);
-            });
-        }
-
-        [Test]
-        public void TestDummy()
-        {
-            Assert.DoesNotThrow(() =>
-            {
-                System.Diagnostics.Debug.WriteLine("first");
-                var enc = System.Text.Encoding.GetEncoding("UTF-8");
-                string url = "http://www.google.co.jp/";
-
-                System.Diagnostics.Debug.WriteLine("start");
-                WebRequest req = WebRequest.Create(url);
-                req.Proxy = null;
-                WebResponse res = req.GetResponse();
-                System.Diagnostics.Debug.WriteLine("end");
-
-                //var st = res.GetResponseStream();
-                //var sr = new System.IO.StreamReader(st, enc);
-                //string html = sr.ReadToEnd();
-                //sr.Close();
-                //st.Close();
-            });
+            var client = new System.Net.Http.HttpClient(handler);
+            client.DefaultRequestHeaders.ConnectionClose = true;
+            var response = await client.GetAsync(uri);
+            Assert.That(response.IsSuccessStatusCode, Is.True);
         }
 
         #endregion
