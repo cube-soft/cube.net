@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Detail\UpdateMessageFactory.cs" />
-    <Compile Include="Extensions\HttpClientExtensions.cs" />
+    <Compile Include="Extensions\HttpClientEx.cs" />
     <Compile Include="Http\ClientHandler.cs" />
     <Compile Include="NetworkAwareMonitor.cs" />
     <Compile Include="Ntp\Client.cs" />

@@ -22,13 +22,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Cube.Extensions;
-using TaskEx = System.Threading.Tasks.Task;
 
 namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.Ntp.Client
+    /// Client
     ///
     /// <summary>
     /// NTP でサーバと通信するためのクラスです。
@@ -186,7 +185,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private Task<int> SendToAsync()
         {
-            return TaskEx.Run<int>(() =>
+            return Task.Run(() =>
             {
                 var endpoint = new IPEndPoint(Host.AddressList[0], Port);
                 var packet = new Ntp.Packet();
@@ -205,7 +204,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private Task<Packet> ReceiveFromAsync()
         {
-            return TaskEx.Run<Packet>(() =>
+            return Task.Run(() =>
             {
                 var endpoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
                 var raw = new byte[48 + (32 + 128) / 8];

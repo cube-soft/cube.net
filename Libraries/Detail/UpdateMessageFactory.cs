@@ -27,7 +27,7 @@ namespace Cube.Net
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.UpdateMessageFactory
+    /// UpdateMessageFactory
     ///
     /// <summary>
     /// UpdateMessage オブジェクトを生成するためのクラスです。

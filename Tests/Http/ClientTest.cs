@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using NUnit.Framework;
-using Cube.Extensions.Net;
+using Cube.Net.Http.Extensions;
 
 
 namespace Cube.Tests.Net.Http

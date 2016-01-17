@@ -17,7 +17,6 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,14 +27,14 @@ namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.Http.ClientHandler
+    /// ClientHandler
     /// 
     /// <summary>
     /// System.Net.Http.HttpClient を拡張するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ClientHandler : System.Net.Http.HttpClientHandler
+    public class ClientHandler : HttpClientHandler
     {
         #region Constructors
 

@@ -23,7 +23,7 @@ namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.Ntp.FixedPoint
+    /// FixedPoint
     /// 
     /// <summary>
     /// 符号付き 32bit 固定小数点数から double への変換機能を提供するための

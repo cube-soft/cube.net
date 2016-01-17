@@ -17,13 +17,11 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
-
 namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.Ntp.LeapIndicator
+    /// LeapIndicator
     /// 
     /// <summary>
     /// 閏秒指示子 (LI: Leap Indicator) の状態を定義した列挙型です。
