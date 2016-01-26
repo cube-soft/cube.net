@@ -53,7 +53,7 @@ namespace Cube.Tests.Net.Ntp
             {
                 var cts = new CancellationTokenSource();
                 monitor.ResultChanged += (s, e) => cts.Cancel();
-                monitor.Timeout  = TimeSpan.FromMilliseconds(100);
+                monitor.Timeout = TimeSpan.FromMilliseconds(100);
                 monitor.Start();
                 Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token).Wait();
             });

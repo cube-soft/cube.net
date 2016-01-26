@@ -28,39 +28,84 @@ namespace Cube.Tests.Net.Ntp
     /// ClientTest
     ///
     /// <summary>
-    /// Cube.Net.Ntp.Client のテストをするためのクラスです。
+    /// Cube.Net.Ntp.Client のテストクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
     public class ClientTest
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsync
+        /// Properties
         /// 
         /// <summary>
-        /// NTP サーバとの通信のテストを行います。
+        /// 各種プロパティのテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public async Task GetAsync()
-        {
-            var client = new Cube.Net.Ntp.Client("ntp.cube-soft.jp");
-            Assert.That(client.Host.HostName, Is.Not.Null.Or.Empty);
-            Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
-            Assert.That(client.Port, Is.EqualTo(123));
-            Assert.That(client.Timeout, Is.EqualTo(TimeSpan.FromSeconds(5)));
+        #region Properties
 
-            var result = await client.GetAsync();
+        [Test]
+        public void HostName_IsNotNullOrEmpty()
+        {
+            Assert.That(
+                Client.Host.HostName,
+                Is.Not.Null.Or.Empty
+            );
+        }
+
+        [TestCase(123)]
+        public void Port(int expected)
+        {
+            Assert.That(
+                Client.Port,
+                Is.EqualTo(expected)
+            );
+        }
+
+        [TestCase(1)]
+        public void AddressList_IsAtLeast(int expected)
+        {
+            Assert.That(
+                Client.Host.AddressList.Length,
+                Is.AtLeast(expected)
+            );
+        }
+
+        [TestCase(5)]
+        public void Timeout(int expected)
+        {
+            Assert.That(
+                Client.Timeout,
+                Is.EqualTo(TimeSpan.FromSeconds(expected))
+            );
+        }
+
+        #endregion
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_Within
+        /// 
+        /// <summary>
+        /// 非同期で時刻を取得するテストを行います。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TestCase(60)]
+        public async Task GetAsync_Within(int expected)
+        {
+            var result = await Client.GetAsync();
             Assert.That(result.IsValid, Is.True);
-            Assert.That(result.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(60));
+            Assert.That(result.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(expected));
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TimeoutException
+        /// GetAsync_Timeout_Throws
         /// 
         /// <summary>
         /// タイムアウト処理のテストを行います。
@@ -68,7 +113,7 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TimeoutException()
+        public void GetAsync_Timeout_Throws()
         {
             var ex = Assert.Throws<AggregateException>(() =>
             {
@@ -81,7 +126,7 @@ namespace Cube.Tests.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SocketException
+        /// GetAsync_404_Throws
         /// 
         /// <summary>
         /// 存在しない NTP サーバを指定した時のテストを行います。
@@ -89,12 +134,44 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void SocketException()
+        public void GetAsync_404_Throws()
         {
-            Assert.Throws<System.Net.Sockets.SocketException>(() =>
-            {
-                var client = new Cube.Net.Ntp.Client("404.not.found");
-            });
+            Assert.That(
+                () => new Cube.Net.Ntp.Client("404.not.found"),
+                Throws.TypeOf<System.Net.Sockets.SocketException>()
+            );
         }
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OneTimeSetUp
+        /// 
+        /// <summary>
+        /// Ntp.Client オブジェクトを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            Client = new Cube.Net.Ntp.Client("ntp.cube-soft.jp");
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Client
+        /// 
+        /// <summary>
+        /// Ntp.Client オブジェクトを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Cube.Net.Ntp.Client Client { get; set; }
+
+        #endregion
     }
 }
