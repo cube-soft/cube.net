@@ -56,9 +56,9 @@ namespace Cube.Tests.Net.Http
         public async Task GetJsonAsync()
         {
             var uri = new Uri("http://dev.cielquis.net/tests/example.json");
-            var client = new System.Net.Http.HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(5);
-            var json = await client.GetJsonAsync<PeopleContainer>(uri);
+            var http = new System.Net.Http.HttpClient();
+            http.Timeout = TimeSpan.FromMilliseconds(500);
+            var json = await http.GetJsonAsync<PeopleContainer>(uri);
 
             Assert.That(json.People, Is.Not.Null);
             Assert.That(json.People.Count,   Is.EqualTo(2));
@@ -83,9 +83,9 @@ namespace Cube.Tests.Net.Http
         public async Task GetXmlAsync()
         {
             var uri = new Uri("http://dev.cielquis.net/tests/example.xml");
-            var client = new System.Net.Http.HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(5);
-            var xml = await client.GetXmlAsync<PeopleContainer>(uri);
+            var http = new System.Net.Http.HttpClient();
+            http.Timeout = TimeSpan.FromMilliseconds(500);
+            var xml = await http.GetXmlAsync<PeopleContainer>(uri);
 
             Assert.That(xml.People, Is.Not.Null);
             Assert.That(xml.People.Count,   Is.EqualTo(2));
@@ -113,9 +113,10 @@ namespace Cube.Tests.Net.Http
             var query = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(key)) query.Add(key, value);
             var uri = new Uri("http://www.cube-soft.jp/cubelab/cubenews/update.php");
-            var client = new System.Net.Http.HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(5);
-            var message = await client.GetUpdateMessageAsync(uri, version, query);
+            var http = new System.Net.Http.HttpClient();
+            http.Timeout = TimeSpan.FromMilliseconds(500);
+            var message = await http.GetUpdateMessageAsync(uri, version, query);
+
             Assert.That(message, Is.Not.Null);
             Assert.That(message.Version, Is.EqualTo(version));
             Assert.That(message.Notify, Is.False);

@@ -19,6 +19,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -40,32 +41,27 @@ namespace Cube.Tests.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// EntityTag
+        /// GetAsync_EntityTag
         ///
         /// <summary>
         /// EntityTag (ETag) のテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public async Task EntityTag()
+        [TestCase(HttpStatusCode.NotModified)]
+        public async Task GetAsync_StatusCode(HttpStatusCode expected)
         {
+            var http = Create();
             var uri = new Uri("http://news.cube-soft.jp/app/notice/all.json");
-            var handler = new Cube.Net.Http.ClientHandler();
-            handler.Proxy = null;
-            handler.UseProxy = true;
 
-            var client = new System.Net.Http.HttpClient(handler);
-            var first = await client.GetAsync(uri);
-            Assert.That(first.IsSuccessStatusCode, Is.True);
-
-            var second = await client.GetAsync(uri);
-            Assert.That(second.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
+            var dummy  = await http.GetAsync(uri);
+            var result = await http.GetAsync(uri);
+            Assert.That(result.StatusCode, Is.EqualTo(expected));
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ConnectionClose
+        /// GetAsync_ConnectionClose
         ///
         /// <summary>
         /// ConnectionClose を設定するテストを行います。
@@ -79,18 +75,38 @@ namespace Cube.Tests.Net.Http
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public async Task ConnectionClose()
+        [TestCase("Close")]
+        public async Task GetAsync_Connection(string expected)
         {
-            var uri = new Uri("http://www.google.co.jp/");
-            var handler = new Cube.Net.Http.ClientHandler();
-            handler.Proxy = null;
-            handler.UseProxy = false;
+            var http = Create();
+            http.DefaultRequestHeaders.ConnectionClose = true;
+            var uri = new Uri("http://news.cube-soft.jp/app/notice/all.json");
 
-            var client = new System.Net.Http.HttpClient(handler);
-            client.DefaultRequestHeaders.ConnectionClose = true;
-            var response = await client.GetAsync(uri);
-            Assert.That(response.IsSuccessStatusCode, Is.True);
+            var result = await http.GetAsync(uri);
+            Assert.That(result.Headers.Connection.Contains(expected), Is.True);
+        }
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        ///
+        /// <summary>
+        /// Cube.Net.Http.ClientHandler を用いて初期化した HttpClient
+        /// オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private HttpClient Create()
+        {
+            return new HttpClient(new Cube.Net.Http.ClientHandler()
+            {
+                Proxy    = null,
+                UseProxy = false
+            });
         }
 
         #endregion
