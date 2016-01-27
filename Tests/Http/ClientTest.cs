@@ -114,7 +114,7 @@ namespace Cube.Tests.Net.Http
             if (!string.IsNullOrEmpty(key)) query.Add(key, value);
             var uri = new Uri("http://www.cube-soft.jp/cubelab/cubenews/update.php");
             var http = new System.Net.Http.HttpClient();
-            http.Timeout = TimeSpan.FromMilliseconds(200);
+            http.Timeout = TimeSpan.FromMilliseconds(500);
             var message = await http.GetUpdateMessageAsync(uri, version, query);
 
             Assert.That(message, Is.Not.Null);
