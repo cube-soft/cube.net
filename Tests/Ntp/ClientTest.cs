@@ -115,13 +115,15 @@ namespace Cube.Tests.Net.Ntp
         [Test]
         public void GetAsync_Timeout_Throws()
         {
-            var ex = Assert.Throws<AggregateException>(() =>
-            {
-                var client = new Cube.Net.Ntp.Client("ntp.cube-soft.jp");
-                client.Timeout = TimeSpan.FromMilliseconds(1);
-                client.GetAsync().Wait();
-            });
-            Assert.That(ex.InnerException, Is.TypeOf<TimeoutException>());
+            Assert.That(
+                async () =>
+                {
+                    var client = new Cube.Net.Ntp.Client("ntp.cube-soft.jp");
+                    client.Timeout = TimeSpan.FromMilliseconds(1);
+                    await client.GetAsync();
+                },
+                Throws.TypeOf<TimeoutException>()
+            );
         }
 
         /* ----------------------------------------------------------------- */
