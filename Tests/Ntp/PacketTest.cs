@@ -27,47 +27,130 @@ namespace Cube.Tests.Net.Ntp
     /// PacketTest
     ///
     /// <summary>
-    /// Cube.Net.Ntp.Packet のテストをするためのクラスです。
+    /// Ntp.Packet のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
     public class PacketTest
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CreatePacket
-        /// 
-        /// <summary>
-        /// 送信用の NTP パケットを生成するテストを行います。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void CreatePacket()
-        {
-            Assert.DoesNotThrow(() =>
-            {
-                var packet = new Cube.Net.Ntp.Packet();
-                Assert.That(packet.IsValid, Is.True);
-                Assert.That(packet.LeapIndicator, Is.EqualTo(Cube.Net.Ntp.LeapIndicator.NoWarning));
-                Assert.That(packet.Version, Is.EqualTo(3));
-                Assert.That(packet.Mode, Is.EqualTo(Cube.Net.Ntp.Mode.Client));
-                Assert.That(packet.Stratum, Is.EqualTo(Cube.Net.Ntp.Stratum.Unspecified));
-                Assert.That(packet.PollInterval, Is.EqualTo(0));
-                Assert.That(packet.Precision, Is.EqualTo(1.0).Within(0.01));
-                Assert.That(packet.RootDelay, Is.EqualTo(0.0).Within(0.01));
-                Assert.That(packet.RootDispersion, Is.EqualTo(0.0).Within(0.01));
-                Assert.That(packet.ReferenceID, Is.Null.Or.Empty);
-                Assert.That(packet.KeyID, Is.Null.Or.Empty);
-                Assert.That(packet.MessageDigest, Is.Null.Or.Empty);
-                Assert.That(packet.TransmitTimestamp.Date, Is.EqualTo(packet.CreationTime.Date));
-            });
-        }
+        #region Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// CreatePacketException
+        /// Properties
+        /// 
+        /// <summary>
+        /// 各種プロパティのテストを行います。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        #region Properties
+
+        [TestCase(Cube.Net.Ntp.LeapIndicator.NoWarning)]
+        public void LeapIndicator(Cube.Net.Ntp.LeapIndicator expected)
+        {
+            Assert.That(
+                Create().LeapIndicator,
+                Is.EqualTo(expected)
+            );
+        }
+
+        [TestCase(3)]
+        public void Version(int expected)
+        {
+            Assert.That(
+                Create().Version,
+                Is.EqualTo(expected)
+            );
+        }
+
+        [TestCase(Cube.Net.Ntp.Mode.Client)]
+        public void Mode(Cube.Net.Ntp.Mode expected)
+        {
+            Assert.That(
+                Create().Mode,
+                Is.EqualTo(expected)
+            );
+        }
+
+        [TestCase(Cube.Net.Ntp.Stratum.Unspecified)]
+        public void Stratum(Cube.Net.Ntp.Stratum expected)
+        {
+            Assert.That(
+                Create().Stratum,
+                Is.EqualTo(expected)
+            );
+        }
+
+        [TestCase(0)]
+        public void PollInterval(int expected)
+        {
+            Assert.That(
+                Create().PollInterval,
+                Is.EqualTo(expected)
+            );
+        }
+
+        [TestCase(1.0)]
+        public void Precision(double expected)
+        {
+            Assert.That(
+                Create().Precision,
+                Is.EqualTo(expected).Within(0.01)
+            );
+        }
+
+        [TestCase(0.0)]
+        public void RootDelay(double expected)
+        {
+            Assert.That(
+                Create().RootDelay,
+                Is.EqualTo(expected).Within(0.01)
+            );
+        }
+
+        [TestCase(0.0)]
+        public void RootDispersion(double expected)
+        {
+            Assert.That(
+                Create().RootDispersion,
+                Is.EqualTo(expected).Within(0.01)
+            );
+        }
+
+        [Test]
+        public void ReferenceID_IsNullOrEmpty()
+        {
+            Assert.That(
+                Create().ReferenceID,
+                Is.Null.Or.Empty
+            );
+        }
+
+        [Test]
+        public void KeyID_IsNullOrEmpty()
+        {
+            Assert.That(
+                Create().KeyID,
+                Is.Null.Or.Empty
+            );
+        }
+
+        [Test]
+        public void MessageDigest_IsNullOrEmpty()
+        {
+            Assert.That(
+                Create().MessageDigest,
+                Is.Null.Or.Empty
+            );
+        }
+
+        #endregion
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// New_TooManyBytes_Throws
         /// 
         /// <summary>
         /// NTP パケットの初期化に失敗するテストを行います。
@@ -75,12 +158,32 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void CreatePacketException()
+        public void New_TooManyBytes_Throws()
         {
-            var err = Assert.Throws<ArgumentException>(() =>
-            {
-                var packet = new Cube.Net.Ntp.Packet(new byte[47]);
-            });
+            Assert.That(
+                () => new Cube.Net.Ntp.Packet(new byte[47]),
+                Throws.TypeOf<ArgumentException>()
+            );
         }
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        /// 
+        /// <summary>
+        /// NTP パケットを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Cube.Net.Ntp.Packet Create()
+        {
+            return new Cube.Net.Ntp.Packet();
+        }
+
+        #endregion
     }
 }
