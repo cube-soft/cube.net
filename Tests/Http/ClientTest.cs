@@ -57,7 +57,7 @@ namespace Cube.Tests.Net.Http
         {
             var uri = new Uri("http://dev.cielquis.net/tests/example.json");
             var client = new System.Net.Http.HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(5);
+            client.Timeout = TimeSpan.FromMilliseconds(500);
             var json = await client.GetJsonAsync<PeopleContainer>(uri);
 
             Assert.That(json.People, Is.Not.Null);
@@ -84,7 +84,7 @@ namespace Cube.Tests.Net.Http
         {
             var uri = new Uri("http://dev.cielquis.net/tests/example.xml");
             var client = new System.Net.Http.HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(5);
+            client.Timeout = TimeSpan.FromMilliseconds(500);
             var xml = await client.GetXmlAsync<PeopleContainer>(uri);
 
             Assert.That(xml.People, Is.Not.Null);
@@ -114,7 +114,7 @@ namespace Cube.Tests.Net.Http
             if (!string.IsNullOrEmpty(key)) query.Add(key, value);
             var uri = new Uri("http://www.cube-soft.jp/cubelab/cubenews/update.php");
             var client = new System.Net.Http.HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(5);
+            client.Timeout = TimeSpan.FromMilliseconds(200);
             var message = await client.GetUpdateMessageAsync(uri, version, query);
             Assert.That(message, Is.Not.Null);
             Assert.That(message.Version, Is.EqualTo(version));
