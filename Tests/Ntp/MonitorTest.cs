@@ -29,7 +29,7 @@ namespace Cube.Tests.Net.Ntp
     /// MonitorTest
     ///
     /// <summary>
-    /// Cube.Net.Ntp.Monitor のテストを行うためのクラスです。
+    /// Cube.Net.Ntp.Monitor のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -38,7 +38,7 @@ namespace Cube.Tests.Net.Ntp
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// RunOnce
+        /// Start_RunOnce
         /// 
         /// <summary>
         /// NTP サーバを監視するテストを行います。
@@ -46,18 +46,20 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void RunOnce()
+        public void Start_RunOnce()
         {
             var monitor = new Cube.Net.Ntp.Monitor("ntp.cube-soft.jp");
-            var ex = Assert.Throws<AggregateException>(() =>
-            {
-                var cts = new CancellationTokenSource();
-                monitor.ResultChanged += (s, e) => cts.Cancel();
-                monitor.Timeout = TimeSpan.FromMilliseconds(100);
-                monitor.Start();
-                Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token).Wait();
-            });
-            Assert.That(ex.InnerException, Is.TypeOf<TaskCanceledException>());
+            Assert.That(
+                async () =>
+                {
+                    var cts = new CancellationTokenSource();
+                    monitor.ResultChanged += (s, e) => cts.Cancel();
+                    monitor.Timeout = TimeSpan.FromMilliseconds(100);
+                    monitor.Start();
+                    await Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token);
+                },
+                Throws.TypeOf<TaskCanceledException>()
+            );
             Assert.That(monitor.IsValid, Is.True);
         }
     }
