@@ -23,7 +23,7 @@ namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.Ntp.Timestamp
+    /// Timestamp
     ///
     /// <summary>
     /// NTP タイムスタンプと DateTime タイムオブジェクトの相互変換機能を
@@ -56,10 +56,10 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static DateTime Convert(Int64 timestamp)
+        public static DateTime Convert(long timestamp)
         {
-            var seconds = (UInt32)(timestamp >> 32);
-            var fraction = (double)((UInt64)(timestamp & UInt32.MaxValue));
+            var seconds = (uint)(timestamp >> 32);
+            var fraction = (double)(timestamp & uint.MaxValue);
 
             var milliseconds = (double)seconds * 1000 + (fraction * 1000) / (_CompensatingRate32);
             var origin = ((seconds & _ConpensatingRate31) == 0) ? _ReverseTerm : _BaseTerm;
@@ -76,20 +76,20 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static Int64 Convert(DateTime datetime)
+        public static long Convert(DateTime datetime)
         {
             var origin = (_ReverseTerm <= datetime) ? _ReverseTerm : _BaseTerm;
             var ticks = (datetime - origin).TotalMilliseconds;
 
-            var seconds = (UInt32)((datetime - origin).TotalSeconds);
-            var fraction = (UInt64)((ticks % 1000) * _CompensatingRate32 / 1000);
+            var seconds = (uint)((datetime - origin).TotalSeconds);
+            var fraction = (ulong)((ticks % 1000) * _CompensatingRate32 / 1000);
 
-            return (Int64)(((UInt64)seconds << 32) | fraction);
+            return (long)(((ulong)seconds << 32) | fraction);
         }
 
         #region Constant variables
-        private static readonly UInt64 _CompensatingRate32 = 0x100000000L;
-        private static readonly UInt32 _ConpensatingRate31 = 0x80000000u;
+        private static readonly ulong _CompensatingRate32 = 0x100000000L;
+        private static readonly uint  _ConpensatingRate31 = 0x80000000u;
         private static readonly DateTime _BaseTerm = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         private static readonly DateTime _ReverseTerm = new DateTime(2036, 2, 7, 6, 28, 16, 0, DateTimeKind.Utc);
         #endregion

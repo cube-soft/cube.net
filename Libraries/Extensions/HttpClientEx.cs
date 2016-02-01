@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// HttpClientExtensions.cs
+/// HttpClientEx.cs
 ///
 /// Copyright (c) 2010 CubeSoft, Inc.
 ///
@@ -26,18 +26,18 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization.Json;
 using Cube.Extensions;
 
-namespace Cube.Extensions.Net
+namespace Cube.Net.Http.Extensions
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Extensions.Net.HttpClientExtensions
+    /// HttpClientEx
     ///
     /// <summary>
     /// System.Net.Http.HttpClient の拡張メソッドを定義するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class HttpClientExtensions
+    public static class HttpClientEx
     {
         /* --------------------------------------------------------------------- */
         ///
@@ -87,8 +87,7 @@ namespace Cube.Extensions.Net
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public static Task<Cube.Net.UpdateMessage> GetUpdateMessageAsync(this HttpClient client,
-            Uri uri, string version)
+        public static Task<UpdateMessage> GetUpdateMessageAsync(this HttpClient client, Uri uri, string version)
         {
             var query = new Dictionary<string, string>();
             return GetUpdateMessageAsync(client, uri, version, query);
@@ -104,8 +103,7 @@ namespace Cube.Extensions.Net
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public static Task<Cube.Net.UpdateMessage> GetUpdateMessageAsync(this HttpClient client,
-            Uri uri, string version, string key, string value)
+        public static Task<UpdateMessage> GetUpdateMessageAsync(this HttpClient client, Uri uri, string version, string key, string value)
         {
             var query = new Dictionary<string, string>();
             query.Add(key, value);
@@ -122,8 +120,7 @@ namespace Cube.Extensions.Net
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public static async Task<Cube.Net.UpdateMessage> GetUpdateMessageAsync(this HttpClient client,
-            Uri uri, string version, IDictionary<string, string> query)
+        public static async Task<UpdateMessage> GetUpdateMessageAsync(this HttpClient client, Uri uri, string version, IDictionary<string, string> query)
         {
             var request = uri.With("ver", version).With(query);
             var response = await client.GetAsync(request);

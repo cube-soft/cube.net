@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// GetExtensionsTester.cs
+/// ClientTest.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -18,116 +18,110 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using NUnit.Framework;
-using Cube.Extensions.Net;
+using Cube.Net.Http.Extensions;
 
 
 namespace Cube.Tests.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Tests.Net.Http.GetAsyncTester
+    /// ClientTest
     ///
     /// <summary>
-    /// 様々なデータの非同期取得メソッドをテストするためのクラスです。
+    /// System.Net.Http.HttpClient を用いて様々な形式のデータを非同期で
+    /// 取得するテストを行うためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    public class GetAsyncTester
+    public class ClientTest
     {
         #region Test methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TestGetJsonAsync
+        /// GetJsonAsync
         /// 
         /// <summary>
-        /// JSON データを取得するテストを行います。
+        /// JSON データを非同期で取得するテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TestGetJsonAsync()
+        public async Task GetJsonAsync()
         {
-            Assert.DoesNotThrow(() =>
-            {
-                var uri = new Uri("http://dev.cielquis.net/tests/example.json");
-                var client = new System.Net.Http.HttpClient();
-                client.Timeout = TimeSpan.FromSeconds(5);
-                var xml = client.GetJsonAsync<PeopleContainer>(uri).Result;
+            var uri = new Uri("http://dev.cielquis.net/tests/example.json");
+            var http = new System.Net.Http.HttpClient();
+            http.Timeout = TimeSpan.FromMilliseconds(500);
+            var json = await http.GetJsonAsync<PeopleContainer>(uri);
 
-                Assert.That(xml.People, Is.Not.Null);
-                Assert.That(xml.People.Count, Is.EqualTo(2));
-                Assert.That(xml.People[0].Id, Is.EqualTo("0001"));
-                Assert.That(xml.People[0].Name, Is.EqualTo("Jack Daniel"));
-                Assert.That(xml.People[0].Age, Is.EqualTo(40));
-                Assert.That(xml.People[1].Id, Is.EqualTo("0002"));
-                Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
-                Assert.That(xml.People[1].Age, Is.EqualTo(25));
-            });
+            Assert.That(json.People, Is.Not.Null);
+            Assert.That(json.People.Count,   Is.EqualTo(2));
+            Assert.That(json.People[0].Id,   Is.EqualTo("0001"));
+            Assert.That(json.People[0].Name, Is.EqualTo("Jack Daniel"));
+            Assert.That(json.People[0].Age,  Is.EqualTo(40));
+            Assert.That(json.People[1].Id,   Is.EqualTo("0002"));
+            Assert.That(json.People[1].Name, Is.EqualTo("山田 花子"));
+            Assert.That(json.People[1].Age,  Is.EqualTo(25));
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TestGetXml
+        /// GetXmlAsync
         /// 
         /// <summary>
-        /// XML データを取得するテストを行います。
+        /// XML データを非同期で取得するテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TestGetXmlAsync()
+        public async Task GetXmlAsync()
         {
-            Assert.DoesNotThrow(() =>
-            {
-                var uri = new Uri("http://dev.cielquis.net/tests/example.xml");
-                var client = new System.Net.Http.HttpClient();
-                client.Timeout = TimeSpan.FromSeconds(5);
-                var xml = client.GetXmlAsync<PeopleContainer>(uri).Result;
+            var uri = new Uri("http://dev.cielquis.net/tests/example.xml");
+            var http = new System.Net.Http.HttpClient();
+            http.Timeout = TimeSpan.FromMilliseconds(500);
+            var xml = await http.GetXmlAsync<PeopleContainer>(uri);
 
-                Assert.That(xml.People, Is.Not.Null);
-                Assert.That(xml.People.Count, Is.EqualTo(2));
-                Assert.That(xml.People[0].Id, Is.EqualTo("0001"));
-                Assert.That(xml.People[0].Name, Is.EqualTo("Jack Daniel"));
-                Assert.That(xml.People[0].Age, Is.EqualTo(40));
-                Assert.That(xml.People[1].Id, Is.EqualTo("0002"));
-                Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
-                Assert.That(xml.People[1].Age, Is.EqualTo(25));
-            });
+            Assert.That(xml.People, Is.Not.Null);
+            Assert.That(xml.People.Count,   Is.EqualTo(2));
+            Assert.That(xml.People[0].Id,   Is.EqualTo("0001"));
+            Assert.That(xml.People[0].Name, Is.EqualTo("Jack Daniel"));
+            Assert.That(xml.People[0].Age,  Is.EqualTo(40));
+            Assert.That(xml.People[1].Id,   Is.EqualTo("0002"));
+            Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
+            Assert.That(xml.People[1].Age,  Is.EqualTo(25));
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// TestGetUpdateMessageAsync
+        /// GetUpdateMessageAsync
         /// 
         /// <summary>
-        /// アップデート用メッセージを取得するテストを行います。
+        /// アップデート用メッセージを非同期で取得するテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [TestCase("1.0.2", "", "")]
         [TestCase("1.0.0", "flag", "install")]
-        public void TestGetUpdateMessageAsync(string version, string key, string value)
+        public async Task GetUpdateMessageAsync(string version, string key, string value)
         {
-            Assert.DoesNotThrow(() =>
-            {
-                var query = new Dictionary<string, string>();
-                if (!string.IsNullOrEmpty(key)) query.Add(key, value);
-                var uri = new Uri("http://www.cube-soft.jp/cubelab/cubenews/update.php");
-                var client = new System.Net.Http.HttpClient();
-                client.Timeout = TimeSpan.FromSeconds(5);
-                var message = client.GetUpdateMessageAsync(uri, version, query).Result;
-                Assert.That(message, Is.Not.Null);
-                Assert.That(message.Version, Is.EqualTo(version));
-                Assert.That(message.Notify, Is.False);
-                Assert.That(message.Uri, Is.EqualTo(new Uri("http://s.cube-soft.jp/widget/")));
-                Assert.That(message.Text.Length, Is.AtLeast(1));
-            });
+            var query = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(key)) query.Add(key, value);
+            var uri = new Uri("http://www.cube-soft.jp/cubelab/cubenews/update.php");
+            var http = new System.Net.Http.HttpClient();
+            http.Timeout = TimeSpan.FromMilliseconds(500);
+            var message = await http.GetUpdateMessageAsync(uri, version, query);
+
+            Assert.That(message, Is.Not.Null);
+            Assert.That(message.Version, Is.EqualTo(version));
+            Assert.That(message.Notify, Is.False);
+            Assert.That(message.Uri, Is.EqualTo(new Uri("http://s.cube-soft.jp/widget/")));
+            Assert.That(message.Text.Length, Is.AtLeast(1));
         }
 
         #endregion

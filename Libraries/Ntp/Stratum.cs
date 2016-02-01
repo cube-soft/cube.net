@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// LeapIndicator.cs
+/// Stratum.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -17,24 +17,22 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
-
 namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Net.Ntp.LeapIndicator
+    /// Stratum
     /// 
     /// <summary>
-    /// 閏秒指示子 (LI: Leap Indicator) の状態を定義した列挙型です。
+    /// 階層の状態を定義した列挙型です。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public enum LeapIndicator : uint
+    public enum Stratum
     {
-        NoWarning    = 0,   // 0 - No warning
-        LastMinute61 = 1,   // 1 - Last minute has 61 seconds
-        LastMinute59 = 2,   // 2 - Last minute has 59 seconds
-        Alarm        = 3    // 3 - Alarm condition (clock not synchronized)
+        Unspecified,            // 0 - unspecified or unavailable
+        PrimaryReference,       // 1 - primary reference (e.g. radio-clock)
+        SecondaryReference,     // 2-15 - secondary reference (via NTP or SNTP)
+        Reserved                // 16-255 - reserved
     }
 }

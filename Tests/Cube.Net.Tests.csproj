@@ -34,46 +34,53 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cube.Core">
-      <HintPath>..\..\lib\net35\Cube.Core.dll</HintPath>
+    <Reference Include="AsyncBridge.Net35">
+      <HintPath>..\..\packages\AsyncBridge.Net35.0.2.0\lib\net35-Client\AsyncBridge.Net35.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading">
+      <HintPath>..\..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.3.0.1\lib\net20\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Net" />
     <Reference Include="System.Net.Http">
       <HintPath>..\..\lib\net35\System.Net.Http.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Threading">
-      <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Cube.Core">
+      <HintPath>..\..\lib\net35\Cube.Core.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\ClientHandleTester.cs" />
-    <Compile Include="Http\GetAsyncTester.cs" />
-    <Compile Include="Ntp\ClientTester.cs" />
-    <Compile Include="Ntp\MonitorTester.cs" />
-    <Compile Include="Ntp\PacketTester.cs" />
-    <Compile Include="Ntp\TimestampTester.cs" />
+    <Compile Include="Http\ClientHandlerTest.cs" />
+    <Compile Include="Http\ClientTest.cs" />
+    <Compile Include="Ntp\ClientTest.cs" />
+    <Compile Include="Ntp\MonitorTest.cs" />
+    <Compile Include="Ntp\PacketTest.cs" />
+    <Compile Include="Ntp\TimestampTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Cube.Net.csproj">
-      <Project>{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}</Project>
-      <Name>Cube.Net</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\Cube.Net.csproj">
+      <Project>{06edf5d3-6a49-445b-a605-b9a9ee2250e2}</Project>
+      <Name>Cube.Net</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
