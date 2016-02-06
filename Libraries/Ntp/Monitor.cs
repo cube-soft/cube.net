@@ -142,7 +142,7 @@ namespace Cube.Net.Ntp
             private set
             {
                 lock (_lock) _result = value;
-                OnResultChanged(new DataEventArgs<Packet>(value));
+                OnResultChanged(new ValueEventArgs<Packet>(value));
             }
         }
 
@@ -203,7 +203,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event EventHandler<DataEventArgs<Packet>> ResultChanged;
+        public event EventHandler<ValueEventArgs<Packet>> ResultChanged;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -229,7 +229,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnResultChanged(DataEventArgs<Packet> e)
+        protected virtual void OnResultChanged(ValueEventArgs<Packet> e)
         {
             if (ResultChanged != null) ResultChanged(this, e);
         }
