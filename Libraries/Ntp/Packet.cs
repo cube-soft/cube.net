@@ -64,9 +64,7 @@ namespace Cube.Net.Ntp
         {
             if (rawdata.Length < _MinimumPacketSize)
             {
-                throw new ArgumentException(
-                    string.Format("data size should be more than {0} bytes", _MinimumPacketSize
-                ));
+                throw new ArgumentException($"packet should be more than {_MinimumPacketSize} bytes");
             }
             CreationTime = DateTime.Now;
             RawData = rawdata;
