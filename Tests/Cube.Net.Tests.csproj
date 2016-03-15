@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Http\ClientHandlerTest.cs" />
     <Compile Include="Http\ClientTest.cs" />
+    <Compile Include="News\ClientTest.cs" />
     <Compile Include="Ntp\ClientTest.cs" />
     <Compile Include="Ntp\MonitorTest.cs" />
     <Compile Include="Ntp\PacketTest.cs" />

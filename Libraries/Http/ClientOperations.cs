@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// HttpClientEx.cs
+/// ClientOperations.cs
 ///
 /// Copyright (c) 2010 CubeSoft, Inc.
 ///
@@ -24,20 +24,20 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Json;
-using Cube.Extensions;
+using Cube.Conversions;
 
-namespace Cube.Net.Http.Extensions
+namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// HttpClientEx
+    /// ClientOperations
     ///
     /// <summary>
-    /// System.Net.Http.HttpClient の拡張メソッドを定義するためのクラスです。
+    /// System.Net.Http.HttpClient の拡張用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class HttpClientEx
+    public static class ClientOperations
     {
         /* --------------------------------------------------------------------- */
         ///

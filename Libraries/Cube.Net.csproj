@@ -65,9 +65,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Detail\UpdateMessageFactory.cs" />
-    <Compile Include="Extensions\HttpClientEx.cs" />
+    <Compile Include="Http\ClientOperations.cs" />
     <Compile Include="Http\ClientHandler.cs" />
     <Compile Include="NetworkAwareMonitor.cs" />
+    <Compile Include="News\Article.cs" />
+    <Compile Include="News\Client.cs" />
+    <Compile Include="News\Monitor.cs" />
     <Compile Include="Ntp\Client.cs" />
     <Compile Include="Detail\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
