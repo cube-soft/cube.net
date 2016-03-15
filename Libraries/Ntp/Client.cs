@@ -21,7 +21,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using Cube.Extensions;
+using Cube.Tasks;
 
 namespace Cube.Net.Ntp
 {

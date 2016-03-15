@@ -54,9 +54,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Detail\UpdateMessageFactory.cs" />
-    <Compile Include="Extensions\HttpClientEx.cs" />
+    <Compile Include="Http\ClientOperations.cs" />
     <Compile Include="Http\ClientHandler.cs" />
     <Compile Include="NetworkAwareMonitor.cs" />
+    <Compile Include="News\Article.cs" />
+    <Compile Include="News\Client.cs" />
     <Compile Include="Ntp\Client.cs" />
     <Compile Include="Detail\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
@@ -72,6 +74,7 @@
     <None Include="App.config" />
     <None Include="Packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
