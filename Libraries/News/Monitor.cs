@@ -230,7 +230,8 @@ namespace Cube.Net.News
                 try
                 {
                     var result = await _client.GetAsync();
-                    Result = result;
+                    if (result.Count > 0) Result = result;
+                    break;
                 }
                 catch (Exception err) { Logger.Error(err); }
                 ++FailedCount;
