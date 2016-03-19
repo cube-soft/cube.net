@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cube.Log;
 
 namespace Cube.Net.News
 {
@@ -233,7 +234,7 @@ namespace Cube.Net.News
                     if (result.Count > 0) Result = result;
                     break;
                 }
-                catch (Exception err) { Logger.Error(err); }
+                catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;
                 await Task.Delay(RetryInterval);
             }

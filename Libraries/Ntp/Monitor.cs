@@ -20,6 +20,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using Cube.Log;
 
 namespace Cube.Net.Ntp
 {
@@ -325,7 +326,7 @@ namespace Cube.Net.Ntp
                         return;
                     }
                 }
-                catch (Exception err) { Logger.Error(err); }
+                catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;
                 await Task.Delay(_RetryInterval);
             }
