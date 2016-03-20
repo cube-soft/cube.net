@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// UpdateMessage.cs
+/// Message.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -19,18 +19,18 @@
 /* ------------------------------------------------------------------------- */
 using System;
 
-namespace Cube.Net
+namespace Cube.Net.Update
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// UpdateMessage
+    /// Message
     /// 
     /// <summary>
     /// アップデートメッセージを格納するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class UpdateMessage
+    public class Message
     {
         #region Properties
 

@@ -38,6 +38,7 @@ namespace Cube.Tests.Net.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
+    [Parallelizable]
     [TestFixture]
     public class ClientTest
     {
@@ -95,33 +96,6 @@ namespace Cube.Tests.Net.Http
             Assert.That(xml.People[1].Id,   Is.EqualTo("0002"));
             Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
             Assert.That(xml.People[1].Age,  Is.EqualTo(25));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetUpdateMessageAsync
-        /// 
-        /// <summary>
-        /// アップデート用メッセージを非同期で取得するテストを行います。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [TestCase("1.0.2", "", "")]
-        [TestCase("1.0.0", "flag", "install")]
-        public async Task GetUpdateMessageAsync(string version, string key, string value)
-        {
-            var query = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(key)) query.Add(key, value);
-            var uri = new Uri("http://www.cube-soft.jp/cubelab/cubenews/update.php");
-            var http = new System.Net.Http.HttpClient();
-            http.Timeout = TimeSpan.FromMilliseconds(500);
-            var message = await http.GetUpdateMessageAsync(uri, version, query);
-
-            Assert.That(message, Is.Not.Null);
-            Assert.That(message.Version, Is.EqualTo(version));
-            Assert.That(message.Notify, Is.False);
-            Assert.That(message.Uri, Is.EqualTo(new Uri("http://s.cube-soft.jp/widget/")));
-            Assert.That(message.Text.Length, Is.AtLeast(1));
         }
 
         #endregion

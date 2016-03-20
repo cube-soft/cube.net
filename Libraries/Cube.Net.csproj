@@ -48,7 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Detail\UpdateMessageFactory.cs" />
+    <Compile Include="Update\Http.cs" />
+    <Compile Include="Update\MessageFactory.cs" />
     <Compile Include="Http\ClientOperations.cs" />
     <Compile Include="Http\ClientHandler.cs" />
     <Compile Include="NetworkAwareMonitor.cs" />
@@ -56,7 +57,7 @@
     <Compile Include="News\Client.cs" />
     <Compile Include="News\Monitor.cs" />
     <Compile Include="Ntp\Client.cs" />
-    <Compile Include="Detail\FixedPoint.cs" />
+    <Compile Include="Ntp\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
     <Compile Include="Ntp\Mode.cs" />
     <Compile Include="Ntp\Monitor.cs" />
@@ -64,7 +65,7 @@
     <Compile Include="Ntp\Stratum.cs" />
     <Compile Include="Ntp\Timestamp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UpdateMessage.cs" />
+    <Compile Include="Update\Message.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

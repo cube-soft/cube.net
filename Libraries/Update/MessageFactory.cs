@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// UpdateMessageFactory.cs
+/// MessageFactory.cs
 ///
 /// Copyright (c) 2010 CubeSoft, Inc.
 ///
@@ -23,18 +23,18 @@ using System.Text;
 using System.IO;
 using System.Collections.Generic;
 
-namespace Cube.Net
+namespace Cube.Net.Update
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// UpdateMessageFactory
+    /// MessageFactory
     ///
     /// <summary>
     /// UpdateMessage オブジェクトを生成するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class UpdateMessageFactory
+    internal static class MessageFactory
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -45,9 +45,9 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static IList<UpdateMessage> Create(Stream stream)
+        public static IList<Message> Create(Stream stream)
         {
-            var dest = new List<UpdateMessage>();
+            var dest = new List<Message>();
             var version = string.Empty;
             var args = new Dictionary<string, string>();
 
@@ -82,14 +82,14 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static void Add(string version, IDictionary<string, string> args, IList<UpdateMessage> dest)
+        private static void Add(string version, IDictionary<string, string> args, IList<Message> dest)
         {
             try
             {
                 if (string.IsNullOrEmpty(version) || args.Count <= 0) return;
 
                 var update = int.Parse(args["UPDATE"]);
-                dest.Add(new UpdateMessage
+                dest.Add(new Message
                 {
                     Version = version,
                     Notify  = (update == 1),
@@ -136,7 +136,7 @@ namespace Cube.Net
         ///
         /* ----------------------------------------------------------------- */
         private static void LogError(Exception err)
-            => Cube.Log.Operations.Error(typeof(UpdateMessageFactory), err.Message, err);
+            => Cube.Log.Operations.Error(typeof(MessageFactory), err.Message, err);
 
         /* ----------------------------------------------------------------- */
         ///
