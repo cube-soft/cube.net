@@ -48,63 +48,56 @@ namespace Cube.Net
         public static IList<UpdateMessage> Create(Stream stream)
         {
             var dest = new List<UpdateMessage>();
-
             var version = string.Empty;
             var args = new Dictionary<string, string>();
 
-            // TODO: auto detect encoding
-            using (var reader = new StreamReader(stream, Encoding.GetEncoding("UTF-8")))
-            while (!reader.EndOfStream)
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
-                var line = reader.ReadLine();
-                if (string.IsNullOrEmpty(line)) continue;
-
-                if (line[0] == '[' && line[line.Length - 1] == ']')
+                while (!reader.EndOfStream)
                 {
-                    var m = Create(version, args);
-                    if (m != null) dest.Add(m);
-                    version = line.Substring(1, line.Length - 2);
-                    args.Clear();
+                    var line = reader.ReadLine();
+                    if (string.IsNullOrEmpty(line)) continue;
+
+                    if (IsCommand(line))
+                    {
+                        Add(version, args, dest);
+                        version = line.Substring(1, line.Length - 2);
+                        args.Clear();
+                    }
+                    else Split(line, args);
                 }
-                else Split(line, args);
             }
 
-            if (!string.IsNullOrEmpty(version) && args.Count > 0)
-            {
-                var m = Create(version, args);
-                if (m != null) dest.Add(m);
-            }
+            Add(version, args, dest);
             return dest;
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create
+        /// Add
         ///
         /// <summary>
         /// 指定されたバージョンと引数から UpdateMessage オブジェクトを
-        /// 生成します。
+        /// 生成して追加します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static UpdateMessage Create(string version, IDictionary<string, string> args)
+        private static void Add(string version, IDictionary<string, string> args, IList<UpdateMessage> dest)
         {
-            if (string.IsNullOrEmpty(version) || args.Count <= 0) return null;
-
             try
             {
+                if (string.IsNullOrEmpty(version) || args.Count <= 0) return;
+
                 var update = int.Parse(args["UPDATE"]);
-                return new UpdateMessage
+                dest.Add(new UpdateMessage
                 {
                     Version = version,
-                    Notify = (update == 1),
-                    Text = args["MESSAGE"],
-                    Uri = new Uri(args["URL"])
-                };
+                    Notify  = (update == 1),
+                    Text    = args["MESSAGE"],
+                    Uri     = new Uri(args["URL"])
+                });
             }
-            catch (Exception err) { System.Diagnostics.Trace.TraceError(err.ToString()); }
-
-            return null;
+            catch (Exception err) { LogError(err); }
         }
 
         /* ----------------------------------------------------------------- */
@@ -118,15 +111,43 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         private static void Split(string src, IDictionary<string, string> dest)
         {
-            if (string.IsNullOrEmpty(src)) return;
+            try
+            {
+                if (string.IsNullOrEmpty(src)) return;
 
-            var pos = src.IndexOf('=');
-            if (pos < 0) return;
+                var pos = src.IndexOf('=');
+                if (pos < 0) return;
 
-            var key = src.Substring(0, pos);
-            var value = src.Substring(pos + 1, src.Length - (pos + 1));
-            if (dest.ContainsKey(key)) dest[key] = value;
-            else dest.Add(key, value);
+                var key = src.Substring(0, pos);
+                var value = src.Substring(pos + 1, src.Length - (pos + 1));
+                if (dest.ContainsKey(key)) dest[key] = value;
+                else dest.Add(key, value);
+            }
+            catch (Exception err) { LogError(err); }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LogError
+        ///
+        /// <summary>
+        /// 例外情報をログに出力します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static void LogError(Exception err)
+            => Cube.Log.Operations.Error(typeof(UpdateMessageFactory), err.Message, err);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsCommand
+        ///
+        /// <summary>
+        /// コマンドを表す文字列かどうかを判別します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static bool IsCommand(string src)
+            => !string.IsNullOrEmpty(src) && src[0] == '[' && src[src.Length - 1] == ']';
     }
 }
