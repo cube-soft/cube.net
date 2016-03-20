@@ -65,43 +65,6 @@ namespace Cube.Net.News
 
         /* --------------------------------------------------------------------- */
         ///
-        /// Timeout
-        /// 
-        /// <summary>
-        /// タイムアウト時間を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan Timeout
-        {
-            get { return _client.Timeout; }
-            set { _client.Timeout = value; }
-        }
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryCount
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する最大回数を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public int RetryCount { get; set; } = 5;
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryInterval
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する間隔を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
-
-        /* --------------------------------------------------------------------- */
-        ///
         /// Result
         /// 
         /// <summary>
@@ -119,21 +82,6 @@ namespace Cube.Net.News
                 OnResultChanged(new ValueEventArgs<IList<Article>>(value));
             }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FailedCount
-        /// 
-        /// <summary>
-        /// サーバとの通信に失敗した回数を取得します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// この値は Reset() を実行した時に 0 になります。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public int FailedCount { get; private set; }
 
         #endregion
 
@@ -186,7 +134,6 @@ namespace Cube.Net.News
             base.OnReset(e);
 
             Result = null;
-            FailedCount = 0;
 
             if (current == SchedulerState.Run)
             {
@@ -220,12 +167,14 @@ namespace Cube.Net.News
         /// GetAsync
         /// 
         /// <summary>
-        /// 非同期で NTP サーバと通信を行います。
+        /// 非同期でニュースサーバと通信を行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         private async Task GetAsync()
         {
+            _client.Timeout = Timeout;
+
             for (var i = 0; i < RetryCount; ++i)
             {
                 try

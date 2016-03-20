@@ -115,21 +115,6 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Timeout
-        /// 
-        /// <summary>
-        /// NTP サーバとの通信タイムアウト時間を設定または取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimeSpan Timeout
-        {
-            get { return _timeout; }
-            set { _timeout = value; }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Result
         /// 
         /// <summary>
@@ -174,22 +159,6 @@ namespace Cube.Net.Ntp
         {
             get { return IsValid ? Result.LocalClockOffset : TimeSpan.Zero; }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FailedCount
-        /// 
-        /// <summary>
-        /// サーバとの通信に失敗した回数を取得します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// この値は Server や Port を変更した時、または Reset() を
-        /// 実行した時に 0 になります。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public int FailedCount { get; private set; }
 
         #endregion
 
@@ -313,7 +282,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private async Task GetAsync()
         {
-            for (var i = 0; i < _RetryCount; ++i )
+            for (var i = 0; i < RetryCount; ++i )
             {
                 try
                 {
@@ -328,7 +297,7 @@ namespace Cube.Net.Ntp
                 }
                 catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;
-                await Task.Delay(_RetryInterval);
+                await Task.Delay(RetryInterval);
             }
         }
 
@@ -340,11 +309,6 @@ namespace Cube.Net.Ntp
         private Packet _result = null;
         private TimeSpan _timeout = TimeSpan.FromSeconds(5);
         private object _lock = new object();
-        #endregion
-
-        #region Constant fields
-        private static readonly int _RetryCount = 5;
-        private static readonly int _RetryInterval = 5000; // [ms]
         #endregion
     }
 }
