@@ -20,6 +20,7 @@
 using System;
 using System.Net.NetworkInformation;
 using Microsoft.Win32;
+using Cube.Log;
 
 namespace Cube.Net
 {
@@ -184,9 +185,11 @@ namespace Cube.Net
         {
             if (State == SchedulerState.Stop) return;
 
+            var before = State;
             var available = (PowerMode == PowerModes.Resume) && IsNetworkAvailable;
             if (available && State == SchedulerState.Suspend) Resume();
             else if (!available && State == SchedulerState.Run) Suspend();
+            this.LogDebug($"State:{before}->{State}");
         }
 
         #endregion
