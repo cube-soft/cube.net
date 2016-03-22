@@ -48,7 +48,13 @@ namespace Cube.Tests.Net.News
         public async Task GetAsync_Count(int expected)
         {
             var client = new Cube.Net.News.Client();
-            client.Version = new Version(1, 0, 0);
+            client.Version = new SoftwareVersion
+            {
+                Number    = new Version(1, 0, 0),
+                Available = 3,
+                Postfix   = string.Empty
+            };
+
             var results = await client.GetAsync();
             Assert.That(
                 results.Count,

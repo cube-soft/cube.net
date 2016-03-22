@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Update\SoftwareActivator.cs" />
     <Compile Include="Update\Http.cs" />
     <Compile Include="Update\MessageFactory.cs" />
     <Compile Include="Http\ClientOperations.cs" />

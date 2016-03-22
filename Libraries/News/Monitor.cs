@@ -57,7 +57,7 @@ namespace Cube.Net.News
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public Version Version
+        public SoftwareVersion Version
         {
             get { return _client.Version; }
             set { _client.Version = value; }
