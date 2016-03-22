@@ -92,7 +92,7 @@ namespace Cube.Tests.Net.Update
             {
                 Number    = new Version(1, 0, 0),
                 Available = 3,
-                Postfix   = string.Empty
+                Suffix    = string.Empty
             };
 
             return dest;

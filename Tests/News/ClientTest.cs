@@ -52,7 +52,7 @@ namespace Cube.Tests.Net.News
             {
                 Number    = new Version(1, 0, 0),
                 Available = 3,
-                Postfix   = string.Empty
+                Suffix    = string.Empty
             };
 
             var results = await client.GetAsync();
