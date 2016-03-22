@@ -90,9 +90,9 @@ namespace Cube.Tests.Net.Update
             dest.Secondary = null;
             dest.Version = new SoftwareVersion
             {
-                Number    = new Version(1, 0, 0),
-                Available = 3,
-                Suffix    = string.Empty
+                Number = new Version(1, 0, 0),
+                Digit  = 3,
+                Suffix = string.Empty
             };
 
             return dest;
