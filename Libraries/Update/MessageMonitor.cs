@@ -18,7 +18,6 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cube.Net.Http;
 using Cube.Log;
@@ -99,17 +98,6 @@ namespace Cube.Net.Update
         ///
         /* ----------------------------------------------------------------- */
         public string VersionPostfix { get; set; } = string.Empty;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OneTimeActivation
-        ///
-        /// <summary>
-        /// 最初の通信でアクティブ化を行います。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool OneTimeActivation { get; set; }
 
         #endregion
 
@@ -194,14 +182,7 @@ namespace Cube.Net.Update
 
             for (var i = 0; i < RetryCount; ++i)
             {
-                try
-                {
-                    return await http.GetUpdateMessageAsync(
-                        EndPoint,
-                        CreateVersion(),
-                        CreateQuery()
-                    );
-                }
+                try { return await http.GetUpdateMessageAsync(EndPoint, CreateVersion()); }
                 catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;
                 await Task.Delay(RetryInterval);
@@ -225,26 +206,6 @@ namespace Cube.Net.Update
             return string.IsNullOrEmpty(VersionPostfix) ?
                    dest :
                    dest + VersionPostfix;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CreateQuery
-        ///
-        /// <summary>
-        /// クエリーを生成します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private IDictionary<string, string> CreateQuery()
-        {
-            var dest = new Dictionary<string, string>();
-            if (OneTimeActivation)
-            {
-                dest.Add("flag", "install");
-                OneTimeActivation = false;
-            }
-            return dest;
         }
 
         #endregion
