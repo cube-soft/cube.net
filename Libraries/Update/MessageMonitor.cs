@@ -44,11 +44,17 @@ namespace Cube.Net.Update
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <remarks>
+        /// SoftwareActivator オブジェクトを指定した場合、初回の通信で
+        /// アクティブ化を行います。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageMonitor() : base()
+        public MessageMonitor(SoftwareActivator activator = null) : base()
         {
             Interval = TimeSpan.FromDays(1);
+            _activator = activator;
         }
 
         #endregion
@@ -75,29 +81,7 @@ namespace Cube.Net.Update
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Version Version { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VersionDigit
-        ///
-        /// <summary>
-        /// バージョン番号の有効桁数を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public int VersionDigit { get; set; } = 3;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VersionPostfix
-        ///
-        /// <summary>
-        /// バージョンの末尾に付与する文字列（α、β、…）を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string VersionPostfix { get; set; } = string.Empty;
+        public SoftwareVersion Version { get; set; }
 
         #endregion
 
@@ -171,6 +155,7 @@ namespace Cube.Net.Update
         private async Task<Message> GetAsync()
         {
             if (EndPoint == null || Version == null) return null;
+            if (_activator != null　&& _activator.Required) return await ActivateAsync();
 
             var http = new System.Net.Http.HttpClient(new ClientHandler
             {
@@ -182,7 +167,7 @@ namespace Cube.Net.Update
 
             for (var i = 0; i < RetryCount; ++i)
             {
-                try { return await http.GetUpdateMessageAsync(EndPoint, CreateVersion()); }
+                try { return await http.GetUpdateMessageAsync(EndPoint, Version.ToString()); }
                 catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;
                 await Task.Delay(RetryInterval);
@@ -193,21 +178,30 @@ namespace Cube.Net.Update
 
         /* ----------------------------------------------------------------- */
         ///
-        /// CreateVersion
+        /// ActivateAsync
         ///
         /// <summary>
-        /// バージョンを表す文字列を生成します。
+        /// アクティブ化を実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private string CreateVersion()
+        private async Task<Message> ActivateAsync()
         {
-            var dest = Version.ToString(VersionDigit);
-            return string.IsNullOrEmpty(VersionPostfix) ?
-                   dest :
-                   dest + VersionPostfix;
+            try
+            {
+                _activator.Version = Version;
+                _activator.Secondary = EndPoint;
+                await _activator.RunAsync();
+
+                return null;
+            }
+            finally { _activator = null; }
         }
 
+        #endregion
+
+        #region Fields
+        private SoftwareActivator _activator = null;
         #endregion
     }
 }
