@@ -88,11 +88,11 @@ namespace Cube.Net.News
         /// Version
         /// 
         /// <summary>
-        /// 通知するバージョンを取得または設定します。
+        /// ソフトウェアのバージョンを取得または設定します。
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public Version Version { get; set; } = new Version(1, 0, 0, 0);
+        public SoftwareVersion Version { get; set; } = new SoftwareVersion();
 
         /* --------------------------------------------------------------------- */
         ///
@@ -124,9 +124,7 @@ namespace Cube.Net.News
         /* --------------------------------------------------------------------- */
         public async Task<IList<Article>> GetAsync()
         {
-            var ver = Version.ToString(3);
-            var uri = EndPoint.With("appver", ver).With(DateTime.Now);
-
+            var uri = EndPoint.With("appver", Version.ToString()).With(DateTime.Now);
             var client = (_handler != null) ? new HttpClient(_handler) : new HttpClient();
             client.Timeout = Timeout;
             client.DefaultRequestHeaders.ConnectionClose = true;

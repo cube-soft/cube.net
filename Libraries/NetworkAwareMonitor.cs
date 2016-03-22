@@ -20,6 +20,7 @@
 using System;
 using System.Net.NetworkInformation;
 using Microsoft.Win32;
+using Cube.Log;
 
 namespace Cube.Net
 {
@@ -77,10 +78,55 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsNetworkAvailable
-        {
-            get { return NetworkInterface.GetIsNetworkAvailable(); }
-        }
+        public bool IsNetworkAvailable => NetworkInterface.GetIsNetworkAvailable();
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Timeout
+        /// 
+        /// <summary>
+        /// タイムアウト時間を取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// RetryInterval
+        /// 
+        /// <summary>
+        /// 通信失敗時に再試行する間隔を取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// RetryCount
+        /// 
+        /// <summary>
+        /// 通信失敗時に再試行する最大回数を取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public int RetryCount { get; set; } = 5;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FailedCount
+        /// 
+        /// <summary>
+        /// サーバとの通信に失敗した回数を取得します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// この値は Reset() を実行した時に 0 になります。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public int FailedCount { get; protected set; }
 
         #endregion
 
@@ -152,8 +198,7 @@ namespace Cube.Net
         /// OnExecute
         /// 
         /// <summary>
-        /// モニタリングのための操作を実行するタイミングになった時に
-        /// 発生するイベントです。
+        /// モニタリングのための操作を実行するタイミングになった時に実行されます。
         /// </summary>
         /// 
         /// <remarks>
@@ -165,6 +210,21 @@ namespace Cube.Net
         {
             if (!NetworkInterface.GetIsNetworkAvailable()) Suspend();
             else base.OnExecute(e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnReset
+        /// 
+        /// <summary>
+        /// リセット時に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnReset(EventArgs e)
+        {
+            base.OnReset(e);
+            FailedCount = 0;
         }
 
         #endregion
@@ -184,9 +244,11 @@ namespace Cube.Net
         {
             if (State == SchedulerState.Stop) return;
 
+            var before = State;
             var available = (PowerMode == PowerModes.Resume) && IsNetworkAvailable;
             if (available && State == SchedulerState.Suspend) Resume();
             else if (!available && State == SchedulerState.Run) Suspend();
+            this.LogDebug($"State:{before}->{State}");
         }
 
         #endregion

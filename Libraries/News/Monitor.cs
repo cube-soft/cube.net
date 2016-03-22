@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cube.Log;
 
 namespace Cube.Net.News
 {
@@ -56,48 +57,11 @@ namespace Cube.Net.News
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public Version Version
+        public SoftwareVersion Version
         {
             get { return _client.Version; }
             set { _client.Version = value; }
         }
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Timeout
-        /// 
-        /// <summary>
-        /// タイムアウト時間を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan Timeout
-        {
-            get { return _client.Timeout; }
-            set { _client.Timeout = value; }
-        }
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryCount
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する最大回数を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public int RetryCount { get; set; } = 5;
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryInterval
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する間隔を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
 
         /* --------------------------------------------------------------------- */
         ///
@@ -118,21 +82,6 @@ namespace Cube.Net.News
                 OnResultChanged(new ValueEventArgs<IList<Article>>(value));
             }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FailedCount
-        /// 
-        /// <summary>
-        /// サーバとの通信に失敗した回数を取得します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// この値は Reset() を実行した時に 0 になります。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public int FailedCount { get; private set; }
 
         #endregion
 
@@ -185,7 +134,6 @@ namespace Cube.Net.News
             base.OnReset(e);
 
             Result = null;
-            FailedCount = 0;
 
             if (current == SchedulerState.Run)
             {
@@ -219,12 +167,14 @@ namespace Cube.Net.News
         /// GetAsync
         /// 
         /// <summary>
-        /// 非同期で NTP サーバと通信を行います。
+        /// 非同期でニュースサーバと通信を行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         private async Task GetAsync()
         {
+            _client.Timeout = Timeout;
+
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
@@ -233,7 +183,7 @@ namespace Cube.Net.News
                     if (result.Count > 0) Result = result;
                     break;
                 }
-                catch (Exception err) { Logger.Error(err); }
+                catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;
                 await Task35.Delay(RetryInterval);
             }
