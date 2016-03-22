@@ -47,7 +47,11 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ClientHandler() : base() { }
+        public ClientHandler() : base()
+        {
+            Proxy    = null;
+            UseProxy = false;
+        }
 
         #endregion
 

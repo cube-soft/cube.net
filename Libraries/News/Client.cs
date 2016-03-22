@@ -51,11 +51,7 @@ namespace Cube.Net.News
         /* --------------------------------------------------------------------- */
         public Client()
         {
-            var handler = new ClientHandler
-            {
-                Proxy    = null,
-                UseProxy = false,
-            };
+            var handler = new ClientHandler();
 
             if (handler.SupportsAutomaticDecompression)
             {
