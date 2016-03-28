@@ -49,10 +49,7 @@ namespace Cube.Net.News
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public Client()
-        {
-            _handler = CreateHandler();
-        }
+        public Client() { }
 
         #endregion
 
@@ -112,9 +109,7 @@ namespace Cube.Net.News
         public async Task<IList<Article>> GetAsync()
         {
             var uri = EndPoint.With("appver", Version.ToString()).With(DateTime.Now);
-            var client = (_handler != null) ? new HttpClient(_handler) : new HttpClient();
-            client.Timeout = Timeout;
-            client.DefaultRequestHeaders.ConnectionClose = true;
+            var client = CreateClient();
 
             var json = await client.GetJsonAsync<List<ArticleList>>(uri);
             if (json != null && json.Count > 0 && json[0] != null && json[0].Items != null) return json[0].Items;
@@ -145,6 +140,23 @@ namespace Cube.Net.News
 
         #region Others
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CreateClient
+        ///
+        /// <summary>
+        /// 通信用クライアントを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private HttpClient CreateClient()
+        {
+            var dest = new HttpClient(CreateHandler());
+            dest.Timeout = Timeout;
+            dest.DefaultRequestHeaders.ConnectionClose = true;
+            return dest;
+        }
+
         /* --------------------------------------------------------------------- */
         ///
         /// CreateHandler
@@ -152,6 +164,14 @@ namespace Cube.Net.News
         /// <summary>
         /// HTTP 通信用のハンドラを生成します。
         /// </summary>
+        /// 
+        /// <remarks>
+        /// TODO: ClientHandler で ETag の設定を行っているが、サーバから取得された
+        /// 値を記憶しておく必要がある。ClientHandler オブジェクトをクラス変数に持つ
+        /// 方法だと、.NET 4.5 では問題ないが .NET 3.5 の場合、途中から通信に失敗する
+        /// 不都合が見られる（恐らく、ライブラリ側のバグ）。現在は、ETag を実質的に
+        /// 無効にする事で運用しているが、修正方法を要検討。
+        /// </remarks>
         ///
         /* --------------------------------------------------------------------- */
         private HttpMessageHandler CreateHandler()
@@ -168,10 +188,6 @@ namespace Cube.Net.News
             return dest;
         }
 
-        #endregion
-
-        #region Fields
-        private HttpMessageHandler _handler = null;
         #endregion
     }
 }
