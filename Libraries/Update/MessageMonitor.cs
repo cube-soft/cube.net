@@ -56,8 +56,6 @@ namespace Cube.Net.Update
         {
             Interval = TimeSpan.FromDays(1);
             _activator = activator;
-            _client = new HttpClient(new ClientHandler());
-            _client.DefaultRequestHeaders.ConnectionClose = true;
         }
 
         #endregion
@@ -157,14 +155,16 @@ namespace Cube.Net.Update
         /* ----------------------------------------------------------------- */
         private async Task<Message> GetAsync()
         {
-            if (_client == null || EndPoint == null || Version == null) return null;
+            if (EndPoint == null || Version == null) return null;
             if (_activator != null　&& _activator.Required) return await ActivateAsync();
-
-            _client.Timeout = Timeout;
 
             for (var i = 0; i < RetryCount; ++i)
             {
-                try { return await _client.GetUpdateMessageAsync(EndPoint, Version.ToString()); }
+                try
+                {
+                    var client = CreateClient();
+                    return await client.GetUpdateMessageAsync(EndPoint, Version.ToString());
+                }
                 catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;
                 await Task.Delay(RetryInterval);
@@ -196,10 +196,26 @@ namespace Cube.Net.Update
             finally { _activator = null; }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CreateClient
+        ///
+        /// <summary>
+        /// 通信用クライアントを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private HttpClient CreateClient()
+        {
+            var dest = new HttpClient(new ClientHandler());
+            dest.Timeout = Timeout;
+            dest.DefaultRequestHeaders.ConnectionClose = true;
+            return dest;
+        }
+
         #endregion
 
         #region Fields
-        private HttpClient _client = null;
         private SoftwareActivator _activator = null;
         #endregion
     }
