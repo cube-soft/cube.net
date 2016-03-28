@@ -74,6 +74,7 @@
     <Compile Include="Ntp\TimestampTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Update\MessageTest.cs" />
+    <Compile Include="Update\SoftwareActivatorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

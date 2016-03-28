@@ -19,6 +19,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Threading.Tasks;
+using System.Net.Http;
 using Cube.Net.Http;
 using Cube.Log;
 
@@ -55,6 +56,8 @@ namespace Cube.Net.Update
         {
             Interval = TimeSpan.FromDays(1);
             _activator = activator;
+            _client = new HttpClient(new ClientHandler());
+            _client.DefaultRequestHeaders.ConnectionClose = true;
         }
 
         #endregion
@@ -154,20 +157,14 @@ namespace Cube.Net.Update
         /* ----------------------------------------------------------------- */
         private async Task<Message> GetAsync()
         {
-            if (EndPoint == null || Version == null) return null;
+            if (_client == null || EndPoint == null || Version == null) return null;
             if (_activator != null　&& _activator.Required) return await ActivateAsync();
 
-            var http = new System.Net.Http.HttpClient(new ClientHandler
-            {
-                UseProxy = false,
-                Proxy = null
-            });
-            http.Timeout = Timeout;
-            http.DefaultRequestHeaders.ConnectionClose = true;
+            _client.Timeout = Timeout;
 
             for (var i = 0; i < RetryCount; ++i)
             {
-                try { return await http.GetUpdateMessageAsync(EndPoint, Version.ToString()); }
+                try { return await _client.GetUpdateMessageAsync(EndPoint, Version.ToString()); }
                 catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;
                 await Task35.Delay(RetryInterval);
@@ -189,6 +186,7 @@ namespace Cube.Net.Update
         {
             try
             {
+                if (_activator == null) return null;
                 _activator.Version = Version;
                 _activator.Secondary = EndPoint;
                 await _activator.RunAsync();
@@ -201,6 +199,7 @@ namespace Cube.Net.Update
         #endregion
 
         #region Fields
+        private HttpClient _client = null;
         private SoftwareActivator _activator = null;
         #endregion
     }

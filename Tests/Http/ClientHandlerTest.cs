@@ -101,13 +101,7 @@ namespace Cube.Tests.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         private HttpClient Create()
-        {
-            return new HttpClient(new Cube.Net.Http.ClientHandler()
-            {
-                Proxy    = null,
-                UseProxy = false
-            });
-        }
+            => new HttpClient(new Cube.Net.Http.ClientHandler());
 
         #endregion
     }

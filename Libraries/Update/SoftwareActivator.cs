@@ -41,14 +41,29 @@ namespace Cube.Net.Update
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Activator
+        /// SoftwareActivator
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SoftwareActivator(string[] args)
+        public SoftwareActivator()
+        {
+            _client = new HttpClient(new ClientHandler());
+            _client.DefaultRequestHeaders.ConnectionClose = true;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SoftwareActivator
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SoftwareActivator(string[] args) : this()
         {
             Required = args?.Length > 0 && args[0] == "install";
             Parse(args);
@@ -94,6 +109,17 @@ namespace Cube.Net.Update
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Timeout
+        ///
+        /// <summary>
+        /// タイムアウト時間を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Utm
         ///
         /// <summary>
@@ -116,6 +142,25 @@ namespace Cube.Net.Update
 
         #endregion
 
+        #region Events
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Received
+        ///
+        /// <summary>
+        /// サーバからの応答を受信した時に発生するイベントです。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// EndoPoint または Secondary からの応答を受信した時に発生します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<ValueEventArgs<HttpResponseMessage>> Received;
+
+        #endregion
+
         #region Methods
 
         /* ----------------------------------------------------------------- */
@@ -131,17 +176,28 @@ namespace Cube.Net.Update
         {
             try
             {
-                var http = new HttpClient(new ClientHandler
-                {
-                    UseProxy = false,
-                    Proxy    = null
-                });
-
-                await RunAsyncPrimary(http);
-                await RunAsyncSecondary(http);
+                _client.Timeout = Timeout;
+                await RunAsyncPrimary();
+                await RunAsyncSecondary();
             }
             catch (Exception err) { this.LogError(err.Message, err); }
         }
+
+        #endregion
+
+        #region Virutal methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnReceived
+        ///
+        /// <summary>
+        /// Received メッセージを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnReceived(ValueEventArgs<HttpResponseMessage> e)
+            => Received?.Invoke(this, e);
 
         #endregion
 
@@ -194,13 +250,16 @@ namespace Cube.Net.Update
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public async Task RunAsyncPrimary(HttpClient http)
+        public async Task RunAsyncPrimary()
         {
             if (!Required) return;
 
             var uri = EndPoint.With(Utm);
-            var response = await http.GetAsync(EndPoint.With(Utm));
-            this.LogDebug($"Primary:{response.StatusCode}");
+            var response = await _client.GetAsync(EndPoint.With(Utm));
+            if (response == null) return;
+
+            OnReceived(ValueEventArgs.Create(response));
+            this.LogDebug($"Primary\tStatusCode:{response.StatusCode}");
         }
 
         /* ----------------------------------------------------------------- */
@@ -212,15 +271,22 @@ namespace Cube.Net.Update
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task RunAsyncSecondary(HttpClient http)
+        private async Task RunAsyncSecondary()
         {
             if (!Required || Secondary == null) return;
 
             var uri = Secondary.With("ver", Version).With("flag", "install");
-            var response = await http.GetAsync(uri);
-            this.LogDebug($"Secondary:{response.StatusCode}");
+            var response = await _client.GetAsync(uri);
+            if (response == null) return;
+
+            OnReceived(ValueEventArgs.Create(response));
+            this.LogDebug($"Secondary\tStatusCode:{response.StatusCode}");
         }
 
+        #endregion
+
+        #region Fields
+        private HttpClient _client = null;
         #endregion
     }
 }
