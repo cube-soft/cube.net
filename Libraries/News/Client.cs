@@ -51,16 +51,7 @@ namespace Cube.Net.News
         /* --------------------------------------------------------------------- */
         public Client()
         {
-            var handler = new ClientHandler();
-
-            if (handler.SupportsAutomaticDecompression)
-            {
-                handler.AutomaticDecompression =
-                    System.Net.DecompressionMethods.Deflate |
-                    System.Net.DecompressionMethods.GZip;
-            }
-
-            _handler = handler;
+            _handler = CreateHandler();
         }
 
         #endregion
@@ -148,6 +139,33 @@ namespace Cube.Net.News
         {
             [DataMember(Name = "items")]
             public List<Article> Items = null;
+        }
+
+        #endregion
+
+        #region Others
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// CreateHandler
+        /// 
+        /// <summary>
+        /// HTTP 通信用のハンドラを生成します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        private HttpMessageHandler CreateHandler()
+        {
+            var dest = new ClientHandler();
+
+            if (dest.SupportsAutomaticDecompression)
+            {
+                dest.AutomaticDecompression =
+                    System.Net.DecompressionMethods.Deflate |
+                    System.Net.DecompressionMethods.GZip;
+            }
+
+            return dest;
         }
 
         #endregion

@@ -109,7 +109,6 @@ namespace Cube.Net.Http
         private void GetEntityTag(HttpResponseHeaders headers)
         {
             _etag = headers?.ETag?.Tag ?? string.Empty;
-            this.LogDebug($"ETag:{_etag}");
         }
 
         #endregion
