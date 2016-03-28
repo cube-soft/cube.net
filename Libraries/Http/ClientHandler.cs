@@ -17,11 +17,11 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Cube.Log;
 
 namespace Cube.Net.Http
 {
@@ -108,13 +108,13 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private void GetEntityTag(HttpResponseHeaders headers)
         {
-            _etag = (headers.ETag != null) ? headers.ETag.Tag : string.Empty;
+            _etag = headers?.ETag?.Tag ?? string.Empty;
+            this.LogDebug($"ETag:{_etag}");
         }
 
         #endregion
 
         #region Fields
-        private IList<string> _acceptEncoding = new List<string>();
         private string _etag = string.Empty;
         #endregion
     }
