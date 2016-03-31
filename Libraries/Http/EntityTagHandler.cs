@@ -36,7 +36,7 @@ namespace Cube.Net.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal class EntityTagHandler : HttpClientHandler
+    internal sealed class EntityTagHandler : HttpClientHandler
     {
         #region Constructors
 
@@ -93,22 +93,6 @@ namespace Cube.Net.Http
 
         #endregion
 
-        #region Virtual methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnReceived
-        ///
-        /// <summary>
-        /// Received イベントを発生させます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void OnReceived(ValueEventArgs<string> e)
-            => Received?.Invoke(this, e);
-
-        #endregion
-
         #region Override methods
 
         /* ----------------------------------------------------------------- */
@@ -126,7 +110,7 @@ namespace Cube.Net.Http
             SetEntityTag(request.Headers);
             var response = await base.SendAsync(request, cancellationToken);
             _etag = GetEntityTag(response.Headers);
-            OnReceived(ValueEventArgs.Create(_etag));
+            Received?.Invoke(this, ValueEventArgs.Create(_etag));
             return response;
         }
 
