@@ -45,7 +45,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public static HttpClient Create(HttpClientHandler handler, TimeSpan timeout)
         {
-            var http = new HttpClient(handler);
+            var http = (handler != null) ? new HttpClient(handler) : new HttpClient();
             http.DefaultRequestHeaders.ConnectionClose = true;
             http.Timeout = timeout;
             return http;
