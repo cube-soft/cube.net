@@ -48,11 +48,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Http\ClientFactory.cs" />
+    <Compile Include="Http\EntityTag.cs" />
+    <Compile Include="Http\EntityTagHandler.cs" />
     <Compile Include="Update\SoftwareActivator.cs" />
     <Compile Include="Update\Http.cs" />
     <Compile Include="Update\MessageFactory.cs" />
     <Compile Include="Http\ClientOperations.cs" />
-    <Compile Include="Http\ClientHandler.cs" />
     <Compile Include="NetworkAwareMonitor.cs" />
     <Compile Include="News\Article.cs" />
     <Compile Include="News\Client.cs" />

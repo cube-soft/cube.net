@@ -55,8 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\ClientHandlerTest.cs" />
     <Compile Include="Http\ClientTest.cs" />
+    <Compile Include="Http\EntityTagTest.cs" />
     <Compile Include="News\ClientTest.cs" />
     <Compile Include="Ntp\ClientTest.cs" />
     <Compile Include="Ntp\MonitorTest.cs" />

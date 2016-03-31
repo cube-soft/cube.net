@@ -48,11 +48,7 @@ namespace Cube.Net.Update
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SoftwareActivator()
-        {
-            _client = new HttpClient(new ClientHandler());
-            _client.DefaultRequestHeaders.ConnectionClose = true;
-        }
+        public SoftwareActivator() { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -176,7 +172,6 @@ namespace Cube.Net.Update
         {
             try
             {
-                _client.Timeout = Timeout;
                 await RunAsyncPrimary();
                 await RunAsyncSecondary();
             }
@@ -255,7 +250,8 @@ namespace Cube.Net.Update
             if (!Required) return;
 
             var uri = EndPoint.With(Utm);
-            var response = await _client.GetAsync(EndPoint.With(Utm));
+            var client = ClientFactory.Create(Timeout);
+            var response = await client.GetAsync(EndPoint.With(Utm));
             if (response == null) return;
 
             OnReceived(ValueEventArgs.Create(response));
@@ -276,17 +272,14 @@ namespace Cube.Net.Update
             if (!Required || Secondary == null) return;
 
             var uri = Secondary.With("ver", Version).With("flag", "install");
-            var response = await _client.GetAsync(uri);
+            var client = ClientFactory.Create(Timeout);
+            var response = await client.GetAsync(uri);
             if (response == null) return;
 
             OnReceived(ValueEventArgs.Create(response));
             this.LogDebug($"Secondary\tStatusCode:{response.StatusCode}");
         }
 
-        #endregion
-
-        #region Fields
-        private HttpClient _client = null;
         #endregion
     }
 }

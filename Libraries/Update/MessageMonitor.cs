@@ -19,7 +19,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Threading.Tasks;
-using System.Net.Http;
 using Cube.Net.Http;
 using Cube.Log;
 
@@ -162,7 +161,7 @@ namespace Cube.Net.Update
             {
                 try
                 {
-                    var client = CreateClient();
+                    var client = ClientFactory.Create(Timeout);
                     return await client.GetUpdateMessageAsync(EndPoint, Version.ToString());
                 }
                 catch (Exception err) { this.LogError(err.Message, err); }
@@ -194,23 +193,6 @@ namespace Cube.Net.Update
                 return null;
             }
             finally { _activator = null; }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CreateClient
-        ///
-        /// <summary>
-        /// 通信用クライアントを生成します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private HttpClient CreateClient()
-        {
-            var dest = new HttpClient(new ClientHandler());
-            dest.Timeout = Timeout;
-            dest.DefaultRequestHeaders.ConnectionClose = true;
-            return dest;
         }
 
         #endregion

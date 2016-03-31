@@ -33,16 +33,69 @@ namespace Cube.Tests.Net.Http
     /// ClientTest
     ///
     /// <summary>
-    /// System.Net.Http.HttpClient を用いて様々な形式のデータを非同期で
-    /// 取得するテストを行うためのクラスです。
+    /// System.Net.Http.HttpClient を用いたテストを行うためのクラスです。
     /// </summary>
+    /// 
+    /// <remarks>
+    /// internal class の場合 GetXmlAsync() のテストに失敗するため、
+    /// public class に設定しています。
+    /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
     public class ClientTest
     {
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Timeout
+        /// 
+        /// <summary>
+        /// タイムアウト時間を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public TimeSpan Timeout => TimeSpan.FromMilliseconds(500);
+
+        #endregion
+
         #region Test methods
+
+        #region ClientFactory
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_ConnectionClose
+        ///
+        /// <summary>
+        /// ConnectionClose を設定するテストを行います。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// NuGet に公開されている System.Net.Http for .NET 3.5 には
+        /// ConnectionClose に関するバグが存在する模様。
+        /// 現在は、AddRequestHeaders で Connection プロパティに値を
+        /// 設定しないように修正したものを利用している。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TestCase("Close")]
+        public async Task GetAsync_Connection(string expected)
+        {
+            var uri = new Uri("http://news.cube-soft.jp/app/notice/all.json");
+            var response = await ClientFactory.Create(Timeout).GetAsync(uri);
+
+            Assert.That(
+                response.Headers.Connection.Contains(expected),
+                Is.True
+            );
+        }
+
+        #endregion
+
+        #region GetXxxAsync
 
         /* ----------------------------------------------------------------- */
         ///
@@ -57,9 +110,8 @@ namespace Cube.Tests.Net.Http
         public async Task GetJsonAsync()
         {
             var uri = new Uri("http://dev.cielquis.net/tests/example.json");
-            var http = new System.Net.Http.HttpClient();
-            http.Timeout = TimeSpan.FromMilliseconds(500);
-            var json = await http.GetJsonAsync<PeopleContainer>(uri);
+            var json = await ClientFactory.Create(Timeout)
+                                          .GetJsonAsync<PeopleContainer>(uri);
 
             Assert.That(json.People, Is.Not.Null);
             Assert.That(json.People.Count,   Is.EqualTo(2));
@@ -84,9 +136,8 @@ namespace Cube.Tests.Net.Http
         public async Task GetXmlAsync()
         {
             var uri = new Uri("http://dev.cielquis.net/tests/example.xml");
-            var http = new System.Net.Http.HttpClient();
-            http.Timeout = TimeSpan.FromMilliseconds(500);
-            var xml = await http.GetXmlAsync<PeopleContainer>(uri);
+            var xml = await ClientFactory.Create(Timeout)
+                                         .GetXmlAsync<PeopleContainer>(uri);
 
             Assert.That(xml.People, Is.Not.Null);
             Assert.That(xml.People.Count,   Is.EqualTo(2));
@@ -97,6 +148,8 @@ namespace Cube.Tests.Net.Http
             Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
             Assert.That(xml.People[1].Age,  Is.EqualTo(25));
         }
+
+        #endregion
 
         #endregion
 
@@ -154,6 +207,5 @@ namespace Cube.Tests.Net.Http
         }
 
         #endregion
-
     }
 }

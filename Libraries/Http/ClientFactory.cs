@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// ClientHandler.cs
+/// ClientFactory.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -17,104 +17,88 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System.Threading;
-using System.Threading.Tasks;
+using System;
+using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using Cube.Log;
 
 namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ClientHandler
+    /// ClientFactory
     /// 
     /// <summary>
-    /// System.Net.Http.HttpClient を拡張するためのクラスです。
+    /// HTTP クライアントを生成するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ClientHandler : HttpClientHandler
+    public static class ClientFactory
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
-        /// ClientHandler
+        /// Create
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// HTTP クライアントを生成します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ClientHandler() : base()
+        public static HttpClient Create(HttpClientHandler handler, TimeSpan timeout)
         {
-            Proxy    = null;
-            UseProxy = false;
-        }
-
-        #endregion
-
-        #region Override methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SendAsync
-        ///
-        /// <summary>
-        /// HTTP リクエストを非同期で送信します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            SetEntityTag(request.Headers);
-            
-            var response = await base.SendAsync(request, cancellationToken);
-
-            GetEntityTag(response.Headers);
-
-            return response;
-        }
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SetEntityTag
-        ///
-        /// <summary>
-        /// エンティティタグ (ETag) をリクエストヘッダに設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void SetEntityTag(HttpRequestHeaders headers)
-        {
-            if (string.IsNullOrEmpty(_etag)) return;
-            var value = EntityTagHeaderValue.Parse(_etag);
-            headers.IfNoneMatch.Add(value);
+            var http = new HttpClient(handler);
+            http.DefaultRequestHeaders.ConnectionClose = true;
+            http.Timeout = timeout;
+            return http;
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetEntityTag
+        /// Create
         ///
         /// <summary>
-        /// エンティティタグ (ETag) をリクエストヘッダから取得します。
+        /// HTTP クライアントを生成します。
+        /// タイムアウト時間は 2 秒に設定されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void GetEntityTag(HttpResponseHeaders headers)
+        public static HttpClient Create(HttpClientHandler handler)
+            => Create(handler, TimeSpan.FromSeconds(2));
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        ///
+        /// <summary>
+        /// HTTP クライアントを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static HttpClient Create(TimeSpan timeout)
         {
-            _etag = headers?.ETag?.Tag ?? string.Empty;
+            var handler = new HttpClientHandler();
+            handler.Proxy = null;
+            handler.UseProxy = false;
+
+            if (handler.SupportsAutomaticDecompression)
+            {
+                handler.AutomaticDecompression =
+                    DecompressionMethods.Deflate |
+                    DecompressionMethods.GZip;
+            }
+
+            return Create(handler, timeout);
         }
 
-        #endregion
-
-        #region Fields
-        private string _etag = string.Empty;
-        #endregion
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        ///
+        /// <summary>
+        /// HTTP クライアントを生成します。
+        /// タイムアウト時間は 2 秒に設定されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static HttpClient Create() => Create(TimeSpan.FromSeconds(2));
     }
 }
