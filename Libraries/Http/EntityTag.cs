@@ -82,6 +82,21 @@ namespace Cube.Net.Http
 
         #endregion
 
+        #region Override methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ToString
+        ///
+        /// <summary>
+        /// 文字列に変換します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public override string ToString() => Value;
+
+        #endregion
+
         #region Event handlers
 
         /* ----------------------------------------------------------------- */
