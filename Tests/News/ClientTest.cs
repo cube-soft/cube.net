@@ -32,6 +32,7 @@ namespace Cube.Tests.Net.News
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
+    [Parallelizable]
     [TestFixture]
     class ClientTest
     {

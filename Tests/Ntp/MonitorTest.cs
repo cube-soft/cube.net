@@ -33,8 +33,9 @@ namespace Cube.Tests.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
+    [Parallelizable]
     [TestFixture]
-    public class MonitorTest
+    class MonitorTest
     {
         /* ----------------------------------------------------------------- */
         ///
