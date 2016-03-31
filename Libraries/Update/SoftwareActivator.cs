@@ -35,7 +35,7 @@ namespace Cube.Net.Update
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class SoftwareActivator
+    public class SoftwareActivator : Cube.Net.Http.ClientBase
     {
         #region Constructors
 
@@ -91,28 +91,6 @@ namespace Cube.Net.Update
         ///
         /* ----------------------------------------------------------------- */
         public bool Required { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Version
-        ///
-        /// <summary>
-        /// ソフトウェアのバージョンを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SoftwareVersion Version { get; set; } = new SoftwareVersion();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Timeout
-        ///
-        /// <summary>
-        /// タイムアウト時間を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -250,8 +228,7 @@ namespace Cube.Net.Update
             if (!Required) return;
 
             var uri = EndPoint.With(Utm);
-            var client = ClientFactory.Create(Timeout);
-            var response = await client.GetAsync(EndPoint.With(Utm));
+            var response = await Http.GetAsync(EndPoint.With(Utm));
             if (response == null) return;
 
             OnReceived(ValueEventArgs.Create(response));
@@ -272,8 +249,7 @@ namespace Cube.Net.Update
             if (!Required || Secondary == null) return;
 
             var uri = Secondary.With("ver", Version).With("flag", "install");
-            var client = ClientFactory.Create(Timeout);
-            var response = await client.GetAsync(uri);
+            var response = await Http.GetAsync(uri);
             if (response == null) return;
 
             OnReceived(ValueEventArgs.Create(response));

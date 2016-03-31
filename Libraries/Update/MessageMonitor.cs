@@ -72,17 +72,6 @@ namespace Cube.Net.Update
         /* ----------------------------------------------------------------- */
         public Uri EndPoint { get; set; }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Version
-        ///
-        /// <summary>
-        /// アプリケーションのバージョンを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SoftwareVersion Version { get; set; }
-
         #endregion
 
         #region Events
@@ -161,8 +150,8 @@ namespace Cube.Net.Update
             {
                 try
                 {
-                    var client = ClientFactory.Create(Timeout);
-                    return await client.GetUpdateMessageAsync(EndPoint, Version.ToString());
+                    return await ClientFactory.Create(Timeout)
+                        .GetUpdateMessageAsync(EndPoint, Version.ToString());
                 }
                 catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;

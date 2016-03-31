@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Http\ClientBase.cs" />
     <Compile Include="Http\ClientFactory.cs" />
     <Compile Include="Http\EntityTag.cs" />
     <Compile Include="Http\EntityTagHandler.cs" />

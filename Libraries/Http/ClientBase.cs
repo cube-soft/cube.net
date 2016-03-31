@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// Client.cs
+/// ClientBase.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -18,37 +18,38 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Runtime.Serialization;
-using Cube.Conversions;
-using Cube.Net.Http;
+using System.Net.Http;
 
-namespace Cube.Net.News
+namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Client
+    /// ClientBase
     /// 
     /// <summary>
-    /// 新着ニュース記事をサーバに問い合わせるためのクラスです。
+    /// HTTP 通信を行う各種クラスのベースとなるクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Client : Cube.Net.Http.ClientBase
+    public class ClientBase
     {
         #region Constructors
 
         /* --------------------------------------------------------------------- */
         ///
-        /// Client
+        /// ClientBase
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <remarks>
+        /// このクラスのオブジェクトを直接生成する事はできません。
+        /// 各継承クラスを使用して下さい。
+        /// </remarks>
         ///
         /* --------------------------------------------------------------------- */
-        public Client() : base() { }
+        protected ClientBase() { }
 
         #endregion
 
@@ -56,60 +57,50 @@ namespace Cube.Net.News
 
         /* --------------------------------------------------------------------- */
         ///
-        /// EndPoint
+        /// Version
         /// 
         /// <summary>
-        /// 新着ニュース取得用の URL を取得します。
+        /// クライアントのバージョンを取得または設定します。
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public static Uri EndPoint
-            => new Uri("http://news.cube-soft.jp/app/notice/all.json");
-
-        #endregion
-
-        #region Methods
+        public SoftwareVersion Version { get; set; } = new SoftwareVersion();
 
         /* --------------------------------------------------------------------- */
         ///
-        /// GetAsync
+        /// Handler
         /// 
         /// <summary>
-        /// 新着記事一覧を非同期で取得します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// JSON フォーマット: [{"items":[{"title":"xxx","url":"yyy"},...]}]
-        /// </remarks>
-        ///
-        /* --------------------------------------------------------------------- */
-        public async Task<IList<Article>> GetAsync()
-        {
-            var uri  = EndPoint.With("appver", Version.ToString()).With(DateTime.Now);
-            var json = await Http.GetJsonAsync<List<ArticleList>>(uri);
-            if (json != null && json.Count > 0 && json[0] != null && json[0].Items != null) return json[0].Items;
-            else return new List<Article>();
-        }
-
-        #endregion
-
-        #region Internal classes
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// ArticleList
-        /// 
-        /// <summary>
-        /// 記事一覧を取得するためのクラスです。
+        /// HttpClientHandler オブジェクトを取得または設定します。
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        [DataContract]
-        internal class ArticleList
-        {
-            [DataMember(Name = "items")]
-            public List<Article> Items = null;
-        }
+        public HttpClientHandler Handler { get; set; }
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Timeout
+        /// 
+        /// <summary>
+        /// タイムアウト時間を取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Http
+        /// 
+        /// <summary>
+        /// HTTP 通信用クライアントを取得します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public HttpClient Http
+            => Handler != null ?
+               ClientFactory.Create(Handler, Timeout) :
+               ClientFactory.Create(Timeout);
 
         #endregion
     }
