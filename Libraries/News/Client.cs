@@ -89,6 +89,17 @@ namespace Cube.Net.News
         /* --------------------------------------------------------------------- */
         public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
 
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Handler
+        /// 
+        /// <summary>
+        /// HttpClientHandler オブジェクトを取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public HttpClientHandler Handler { get; set; }
+
         #endregion
 
         #region Methods
@@ -109,7 +120,7 @@ namespace Cube.Net.News
         public async Task<IList<Article>> GetAsync()
         {
             var uri = EndPoint.With("appver", Version.ToString()).With(DateTime.Now);
-            var client = ClientFactory.Create(Timeout);
+            var client = ClientFactory.Create(Handler, Timeout);
 
             var json = await client.GetJsonAsync<List<ArticleList>>(uri);
             if (json != null && json.Count > 0 && json[0] != null && json[0].Items != null) return json[0].Items;
