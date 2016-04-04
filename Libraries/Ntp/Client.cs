@@ -34,9 +34,9 @@ namespace Cube.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Client
+    public class Client : IDisposable
     {
-        #region Constructors
+        #region Constructors and destructors
 
         /* ----------------------------------------------------------------- */
         ///
@@ -89,6 +89,20 @@ namespace Cube.Net.Ntp
             Port = port;
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~Client
+        /// 
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        ~Client()
+        {
+            Dispose(false);
+        }
+
         #endregion
 
         #region Properties
@@ -135,7 +149,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TimeSpan Timeout { get; set; }
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
 
         #endregion
 
@@ -157,7 +171,42 @@ namespace Cube.Net.Ntp
 
         #endregion
 
-        #region Implementations
+        #region Methods for IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            _disposed = true;
+            if (disposing) _socket.Dispose();
+        }
+
+        #endregion
+
+        #region Others
 
         /* ----------------------------------------------------------------- */
         ///
@@ -216,6 +265,7 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Fields
+        private bool _disposed = false;
         private Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         #endregion
     }

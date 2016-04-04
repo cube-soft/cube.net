@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// ClientHandler.cs
+/// EntityTag.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -17,40 +17,67 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System.Threading;
-using System.Threading.Tasks;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using Cube.Log;
 
 namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ClientHandler
-    /// 
+    /// EntityTag
+    ///
     /// <summary>
-    /// System.Net.Http.HttpClient を拡張するためのクラスです。
+    /// EntityTag を表すクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ClientHandler : HttpClientHandler
+    public class EntityTag
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ClientHandler
+        /// EntityTag
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ClientHandler() : base()
+        public EntityTag() { }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Value
+        ///
+        /// <summary>
+        /// EntityTag を表す文字列を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Value { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CreateHandler
+        ///
+        /// <summary>
+        /// EntityTag 監視用の HttpClientHandler オブジェクトを生成します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public HttpClientHandler CreateHandler()
         {
-            Proxy    = null;
-            UseProxy = false;
+            var dest = new EntityTagHandler(Value);
+            dest.Received += Handler_Received;
+            return dest;
         }
 
         #endregion
@@ -59,62 +86,38 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SendAsync
+        /// ToString
         ///
         /// <summary>
-        /// HTTP リクエストを非同期で送信します。
+        /// 文字列に変換します。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            SetEntityTag(request.Headers);
-            
-            var response = await base.SendAsync(request, cancellationToken);
-
-            GetEntityTag(response.Headers);
-
-            return response;
-        }
+        public override string ToString() => Value;
 
         #endregion
 
-        #region Implementations
+        #region Event handlers
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SetEntityTag
+        /// Handler_Received
         ///
         /// <summary>
-        /// エンティティタグ (ETag) をリクエストヘッダに設定します。
+        /// EntityTag を受信時に実行されるハンドラです。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
-        private void SetEntityTag(HttpRequestHeaders headers)
+        private void Handler_Received(object sender, ValueEventArgs<string> e)
         {
-            if (string.IsNullOrEmpty(_etag)) return;
-            var value = EntityTagHeaderValue.Parse(_etag);
-            headers.IfNoneMatch.Add(value);
+            Value = e.Value;
+
+            var handler = sender as EntityTagHandler;
+            if (handler == null) return;
+
+            handler.Received -= Handler_Received;
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetEntityTag
-        ///
-        /// <summary>
-        /// エンティティタグ (ETag) をリクエストヘッダから取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void GetEntityTag(HttpResponseHeaders headers)
-        {
-            _etag = headers?.ETag?.Tag ?? string.Empty;
-        }
-
-        #endregion
-
-        #region Fields
-        private string _etag = string.Empty;
         #endregion
     }
 }

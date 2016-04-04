@@ -50,18 +50,15 @@ namespace Cube.Net.News
 
         /* --------------------------------------------------------------------- */
         ///
-        /// Version
+        /// EntityTag
         /// 
         /// <summary>
-        /// 通知するバージョンを取得または設定します。
+        /// EntityTag (ETag) を取得します。
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public SoftwareVersion Version
-        {
-            get { return _client.Version; }
-            set { _client.Version = value; }
-        }
+        public Cube.Net.Http.EntityTag EntityTag { get; }
+            = new Cube.Net.Http.EntityTag();
 
         /* --------------------------------------------------------------------- */
         ///
@@ -173,13 +170,11 @@ namespace Cube.Net.News
         /* ----------------------------------------------------------------- */
         private async Task GetAsync()
         {
-            _client.Timeout = Timeout;
-
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
                 {
-                    var result = await _client.GetAsync();
+                    var result = await Create().GetAsync();
                     if (result.Count > 0) Result = result;
                     break;
                 }
@@ -189,10 +184,27 @@ namespace Cube.Net.News
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        /// 
+        /// <summary>
+        /// 通信用クライアントを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private Client Create()
+        {
+            var dest = new Client();
+            dest.Version = Version;
+            dest.Timeout = Timeout;
+            dest.Handler = EntityTag.CreateHandler();
+            return dest;
+        }
+
         #endregion
 
         #region Fields
-        private Client _client = new Client();
         private IList<Article> _result = new List<Article>();
         #endregion
     }

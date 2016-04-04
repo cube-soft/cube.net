@@ -31,8 +31,9 @@ namespace Cube.Tests.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
+    [Parallelizable]
     [TestFixture]
-    public class TimestampTest
+    class TimestampTest
     {
         /* ----------------------------------------------------------------- */
         ///

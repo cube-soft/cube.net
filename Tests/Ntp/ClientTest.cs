@@ -32,8 +32,9 @@ namespace Cube.Tests.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
+    [Parallelizable]
     [TestFixture]
-    public class ClientTest
+    class ClientTest
     {
         #region Tests
 
