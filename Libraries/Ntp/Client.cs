@@ -201,7 +201,7 @@ namespace Cube.Net.Ntp
         {
             if (_disposed) return;
             _disposed = true;
-            if (disposing) _socket.Dispose();
+            //if (disposing) _socket.Dispose();
         }
 
         #endregion
