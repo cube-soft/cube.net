@@ -71,9 +71,6 @@
     <Compile Include="Update\MessageFactory.cs" />
     <Compile Include="Http\ClientOperations.cs" />
     <Compile Include="NetworkAwareMonitor.cs" />
-    <Compile Include="News\Article.cs" />
-    <Compile Include="News\Client.cs" />
-    <Compile Include="News\Monitor.cs" />
     <Compile Include="Ntp\Client.cs" />
     <Compile Include="Ntp\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
