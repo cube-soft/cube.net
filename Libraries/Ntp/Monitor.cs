@@ -235,10 +235,10 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnReset(EventArgs e)
+        protected override void OnReset()
         {
             var current = State;
-            base.OnReset(e);
+            base.OnReset();
 
             Result = null;
             FailedCount = 0;
