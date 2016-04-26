@@ -232,9 +232,9 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnReset(EventArgs e)
+        protected override void OnReset()
         {
-            base.OnReset(e);
+            base.OnReset();
             FailedCount = 0;
         }
 
