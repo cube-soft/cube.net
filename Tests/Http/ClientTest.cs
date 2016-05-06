@@ -57,7 +57,7 @@ namespace Cube.Tests.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TimeSpan Timeout => TimeSpan.FromMilliseconds(500);
+        public TimeSpan Timeout => TimeSpan.FromSeconds(2);
 
         #endregion
 
