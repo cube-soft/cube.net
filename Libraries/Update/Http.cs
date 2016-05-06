@@ -95,7 +95,7 @@ namespace Cube.Net.Update
 
             foreach (var item in items)
             {
-                if (item.Version == version.ToString()) return item;
+                if (item.Version == version.ToString(false)) return item;
             }
             return null;
         }
