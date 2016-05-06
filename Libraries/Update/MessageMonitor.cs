@@ -151,7 +151,7 @@ namespace Cube.Net.Update
                 try
                 {
                     return await ClientFactory.Create(Timeout)
-                        .GetUpdateMessageAsync(EndPoint, Version.ToString());
+                        .GetUpdateMessageAsync(EndPoint, Version);
                 }
                 catch (Exception err) { this.LogError(err.Message, err); }
                 ++FailedCount;
