@@ -37,7 +37,7 @@ namespace Cube.Net.Update
     /* --------------------------------------------------------------------- */
     public static class Http
     {
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         ///
         /// GetUpdateMessageAsync
         ///
@@ -46,7 +46,7 @@ namespace Cube.Net.Update
         /// 非同期で取得します。
         /// </summary>
         ///
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         public static Task<Message> GetUpdateMessageAsync(this HttpClient client,
             Uri uri, SoftwareVersion version)
         {
@@ -54,7 +54,7 @@ namespace Cube.Net.Update
             return GetUpdateMessageAsync(client, uri, version, query);
         }
 
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         ///
         /// GetUpdateMessageAsync
         ///
@@ -63,7 +63,7 @@ namespace Cube.Net.Update
         /// 非同期で取得します。
         /// </summary>
         ///
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         public static Task<Message> GetUpdateMessageAsync(this HttpClient client,
             Uri uri, SoftwareVersion version, string key, string value)
         {
@@ -72,7 +72,7 @@ namespace Cube.Net.Update
             return GetUpdateMessageAsync(client, uri, version, query);
         }
 
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         ///
         /// GetUpdateMessageAsync
         ///
@@ -81,7 +81,7 @@ namespace Cube.Net.Update
         /// 非同期で取得します。
         /// </summary>
         ///
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         public static async Task<Message> GetUpdateMessageAsync(this HttpClient client,
             Uri uri, SoftwareVersion version, IDictionary<string, string> query)
         {
