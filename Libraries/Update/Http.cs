@@ -37,7 +37,7 @@ namespace Cube.Net.Update
     /* --------------------------------------------------------------------- */
     public static class Http
     {
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         ///
         /// GetUpdateMessageAsync
         ///
@@ -46,15 +46,15 @@ namespace Cube.Net.Update
         /// 非同期で取得します。
         /// </summary>
         ///
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         public static Task<Message> GetUpdateMessageAsync(this HttpClient client,
-            Uri uri, string version)
+            Uri uri, SoftwareVersion version)
         {
             var query = new Dictionary<string, string>();
             return GetUpdateMessageAsync(client, uri, version, query);
         }
 
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         ///
         /// GetUpdateMessageAsync
         ///
@@ -63,16 +63,16 @@ namespace Cube.Net.Update
         /// 非同期で取得します。
         /// </summary>
         ///
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         public static Task<Message> GetUpdateMessageAsync(this HttpClient client,
-            Uri uri, string version, string key, string value)
+            Uri uri, SoftwareVersion version, string key, string value)
         {
             var query = new Dictionary<string, string>();
             query.Add(key, value);
             return GetUpdateMessageAsync(client, uri, version, query);
         }
 
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         ///
         /// GetUpdateMessageAsync
         ///
@@ -81,11 +81,11 @@ namespace Cube.Net.Update
         /// 非同期で取得します。
         /// </summary>
         ///
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         public static async Task<Message> GetUpdateMessageAsync(this HttpClient client,
-            Uri uri, string version, IDictionary<string, string> query)
+            Uri uri, SoftwareVersion version, IDictionary<string, string> query)
         {
-            var request = uri.With("ver", version).With(query);
+            var request = uri.With(version).With(query);
             var response = await client.GetAsync(request);
             if (!response.IsSuccessStatusCode) return null;
 
@@ -95,7 +95,7 @@ namespace Cube.Net.Update
 
             foreach (var item in items)
             {
-                if (item.Version == version) return item;
+                if (item.Version == version.ToString(false)) return item;
             }
             return null;
         }

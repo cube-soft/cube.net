@@ -248,7 +248,9 @@ namespace Cube.Net.Update
         {
             if (!Required || Secondary == null) return;
 
-            var uri = Secondary.With("ver", Version).With("flag", "install");
+            var uri = Secondary.With(Version)
+                               .With("flag", "install");
+
             var response = await Http.GetAsync(uri);
             if (response == null) return;
 
