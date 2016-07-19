@@ -46,6 +46,17 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        public Monitor() : this(Client.DefaultServer) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
         public Monitor(string server)
             : this(server, Client.DefaultPort) { }
 

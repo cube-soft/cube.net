@@ -47,6 +47,17 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        public Client() : this(DefaultServer) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Client
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
         public Client(IPAddress server)
             : this(server.ToString(), DefaultPort) { }
 
@@ -106,6 +117,17 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DefaultServer
+        /// 
+        /// <summary>
+        /// NTP 通信のデフォルトサーバを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static readonly string DefaultServer = @"ntp.cube-soft.jp";
 
         /* ----------------------------------------------------------------- */
         ///
