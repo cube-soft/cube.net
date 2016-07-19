@@ -127,7 +127,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static readonly string DefaultServer = @"ntp.cube-soft.jp";
+        public static readonly string DefaultServer = "ntp.cube-soft.jp";
 
         /* ----------------------------------------------------------------- */
         ///
