@@ -119,7 +119,7 @@ namespace Cube.Tests.Net.Ntp
             Assert.That(
                 async () =>
                 {
-                    var client = new Cube.Net.Ntp.Client("ntp.cube-soft.jp");
+                    var client = new Cube.Net.Ntp.Client();
                     client.Timeout = TimeSpan.FromMilliseconds(1);
                     await client.GetAsync();
                 },
@@ -161,7 +161,7 @@ namespace Cube.Tests.Net.Ntp
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            Client = new Cube.Net.Ntp.Client("ntp.cube-soft.jp");
+            Client = new Cube.Net.Ntp.Client();
         }
 
         /* ----------------------------------------------------------------- */
