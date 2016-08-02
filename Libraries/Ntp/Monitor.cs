@@ -211,9 +211,7 @@ namespace Cube.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         protected virtual void OnResultChanged(ValueEventArgs<Packet> e)
-        {
-            if (ResultChanged != null) ResultChanged(this, e);
-        }
+            => ResultChanged?.Invoke(this, e);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -229,7 +227,7 @@ namespace Cube.Net.Ntp
             if (PowerMode == PowerModes.Suspend) return;
             Reset();
 
-            if (TimeChanged != null) TimeChanged(this, e);
+            TimeChanged?.Invoke(this, e);
         }
 
         #endregion
