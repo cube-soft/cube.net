@@ -181,7 +181,7 @@ namespace Cube.Net
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
             ChangeState();
-            if (NetworkChanged != null) NetworkChanged(this, e);
+            NetworkChanged?.Invoke(this, e);
         }
 
         /* ----------------------------------------------------------------- */
@@ -197,7 +197,7 @@ namespace Cube.Net
         {
             PowerMode = e.Mode;
             ChangeState();
-            if (PowerModeChanged != null) PowerModeChanged(this, e);
+            PowerModeChanged?.Invoke(this, e);
         }
 
         #endregion
@@ -240,7 +240,7 @@ namespace Cube.Net
 
         #endregion
 
-        #region Implementations
+        #region Other private methods
 
         /* ----------------------------------------------------------------- */
         ///
@@ -257,8 +257,13 @@ namespace Cube.Net
 
             var before = State;
             var available = (PowerMode == PowerModes.Resume) && IsNetworkAvailable;
-            if (available && State == SchedulerState.Suspend) Resume();
+            if (available && State == SchedulerState.Suspend)
+            {
+                Resume();
+                if (DateTime.Now - LastExecuted > Interval) RaiseExecute();
+            }
             else if (!available && State == SchedulerState.Run) Suspend();
+
             this.LogDebug($"State:{before}->{State}");
         }
 
