@@ -253,18 +253,45 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         private void ChangeState()
         {
-            if (State == SchedulerState.Stop) return;
+            var previous = State;
 
-            var before = State;
-            var available = (PowerMode == PowerModes.Resume) && IsNetworkAvailable;
-            if (available && State == SchedulerState.Suspend)
+            try
             {
-                Resume();
-                if (DateTime.Now - LastExecuted > Interval) RaiseExecute();
-            }
-            else if (!available && State == SchedulerState.Run) Suspend();
+                if (State == SchedulerState.Stop) return;
+                if (!IsNetworkAvailable)
+                {
+                    if (State == SchedulerState.Run) Suspend();
+                    return;
+                }
 
-            this.LogDebug($"State:{before}->{State}");
+                switch (PowerMode)
+                {
+                    case PowerModes.Resume:
+                        if (State == SchedulerState.Suspend)
+                        {
+                            Resume();
+                            if (DateTime.Now - LastExecuted > Interval) RaiseExecute();
+                        }
+                        break;
+                    case PowerModes.Suspend:
+                        if (State == SchedulerState.Run) Suspend();
+                        break;
+                    case PowerModes.StatusChange:
+                        break;
+                    default:
+                        break;
+                }
+            }
+            finally
+            {
+                var format = "State:{0}->{1}\tPowerMode:{2}\tIsNetworkAvailable:{3}";
+                this.LogDebug(string.Format(format,
+                    previous,
+                    State,
+                    PowerMode,
+                    IsNetworkAvailable
+                ));
+            }
         }
 
         #endregion
