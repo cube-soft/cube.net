@@ -23,6 +23,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Json;
+using Cube.Log;
 
 namespace Cube.Net.Http
 {
@@ -49,11 +50,21 @@ namespace Cube.Net.Http
         public static async Task<T> GetJsonAsync<T>(this HttpClient client, Uri uri) where T : class
         {
             var response = await client.GetAsync(uri);
-            if (!response.IsSuccessStatusCode) return null;
+            if (!response.IsSuccessStatusCode)
+            {
+                client.LogError($"StatusCode:{response.StatusCode}");
+                return null;
+            }
 
-            var stream = await response.Content.ReadAsStreamAsync();
-            var json = new DataContractJsonSerializer(typeof(T));
-            return json.ReadObject(stream) as T;
+            try
+            {
+                var stream = await response.Content.ReadAsStreamAsync();
+                var json = new DataContractJsonSerializer(typeof(T));
+                return json.ReadObject(stream) as T;
+            }
+            catch (Exception err) { await client.LogError(response, err); }
+
+            return null;
         }
 
         /* --------------------------------------------------------------------- */
@@ -68,11 +79,41 @@ namespace Cube.Net.Http
         public static async Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri) where T : class
         {
             var response = await client.GetAsync(uri);
-            if (!response.IsSuccessStatusCode) return null;
+            if (!response.IsSuccessStatusCode)
+            {
+                client.LogError($"StatusCode:{response.StatusCode}");
+                return null;
+            }
 
-            var stream = await response.Content.ReadAsStreamAsync();
-            var xml = new XmlSerializer(typeof(T));
-            return xml.Deserialize(stream) as T;
+            try
+            {
+                var stream = await response.Content.ReadAsStreamAsync();
+                var xml = new XmlSerializer(typeof(T));
+                return xml.Deserialize(stream) as T;
+            }
+            catch (Exception err) { await client.LogError(response, err); }
+
+            return null;
         }
+
+        #region Other private methods
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// LogError
+        /// 
+        /// <summary>
+        /// エラーログを出力します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        private static async Task LogError(this HttpClient client, HttpResponseMessage response, Exception err)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            client.LogError(err.Message, err);
+            client.LogError(content);
+        }
+
+        #endregion
     }
 }
