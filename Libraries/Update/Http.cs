@@ -22,6 +22,7 @@ using System;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Cube.Conversions;
 
 namespace Cube.Net.Update
@@ -90,14 +91,9 @@ namespace Cube.Net.Update
             if (!response.IsSuccessStatusCode) return null;
 
             var stream = await response.Content.ReadAsStreamAsync();
-            var items  = MessageFactory.Create(stream);
-            if (items == null) return null;
-
-            foreach (var item in items)
-            {
-                if (item.Version == version.ToString(false)) return item;
-            }
-            return null;
+            return MessageFactory.Create(stream)?.FirstOrDefault(
+                x => x.Version == version.ToString(false)
+            );
         }
     }
 }
