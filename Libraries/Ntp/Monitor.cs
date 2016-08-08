@@ -57,8 +57,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Monitor(string server)
-            : this(server, Client.DefaultPort) { }
+        public Monitor(string server) : this(server, Client.DefaultPort) { }
 
         /* ----------------------------------------------------------------- */
         ///

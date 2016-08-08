@@ -49,9 +49,7 @@ namespace Cube.Net
         public NetworkAwareMonitor()
             : base()
         {
-            PowerMode = PowerModes.Resume;
             NetworkChange.NetworkAvailabilityChanged += (s, e) => OnNetworkChanged(e);
-            SystemEvents.PowerModeChanged += (s, e) => OnPowerModeChanged(e);
         }
 
         #endregion
@@ -60,25 +58,14 @@ namespace Cube.Net
 
         /* ----------------------------------------------------------------- */
         ///
-        /// PowerMode
-        /// 
-        /// <summary>
-        /// 現在の電源モードを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public PowerModes PowerMode { get; private set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IsNetworkAvailable
+        /// NetworkAvailable
         /// 
         /// <summary>
         /// ネットワークが使用可能な状態かどうかを表す値を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsNetworkAvailable => NetworkInterface.GetIsNetworkAvailable();
+        public bool NetworkAvailable => NetworkInterface.GetIsNetworkAvailable();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -154,17 +141,6 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         public event EventHandler<NetworkAvailabilityEventArgs> NetworkChanged;
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// PowerModeChanged
-        /// 
-        /// <summary>
-        /// 電源の状態が変化した時に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public event EventHandler<PowerModeChangedEventArgs> PowerModeChanged;
-
         #endregion
 
         #region Virtual methods
@@ -180,48 +156,20 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
-            ChangeState();
-            NetworkChanged?.Invoke(this, e);
-        }
+            var previous = State;
+            if (NetworkAvailable)
+            {
+                if (State == SchedulerState.Suspend) Resume();
+            }
+            else if (State == SchedulerState.Run) Suspend();
+            this.LogDebug($"NetworkAvailable:{NetworkAvailable}\tState:{previous}->{State}");
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// PowerModeChanged
-        /// 
-        /// <summary>
-        /// 電源の状態が変化した時に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void OnPowerModeChanged(PowerModeChangedEventArgs e)
-        {
-            PowerMode = e.Mode;
-            ChangeState();
-            PowerModeChanged?.Invoke(this, e);
+            NetworkChanged?.Invoke(this, e);
         }
 
         #endregion
 
         #region Override methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnExecute
-        /// 
-        /// <summary>
-        /// モニタリングのための操作を実行するタイミングになった時に実行されます。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// ネットワークが利用不可能な状態の場合 Suspend を実行します。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnExecute(EventArgs e)
-        {
-            if (!NetworkInterface.GetIsNetworkAvailable()) Suspend();
-            else base.OnExecute(e);
-        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -238,60 +186,43 @@ namespace Cube.Net
             FailedCount = 0;
         }
 
-        #endregion
-
-        #region Other private methods
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnExecute
+        /// 
+        /// <summary>
+        /// モニタリングのための操作を実行するタイミングになった時に
+        /// 実行されます。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// ネットワークが利用不可能な状態の場合 Suspend を実行します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnExecute(EventArgs e)
+        {
+            if (!NetworkAvailable) Suspend();
+            else base.OnExecute(e);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ChangeState
+        /// OnPowerModeChanged
         /// 
         /// <summary>
-        /// ネットワークや電源の状態に応じて State を切り替えます。
+        /// 電源の状態が変更された時に実行されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void ChangeState()
+        protected override void OnPowerModeChanged(PowerModeChangedEventArgs e)
         {
-            var previous = State;
-
-            try
+            if (!NetworkAvailable)
             {
-                if (State == SchedulerState.Stop) return;
-                if (!IsNetworkAvailable)
-                {
-                    if (State == SchedulerState.Run) Suspend();
-                    return;
-                }
-
-                switch (PowerMode)
-                {
-                    case PowerModes.Resume:
-                        if (State == SchedulerState.Suspend)
-                        {
-                            Resume();
-                            if (DateTime.Now - LastExecuted > Interval) RaiseExecute();
-                        }
-                        break;
-                    case PowerModes.Suspend:
-                        if (State == SchedulerState.Run) Suspend();
-                        break;
-                    case PowerModes.StatusChange:
-                        break;
-                    default:
-                        break;
-                }
+                if (State == SchedulerState.Run) Suspend();
+                return;
             }
-            finally
-            {
-                var format = "State:{0}->{1}\tPowerMode:{2}\tIsNetworkAvailable:{3}";
-                this.LogDebug(string.Format(format,
-                    previous,
-                    State,
-                    PowerMode,
-                    IsNetworkAvailable
-                ));
-            }
+            base.OnPowerModeChanged(e);
         }
 
         #endregion

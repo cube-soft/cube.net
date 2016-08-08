@@ -38,6 +38,21 @@ namespace Cube.Tests.Net.Update
     [TestFixture]
     class MessageTest
     {
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// EndPoint
+        /// 
+        /// <summary>
+        /// テスト用の URL を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Uri EndPoint => new Uri("http://www.cube-soft.jp/cubelab/cubenews/update.php");
+
+        #endregion
+
         #region Tests
 
         /* ----------------------------------------------------------------- */
@@ -55,17 +70,58 @@ namespace Cube.Tests.Net.Update
         {
             var query = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(key)) query.Add(key, value);
-            var uri = new Uri("http://www.cube-soft.jp/cubelab/cubenews/update.php");
-            var http = new System.Net.Http.HttpClient();
-            http.Timeout = TimeSpan.FromSeconds(2);
-            var message = await http.GetUpdateMessageAsync(uri, new SoftwareVersion(version), query);
 
-            Assert.That(message, Is.Not.Null);
-            Assert.That(message.Version, Is.EqualTo(version));
-            Assert.That(message.Notify, Is.False);
-            Assert.That(message.Uri, Is.EqualTo(new Uri("http://s.cube-soft.jp/widget/")));
-            Assert.That(message.Text.Length, Is.AtLeast(1));
+            var result = await Create().GetUpdateMessageAsync(
+                EndPoint,
+                new SoftwareVersion(version),
+                query
+            );
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Version, Is.EqualTo(version));
+            Assert.That(result.Notify, Is.False);
+            Assert.That(result.Uri, Is.EqualTo(new Uri("http://s.cube-soft.jp/widget/")));
+            Assert.That(result.Text.Length, Is.AtLeast(1));
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetUpdateMessageAsync_IsNull
+        /// 
+        /// <summary>
+        /// アップデート用メッセージが見つからない場合のテストを行います。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TestCase("9.9.9")]
+        public async Task GetUpdateMessageAsync_IsNull(string version)
+        {
+            var result = await Create().GetUpdateMessageAsync(
+                EndPoint,
+                new SoftwareVersion(version)
+            );
+
+            Assert.That(result, Is.Null);
+        }
+
+        #endregion
+
+        #region Other private methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        /// 
+        /// <summary>
+        /// HttpClient オブジェクトを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private System.Net.Http.HttpClient Create()
+            => new System.Net.Http.HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(2)
+        };
 
         #endregion
     }
