@@ -37,23 +37,22 @@
     <Reference Include="Cube.Core">
       <HintPath>..\..\lib\net45\Cube.Core.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Http\ClientBase.cs" />
     <Compile Include="Http\ClientFactory.cs" />
+    <Compile Include="Http\ClientOperations.cs" />
     <Compile Include="Http\EntityTag.cs" />
     <Compile Include="Http\EntityTagHandler.cs" />
-    <Compile Include="Http\ClientOperations.cs" />
-    <Compile Include="NetworkAwareMonitor.cs" />
     <Compile Include="Ntp\Client.cs" />
     <Compile Include="Ntp\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
@@ -62,6 +61,7 @@
     <Compile Include="Ntp\Packet.cs" />
     <Compile Include="Ntp\Stratum.cs" />
     <Compile Include="Ntp\Timestamp.cs" />
+    <Compile Include="NetworkAwareMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
