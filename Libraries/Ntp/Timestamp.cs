@@ -1,7 +1,5 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// Timestamp.cs
-/// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
 /// Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +43,7 @@ namespace Cube.Net.Ntp
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class Timestamp
+    public static class Timestamp
     {
         /* ----------------------------------------------------------------- */
         ///
