@@ -49,6 +49,9 @@
     <Reference Include="System.Net.Http">
       <HintPath>..\..\lib\net35\System.Net.Http.dll</HintPath>
     </Reference>
+    <Reference Include="Cube.Backwards">
+      <HintPath>..\..\lib\net35\Cube.Backwards.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cube.Core">
