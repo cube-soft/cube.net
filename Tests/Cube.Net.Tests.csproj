@@ -42,11 +42,9 @@
   <ItemGroup>
     <Reference Include="AsyncBridge.Net35">
       <HintPath>..\..\packages\AsyncBridge.Net35.0.2.0\lib\net35-Client\AsyncBridge.Net35.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Threading">
       <HintPath>..\..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http">
       <HintPath>..\..\lib\net35\System.Net.Http.dll</HintPath>
@@ -57,12 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net">
-      <HintPath>..\..\packages\log4net.2.0.7\lib\net35-full\log4net.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.3.0.1\lib\net20\nunit.framework.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Cube.Core">
       <HintPath>..\..\lib\net35\Cube.Core.dll</HintPath>
@@ -85,7 +81,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="Packages.config" />
   </ItemGroup>
   <ItemGroup>
