@@ -28,13 +28,13 @@ namespace Cube.Net.Ntp
     /// Client
     ///
     /// <summary>
-    /// NTP でサーバと通信するためのクラスです。
+    /// NTP サーバと通信するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public class Client : IDisposable
     {
-        #region Constructors and destructors
+        #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
@@ -96,20 +96,6 @@ namespace Cube.Net.Ntp
             Timeout = TimeSpan.FromSeconds(5);
             Host = Dns.GetHostEntry(server);
             Port = port;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~Client
-        /// 
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~Client()
-        {
-            Dispose(false);
         }
 
         #endregion
@@ -175,23 +161,21 @@ namespace Cube.Net.Ntp
 
         #region Methods
 
+        #region IDisposable
+
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsync
+        /// ~Client
         /// 
         /// <summary>
-        /// NTP サーバと通信を行い、NTP パケットを取得します。
+        /// オブジェクトを破棄します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Task<Packet> GetAsync()
+        ~Client()
         {
-            return GetAsyncCore().Timeout(Timeout);
+            Dispose(false);
         }
-
-        #endregion
-
-        #region Methods for IDisposable
 
         /* ----------------------------------------------------------------- */
         ///
@@ -226,7 +210,21 @@ namespace Cube.Net.Ntp
 
         #endregion
 
-        #region Others
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync
+        /// 
+        /// <summary>
+        /// NTP サーバと通信を行い、NTP パケットを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Task<Packet> GetAsync()
+            => GetAsyncCore().Timeout(Timeout);
+
+        #endregion
+
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
@@ -237,56 +235,51 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task<Packet> GetAsyncCore()
+        private Task<Packet> GetAsyncCore() => Task.Run(() =>
         {
-            await SendToAsync();
-            return await ReceiveFromAsync();
-        }
+            SendTo();
+            return ReceiveFrom();
+        });
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SendToAsync
+        /// SendTo
         /// 
         /// <summary>
         /// NTP サーバへパケットを送信します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Task<int> SendToAsync()
+        private void SendTo()
         {
-            return Task.Run(() =>
-            {
-                var endpoint = new IPEndPoint(Host.AddressList[0], Port);
-                var packet = new Ntp.Packet();
-                return _socket.SendTo(packet.RawData, endpoint);
-            });
+            var endpoint = new IPEndPoint(Host.AddressList[0], Port);
+            var packet = new Ntp.Packet();
+            var sent = _socket.SendTo(packet.RawData, endpoint);
+            if (sent != packet.RawData.Length) throw new SocketException();
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ReceiveFromAsync
+        /// ReceiveFrom
         /// 
         /// <summary>
         /// NTP サーバからパケットを受信します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Task<Packet> ReceiveFromAsync()
+        private Packet ReceiveFrom()
         {
-            return Task.Run(() =>
-            {
-                var endpoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
-                var raw = new byte[48 + (32 + 128) / 8];
-                var bytes = _socket.ReceiveFrom(raw, ref endpoint);
-                return new Packet(raw);
-            });
+            var endpoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
+            var raw = new byte[48 + (32 + 128) / 8];
+            var bytes = _socket.ReceiveFrom(raw, ref endpoint);
+            return new Packet(raw);
         }
-
-        #endregion
 
         #region Fields
         private bool _disposed = false;
         private Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        #endregion
+
         #endregion
     }
 }
