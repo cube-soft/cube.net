@@ -31,7 +31,7 @@ namespace Cube.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Monitor : NetworkAwareMonitor
+    public class Monitor : NetworkAwareTimer
     {
         #region Constructors
 
@@ -249,7 +249,7 @@ namespace Cube.Net.Ntp
             Result = null;
             FailedCount = 0;
 
-            if (current == SchedulerState.Run)
+            if (current == TimerState.Run)
             {
                 var _ = GetAsync();
                 Start();
@@ -269,7 +269,7 @@ namespace Cube.Net.Ntp
         protected override void OnExecute(EventArgs e)
         {
             base.OnExecute(e);
-            if (State != SchedulerState.Run) return;
+            if (State != TimerState.Run) return;
             var _ = GetAsync();
         }
 

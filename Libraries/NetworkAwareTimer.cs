@@ -24,14 +24,14 @@ namespace Cube.Net
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkAwareMonitor
+    /// NetworkAwareTimer
     ///
     /// <summary>
-    /// ネットワーク状況の変化に反応するモニタリング用クラスです。
+    /// ネットワーク状況の変化に反応するタイマーです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class NetworkAwareMonitor : Scheduler
+    public class NetworkAwareTimer : WakeableTimer
     {
         #region Constructors
 
@@ -44,8 +44,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public NetworkAwareMonitor()
-            : base()
+        public NetworkAwareTimer() : base()
         {
             NetworkChange.NetworkAvailabilityChanged += (s, e) => OnNetworkChanged(e);
         }
@@ -122,7 +121,7 @@ namespace Cube.Net
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public int FailedCount { get; protected set; }
+        public int FailedCount { get; protected set; } = 0;
 
         #endregion
 
@@ -139,16 +138,12 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         public event EventHandler<NetworkAvailabilityEventArgs> NetworkChanged;
 
-        #endregion
-
-        #region Virtual methods
-
         /* ----------------------------------------------------------------- */
         ///
         /// OnNetworkChanged
         /// 
         /// <summary>
-        /// ネットワークの状況が変化した時に発生するイベントです。
+        /// NetworkChanged イベントを発生させます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -157,9 +152,9 @@ namespace Cube.Net
             var previous = State;
             if (NetworkAvailable)
             {
-                if (State == SchedulerState.Suspend) Resume();
+                if (State == TimerState.Suspend) Resume();
             }
-            else if (State == SchedulerState.Run) Suspend();
+            else if (State == TimerState.Run) Suspend();
             this.LogDebug($"NetworkAvailable:{NetworkAvailable}\tState:{previous}->{State}");
 
             NetworkChanged?.Invoke(this, e);
@@ -217,7 +212,7 @@ namespace Cube.Net
         {
             if (!NetworkAvailable)
             {
-                if (State == SchedulerState.Run) Suspend();
+                if (State == TimerState.Run) Suspend();
                 return;
             }
             base.OnPowerModeChanged(e);

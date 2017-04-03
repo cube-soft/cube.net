@@ -61,7 +61,7 @@
     <Compile Include="Ntp\Packet.cs" />
     <Compile Include="Ntp\Stratum.cs" />
     <Compile Include="Ntp\Timestamp.cs" />
-    <Compile Include="NetworkAwareMonitor.cs" />
+    <Compile Include="NetworkAwareTimer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
