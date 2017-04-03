@@ -44,7 +44,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Monitor() : this(Client.DefaultServer) { }
+        public Monitor() : this(Ntp.Client.DefaultServer) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -53,9 +53,11 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <param name="server">NTP サーバ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public Monitor(string server) : this(server, Client.DefaultPort) { }
+        public Monitor(string server) : this(server, Ntp.Client.DefaultPort) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -64,10 +66,12 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <param name="server">NTP サーバ</param>
+        /// <param name="port">ポート番号</param>
         ///
         /* ----------------------------------------------------------------- */
-        public Monitor(string server, int port)
-            : base()
+        public Monitor(string server, int port) : base()
         {
             Interval = TimeSpan.FromHours(1);
             _server = server;
@@ -85,8 +89,8 @@ namespace Cube.Net.Ntp
         /// Server
         /// 
         /// <summary>
-        /// サーバのアドレス (ホスト名または IP アドレス) を取得または
-        /// 設定します。
+        /// NTP サーバのアドレス (ホスト名または IP アドレス) を取得
+        /// または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -123,25 +127,6 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Result
-        /// 
-        /// <summary>
-        /// NTP サーバと最後に通信した結果を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Packet Result
-        {
-            get { return _result; }
-            private set
-            {
-                lock (_lock) _result = value;
-                OnResultChanged(new ValueEventArgs<Packet>(value));
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// IsValid
         /// 
         /// <summary>
@@ -149,28 +134,43 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsValid
-        {
-            get { return Result != null && Result.IsValid; }
-        }
+        public bool IsValid => _packet?.IsValid ?? false;
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LocalClockOffset
+        /// Result
         /// 
         /// <summary>
         /// ローカル時刻とのずれを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TimeSpan LocalClockOffset
+        public TimeSpan Result => IsValid ? Packet.LocalClockOffset : TimeSpan.Zero;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Packet
+        /// 
+        /// <summary>
+        /// 最新の Packet オブジェクトを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected Packet Packet
         {
-            get { return IsValid ? Result.LocalClockOffset : TimeSpan.Zero; }
+            get { return _packet; }
+            set
+            {
+                _packet = value;
+                OnResultChanged(ValueEventArgs.Create(Result));
+            }
         }
 
         #endregion
 
         #region Events
+
+        #region ResultChanged
 
         /* ----------------------------------------------------------------- */
         ///
@@ -181,7 +181,23 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event EventHandler<ValueEventArgs<Packet>> ResultChanged;
+        public event ValueEventHandler<TimeSpan> ResultChanged;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnResultChanged
+        /// 
+        /// <summary>
+        /// ResultChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnResultChanged(ValueEventArgs<TimeSpan> e)
+            => ResultChanged?.Invoke(this, e);
+
+        #endregion
+
+        #region TimeChanged
 
         /* ----------------------------------------------------------------- */
         ///
@@ -193,22 +209,6 @@ namespace Cube.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         public event EventHandler TimeChanged;
-
-        #endregion
-
-        #region Virtual methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnResultChanged
-        /// 
-        /// <summary>
-        /// Result プロパティが変化した時に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void OnResultChanged(ValueEventArgs<Packet> e)
-            => ResultChanged?.Invoke(this, e);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -229,15 +229,16 @@ namespace Cube.Net.Ntp
 
         #endregion
 
-        #region Override methods
+        #endregion
+
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
         /// OnReset
         /// 
         /// <summary>
-        /// 現在の LastResult プロパティの値を破棄し、NTP サーバに
-        /// 問い合わせます。
+        /// 現在の状態を破棄し、NTP サーバに問い合わせます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -246,14 +247,8 @@ namespace Cube.Net.Ntp
             var current = State;
             base.OnReset();
 
-            Result = null;
-            FailedCount = 0;
-
-            if (current == TimerState.Run)
-            {
-                var _ = GetAsync();
-                Start();
-            }
+            Packet = null;
+            if (current == TimerState.Run) RaiseExecute();
         }
 
         /* ----------------------------------------------------------------- */
@@ -266,16 +261,12 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnExecute(EventArgs e)
+        protected override async void OnExecute(EventArgs e)
         {
             base.OnExecute(e);
             if (State != TimerState.Run) return;
-            var _ = GetAsync();
+            await GetAsync();
         }
-
-        #endregion
-
-        #region Other private methods
 
         /* ----------------------------------------------------------------- */
         ///
@@ -292,29 +283,32 @@ namespace Cube.Net.Ntp
             {
                 try
                 {
-                    var client = new Client(Server, Port);
-                    client.Timeout = Timeout;
+                    var client = new Client(Server, Port)
+                    {
+                        Timeout = Timeout,
+                    };
+
                     var packet = await client.GetAsync();
                     if (packet != null && packet.IsValid)
                     {
-                        Result = packet;
+                        Packet = packet;
                         return;
                     }
                 }
-                catch (Exception err) { this.LogError(err.Message, err); }
+                catch (Exception err) { this.LogWarn(err.Message, err); }
                 ++FailedCount;
                 await Task.Delay(RetryInterval);
             }
-        }
 
-        #endregion
+            this.LogWarn($"Failed\tCount:{FailedCount}");
+        }
 
         #region Fields
         private string _server = string.Empty;
         private int _port = Client.DefaultPort;
-        private Packet _result = null;
-        private TimeSpan _timeout = TimeSpan.FromSeconds(5);
-        private object _lock = new object();
+        private Packet _packet = null;
+        #endregion
+
         #endregion
     }
 }

@@ -37,7 +37,7 @@ namespace Cube.Tests.Net.Ntp
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Start_RunOnce
+        /// Start
         /// 
         /// <summary>
         /// NTP サーバを監視するテストを行います。
@@ -45,7 +45,7 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start_RunOnce()
+        public void Start()
         {
             var monitor = new Cube.Net.Ntp.Monitor("ntp.cube-soft.jp");
             Assert.That(
