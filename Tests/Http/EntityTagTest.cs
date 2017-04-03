@@ -78,7 +78,7 @@ namespace Cube.Tests.Net.Http
         /* ----------------------------------------------------------------- */
         private HttpClient Create(Cube.Net.Http.EntityTag etag)
         {
-            var handler = etag.CreateHandler();
+            var handler = etag.GetHandler();
             var timeout = TimeSpan.FromSeconds(1);
             return Cube.Net.Http.ClientFactory.Create(handler, timeout);
         }

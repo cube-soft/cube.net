@@ -52,7 +52,6 @@
     <Compile Include="Http\ClientFactory.cs" />
     <Compile Include="Http\ClientOperations.cs" />
     <Compile Include="Http\EntityTag.cs" />
-    <Compile Include="Http\EntityTagHandler.cs" />
     <Compile Include="Ntp\Client.cs" />
     <Compile Include="Ntp\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
