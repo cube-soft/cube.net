@@ -44,7 +44,20 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public NetworkAwareTimer() : base()
+        public NetworkAwareTimer() : this(TimeSpan.FromHours(1)) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// NetworkAwareMonitor
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="interval">実行周期</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public NetworkAwareTimer(TimeSpan interval) : base(interval)
         {
             NetworkChange.NetworkAvailabilityChanged += (s, e) => OnNetworkChanged(e);
         }
@@ -162,7 +175,7 @@ namespace Cube.Net
 
         #endregion
 
-        #region Override methods
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
