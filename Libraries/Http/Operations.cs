@@ -26,15 +26,17 @@ namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ClientOperations
+    /// Net.Http.Operations
     ///
     /// <summary>
-    /// System.Net.Http.HttpClient の拡張用クラスです。
+    /// HTTP 通信に関する拡張用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class ClientOperations
+    public static class Operations
     {
+        #region HttpClient
+
         /* --------------------------------------------------------------------- */
         ///
         /// GetJsonAsync
@@ -42,6 +44,11 @@ namespace Cube.Net.Http
         /// <summary>
         /// JSON 形式のデータを非同期で取得します。
         /// </summary>
+        /// 
+        /// <param name="client">HTTP クライアント</param>
+        /// <param name="uri">レスポンス取得 URL</param>
+        /// 
+        /// <returns>JSON 形式データを解析した結果</returns>
         ///
         /* --------------------------------------------------------------------- */
         public static async Task<T> GetJsonAsync<T>(this HttpClient client, Uri uri) where T : class
@@ -72,6 +79,11 @@ namespace Cube.Net.Http
         /// XML 形式のデータを非同期で取得します。
         /// </summary>
         ///
+        /// <param name="client">HTTP クライアント</param>
+        /// <param name="uri">レスポンス取得 URL</param>
+        /// 
+        /// <returns>XML 形式データを解析した結果</returns>
+        ///
         /* --------------------------------------------------------------------- */
         public static async Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri) where T : class
         {
@@ -93,7 +105,9 @@ namespace Cube.Net.Http
             return null;
         }
 
-        #region Other private methods
+        #endregion
+
+        #region Implementations
 
         /* --------------------------------------------------------------------- */
         ///

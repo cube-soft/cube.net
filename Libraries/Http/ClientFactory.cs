@@ -73,15 +73,16 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public static HttpClient Create(TimeSpan timeout)
         {
-            var handler = new HttpClientHandler();
-            handler.Proxy = null;
-            handler.UseProxy = false;
+            var handler = new HttpClientHandler
+            {
+                Proxy    = null,
+                UseProxy = false,
+            };
 
             if (handler.SupportsAutomaticDecompression)
             {
-                handler.AutomaticDecompression =
-                    DecompressionMethods.Deflate |
-                    DecompressionMethods.GZip;
+                handler.AutomaticDecompression = DecompressionMethods.Deflate |
+                                                 DecompressionMethods.GZip;
             }
 
             return Create(handler, timeout);

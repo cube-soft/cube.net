@@ -47,7 +47,7 @@ namespace Cube.Net.Http
         /// <param name="handler">HTTP 通信用ハンドラ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public Monitor(ContentConvertHandler<TValue> handler) : base()
+        public Monitor(ContentHandler<TValue> handler) : base()
         {
             _handler = handler;
         }
@@ -64,7 +64,7 @@ namespace Cube.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         public Monitor(IContentConverter<TValue> converter)
-            : this (new ContentConvertHandler<TValue>(converter)) { }
+            : this (new ContentHandler<TValue>(converter)) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -78,7 +78,7 @@ namespace Cube.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         public Monitor(Func<HttpContent, Task<TValue>> func)
-            : this(new ContentConvertHandler<TValue>(func)) { }
+            : this(new ContentHandler<TValue>(func)) { }
 
         #endregion
 
@@ -124,6 +124,47 @@ namespace Cube.Net.Http
 
         #endregion
 
+        #region IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor
+        ///
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        ~Monitor()
+        {
+            Dispose(false);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                _http?.Dispose();
+                _handler?.Dispose();
+            }
+
+            _disposed = true;
+            base.Dispose(disposing);
+        }
+
+        #endregion
+
         #region Implementations
 
         /* ----------------------------------------------------------------- */
@@ -144,8 +185,8 @@ namespace Cube.Net.Http
             {
                 try
                 {
-                    var http     = ClientFactory.Create(_handler, Timeout);
-                    var response = await http.GetAsync(EndPoint.With(Version));
+                    if (_http == null) _http = ClientFactory.Create(_handler, Timeout);
+                    var response = await _http.GetAsync(EndPoint.With(Version));
 
                     if (response?.Content is ValueContent<TValue> content)
                     {
@@ -162,7 +203,9 @@ namespace Cube.Net.Http
         }
 
         #region Fields
-        private ContentConvertHandler<TValue> _handler;
+        private bool _disposed = false;
+        private HttpClient _http;
+        private ContentHandler<TValue> _handler;
         #endregion
 
         #endregion

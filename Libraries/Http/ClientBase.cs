@@ -29,7 +29,7 @@ namespace Cube.Net.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ClientBase
+    public class ClientBase : IDisposable
     {
         #region Constructors
 
@@ -66,17 +66,6 @@ namespace Cube.Net.Http
 
         /* --------------------------------------------------------------------- */
         ///
-        /// Handler
-        /// 
-        /// <summary>
-        /// HttpClientHandler オブジェクトを取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public HttpClientHandler Handler { get; set; }
-
-        /* --------------------------------------------------------------------- */
-        ///
         /// Timeout
         /// 
         /// <summary>
@@ -88,6 +77,25 @@ namespace Cube.Net.Http
 
         /* --------------------------------------------------------------------- */
         ///
+        /// Handler
+        /// 
+        /// <summary>
+        /// HttpClientHandler オブジェクトを取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public HttpClientHandler Handler
+        {
+            get { return _handler; }
+            set
+            {
+                if (_handler == value) return;
+                _handler = value;
+            }
+        }
+
+        /* --------------------------------------------------------------------- */
+        ///
         /// Http
         /// 
         /// <summary>
@@ -96,9 +104,95 @@ namespace Cube.Net.Http
         ///
         /* --------------------------------------------------------------------- */
         public HttpClient Http
-            => Handler != null ?
-               ClientFactory.Create(Handler, Timeout) :
-               ClientFactory.Create(Timeout);
+        {
+            get
+            {
+                if (_http == null) UpdateClient();
+                return _http;
+            }
+        }
+
+        #endregion
+
+        #region IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~ClientBase
+        ///
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        ~ClientBase()
+        {
+            Dispose(false);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                _http?.Dispose();
+                _handler?.Dispose();
+            }
+
+            _disposed = true;
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// UpdateClient
+        /// 
+        /// <summary>
+        /// HTTP 通信用クライアントを更新します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        private void UpdateClient()
+        {
+            _http?.Dispose();
+            _http = Handler != null ?
+                    ClientFactory.Create(Handler, Timeout) :
+                    ClientFactory.Create(Timeout);
+        }
+
+        #region Fields
+        private bool _disposed = false;
+        private HttpClient _http;
+        private HttpClientHandler _handler;
+        #endregion
 
         #endregion
     }

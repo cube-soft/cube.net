@@ -36,8 +36,6 @@ namespace Cube.Tests.Net.Http
     [TestFixture]
     class EntityTagTest
     {
-        #region Tests
-
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync_EntityTag
@@ -51,38 +49,19 @@ namespace Cube.Tests.Net.Http
         public async Task GetAsync_StatusCode(int count, HttpStatusCode expected)
         {
             var uri  = new Uri("http://news.cube-soft.jp/app/notice/all.json");
-            var etag = new Cube.Net.Http.EntityTag();
+            var handler = new Cube.Net.Http.ContentHandler<object>();
+            var http = Cube.Net.Http.ClientFactory.Create(handler, TimeSpan.FromSeconds(1));
 
-            var first = await Create(etag).GetAsync(uri);
+            var first = await http.GetAsync(uri);
+            Assert.That(handler.EntityTag, Is.Not.Null.Or.Empty);
             Assert.That(first.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
             var n = Math.Max(count - 2, 1);
-            for (var i = 0; i < n; ++i) await Create(etag).GetAsync(uri);
+            for (var i = 0; i < n; ++i) await http.GetAsync(uri);
 
-            var last = await Create(etag).GetAsync(uri);
+            var last = await http.GetAsync(uri);
+            Assert.That(handler.EntityTag, Is.Not.Null.Or.Empty);
             Assert.That(last.StatusCode, Is.EqualTo(expected));
         }
-
-        #endregion
-
-        #region Helper methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Create
-        ///
-        /// <summary>
-        /// HttpClient を生成します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private HttpClient Create(Cube.Net.Http.EntityTag etag)
-        {
-            var handler = etag.GetHandler();
-            var timeout = TimeSpan.FromSeconds(1);
-            return Cube.Net.Http.ClientFactory.Create(handler, timeout);
-        }
-
-        #endregion
     }
 }
