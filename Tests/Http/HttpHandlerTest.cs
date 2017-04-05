@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using System.Net;
 using NUnit.Framework;
 
-namespace Cube.Tests.Net.Http
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///

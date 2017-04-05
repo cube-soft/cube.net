@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-namespace Cube.Tests.Net
+namespace Cube.Net.Tests
 {
     /* ----------------------------------------------------------------- */
     ///

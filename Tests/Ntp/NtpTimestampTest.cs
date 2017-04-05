@@ -18,20 +18,20 @@
 using System;
 using NUnit.Framework;
 
-namespace Cube.Tests.Net.Ntp
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// TimestampTest
+    /// NtpTimestampTest
     ///
     /// <summary>
-    /// Cube.Net.Ntp.Timestamp クラスのテストをするためのクラスです。
+    /// Ntp.Timestamp のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    class TimestampTest
+    class NtpTimestampTest
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -47,11 +47,11 @@ namespace Cube.Tests.Net.Ntp
         [TestCase(2036, 2, 7, 6, 28, 16, 0)]
         public void ToDateTime(int y, int m, int d, int hh, int mm, int ss, long ts)
         {
-            var converted = Cube.Net.Ntp.Timestamp.Convert(ts);
-            Assert.That(converted.Year, Is.EqualTo(y));
-            Assert.That(converted.Month, Is.EqualTo(m));
-            Assert.That(converted.Day, Is.EqualTo(d));
-            Assert.That(converted.Hour, Is.EqualTo(hh));
+            var converted = Ntp.Timestamp.Convert(ts);
+            Assert.That(converted.Year,   Is.EqualTo(y));
+            Assert.That(converted.Month,  Is.EqualTo(m));
+            Assert.That(converted.Day,    Is.EqualTo(d));
+            Assert.That(converted.Hour,   Is.EqualTo(hh));
             Assert.That(converted.Minute, Is.EqualTo(mm));
             Assert.That(converted.Second, Is.EqualTo(ss));
         }
@@ -71,7 +71,7 @@ namespace Cube.Tests.Net.Ntp
         public void ToTimestamp(int y, int m, int d, int hh, int mm, int ss, long ts)
         {
             var src = new DateTime(y, m, d, hh, mm, ss, DateTimeKind.Utc);
-            var converted = Cube.Net.Ntp.Timestamp.Convert(src);
+            var converted = Ntp.Timestamp.Convert(src);
             Assert.That(converted, Is.EqualTo(ts));
         }
 
@@ -94,8 +94,8 @@ namespace Cube.Tests.Net.Ntp
         public void Convert(int y, int m, int d, int hh, int mm, int ss, int ms)
         {
             var src = new DateTime(y, m, d, hh, mm, ss, ms, DateTimeKind.Utc);
-            var tmp = Cube.Net.Ntp.Timestamp.Convert(src);
-            var converted = Cube.Net.Ntp.Timestamp.Convert(tmp);
+            var tmp = Ntp.Timestamp.Convert(src);
+            var converted = Ntp.Timestamp.Convert(tmp);
             Assert.That(converted.Year,        Is.EqualTo(y));
             Assert.That(converted.Month,       Is.EqualTo(m));
             Assert.That(converted.Day,         Is.EqualTo(d));

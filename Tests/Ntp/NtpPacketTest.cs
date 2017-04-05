@@ -16,50 +16,37 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Cube.Tests.Net.Ntp
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MonitorTest
+    /// NtpPacketTest
     ///
     /// <summary>
-    /// Cube.Net.Ntp.Monitor のテスト用クラスです。
+    /// Ntp.Packet のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    class MonitorTest
+    class NtpPacketTest
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// TooManyBytes_Throws
         /// 
         /// <summary>
-        /// NTP サーバを監視するテストを行います。
+        /// NTP パケットの初期化に失敗するテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start()
-        {
-            var monitor = new Cube.Net.Ntp.Monitor("ntp.cube-soft.jp");
-            Assert.That(
-                async () =>
-                {
-                    var cts = new CancellationTokenSource();
-                    monitor.ResultChanged += (s, e) => cts.Cancel();
-                    monitor.Timeout = TimeSpan.FromSeconds(2);
-                    monitor.Start();
-                    await Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token);
-                },
-                Throws.TypeOf<TaskCanceledException>()
-            );
-            Assert.That(monitor.IsValid, Is.True);
-        }
+        public void TooManyBytes_Throws()
+            =>Assert.That(
+            () => new Ntp.Packet(new byte[47]),
+            Throws.TypeOf<ArgumentException>()
+        );
     }
 }
