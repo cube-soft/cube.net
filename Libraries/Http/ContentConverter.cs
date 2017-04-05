@@ -17,7 +17,9 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net.Http;
+using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Cube.Net.Http
 {
@@ -101,5 +103,65 @@ namespace Cube.Net.Http
         #region Fields
         private Func<HttpContent, Task<TValue>> _func;
         #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// JsonContentConverter(TValue)
+    ///
+    /// <summary>
+    /// JSON 形式の HttpContent を変換するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class JsonContentConverter<TValue> : IContentConverter<TValue>
+        where TValue : class
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ConvertAsync(TValue)
+        ///
+        /// <summary>
+        /// 非同期で変換処理を実行します。
+        /// </summary>
+        /// 
+        /// <param name="src">HttpContent オブジェクト</param>
+        /// 
+        /// <returns>変換後のオブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public async Task<TValue> ConvertAsync(HttpContent src)
+            => new DataContractJsonSerializer(typeof(TValue))
+            .ReadObject(await src.ReadAsStreamAsync()) as TValue;
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// XmlContentConverter(TValue)
+    ///
+    /// <summary>
+    /// XML 形式の HttpContent を変換するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class XmlContentConverter<TValue> : IContentConverter<TValue>
+        where TValue : class
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ConvertAsync(TValue)
+        ///
+        /// <summary>
+        /// 非同期で変換処理を実行します。
+        /// </summary>
+        /// 
+        /// <param name="src">HttpContent オブジェクト</param>
+        /// 
+        /// <returns>変換後のオブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public async Task<TValue> ConvertAsync(HttpContent src)
+            => new XmlSerializer(typeof(TValue))
+            .Deserialize(await src.ReadAsStreamAsync()) as TValue;
     }
 }

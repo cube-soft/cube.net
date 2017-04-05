@@ -18,8 +18,6 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using System.Runtime.Serialization.Json;
 using Cube.Log;
 
 namespace Cube.Net.Http
@@ -39,6 +37,40 @@ namespace Cube.Net.Http
 
         /* --------------------------------------------------------------------- */
         ///
+        /// GetAsync(T)
+        /// 
+        /// <summary>
+        /// HTTP 通信を実行し、変換結果を取得します。
+        /// </summary>
+        /// 
+        /// <param name="client">HTTP クライアント</param>
+        /// <param name="uri">レスポンス取得 URL</param>
+        /// <param name="converter">変換用オブジェクト</param>
+        /// 
+        /// <returns>変換結果</returns>
+        ///
+        /* --------------------------------------------------------------------- */
+        public static async Task<T> GetAsync<T>(this HttpClient client,
+            Uri uri, IContentConverter<T> converter) where T : class
+        {
+            var response = await client?.GetAsync(uri);
+            if (response == null) return null;
+            else if (!response.IsSuccessStatusCode)
+            {
+                client.LogWarn($"StatusCode:{response.StatusCode}");
+                return null;
+            }
+
+            try { return await converter.ConvertAsync(response.Content); }
+            catch (Exception err)
+            {
+                await client.Warning(response, err);
+                return null;
+            }
+        }
+
+        /* --------------------------------------------------------------------- */
+        ///
         /// GetJsonAsync
         /// 
         /// <summary>
@@ -48,28 +80,11 @@ namespace Cube.Net.Http
         /// <param name="client">HTTP クライアント</param>
         /// <param name="uri">レスポンス取得 URL</param>
         /// 
-        /// <returns>JSON 形式データを解析した結果</returns>
+        /// <returns>JSON 形式データの変換結果</returns>
         ///
         /* --------------------------------------------------------------------- */
-        public static async Task<T> GetJsonAsync<T>(this HttpClient client, Uri uri) where T : class
-        {
-            var response = await client.GetAsync(uri);
-            if (!response.IsSuccessStatusCode)
-            {
-                client.LogError($"StatusCode:{response.StatusCode}");
-                return null;
-            }
-
-            try
-            {
-                var stream = await response.Content.ReadAsStreamAsync();
-                var json = new DataContractJsonSerializer(typeof(T));
-                return json.ReadObject(stream) as T;
-            }
-            catch (Exception err) { await client.LogError(response, err); }
-
-            return null;
-        }
+        public static Task<T> GetJsonAsync<T>(this HttpClient client, Uri uri) where T : class
+            => client.GetAsync(uri, new JsonContentConverter<T>());
 
         /* --------------------------------------------------------------------- */
         ///
@@ -82,28 +97,11 @@ namespace Cube.Net.Http
         /// <param name="client">HTTP クライアント</param>
         /// <param name="uri">レスポンス取得 URL</param>
         /// 
-        /// <returns>XML 形式データを解析した結果</returns>
+        /// <returns>XML 形式データの変換結果</returns>
         ///
         /* --------------------------------------------------------------------- */
-        public static async Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri) where T : class
-        {
-            var response = await client.GetAsync(uri);
-            if (!response.IsSuccessStatusCode)
-            {
-                client.LogError($"StatusCode:{response.StatusCode}");
-                return null;
-            }
-
-            try
-            {
-                var stream = await response.Content.ReadAsStreamAsync();
-                var xml = new XmlSerializer(typeof(T));
-                return xml.Deserialize(stream) as T;
-            }
-            catch (Exception err) { await client.LogError(response, err); }
-
-            return null;
-        }
+        public static Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri) where T : class
+            => client.GetAsync(uri, new XmlContentConverter<T>());
 
         #endregion
 
@@ -111,18 +109,18 @@ namespace Cube.Net.Http
 
         /* --------------------------------------------------------------------- */
         ///
-        /// LogError
+        /// Warning
         /// 
         /// <summary>
         /// エラーログを出力します。
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        private static async Task LogError(this HttpClient client, HttpResponseMessage response, Exception err)
+        private static async Task Warning(this HttpClient client,
+            HttpResponseMessage msg, Exception err)
         {
-            var content = await response.Content.ReadAsStringAsync();
-            client.LogError(err.Message, err);
-            client.LogError(content);
+            client.LogWarn(err.Message, err);
+            if (msg?.Content != null) client.LogWarn(await msg.Content.ReadAsStringAsync());
         }
 
         #endregion
