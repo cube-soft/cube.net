@@ -34,17 +34,33 @@ namespace Cube.Net.Http
     {
         /* ----------------------------------------------------------------- */
         ///
+        /// DefaultTimeout
+        ///
+        /// <summary>
+        /// timeout 引数を指定しない場合に使用されるタイムアウト時間を
+        /// 取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(2);
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Create
         ///
         /// <summary>
         /// HTTP クライアントを生成します。
         /// </summary>
+        /// 
+        /// <param name="handler">HTTP ハンドラ</param>
+        /// <param name="timeout">タイムアウト時間</param>
+        /// 
+        /// <returns>HttpClient オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static HttpClient Create(HttpClientHandler handler, TimeSpan timeout)
         {
             var http = (handler != null) ? new HttpClient(handler) : new HttpClient();
-            http.DefaultRequestHeaders.ConnectionClose = true;
             http.Timeout = timeout;
             return http;
         }
@@ -55,12 +71,15 @@ namespace Cube.Net.Http
         ///
         /// <summary>
         /// HTTP クライアントを生成します。
-        /// タイムアウト時間は 2 秒に設定されます。
         /// </summary>
+        /// 
+        /// <param name="handler">HTTP ハンドラ</param>
+        /// 
+        /// <returns>HttpClient オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static HttpClient Create(HttpClientHandler handler)
-            => Create(handler, TimeSpan.FromSeconds(2));
+            => Create(handler, DefaultTimeout);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -69,6 +88,10 @@ namespace Cube.Net.Http
         /// <summary>
         /// HTTP クライアントを生成します。
         /// </summary>
+        /// 
+        /// <param name="timeout">タイムアウト時間</param>
+        /// 
+        /// <returns>HttpClient オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static HttpClient Create(TimeSpan timeout)
@@ -94,10 +117,11 @@ namespace Cube.Net.Http
         ///
         /// <summary>
         /// HTTP クライアントを生成します。
-        /// タイムアウト時間は 2 秒に設定されます。
         /// </summary>
+        /// 
+        /// <returns>HttpClient オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static HttpClient Create() => Create(TimeSpan.FromSeconds(2));
+        public static HttpClient Create() => Create(DefaultTimeout);
     }
 }
