@@ -86,14 +86,14 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// EndPoint
+        /// Uri
         ///
         /// <summary>
         /// HTTP 通信を行う URL を取得または設定します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public Uri EndPoint { get; set; }
+        public Uri Uri { get; set; }
 
         #endregion
 
@@ -135,7 +135,7 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected virtual Uri GetRequestUri() => EndPoint.With(Version);
+        protected virtual Uri GetRequestUri() => Uri.With(Version);
 
         #region IDisposable
 
@@ -194,14 +194,16 @@ namespace Cube.Net.Http
         protected override async void OnExecute(EventArgs e)
         {
             base.OnExecute(e);
-            if (State != TimerState.Run || EndPoint == null) return;
+
+            var uri = GetRequestUri();
+            if (State != TimerState.Run || uri == null) return;
 
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
                 {
                     if (_http == null) _http = ClientFactory.Create(_handler, Timeout);
-                    var response = await _http.GetAsync(GetRequestUri());
+                    var response = await _http.GetAsync(uri);
 
                     if (response?.Content is ValueContent<TValue> content)
                     {
