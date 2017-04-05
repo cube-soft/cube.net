@@ -124,6 +124,19 @@ namespace Cube.Net.Http
 
         #endregion
 
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetRequestUri
+        ///
+        /// <summary>
+        /// リクエスト送信先 URL を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual Uri GetRequestUri() => EndPoint.With(Version);
+
         #region IDisposable
 
         /* ----------------------------------------------------------------- */
@@ -165,6 +178,8 @@ namespace Cube.Net.Http
 
         #endregion
 
+        #endregion
+
         #region Implementations
 
         /* ----------------------------------------------------------------- */
@@ -186,7 +201,7 @@ namespace Cube.Net.Http
                 try
                 {
                     if (_http == null) _http = ClientFactory.Create(_handler, Timeout);
-                    var response = await _http.GetAsync(EndPoint.With(Version));
+                    var response = await _http.GetAsync(GetRequestUri());
 
                     if (response?.Content is ValueContent<TValue> content)
                     {
