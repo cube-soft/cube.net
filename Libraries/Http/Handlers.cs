@@ -16,7 +16,6 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -28,6 +27,180 @@ namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
+    /// HeaderHandler
+    ///
+    /// <summary>
+    /// HTTP 通信のリクエストヘッダおよびレスポンスヘッダを扱うための
+    /// ハンドラです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class HeaderHandler : HttpClientHandler
+    {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// HeaderHandler
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public HeaderHandler() : base()
+        {
+            Proxy    = null;
+            UseProxy = false;
+
+            if (SupportsAutomaticDecompression)
+            {
+                AutomaticDecompression = DecompressionMethods.Deflate |
+                                         DecompressionMethods.GZip;
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ConnectionClose
+        ///
+        /// <summary>
+        /// ConnectionClose ヘッダに設定する値を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public bool ConnectionClose { get; set; } = true;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// EntityTag
+        ///
+        /// <summary>
+        /// EntityTag (ETag) を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public string EntityTag { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UserAgent
+        ///
+        /// <summary>
+        /// User-Agent を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public string UserAgent { get; set; }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SendAsync
+        ///
+        /// <summary>
+        /// HTTP リクエストを非同期で送信します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            SetConnectionClose(request.Headers);
+            SetEntityTag(request.Headers);
+            SetUserAgent(request.Headers);
+
+            var response = await base.SendAsync(request, cancellationToken);
+
+            GetEntityTag(response.Headers);
+
+            return response;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SetConnectionClose
+        ///
+        /// <summary>
+        /// リクエストヘッダに ConnectionClose を設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void SetConnectionClose(HttpRequestHeaders headers)
+        {
+            try
+            {
+                if (headers.ConnectionClose.HasValue &&
+                    headers.ConnectionClose == ConnectionClose) return;
+                headers.ConnectionClose = ConnectionClose;
+            }
+            catch (Exception err) { this.LogWarn(err.Message, err); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SetUserAgent
+        ///
+        /// <summary>
+        /// リクエストヘッダに User-Agent を設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void SetUserAgent(HttpRequestHeaders headers)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(UserAgent)) return;
+                headers.UserAgent.ParseAdd(UserAgent);
+            }
+            catch (Exception err) { this.LogWarn(err.Message, err); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SetEntityTag
+        ///
+        /// <summary>
+        /// リクエストヘッダに EntityTag を設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void SetEntityTag(HttpRequestHeaders headers)
+        {
+            if (string.IsNullOrEmpty(EntityTag)) return;
+
+            try
+            {
+                var etag = EntityTagHeaderValue.Parse(EntityTag);
+                headers.IfNoneMatch.Add(etag);
+            }
+            catch (Exception err) { this.LogWarn(err.Message, err); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetEntityTag
+        ///
+        /// <summary>
+        /// レスポンスヘッダから EntityTag を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void GetEntityTag(HttpResponseHeaders headers)
+            => EntityTag = headers?.ETag?.Tag ?? string.Empty;
+
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
     /// ContentHandler(TValue)
     ///
     /// <summary>
@@ -36,7 +209,7 @@ namespace Cube.Net.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ContentHandler<TValue> : HttpClientHandler
+    public class ContentHandler<TValue> : HeaderHandler
     {
         #region Constructors
 
@@ -49,17 +222,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ContentHandler() : base()
-        {
-            Proxy    = null;
-            UseProxy = false;
-
-            if (SupportsAutomaticDecompression)
-            {
-                AutomaticDecompression = DecompressionMethods.Deflate |
-                                         DecompressionMethods.GZip;
-            }
-        }
+        public ContentHandler() : base() { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -106,17 +269,6 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public IContentConverter<TValue> Converter { get; set; }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// EntityTag
-        ///
-        /// <summary>
-        /// EntityTag (ETag) を取得または設定します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public string EntityTag { get; set; }
-
         #endregion
 
         #region Implementations
@@ -133,10 +285,7 @@ namespace Cube.Net.Http
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            SetEntityTag(request.Headers);
             var response = await base.SendAsync(request, cancellationToken);
-            GetEntityTag(response.Headers);
-
             if (response?.Content != null && Converter != null)
             {
                 response.Content = new ValueContent<TValue>(
@@ -145,146 +294,6 @@ namespace Cube.Net.Http
                 );
             }
             return response;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SetEntityTag
-        ///
-        /// <summary>
-        /// リクエストヘッダに EntityTag を設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void SetEntityTag(HttpRequestHeaders headers)
-        {
-            if (string.IsNullOrEmpty(EntityTag)) return;
-            
-            try
-            {
-                var etag = EntityTagHeaderValue.Parse(EntityTag);
-                headers.IfNoneMatch.Add(etag);
-            }
-            catch (Exception err) { this.LogWarn(err.Message, err); }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetEntityTag
-        ///
-        /// <summary>
-        /// レスポンスヘッダから EntityTag を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void GetEntityTag(HttpResponseHeaders headers)
-            => EntityTag = headers?.ETag?.Tag ?? string.Empty;
-
-        #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// ValueContent(TValue)
-    ///
-    /// <summary>
-    /// HttpContent を変換した結果を保持するためのクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    internal class ValueContent<TValue> : HttpContent
-    {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ValueContent
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="src">変換前の HttpContent オブジェクト</param>
-        /// <param name="value">変換後のオブジェクト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ValueContent(HttpContent src, TValue value)
-        {
-            Source = src;
-            Value = value;
-        }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Source
-        ///
-        /// <summary>
-        /// 変換前のオブジェクトを取得します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public HttpContent Source { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Value
-        ///
-        /// <summary>
-        /// 変換後のオブジェクトを取得します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public TValue Value { get; }
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SerializeToStreamAsync
-        ///
-        /// <summary>
-        /// 非同期で HTTP コンテンツをシリアライズし Stream オブジェクトに
-        /// コピーします。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
-            => Source.CopyToAsync(stream, context);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// TryComputeLength
-        ///
-        /// <summary>
-        /// HTTP コンテンツのバイト数の取得を試みます。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected override bool TryComputeLength(out long length)
-        {
-            length = Source?.Headers?.ContentLength ?? -1;
-            return length != -1;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (disposing) Source?.Dispose();
         }
 
         #endregion

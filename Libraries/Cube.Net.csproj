@@ -50,9 +50,10 @@
   <ItemGroup>
     <Compile Include="Http\ClientBase.cs" />
     <Compile Include="Http\ClientFactory.cs" />
+    <Compile Include="Http\Contents.cs" />
     <Compile Include="Http\Operations.cs" />
     <Compile Include="Http\ContentConverter.cs" />
-    <Compile Include="Http\ContentHandler.cs" />
+    <Compile Include="Http\Handlers.cs" />
     <Compile Include="Http\Monitor.cs" />
     <Compile Include="Ntp\Client.cs" />
     <Compile Include="Ntp\FixedPoint.cs" />
