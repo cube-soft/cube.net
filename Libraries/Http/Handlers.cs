@@ -252,7 +252,7 @@ namespace Cube.Net.Http
         /// 
         /* ----------------------------------------------------------------- */
         public ContentHandler(Func<HttpContent, Task<TValue>> func)
-            : this(new GenericContentConverter<TValue>(func)) { }
+            : this(new ContentConverter<TValue>(func)) { }
 
         #endregion
 

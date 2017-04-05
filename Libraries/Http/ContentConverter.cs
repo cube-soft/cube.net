@@ -52,14 +52,14 @@ namespace Cube.Net.Http
 
     /* --------------------------------------------------------------------- */
     ///
-    /// GenericContentConverter(TValue)
+    /// ContentConverter(TValue)
     ///
     /// <summary>
     /// 関数オブジェクトを IContentConverter に変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class GenericContentConverter<TValue> : IContentConverter<TValue>
+    public class ContentConverter<TValue> : IContentConverter<TValue>
     {
         #region Constructors
 
@@ -74,7 +74,7 @@ namespace Cube.Net.Http
         /// <param name="func">変換用オブジェクト</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public GenericContentConverter(Func<HttpContent, Task<TValue>> func)
+        public ContentConverter(Func<HttpContent, Task<TValue>> func)
         {
             _func = func;
         }

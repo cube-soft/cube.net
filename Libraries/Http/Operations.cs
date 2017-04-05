@@ -71,6 +71,25 @@ namespace Cube.Net.Http
 
         /* --------------------------------------------------------------------- */
         ///
+        /// GetAsync(T)
+        /// 
+        /// <summary>
+        /// HTTP 通信を実行し、変換結果を取得します。
+        /// </summary>
+        /// 
+        /// <param name="client">HTTP クライアント</param>
+        /// <param name="uri">レスポンス取得 URL</param>
+        /// <param name="converter">変換用の関数オブジェクト</param>
+        /// 
+        /// <returns>変換結果</returns>
+        ///
+        /* --------------------------------------------------------------------- */
+        public static Task<T> GetAsync<T>(this HttpClient client,
+            Uri uri, Func<HttpContent, Task<T>> func) where T : class
+            => client.GetAsync(uri, new ContentConverter<T>(func));
+
+        /* --------------------------------------------------------------------- */
+        ///
         /// GetJsonAsync
         /// 
         /// <summary>
