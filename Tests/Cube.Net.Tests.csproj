@@ -60,8 +60,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\ClientTest.cs" />
-    <Compile Include="Http\EntityTagTest.cs" />
+    <Compile Include="Details\Persion.cs" />
+    <Compile Include="Http\HttpClientTest.cs" />
+    <Compile Include="Http\HttpHandlerTest.cs" />
     <Compile Include="Ntp\ClientTest.cs" />
     <Compile Include="Ntp\MonitorTest.cs" />
     <Compile Include="Ntp\PacketTest.cs" />
