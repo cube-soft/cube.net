@@ -48,7 +48,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\ClientBase.cs" />
     <Compile Include="Http\ClientFactory.cs" />
     <Compile Include="Http\Contents.cs" />
     <Compile Include="Http\Operations.cs" />
