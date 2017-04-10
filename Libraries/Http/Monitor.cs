@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Cube.Conversions;
@@ -95,36 +96,31 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public Uri Uri { get; set; }
 
-        #endregion
-
-        #region Events
-
         /* ----------------------------------------------------------------- */
         ///
-        /// Received
+        /// Subscriptions
         ///
         /// <summary>
-        /// 新しい結果を受信した時に発生するイベントです。
+        /// 購読者一覧を取得します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public event ValueEventHandler<TValue> Received;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnReceived
-        ///
-        /// <summary>
-        /// Received イベントを発生させます。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected virtual void OnReceived(ValueEventArgs<TValue> e)
-            => Received?.Invoke(this, e);
+        protected IList<Action<TValue>> Subscriptions { get; } = new List<Action<TValue>>();
 
         #endregion
 
         #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscribe
+        ///
+        /// <summary>
+        /// データ受信時に実行する処理を登録します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Subscribe(Action<TValue> action) => Subscriptions.Add(action);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -194,6 +190,7 @@ namespace Cube.Net.Http
         protected override async void OnExecute(EventArgs e)
         {
             base.OnExecute(e);
+            if (Subscriptions.Count <= 0) return;
 
             var uri = GetRequestUri();
             if (State != TimerState.Run || uri == null) return;
@@ -207,7 +204,7 @@ namespace Cube.Net.Http
 
                     if (response?.Content is ValueContent<TValue> content)
                     {
-                        OnReceived(ValueEventArgs.Create(content.Value));
+                        foreach (var x in Subscriptions) x(content.Value);
                         return;
                     }
                 }
