@@ -133,6 +133,20 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected virtual Uri GetRequestUri() => Uri.With(Version);
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Publish
+        ///
+        /// <summary>
+        /// 新しい結果を発行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void Publish(TValue value)
+        {
+            foreach (var x in Subscriptions) x(value);
+        }
+
         #region IDisposable
 
         /* ----------------------------------------------------------------- */
@@ -204,7 +218,7 @@ namespace Cube.Net.Http
 
                     if (response?.Content is ValueContent<TValue> content)
                     {
-                        foreach (var x in Subscriptions) x(content.Value);
+                        Publish(content.Value);
                         return;
                     }
                 }
