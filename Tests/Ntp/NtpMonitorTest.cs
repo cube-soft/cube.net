@@ -47,19 +47,24 @@ namespace Cube.Net.Tests
         [Test]
         public void Start()
         {
-            var monitor = new Ntp.Monitor();
+            var result = TimeSpan.Zero;
             Assert.That(
                 async () =>
                 {
-                    var cts = new CancellationTokenSource();
-                    monitor.ResultChanged += (s, e) => cts.Cancel();
+                    var cts     = new CancellationTokenSource();
+                    var monitor = new Ntp.Monitor();
+                    monitor.Subscribe(x =>
+                    {
+                        result = x;
+                        cts.Cancel();
+                    });
                     monitor.Timeout = TimeSpan.FromSeconds(2);
                     monitor.Start();
                     await Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token);
                 },
                 Throws.TypeOf<TaskCanceledException>()
             );
-            Assert.That(monitor.IsValid, Is.True);
+            Assert.That(result, Is.Not.EqualTo(TimeSpan.Zero));
         }
     }
 }

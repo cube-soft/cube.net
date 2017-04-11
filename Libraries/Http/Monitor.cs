@@ -33,7 +33,7 @@ namespace Cube.Net.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Monitor<TValue> : NetworkAwareTimer
+    public class Monitor<TValue> : IDisposable
     {
         #region Constructors
 
@@ -51,6 +51,7 @@ namespace Cube.Net.Http
         public Monitor(ContentHandler<TValue> handler) : base()
         {
             _handler = handler;
+            _core.Subscribe(WhenTick);
         }
 
         /* ----------------------------------------------------------------- */
@@ -87,6 +88,43 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
+        /// NetworkAvailable
+        /// 
+        /// <summary>
+        /// ネットワークが使用可能な状態かどうかを表す値を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool NetworkAvailable => _core.NetworkAvailable;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// State
+        /// 
+        /// <summary>
+        /// オブジェクトの状態を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public TimerState State => _core.State;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Interval
+        /// 
+        /// <summary>
+        /// 実行間隔を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public TimeSpan Interval
+        {
+            get { return _core.Interval; }
+            set { _core.Interval = value; }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Uri
         ///
         /// <summary>
@@ -95,6 +133,61 @@ namespace Cube.Net.Http
         /// 
         /* ----------------------------------------------------------------- */
         public Uri Uri { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FailedCount
+        /// 
+        /// <summary>
+        /// サーバとの通信に失敗した回数を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public int FailedCount { get; protected set; } = 0;
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// RetryCount
+        /// 
+        /// <summary>
+        /// 通信失敗時に再試行する最大回数を取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public int RetryCount { get; set; } = 5;
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// RetryInterval
+        /// 
+        /// <summary>
+        /// 通信失敗時に再試行する間隔を取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Timeout
+        /// 
+        /// <summary>
+        /// タイムアウト時間を取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Version
+        ///
+        /// <summary>
+        /// アプリケーションのバージョンを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SoftwareVersion Version { get; set; } = new SoftwareVersion();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -113,6 +206,41 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Start
+        ///
+        /// <summary>
+        /// 監視を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Start() => Start(TimeSpan.Zero);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Start
+        ///
+        /// <summary>
+        /// 監視を実行します。
+        /// </summary>
+        /// 
+        /// <param name="delay">初期遅延時間</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Start(TimeSpan delay) => _core.Start(delay);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Stop
+        ///
+        /// <summary>
+        /// 監視を停止します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Stop() => _core.Stop();
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Subscribe
         ///
         /// <summary>
@@ -121,6 +249,17 @@ namespace Cube.Net.Http
         /// 
         /* ----------------------------------------------------------------- */
         public void Subscribe(Action<TValue> action) => Subscriptions.Add(action);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        ///
+        /// <summary>
+        /// リセットします。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public virtual void Reset() => _core.Reset();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -144,7 +283,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected virtual void Publish(TValue value)
         {
-            foreach (var x in Subscriptions) x(value);
+            foreach (var action in Subscriptions) action(value);
         }
 
         #region IDisposable
@@ -172,7 +311,26 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected override void Dispose(bool disposing)
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージリソースを解放するかどうかを示す値
+        /// </param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing)
         {
             if (_disposed) return;
 
@@ -183,7 +341,6 @@ namespace Cube.Net.Http
             }
 
             _disposed = true;
-            base.Dispose(disposing);
         }
 
         #endregion
@@ -194,16 +351,15 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnExecute
+        /// WhenTick
         ///
         /// <summary>
         /// 一定間隔で実行されます。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected override async void OnExecute(EventArgs e)
+        private async void WhenTick()
         {
-            base.OnExecute(e);
             if (Subscriptions.Count <= 0) return;
 
             var uri = GetRequestUri();
@@ -234,6 +390,7 @@ namespace Cube.Net.Http
         private bool _disposed = false;
         private HttpClient _http;
         private ContentHandler<TValue> _handler;
+        private NetworkAwareTimer _core = new NetworkAwareTimer();
         #endregion
 
         #endregion

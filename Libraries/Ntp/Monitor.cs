@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using Cube.Log;
@@ -31,7 +32,7 @@ namespace Cube.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Monitor : NetworkAwareTimer
+    public class Monitor : IDisposable
     {
         #region Constructors
 
@@ -74,8 +75,10 @@ namespace Cube.Net.Ntp
         public Monitor(string server, int port) : base()
         {
             Interval = TimeSpan.FromHours(1);
+
             _server = server;
             _port = port;
+            _core.Subscribe(WhenTick);
 
             SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
@@ -83,6 +86,43 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// NetworkAvailable
+        /// 
+        /// <summary>
+        /// ネットワークが使用可能な状態かどうかを表す値を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool NetworkAvailable => _core.NetworkAvailable;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// State
+        /// 
+        /// <summary>
+        /// オブジェクトの状態を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public TimerState State => _core.State;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Interval
+        /// 
+        /// <summary>
+        /// 実行間隔を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public TimeSpan Interval
+        {
+            get { return _core.Interval; }
+            set { _core.Interval = value; }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -127,77 +167,73 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// IsValid
+        /// FailedCount
         /// 
         /// <summary>
-        /// 最新の結果が有効なものであるかどうかを表す値を取得します。
+        /// サーバとの通信に失敗した回数を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public int FailedCount { get; protected set; } = 0;
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// RetryCount
+        /// 
+        /// <summary>
+        /// 通信失敗時に再試行する最大回数を取得または設定します。
         /// </summary>
         ///
-        /* ----------------------------------------------------------------- */
-        public bool IsValid => _packet?.IsValid ?? false;
+        /* --------------------------------------------------------------------- */
+        public int RetryCount { get; set; } = 5;
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// RetryInterval
+        /// 
+        /// <summary>
+        /// 通信失敗時に再試行する間隔を取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Timeout
+        /// 
+        /// <summary>
+        /// タイムアウト時間を取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Result
-        /// 
+        /// Version
+        ///
         /// <summary>
-        /// ローカル時刻とのずれを取得します。
+        /// アプリケーションのバージョンを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TimeSpan Result => IsValid ? Packet.LocalClockOffset : TimeSpan.Zero;
+        public SoftwareVersion Version { get; set; } = new SoftwareVersion();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Packet
-        /// 
-        /// <summary>
-        /// 最新の Packet オブジェクトを取得または設定します。
-        /// </summary>
+        /// Subscriptions
         ///
+        /// <summary>
+        /// 購読者一覧を取得します。
+        /// </summary>
+        /// 
         /* ----------------------------------------------------------------- */
-        protected Packet Packet
-        {
-            get { return _packet; }
-            set
-            {
-                _packet = value;
-                OnResultChanged(ValueEventArgs.Create(Result));
-            }
-        }
+        protected IList<Action<TimeSpan>> Subscriptions { get; } = new List<Action<TimeSpan>>();
 
         #endregion
 
         #region Events
-
-        #region ResultChanged
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ResultChanged
-        /// 
-        /// <summary>
-        /// Result プロパティが変化した時に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public event ValueEventHandler<TimeSpan> ResultChanged;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnResultChanged
-        /// 
-        /// <summary>
-        /// ResultChanged イベントを発生させます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void OnResultChanged(ValueEventArgs<TimeSpan> e)
-            => ResultChanged?.Invoke(this, e);
-
-        #endregion
-
-        #region TimeChanged
 
         /* ----------------------------------------------------------------- */
         ///
@@ -221,10 +257,151 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         protected virtual void OnTimeChanged(EventArgs e)
         {
-            if (PowerMode == PowerModes.Suspend) return;
+            if (_core.PowerMode == PowerModes.Suspend) return;
             Reset();
-
             TimeChanged?.Invoke(this, e);
+        }
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Start
+        ///
+        /// <summary>
+        /// 監視を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Start() => Start(TimeSpan.Zero);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Start
+        ///
+        /// <summary>
+        /// 監視を実行します。
+        /// </summary>
+        /// 
+        /// <param name="delay">初期遅延時間</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Start(TimeSpan delay) => _core.Start(delay);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Stop
+        ///
+        /// <summary>
+        /// 監視を停止します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Stop() => _core.Stop();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscribe
+        ///
+        /// <summary>
+        /// データ受信時に実行する処理を登録します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Subscribe(Action<TimeSpan> action)
+            => Subscriptions.Add(action);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        ///
+        /// <summary>
+        /// リセットします。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// 監視中にリセットした場合、直ちに NTP サーバと通信を試みます。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public virtual void Reset()
+        {
+            var current = State;
+            _core.Reset();
+            if (current == TimerState.Run)
+            {
+                Stop();
+                Start();
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Publish
+        ///
+        /// <summary>
+        /// 新しい結果を発行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void Publish(TimeSpan value)
+        {
+            foreach (var action in Subscriptions) action(value);
+        }
+
+        #region IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor
+        ///
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        ~Monitor()
+        {
+            Dispose(false);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージリソースを解放するかどうかを示す値
+        /// </param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing) _core?.Dispose();
+
+            _disposed = true;
         }
 
         #endregion
@@ -235,35 +412,15 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnReset
+        /// WhenTick
         /// 
         /// <summary>
-        /// 現在の状態を破棄し、NTP サーバに問い合わせます。
+        /// 一定間隔毎に実行されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnReset()
+        private async void WhenTick()
         {
-            var current = State;
-            base.OnReset();
-
-            Packet = null;
-            if (current == TimerState.Run) RaiseExecute();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnExecute
-        /// 
-        /// <summary>
-        /// モニタリングのための操作を実行するタイミングになった時に
-        /// 発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override async void OnExecute(EventArgs e)
-        {
-            base.OnExecute(e);
             if (State != TimerState.Run) return;
             await GetAsync();
         }
@@ -291,7 +448,7 @@ namespace Cube.Net.Ntp
                     var packet = await client.GetAsync();
                     if (packet != null && packet.IsValid)
                     {
-                        Packet = packet;
+                        Publish(packet.LocalClockOffset);
                         return;
                     }
                 }
@@ -304,9 +461,10 @@ namespace Cube.Net.Ntp
         }
 
         #region Fields
+        private bool _disposed = false;
         private string _server = string.Empty;
         private int _port = Client.DefaultPort;
-        private Packet _packet = null;
+        private NetworkAwareTimer _core = new NetworkAwareTimer();
         #endregion
 
         #endregion
