@@ -138,7 +138,7 @@ namespace Cube.Net.Http
         private static async Task Warning(this HttpClient client,
             HttpResponseMessage msg, Exception err)
         {
-            client.LogWarn(err.Message, err);
+            client.LogWarn(err.ToString());
             if (msg?.Content != null) client.LogWarn(await msg.Content.ReadAsStringAsync());
         }
 

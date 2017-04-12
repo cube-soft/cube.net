@@ -378,7 +378,7 @@ namespace Cube.Net.Http
                         return;
                     }
                 }
-                catch (Exception err) { this.LogWarn(err.Message, err); }
+                catch (Exception err) { this.LogWarn(err.ToString()); }
                 ++FailedCount;
                 await Task.Delay(RetryInterval);
             }

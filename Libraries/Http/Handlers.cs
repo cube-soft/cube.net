@@ -141,7 +141,7 @@ namespace Cube.Net.Http
                     headers.ConnectionClose == ConnectionClose) return;
                 headers.ConnectionClose = ConnectionClose;
             }
-            catch (Exception err) { this.LogWarn(err.Message, err); }
+            catch (Exception err) { this.LogWarn(err.ToString()); }
         }
 
         /* ----------------------------------------------------------------- */
@@ -160,7 +160,7 @@ namespace Cube.Net.Http
                 if (string.IsNullOrEmpty(UserAgent)) return;
                 headers.UserAgent.ParseAdd(UserAgent);
             }
-            catch (Exception err) { this.LogWarn(err.Message, err); }
+            catch (Exception err) { this.LogWarn(err.ToString()); }
         }
 
         /* ----------------------------------------------------------------- */
@@ -181,7 +181,7 @@ namespace Cube.Net.Http
                 var etag = EntityTagHeaderValue.Parse(EntityTag);
                 headers.IfNoneMatch.Add(etag);
             }
-            catch (Exception err) { this.LogWarn(err.Message, err); }
+            catch (Exception err) { this.LogWarn(err.ToString()); }
         }
 
         /* ----------------------------------------------------------------- */
