@@ -207,7 +207,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromMilliseconds(500);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -322,7 +322,9 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /// <remarks>
-        /// 監視中にリセットした場合、直ちに NTP サーバと通信を試みます。
+        /// リセット時に直ちに NTP サーバと通信した場合、精度が悪い傾向が
+        /// あります。現在は、500 ミリ秒の待機時間を設ける事で回避して
+        /// います。
         /// </remarks>
         /// 
         /* ----------------------------------------------------------------- */
@@ -333,7 +335,7 @@ namespace Cube.Net.Ntp
             if (current == TimerState.Run)
             {
                 Stop();
-                Start();
+                Start(TimeSpan.FromMilliseconds(500));
             }
         }
 
