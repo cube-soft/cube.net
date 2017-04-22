@@ -290,7 +290,9 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public void Start(TimeSpan delay)
         {
+            var state = _core.State;
             _core.Start(delay);
+            if (state != TimerState.Stop) return;
             this.LogDebug($"Start\tInterval:{Interval}\tInitialDelay:{delay}");
         }
 
@@ -305,7 +307,9 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public void Stop()
         {
+            var state = _core.State;
             _core.Stop();
+            if (state == TimerState.Stop) return;
             this.LogDebug($"Stop\tLast:{_core.LastExecuted}\tFaild:{FailedCount}");
         }
 

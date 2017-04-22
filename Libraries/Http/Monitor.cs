@@ -228,7 +228,9 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public void Start(TimeSpan delay)
         {
+            var state = _core.State;
             _core.Start(delay);
+            if (state != TimerState.Stop) return;
             this.LogDebug($"Start\tInterval:{Interval}\tInitialDelay:{delay}");
         }
 
@@ -243,8 +245,10 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public void Stop()
         {
+            var state = _core.State;
             _core.Stop();
-            this.LogDebug($"Stop\tLast:{_core.LastExecuted}\tFailed:{FailedCount}");
+            if (state == TimerState.Stop) return;
+            this.LogDebug($"Stop\tLast:{_core.LastExecuted}\tFaild:{FailedCount}");
         }
 
         /* ----------------------------------------------------------------- */
