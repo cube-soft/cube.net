@@ -165,7 +165,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
+        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(10);
 
         /* --------------------------------------------------------------------- */
         ///
@@ -372,10 +372,10 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private async void WhenTick()
         {
-            if (Subscriptions.Count <= 0) return;
+            if (State != TimerState.Run || Subscriptions.Count <= 0) return;
 
             var uri = GetRequestUri();
-            if (State != TimerState.Run || uri == null) return;
+            if (uri == null) return;
 
             for (var i = 0; i < RetryCount; ++i)
             {
@@ -389,12 +389,31 @@ namespace Cube.Net.Http
                         Publish(content.Value);
                         return;
                     }
+                    else Fail($"Content is not {nameof(TValue)} ({response?.StatusCode})");
                 }
-                catch (Exception err) { this.LogWarn(err.ToString()); }
-                ++FailedCount;
+                catch (Exception err)
+                {
+                    Fail(err.ToString());
+                    if (!(err is TaskCanceledException) && !(err is HttpRequestException)) break;
+                }
+
                 await Task.Delay(RetryInterval);
             }
+        }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Fail
+        ///
+        /// <summary>
+        /// 通信に失敗した事を伝える処理を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Fail(string message)
+        {
+            ++FailedCount;
+            this.LogWarn(message);
             this.LogWarn($"Failed\tCount:{FailedCount}");
         }
 
