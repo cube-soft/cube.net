@@ -20,6 +20,7 @@ using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Cube.Log;
 
 namespace Cube.Net.Http
 {
@@ -131,8 +132,19 @@ namespace Cube.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         public async Task<TValue> ConvertAsync(HttpContent src)
-            => new DataContractJsonSerializer(typeof(TValue))
-            .ReadObject(await src.ReadAsStreamAsync()) as TValue;
+        {
+            try
+            {
+                if (src == null) return null;
+                var json = new DataContractJsonSerializer(typeof(TValue));
+                return json.ReadObject(await src.ReadAsStreamAsync()) as TValue;
+            }
+            catch (Exception err)
+            {
+                this.LogWarn($"Content:{await src.ReadAsStringAsync()}");
+                throw err;
+            }
+        }
     }
 
     /* --------------------------------------------------------------------- */
@@ -161,7 +173,18 @@ namespace Cube.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         public async Task<TValue> ConvertAsync(HttpContent src)
-            => new XmlSerializer(typeof(TValue))
-            .Deserialize(await src.ReadAsStreamAsync()) as TValue;
+        {
+            try
+            {
+                if (src == null) return null;
+                var xml = new XmlSerializer(typeof(TValue));
+                return xml.Deserialize(await src.ReadAsStreamAsync()) as TValue;
+            }
+            catch (Exception err)
+            {
+                this.LogWarn($"Content:{await src.ReadAsStringAsync()}");
+                throw err;
+            }
+        }
     }
 }
