@@ -288,7 +288,11 @@ namespace Cube.Net.Ntp
         /// <param name="delay">初期遅延時間</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Start(TimeSpan delay) => _core.Start(delay);
+        public void Start(TimeSpan delay)
+        {
+            _core.Start(delay);
+            this.LogDebug($"Start\tInterval:{Interval}\tInitialDelay:{delay}");
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -299,7 +303,11 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Stop() => _core.Stop();
+        public void Stop()
+        {
+            _core.Stop();
+            this.LogDebug($"Stop\tLastChecked:{_core.LastExecuted}");
+        }
 
         /* ----------------------------------------------------------------- */
         ///

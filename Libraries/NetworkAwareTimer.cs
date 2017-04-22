@@ -103,13 +103,13 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
-            var previous = State;
+            var prev = State;
             if (NetworkAvailable)
             {
                 if (State == TimerState.Suspend) Resume();
             }
             else if (State == TimerState.Run) Suspend();
-            this.LogDebug($"NetworkAvailable:{NetworkAvailable}\tState:{previous}->{State}");
+            this.LogDebug($"NetworkAvailable:{NetworkAvailable}\tState:{prev}->{State}");
 
             NetworkChanged?.Invoke(this, e);
         }
