@@ -306,7 +306,7 @@ namespace Cube.Net.Ntp
         public void Stop()
         {
             _core.Stop();
-            this.LogDebug($"Stop\tLastChecked:{_core.LastExecuted}");
+            this.LogDebug($"Stop\tLast:{_core.LastExecuted}\tFaild:{FailedCount}");
         }
 
         /* ----------------------------------------------------------------- */

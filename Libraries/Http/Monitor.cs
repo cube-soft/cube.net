@@ -244,7 +244,7 @@ namespace Cube.Net.Http
         public void Stop()
         {
             _core.Stop();
-            this.LogDebug($"Stop\tLastChecked:{_core.LastExecuted}");
+            this.LogDebug($"Stop\tLast:{_core.LastExecuted}\tFailed:{FailedCount}");
         }
 
         /* ----------------------------------------------------------------- */
