@@ -59,7 +59,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         public NetworkAwareTimer(TimeSpan interval) : base(interval)
         {
-            NetworkChange.NetworkAvailabilityChanged += (s, e) => OnNetworkChanged(e);
+            Network.AvailabilityChanged += (s, e) => OnNetworkChanged(e);
         }
 
         #endregion
@@ -75,7 +75,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool NetworkAvailable => NetworkInterface.GetIsNetworkAvailable();
+        public bool NetworkAvailable => Network.Available;
 
         #endregion
 

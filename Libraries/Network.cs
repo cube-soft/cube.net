@@ -75,6 +75,25 @@ namespace Cube.Net
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Available
+        /// 
+        /// <summary>
+        /// ネットワークが利用可能かどうかを示す値を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static bool Available
+        {
+            get
+            {
+                var ns   = GetNetworkInterfaces();
+                var dest = ns.FirstOrDefault(n => n.OperationalStatus == OperationalStatus.Up);
+                return dest != null;
+            }
+        }
+
         #endregion
 
         #region Events
@@ -89,28 +108,6 @@ namespace Cube.Net
         ///
         /* ----------------------------------------------------------------- */
         public static event NetworkAvailabilityChangedEventHandler AvailabilityChanged;
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IsNetworkAvailable
-        /// 
-        /// <summary>
-        /// ネットワークが利用可能かどうかを判別します。
-        /// </summary>
-        /// 
-        /// <returns>
-        /// ネットワークが利用可能かどうかを示す値
-        /// </returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static bool IsNetworkAvailable()
-            => GetNetworkInterfaces().FirstOrDefault(n =>
-               n.OperationalStatus == OperationalStatus.Up
-            ) != null;
 
         #endregion
 

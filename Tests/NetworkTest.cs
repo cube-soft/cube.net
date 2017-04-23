@@ -48,7 +48,7 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// IsNetworkAvailable
+        /// Available
         /// 
         /// <summary>
         /// ネットワークが利用可能かどうか判別するテストを実行します。
@@ -56,7 +56,7 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void IsNetworkAvailable()
-            => Assert.That(Network.IsNetworkAvailable());
+        public void Available()
+            => Assert.That(Network.Available);
     }
 }
