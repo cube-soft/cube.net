@@ -158,7 +158,6 @@ namespace Cube.Net
                         AvailabilityChanged?.Invoke(sender, e);
                         return;
                     }
-                    Cube.Log.Operations.Debug(typeof(Network), $"Waiting\tStatus:{Status}");
                     await Task.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
                 }
                 AvailabilityChanged?.Invoke(sender, e);

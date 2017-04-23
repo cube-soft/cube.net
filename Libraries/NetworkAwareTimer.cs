@@ -18,7 +18,6 @@
 using System;
 using System.Net.NetworkInformation;
 using Microsoft.Win32;
-using Cube.Log;
 
 namespace Cube.Net
 {
@@ -103,14 +102,8 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
-            var prev = State;
-            if (NetworkAvailable)
-            {
-                if (State == TimerState.Suspend) Resume();
-            }
-            else if (State == TimerState.Run) Suspend();
-            this.LogDebug($"NetworkAvailable:{NetworkAvailable}\tState:{prev}->{State}");
-
+            if (NetworkAvailable && State == TimerState.Suspend) Resume();
+            else if (!NetworkAvailable && State == TimerState.Run) Suspend();
             NetworkChanged?.Invoke(this, e);
         }
 
