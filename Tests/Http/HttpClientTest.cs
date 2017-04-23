@@ -38,7 +38,7 @@ namespace Cube.Net.Tests
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    public class HttpClientTest
+    public class HttpClientTest : NetworkResource
     {
         /* ----------------------------------------------------------------- */
         ///

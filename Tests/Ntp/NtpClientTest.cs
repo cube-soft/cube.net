@@ -32,7 +32,7 @@ namespace Cube.Net.Tests
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    class NtpClientTest
+    class NtpClientTest : NetworkResource
     {
         /* ----------------------------------------------------------------- */
         ///
