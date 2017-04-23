@@ -54,6 +54,7 @@
     <Compile Include="Http\ContentConverter.cs" />
     <Compile Include="Http\Handlers.cs" />
     <Compile Include="Http\Monitor.cs" />
+    <Compile Include="Network.cs" />
     <Compile Include="Ntp\Client.cs" />
     <Compile Include="Ntp\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
