@@ -286,7 +286,9 @@ namespace Cube.Net.Http
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var response = await base.SendAsync(request, cancellationToken);
-            if (response?.Content != null && Converter != null)
+            if (response == null || Converter == null) return response;
+
+            if ((int)response.StatusCode / 100 == 2) // 2XX
             {
                 response.Content = new ValueContent<TValue>(
                     response.Content,

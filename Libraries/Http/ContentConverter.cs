@@ -133,17 +133,11 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public async Task<TValue> ConvertAsync(HttpContent src)
         {
-            try
-            {
-                if (src == null) return null;
-                var json = new DataContractJsonSerializer(typeof(TValue));
-                return json.ReadObject(await src.ReadAsStreamAsync()) as TValue;
-            }
-            catch (Exception err)
-            {
-                this.LogWarn($"Content:{await src.ReadAsStringAsync()}");
-                throw err;
-            }
+            if (src == null) return null;
+
+            var stream = await src.ReadAsStreamAsync();
+            var json = new DataContractJsonSerializer(typeof(TValue));
+            return json.ReadObject(stream) as TValue;
         }
     }
 
@@ -174,17 +168,11 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public async Task<TValue> ConvertAsync(HttpContent src)
         {
-            try
-            {
-                if (src == null) return null;
-                var xml = new XmlSerializer(typeof(TValue));
-                return xml.Deserialize(await src.ReadAsStreamAsync()) as TValue;
-            }
-            catch (Exception err)
-            {
-                this.LogWarn($"Content:{await src.ReadAsStringAsync()}");
-                throw err;
-            }
+            if (src == null) return null;
+
+            var stream = await src.ReadAsStreamAsync();
+            var xml = new XmlSerializer(typeof(TValue));
+            return xml.Deserialize(stream) as TValue;
         }
     }
 }
