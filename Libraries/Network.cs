@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Cube.Tasks;
@@ -108,6 +109,26 @@ namespace Cube.Net
         ///
         /* ----------------------------------------------------------------- */
         public static event NetworkAvailabilityChangedEventHandler AvailabilityChanged;
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DisableOptions
+        /// 
+        /// <summary>
+        /// ネットワークに関連するオプションを無効化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static void DisableOptions()
+        {
+            ServicePointManager.Expect100Continue = false;
+            ServicePointManager.UseNagleAlgorithm = false;
+            WebRequest.DefaultWebProxy = null;
+        }
 
         #endregion
 
