@@ -383,17 +383,19 @@ namespace Cube.Net.Http
                 {
                     if (_http == null) _http = ClientFactory.Create(_handler, Timeout);
 
-                    var response = await _http.GetAsync(uri);
-                    var status   = response.StatusCode;
-                    var code     = (int)status;
-                    var digit    = code / 100;
+                    using (var response = await _http.GetAsync(uri))
+                    {
+                        var status = response.StatusCode;
+                        var code   = (int)status;
+                        var digit  = code / 100;
 
-                    if (response.Content is ValueContent<TValue> content) Publish(content.Value); // OK
-                    else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
-                    else if (digit == 4) Fail($"HTTP:{code} {status}");
-                    else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
-                    else Fail($"Content is not {nameof(TValue)} ({code})");
-                    break;
+                        if (response.Content is ValueContent<TValue> content) Publish(content.Value); // OK
+                        else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
+                        else if (digit == 4) Fail($"HTTP:{code} {status}");
+                        else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
+                        else Fail($"Content is not {nameof(TValue)} ({code})");
+                        break;
+                    }
                 }
                 catch (Exception err)
                 {
