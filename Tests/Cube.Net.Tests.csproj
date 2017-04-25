@@ -8,7 +8,7 @@
     <ProjectGuid>{03DB8859-93F8-4335-BBA1-0C04981A970A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cube.Tests.Net</RootNamespace>
+    <RootNamespace>Cube.Net.Tests</RootNamespace>
     <AssemblyName>Cube.Net.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -72,12 +72,15 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\ClientTest.cs" />
-    <Compile Include="Http\EntityTagTest.cs" />
-    <Compile Include="Ntp\ClientTest.cs" />
-    <Compile Include="Ntp\MonitorTest.cs" />
-    <Compile Include="Ntp\PacketTest.cs" />
-    <Compile Include="Ntp\TimestampTest.cs" />
+    <Compile Include="Details\NetworkResource.cs" />
+    <Compile Include="Details\Persion.cs" />
+    <Compile Include="Http\HttpClientTest.cs" />
+    <Compile Include="Http\HttpHandlerTest.cs" />
+    <Compile Include="NetworkTest.cs" />
+    <Compile Include="Ntp\NtpClientTest.cs" />
+    <Compile Include="Ntp\NtpMonitorTest.cs" />
+    <Compile Include="Ntp\NtpPacketTest.cs" />
+    <Compile Include="Ntp\NtpTimestampTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

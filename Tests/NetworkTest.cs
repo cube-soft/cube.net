@@ -15,74 +15,48 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Http;
+using System.Net.NetworkInformation;
 using NUnit.Framework;
 
-namespace Cube.Tests.Net.Http
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// EntityTagTest
+    /// NetworkTest
     ///
     /// <summary>
-    /// EntityTag のテストを行うためのクラスです。
+    /// Network のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    class EntityTagTest
+    class NetworkTest : NetworkResource
     {
-        #region Tests
-
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsync_EntityTag
-        ///
+        /// Status
+        /// 
         /// <summary>
-        /// EntityTag (ETag) のテストを行います。
+        /// ネットワーク状況を取得するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TestCase(3, HttpStatusCode.NotModified)]
-        public async Task GetAsync_StatusCode(int count, HttpStatusCode expected)
-        {
-            var uri  = new Uri("http://news.cube-soft.jp/app/notice/all.json");
-            var etag = new Cube.Net.Http.EntityTag();
-
-            var first = await Create(etag).GetAsync(uri);
-            Assert.That(first.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-            var n = Math.Max(count - 2, 1);
-            for (var i = 0; i < n; ++i) await Create(etag).GetAsync(uri);
-
-            var last = await Create(etag).GetAsync(uri);
-            Assert.That(last.StatusCode, Is.EqualTo(expected));
-        }
-
-        #endregion
-
-        #region Helper methods
+        [Test]
+        public void Status()
+            => Assert.That(Network.Status, Is.EqualTo(OperationalStatus.Up));
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create
-        ///
+        /// Available
+        /// 
         /// <summary>
-        /// HttpClient を生成します。
+        /// ネットワークが利用可能かどうか判別するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private HttpClient Create(Cube.Net.Http.EntityTag etag)
-        {
-            var handler = etag.CreateHandler();
-            var timeout = TimeSpan.FromSeconds(1);
-            return Cube.Net.Http.ClientFactory.Create(handler, timeout);
-        }
-
-        #endregion
+        [Test]
+        public void Available()
+            => Assert.That(Network.Available);
     }
 }

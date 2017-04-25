@@ -20,24 +20,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Cube.Tests.Net.Ntp
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MonitorTest
+    /// NtpMonitorTest
     ///
     /// <summary>
-    /// Cube.Net.Ntp.Monitor のテスト用クラスです。
+    /// Ntp.Monitor のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    class MonitorTest
+    class NtpMonitorTest : NetworkResource
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Start_RunOnce
+        /// Start
         /// 
         /// <summary>
         /// NTP サーバを監視するテストを行います。
@@ -45,21 +45,27 @@ namespace Cube.Tests.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start_RunOnce()
+        [Ignore("NUnit for .NET 3.5 does not support async/await")]
+        public void Start()
         {
-            var monitor = new Cube.Net.Ntp.Monitor("ntp.cube-soft.jp");
+            var result = TimeSpan.Zero;
             Assert.That(
                 async () =>
                 {
-                    var cts = new CancellationTokenSource();
-                    monitor.ResultChanged += (s, e) => cts.Cancel();
+                    var cts     = new CancellationTokenSource();
+                    var monitor = new Ntp.Monitor();
+                    monitor.Subscribe(x =>
+                    {
+                        result = x;
+                        cts.Cancel();
+                    });
                     monitor.Timeout = TimeSpan.FromSeconds(2);
                     monitor.Start();
-                    await Task35.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token);
+                    await TaskEx.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token);
                 },
                 Throws.TypeOf<TaskCanceledException>()
             );
-            Assert.That(monitor.IsValid, Is.True);
+            Assert.That(result, Is.Not.EqualTo(TimeSpan.Zero));
         }
     }
 }

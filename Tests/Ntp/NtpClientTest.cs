@@ -15,107 +15,92 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System.Net.Http;
+using System;
+using System.Threading.Tasks;
+using NUnit.Framework;
 
-namespace Cube.Net.Http
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// EntityTag
+    /// ClientTest
     ///
     /// <summary>
-    /// EntityTag を表すクラスです。
+    /// Cube.Net.Ntp.Client のテストクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class EntityTag
+    [Parallelizable]
+    [TestFixture]
+    class NtpClientTest : NetworkResource
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
-        /// EntityTag
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public EntityTag() { }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Value
-        ///
-        /// <summary>
-        /// EntityTag を表す文字列を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Value { get; set; }
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CreateHandler
-        ///
-        /// <summary>
-        /// EntityTag 監視用の HttpClientHandler オブジェクトを生成します。
-        /// </summary>
+        /// Properties_Default
         /// 
+        /// <summary>
+        /// 各種プロパティの初期値を確認します。
+        /// </summary>
+        ///
         /* ----------------------------------------------------------------- */
-        public HttpClientHandler CreateHandler()
+        public void Properties_Default()
         {
-            var dest = new EntityTagHandler(Value);
-            dest.Received += Handler_Received;
-            return dest;
+            var client = new Ntp.Client();
+
+            Assert.That(client.Host.HostName, Is.EqualTo("ntp.cube-soft.jp"));
+            Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
+            Assert.That(client.Port, Is.EqualTo(123));
+            Assert.That(client.Timeout, Is.EqualTo(TimeSpan.FromSeconds(5)));
         }
 
-        #endregion
-
-        #region Override methods
-
         /* ----------------------------------------------------------------- */
         ///
-        /// ToString
-        ///
-        /// <summary>
-        /// 文字列に変換します。
-        /// </summary>
+        /// LocalClockOffset
         /// 
-        /* ----------------------------------------------------------------- */
-        public override string ToString() => Value;
-
-        #endregion
-
-        #region Event handlers
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Handler_Received
-        ///
         /// <summary>
-        /// EntityTag を受信時に実行されるハンドラです。
+        /// 非同期で時刻を取得するテストを行います。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        private void Handler_Received(object sender, ValueEventArgs<string> e)
+        [TestCase(60)]
+        public async void LocalClockOffset(int delta)
         {
-            Value = e.Value;
-
-            var handler = sender as EntityTagHandler;
-            if (handler == null) return;
-
-            handler.Received -= Handler_Received;
+            var result = await new Ntp.Client().GetAsync();
+            Assert.That(result.IsValid, Is.True);
+            Assert.That(result.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(delta));
         }
 
-        #endregion
+        /* ----------------------------------------------------------------- */
+        ///
+        /// NotFound_Throws
+        /// 
+        /// <summary>
+        /// 存在しない NTP サーバを指定した時のテストを行います。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void NotFound_Throws()
+            => Assert.That(
+            () => new Ntp.Client("404.not.found"),
+            Throws.TypeOf<System.Net.Sockets.SocketException>()
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Timeout_Throws
+        /// 
+        /// <summary>
+        /// タイムアウト処理のテストを行います。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        [Ignore("NUnit for .NET 3.5 does not support async/await")]
+        public void Timeout_Throws()
+            => Assert.That(
+            async () => await new Ntp.Client { Timeout = TimeSpan.FromMilliseconds(1) }.GetAsync(),
+            Throws.TypeOf<TimeoutException>()
+        );
     }
 }

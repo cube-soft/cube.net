@@ -67,11 +67,12 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\ClientBase.cs" />
     <Compile Include="Http\ClientFactory.cs" />
-    <Compile Include="Http\ClientOperations.cs" />
-    <Compile Include="Http\EntityTag.cs" />
-    <Compile Include="Http\EntityTagHandler.cs" />
+    <Compile Include="Http\ContentConverter.cs" />
+    <Compile Include="Http\Contents.cs" />
+    <Compile Include="Http\Handlers.cs" />
+    <Compile Include="Http\Monitor.cs" />
+    <Compile Include="Http\Operations.cs" />
     <Compile Include="Ntp\Client.cs" />
     <Compile Include="Ntp\FixedPoint.cs" />
     <Compile Include="Ntp\LeapIndicator.cs" />
@@ -80,7 +81,8 @@
     <Compile Include="Ntp\Packet.cs" />
     <Compile Include="Ntp\Stratum.cs" />
     <Compile Include="Ntp\Timestamp.cs" />
-    <Compile Include="NetworkAwareMonitor.cs" />
+    <Compile Include="Network.cs" />
+    <Compile Include="NetworkAwareTimer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

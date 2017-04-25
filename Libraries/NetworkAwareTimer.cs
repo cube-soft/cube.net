@@ -18,20 +18,19 @@
 using System;
 using System.Net.NetworkInformation;
 using Microsoft.Win32;
-using Cube.Log;
 
 namespace Cube.Net
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkAwareMonitor
+    /// NetworkAwareTimer
     ///
     /// <summary>
-    /// ネットワーク状況の変化に反応するモニタリング用クラスです。
+    /// ネットワーク状況の変化に反応するタイマーです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class NetworkAwareMonitor : Scheduler
+    public class NetworkAwareTimer : WakeableTimer
     {
         #region Constructors
 
@@ -44,10 +43,22 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public NetworkAwareMonitor()
-            : base()
+        public NetworkAwareTimer() : this(TimeSpan.FromHours(1)) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// NetworkAwareMonitor
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="interval">実行周期</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public NetworkAwareTimer(TimeSpan interval) : base(interval)
         {
-            NetworkChange.NetworkAvailabilityChanged += (s, e) => OnNetworkChanged(e);
+            Network.AvailabilityChanged += (s, e) => OnNetworkChanged(e);
         }
 
         #endregion
@@ -63,66 +74,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool NetworkAvailable => NetworkInterface.GetIsNetworkAvailable();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Version
-        ///
-        /// <summary>
-        /// アプリケーションのバージョンを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SoftwareVersion Version { get; set; } = new SoftwareVersion();
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Timeout
-        /// 
-        /// <summary>
-        /// タイムアウト時間を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryInterval
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する間隔を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryCount
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する最大回数を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public int RetryCount { get; set; } = 5;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FailedCount
-        /// 
-        /// <summary>
-        /// サーバとの通信に失敗した回数を取得します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// この値は Reset() を実行した時に 0 になります。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public int FailedCount { get; protected set; }
+        public bool NetworkAvailable => Network.Available;
 
         #endregion
 
@@ -139,54 +91,29 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         public event EventHandler<NetworkAvailabilityEventArgs> NetworkChanged;
 
-        #endregion
-
-        #region Virtual methods
-
         /* ----------------------------------------------------------------- */
         ///
         /// OnNetworkChanged
         /// 
         /// <summary>
-        /// ネットワークの状況が変化した時に発生するイベントです。
+        /// NetworkChanged イベントを発生させます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
-            var previous = State;
-            if (NetworkAvailable)
-            {
-                if (State == SchedulerState.Suspend) Resume();
-            }
-            else if (State == SchedulerState.Run) Suspend();
-            this.LogDebug($"NetworkAvailable:{NetworkAvailable}\tState:{previous}->{State}");
-
+            if (NetworkAvailable && State == TimerState.Suspend) Resume();
+            else if (!NetworkAvailable && State == TimerState.Run) Suspend();
             NetworkChanged?.Invoke(this, e);
         }
 
         #endregion
 
-        #region Override methods
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnReset
-        /// 
-        /// <summary>
-        /// リセット時に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnReset()
-        {
-            base.OnReset();
-            FailedCount = 0;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnExecute
+        /// Publish
         /// 
         /// <summary>
         /// モニタリングのための操作を実行するタイミングになった時に
@@ -198,10 +125,10 @@ namespace Cube.Net
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnExecute(EventArgs e)
+        protected override void Publish()
         {
             if (!NetworkAvailable) Suspend();
-            else base.OnExecute(e);
+            else base.Publish();
         }
 
         /* ----------------------------------------------------------------- */
@@ -217,7 +144,7 @@ namespace Cube.Net
         {
             if (!NetworkAvailable)
             {
-                if (State == SchedulerState.Run) Suspend();
+                if (State == TimerState.Run) Suspend();
                 return;
             }
             base.OnPowerModeChanged(e);

@@ -15,140 +15,143 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using Cube.Log;
+using System.Threading.Tasks;
 
 namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// EntityTagHandler
+    /// ValueContent(TValue)
     ///
     /// <summary>
-    /// EntityTag (ETag) を扱うための HTTP クライアント用ハンドラです。
+    /// HttpContent を変換した結果を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal sealed class EntityTagHandler : HttpClientHandler
+    internal class ValueContent<TValue> : HttpContent
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// EntityTagHandler
+        /// ValueContent
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <param name="src">変換前の HttpContent オブジェクト</param>
+        /// <param name="value">変換後のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public EntityTagHandler() : base()
+        public ValueContent(HttpContent src, TValue value)
         {
-            Proxy    = null;
-            UseProxy = false;
-
-            if (SupportsAutomaticDecompression)
-            {
-                AutomaticDecompression =
-                    DecompressionMethods.Deflate |
-                    DecompressionMethods.GZip;
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// EntityTagHandler
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public EntityTagHandler(string etag) : this()
-        {
-            _etag = etag;
+            Source = src;
+            Value = value;
         }
 
         #endregion
 
-        #region Events
+        #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Received
+        /// Source
         ///
         /// <summary>
-        /// EntityTag 受信時に発生するイベントです。
+        /// 変換前のオブジェクトを取得します。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
-        public event EventHandler<ValueEventArgs<string>> Received;
+        public HttpContent Source { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Value
+        ///
+        /// <summary>
+        /// 変換後のオブジェクトを取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public TValue Value { get; }
 
         #endregion
 
-        #region Override methods
+        #region IDisposable
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SendAsync
+        /// ~ValueContent
         ///
         /// <summary>
-        /// HTTP リクエストを非同期で送信します。
+        /// オブジェクトを破棄します。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
-        protected override async Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request, CancellationToken cancellationToken)
+        ~ValueContent()
         {
-            SetEntityTag(request.Headers);
-            var response = await base.SendAsync(request, cancellationToken);
-            _etag = GetEntityTag(response.Headers);
-            Received?.Invoke(this, ValueEventArgs.Create(_etag));
-            return response;
+            Dispose(false);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing) Source?.Dispose();
+
+            _disposed = true;
+            base.Dispose(disposing);
         }
 
         #endregion
 
-        #region Others
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SetEntityTag
+        /// SerializeToStreamAsync
         ///
         /// <summary>
-        /// リクエストヘッダに EntityTag を設定します。
+        /// 非同期で HTTP コンテンツをシリアライズし Stream オブジェクトに
+        /// コピーします。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
-        private void SetEntityTag(HttpRequestHeaders headers)
-            => this.LogException(() =>
+        protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
+            => Source.CopyToAsync(stream, context);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TryComputeLength
+        ///
+        /// <summary>
+        /// HTTP コンテンツのバイト数の取得を試みます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected override bool TryComputeLength(out long length)
         {
-            if (string.IsNullOrEmpty(_etag)) return;
-            var value = EntityTagHeaderValue.Parse(_etag);
-            headers.IfNoneMatch.Add(value);
-        });
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetEntityTag
-        ///
-        /// <summary>
-        /// レスポンスヘッダから EntityTag を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private string GetEntityTag(HttpResponseHeaders headers)
-            => headers?.ETag?.Tag ?? string.Empty;
-
-        #endregion
+            length = Source?.Headers?.ContentLength ?? -1;
+            return length != -1;
+        }
 
         #region Fields
-        private string _etag = string.Empty;
+        private bool _disposed = false;
+        #endregion
+
         #endregion
     }
 }
