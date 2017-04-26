@@ -53,19 +53,21 @@ namespace Cube.Net.Http
         public static async Task<T> GetAsync<T>(this HttpClient client,
             Uri uri, IContentConverter<T> converter) where T : class
         {
-            var response = await client?.GetAsync(uri);
-            if (response == null) return null;
-            else if (!response.IsSuccessStatusCode)
+            using (var response = await client?.GetAsync(uri))
             {
-                client.LogWarn($"StatusCode:{response.StatusCode}");
-                return null;
-            }
+                if (response == null) return null;
+                else if (!response.IsSuccessStatusCode)
+                {
+                    client.LogWarn($"StatusCode:{response.StatusCode}");
+                    return null;
+                }
 
-            try { return await converter.ConvertAsync(response.Content); }
-            catch (Exception err)
-            {
-                await client.Warning(response, err);
-                return null;
+                try { return await converter.ConvertAsync(response.Content); }
+                catch (Exception err)
+                {
+                    await client.Warning(response, err);
+                    return null;
+                }
             }
         }
 
