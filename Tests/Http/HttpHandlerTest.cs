@@ -78,21 +78,19 @@ namespace Cube.Net.Tests
             var handler = new Cube.Net.Http.HeaderHandler();
             var http    = Cube.Net.Http.ClientFactory.Create(handler);
 
-            var _ = await http.GetAsync(uri);
-            Assert.That(handler.EntityTag, Is.Not.Null.Or.Empty);
-
-            var etag = handler.EntityTag;
-            for (var i = 0; i < 5; ++i)
+            using (var response = await http.GetAsync(uri))
             {
-                var response = await http.GetAsync(uri);
-                if (handler.EntityTag == etag)
-                {
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
-                    return;
-                }
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                if (string.IsNullOrEmpty(handler.EntityTag)) Assert.Ignore("EntityTag not set");
             }
 
-            Assert.Fail();
+            var etag = handler.EntityTag;
+
+            using (var response = await http.GetAsync(uri))
+            {
+                if (handler.EntityTag != etag) Assert.Ignore("EntityTag changed");
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
+            }
         }
     }
 }
