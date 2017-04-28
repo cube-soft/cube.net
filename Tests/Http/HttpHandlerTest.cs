@@ -58,8 +58,10 @@ namespace Cube.Net.Tests
             var handler = new Cube.Net.Http.HeaderHandler { ConnectionClose = true };
             var http    = Cube.Net.Http.ClientFactory.Create(handler);
 
-            var response = await http.GetAsync(uri);
-            Assert.That(response.Headers.Connection.Contains("Close"));
+            using (var response = await http.GetAsync(uri))
+            {
+                Assert.That(response.Headers.Connection.Contains("Close"));
+            }
         }
 
         /* ----------------------------------------------------------------- */
