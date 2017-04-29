@@ -63,6 +63,7 @@
     <Compile Include="Details\Persion.cs" />
     <Compile Include="Http\HttpClientTest.cs" />
     <Compile Include="Http\HttpHandlerTest.cs" />
+    <Compile Include="Http\HttpMonitorTest.cs" />
     <Compile Include="Ntp\NtpClientTest.cs" />
     <Compile Include="Ntp\NtpMonitorTest.cs" />
     <Compile Include="Ntp\NtpPacketTest.cs" />
