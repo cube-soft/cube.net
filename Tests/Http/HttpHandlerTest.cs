@@ -54,7 +54,7 @@ namespace Cube.Net.Tests
         [Test]
         public async Task ConnectionClose()
         {
-            var uri     = new Uri("http://www.example.com/");
+            var uri     = new Uri("http://www.cube-soft.jp/");
             var handler = new Cube.Net.Http.HeaderHandler { ConnectionClose = true };
             var http    = Cube.Net.Http.ClientFactory.Create(handler);
 
