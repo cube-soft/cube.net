@@ -53,7 +53,7 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Monitor()
+        public async void Monitor()
         {
             var count = 0;
             var mon = new Cube.Net.Http.Monitor<int>(new ContentLengthConverter())
@@ -67,7 +67,7 @@ namespace Cube.Net.Tests.Http
             var cts = new CancellationTokenSource();
             mon.Subscribe(x => count++);
             mon.Start();
-            await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token);
+            await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token);
             mon.Stop();
 
             Assert.That(count, Is.AtLeast(1));
