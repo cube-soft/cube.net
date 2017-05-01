@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Net;
 using System.Net.Http;
 using Cube.Conversions;
 using Cube.Log;
@@ -295,7 +296,11 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected virtual void Publish(TValue value)
         {
-            foreach (var action in Subscriptions) action(value);
+            foreach (var action in Subscriptions)
+            {
+                try { action(value); }
+                catch (Exception err) { this.LogWarn(err.ToString()); }
+            }
         }
 
         #region IDisposable
@@ -400,7 +405,6 @@ namespace Cube.Net.Http
                 catch (Exception err)
                 {
                     Fail(err.ToString());
-                    if (!(err is TaskCanceledException) && !(err is HttpRequestException)) break;
                     await Task.Delay(RetryInterval);
                 }
             }
