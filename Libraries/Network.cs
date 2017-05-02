@@ -176,14 +176,28 @@ namespace Cube.Net
                 {
                     if (Status == OperationalStatus.Up)
                     {
+                        Debug($"Status:Up\tWait:{i * 5}sec");
                         AvailabilityChanged?.Invoke(sender, e);
                         return;
                     }
                     await TaskEx.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
                 }
+                Debug($"Timeout\tStatus:{Status}");
                 AvailabilityChanged?.Invoke(sender, e);
             }).Forget();
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Debug
+        /// 
+        /// <summary>
+        /// デバッグログを出力します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static void Debug(string message)
+            => Cube.Log.Operations.Debug(typeof(Network), message);
 
         #endregion
     }
