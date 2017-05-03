@@ -176,13 +176,13 @@ namespace Cube.Net
                 {
                     if (Status == OperationalStatus.Up)
                     {
-                        Debug($"Status:Up\tWait:{i * 5}sec");
+                        Debug($"Status:Up ({i * 5} sec)");
                         AvailabilityChanged?.Invoke(sender, e);
                         return;
                     }
                     await Task.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
                 }
-                Debug($"Timeout\tStatus:{Status}");
+                Debug($"Status:{Status} (Timeout)");
                 AvailabilityChanged?.Invoke(sender, e);
             }).Forget();
         }
