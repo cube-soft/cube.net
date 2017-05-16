@@ -65,7 +65,11 @@ namespace Cube.Net.Http
                 try { return await converter.ConvertAsync(response.Content); }
                 catch (Exception err)
                 {
-                    await client.Warning(response, err);
+                    client.LogWarn(err.ToString());
+                    if (response?.Content != null)
+                    {
+                        client.LogWarn(await response.Content.ReadAsStringAsync());
+                    }
                     return null;
                 }
             }
@@ -123,26 +127,6 @@ namespace Cube.Net.Http
         /* --------------------------------------------------------------------- */
         public static Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri) where T : class
             => client.GetAsync(uri, new XmlContentConverter<T>());
-
-        #endregion
-
-        #region Implementations
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Warning
-        /// 
-        /// <summary>
-        /// エラーログを出力します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        private static async Task Warning(this HttpClient client,
-            HttpResponseMessage msg, Exception err)
-        {
-            client.LogWarn(err.ToString());
-            if (msg?.Content != null) client.LogWarn(await msg.Content.ReadAsStringAsync());
-        }
 
         #endregion
     }
