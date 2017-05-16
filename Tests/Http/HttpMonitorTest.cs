@@ -55,41 +55,39 @@ namespace Cube.Net.Tests.Http
         [Test]
         public async Task Monitor()
         {
-            var count = 0;
-            var mon = new Cube.Net.Http.Monitor<int>(new ContentLengthConverter())
+            using (var mon = new Cube.Net.Http.Monitor<int>(Convert))
             {
-                Version  = new SoftwareVersion("1.0.0"),
-                Interval = TimeSpan.FromMilliseconds(100),
-                Timeout  = TimeSpan.FromMilliseconds(500),
-                Uri      = new Uri("http://www.cube-soft.jp/"),
-            };
+                mon.Version  = new SoftwareVersion("1.0.0");
+                mon.Interval = TimeSpan.FromMilliseconds(100);
+                mon.Timeout  = TimeSpan.FromMilliseconds(500);
+                mon.Uri      = new Uri("http://www.cube-soft.jp/");
 
-            var cts = new CancellationTokenSource();
-            mon.Subscribe(x => count++);
-            mon.Start();
-            await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token);
-            mon.Stop();
+                var sum = 0;
+                var cts = new CancellationTokenSource();
 
-            Assert.That(count, Is.AtLeast(1));
-            Assert.That(mon.FailedCount, Is.EqualTo(0));
+                mon.Subscribe(x => sum += x);
+                mon.Start();
+                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token);
+                mon.Stop();
+
+                Assert.That(sum, Is.AtLeast(1));
+                Assert.That(mon.FailedCount, Is.EqualTo(0));
+            }
         }
-    }
 
-    /* --------------------------------------------------------------------- */
-    ///
-    /// ContentLengthConverter
-    ///
-    /// <summary>
-    /// コンテンツの長さを取得するクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    class ContentLengthConverter : Cube.Net.Http.IContentConverter<int>
-    {
-        public async Task<int> ConvertAsync(HttpContent src)
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Convert
+        /// 
+        /// <summary>
+        /// HttpContent の変換処理を実行する関数オブジェクトです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private Func<HttpContent, Task<int>> Convert = async (s) =>
         {
-            var s = await src.ReadAsStringAsync();
-            return s.Length;
-        }
+            var str = await s.ReadAsStringAsync();
+            return str.Length;
+        };
     }
 }

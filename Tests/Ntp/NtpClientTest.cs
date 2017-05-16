@@ -46,28 +46,40 @@ namespace Cube.Net.Tests
         public void Properties_Default()
         {
             var client = new Ntp.Client();
-
-            Assert.That(client.Host.HostName, Is.EqualTo("ntp.cube-soft.jp"));
+            Assert.That(client.Host.HostName,           Is.EqualTo("ntp.cube-soft.jp"));
             Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
-            Assert.That(client.Port, Is.EqualTo(123));
-            Assert.That(client.Timeout, Is.EqualTo(TimeSpan.FromSeconds(5)));
+            Assert.That(client.Port,                    Is.EqualTo(123));
+            Assert.That(client.Timeout,                 Is.EqualTo(TimeSpan.FromSeconds(5)));
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LocalClockOffset
+        /// GetAsync
         /// 
         /// <summary>
-        /// 非同期で時刻を取得するテストを行います。
+        /// 非同期で NTP サーバと通信するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TestCase(60)]
-        public async Task LocalClockOffset(int delta)
+        [Test]
+        public async Task GetAsync()
         {
-            var result = await new Ntp.Client().GetAsync();
-            Assert.That(result.IsValid, Is.True);
-            Assert.That(result.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(delta));
+            var pkt = await new Ntp.Client().GetAsync();
+            Assert.That(pkt.IsValid,                       Is.True);
+            Assert.That(pkt.LeapIndicator,                 Is.EqualTo(Cube.Net.Ntp.LeapIndicator.NoWarning));
+            Assert.That(pkt.Version,                       Is.EqualTo(3));
+            Assert.That(pkt.Mode,                          Is.EqualTo(Cube.Net.Ntp.Mode.Server));
+            Assert.That(pkt.Stratum,                       Is.EqualTo(Cube.Net.Ntp.Stratum.SecondaryReference));
+            Assert.That(pkt.PollInterval,                  Is.EqualTo(4));
+            Assert.That(pkt.Precision,                     Is.GreaterThan(0.0).And.LessThan(1.0));
+            Assert.That(pkt.RootDelay,                     Is.GreaterThan(0.0).And.LessThan(1.0));
+            Assert.That(pkt.RootDispersion,                Is.GreaterThan(0.0).And.LessThan(1.0));
+            Assert.That(pkt.ReferenceID,                   Is.Not.Null.And.Not.Empty);
+            Assert.That(pkt.ReferenceTimestamp,            Is.Not.Null);
+            Assert.That(pkt.KeyID,                         Is.Empty);
+            Assert.That(pkt.MessageDigest,                 Is.Empty);
+            Assert.That(pkt.NetworkDelay.TotalSeconds,     Is.GreaterThan(0.0).And.LessThan(1.0));
+            Assert.That(pkt.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(60));
         }
 
         /* ----------------------------------------------------------------- */

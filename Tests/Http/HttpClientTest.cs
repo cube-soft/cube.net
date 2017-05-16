@@ -91,5 +91,27 @@ namespace Cube.Net.Tests
             Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
             Assert.That(xml.People[1].Age,  Is.EqualTo(25));
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync
+        /// 
+        /// <summary>
+        /// Handler に null を指定した場合のテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async Task GetAsync_NullHandler()
+        {
+            var uri  = new Uri("http://www.example.com/");
+            var time = TimeSpan.FromSeconds(5);
+
+            using (var http = ClientFactory.Create(null, time))
+            using (var response = await http.GetAsync(uri))
+            {
+                Assert.That(response.IsSuccessStatusCode);
+            }
+        }
     }
 }
