@@ -43,10 +43,11 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [Test]
         public void Properties_Default()
         {
             var client = new Ntp.Client();
-            Assert.That(client.Host.HostName,           Is.EqualTo("ntp.cube-soft.jp"));
+            Assert.That(client.Host.HostName,           Is.EqualTo("www268.ziyu.net"));
             Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
             Assert.That(client.Port,                    Is.EqualTo(123));
             Assert.That(client.Timeout,                 Is.EqualTo(TimeSpan.FromSeconds(5)));
