@@ -46,11 +46,13 @@ namespace Cube.Net.Tests
         [Test]
         public void Properties_Default()
         {
-            var client = new Ntp.Client();
-            Assert.That(client.Host.HostName,           Is.EqualTo("www268.ziyu.net"));
-            Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
-            Assert.That(client.Port,                    Is.EqualTo(123));
-            Assert.That(client.Timeout,                 Is.EqualTo(TimeSpan.FromSeconds(5)));
+            using (var client = new Ntp.Client())
+            {
+                Assert.That(client.Host.HostName, Is.EqualTo("www268.ziyu.net"));
+                Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
+                Assert.That(client.Port, Is.EqualTo(123));
+                Assert.That(client.Timeout, Is.EqualTo(TimeSpan.FromSeconds(5)));
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -111,7 +113,15 @@ namespace Cube.Net.Tests
         [Test]
         public void Timeout_Throws()
             => Assert.That(
-            async () => await new Ntp.Client { Timeout = TimeSpan.FromMilliseconds(1) }.GetAsync(),
+            async () =>
+            {
+                using (var client = new Ntp.Client())
+                {
+                    client.Timeout = TimeSpan.FromMilliseconds(1);
+                    var result = await client.GetAsync();
+                    Assert.Fail("never reached");
+                }
+            },
             Throws.TypeOf<TimeoutException>()
         );
     }
