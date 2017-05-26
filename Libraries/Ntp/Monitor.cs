@@ -413,7 +413,7 @@ namespace Cube.Net.Ntp
         {
             if (_disposed) return;
 
-            if (disposing) _core?.Dispose();
+            if (disposing) _core.Dispose();
 
             _disposed = true;
         }
