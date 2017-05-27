@@ -97,7 +97,7 @@ namespace Cube.Net.Http
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public Task<TValue> ConvertAsync(HttpContent src) => _func?.Invoke(src);
+        public Task<TValue> ConvertAsync(HttpContent src) => _func(src);
 
         #endregion
 
