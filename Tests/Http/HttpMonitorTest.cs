@@ -70,8 +70,8 @@ namespace Cube.Net.Tests.Http
                 await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token);
                 mon.Stop();
 
-                Assert.That(sum, Is.AtLeast(1));
                 Assert.That(mon.FailedCount, Is.EqualTo(0));
+                Assert.That(sum, Is.AtLeast(1));
             }
         }
 
