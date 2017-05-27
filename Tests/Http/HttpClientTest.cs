@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Cube.Net.Http;
@@ -113,5 +114,39 @@ namespace Cube.Net.Tests
                 Assert.That(response.IsSuccessStatusCode);
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_ConverterThrows
+        /// 
+        /// <summary>
+        /// 変換用オブジェクトが例外を送出した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async Task GetAsync_ConverterThrows()
+        {
+            var uri = new Uri("http://www.example.com/");
+            using (var http = ClientFactory.Create())
+            {
+                var result = await http.GetAsync(uri, Converter);
+                Assert.That(result, Is.Null);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Throws
+        /// 
+        /// <summary>
+        /// 例外を発生させる関数オブジェクトを生成します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private Func<HttpContent, Task<string>> Converter = (s) =>
+        {
+            throw new ArgumentException("ErrorTest");
+        };
     }
 }
