@@ -41,6 +41,8 @@ namespace Cube.Net.Tests
     [TestFixture]
     public class HttpClientTest : NetworkResource
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// GetJsonAsync
@@ -130,23 +132,29 @@ namespace Cube.Net.Tests
             var uri = new Uri("http://www.example.com/");
             using (var http = ClientFactory.Create())
             {
-                var result = await http.GetAsync(uri, Converter);
+                var result = await http.GetAsync(uri, Throws);
                 Assert.That(result, Is.Null);
             }
         }
+
+        #endregion
+
+        #region Helper methods
 
         /* ----------------------------------------------------------------- */
         ///
         /// Throws
         /// 
         /// <summary>
-        /// 例外を発生させる関数オブジェクトを生成します。
+        /// 例外を発生させる関数オブジェクトです。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private Func<HttpContent, Task<string>> Converter = (s) =>
+        private Func<HttpContent, Task<string>> Throws = (s) =>
         {
             throw new ArgumentException("ErrorTest");
         };
+
+        #endregion
     }
 }
