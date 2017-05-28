@@ -119,6 +119,26 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// GetAsync_NotFound
+        /// 
+        /// <summary>
+        /// 存在しない URL を指定した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async Task GetAsync_NotFound()
+        {
+            var uri = new Uri("http://www.cube-soft.jp/404.html");
+            using (var http = ClientFactory.Create())
+            {
+                var result = await http.GetAsync(uri, RawContent);
+                Assert.That(result, Is.Null);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// GetAsync_ConverterThrows
         /// 
         /// <summary>
@@ -140,6 +160,18 @@ namespace Cube.Net.Tests
         #endregion
 
         #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RawContent
+        /// 
+        /// <summary>
+        /// 文字列を取得する関数オブジェクトです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private Func<HttpContent, Task<string>> RawContent = (s)
+            => s.ReadAsStringAsync();
 
         /* ----------------------------------------------------------------- */
         ///
