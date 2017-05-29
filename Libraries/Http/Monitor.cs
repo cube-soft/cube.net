@@ -272,7 +272,16 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public virtual void Reset() => _core.Reset();
+        public virtual void Reset()
+        {
+            var current = State;
+            _core.Reset();
+            if (current == TimerState.Run)
+            {
+                Stop();
+                Start();
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
