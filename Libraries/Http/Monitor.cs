@@ -81,7 +81,7 @@ namespace Cube.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         public Monitor(Func<HttpContent, Task<TValue>> func)
-            : this(new ContentHandler<TValue>(func)) { }
+            : this(new ContentConverter<TValue>(func)) { }
 
         #endregion
 
@@ -363,7 +363,7 @@ namespace Cube.Net.Http
             if (disposing)
             {
                 _http?.Dispose();
-                _handler?.Dispose();
+                _handler.Dispose();
             }
 
             _disposed = true;
