@@ -36,6 +36,8 @@ namespace Cube.Net.Tests.Http
     [TestFixture]
     class HttpMonitorTest
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// Monitor
@@ -57,23 +59,57 @@ namespace Cube.Net.Tests.Http
         {
             using (var mon = new Cube.Net.Http.Monitor<int>(Convert))
             {
+                Assert.That(mon.NetworkAvailable, Is.True);
+
                 mon.Version  = new SoftwareVersion("1.0.0");
                 mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Timeout  = TimeSpan.FromMilliseconds(500);
                 mon.Uri      = new Uri("http://www.cube-soft.jp/");
 
                 var sum = 0;
-                var cts = new CancellationTokenSource();
-
                 mon.Subscribe(x => sum += x);
                 mon.Start();
-                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token);
+                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
                 mon.Stop();
 
                 Assert.That(mon.FailedCount, Is.EqualTo(0));
                 Assert.That(sum, Is.AtLeast(1));
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        /// 
+        /// <summary>
+        /// リセット処理のテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async Task Reset()
+        {
+            using (var mon = new Cube.Net.Http.Monitor<int>(Convert))
+            {
+                mon.Version  = new SoftwareVersion("1.0.0");
+                mon.Interval = TimeSpan.FromMinutes(1);
+                mon.Timeout  = TimeSpan.FromMilliseconds(500);
+                mon.Uri      = new Uri("http://www.cube-soft.jp/");
+
+                var count = 0;
+
+                mon.Subscribe(_ => ++count);
+                mon.Start(mon.Interval);
+                mon.Reset();
+                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+                mon.Stop();
+                Assert.That(count, Is.EqualTo(1));
+            }
+        }
+
+        #endregion
+
+        #region Helper methods
 
         /* ----------------------------------------------------------------- */
         ///
@@ -89,5 +125,7 @@ namespace Cube.Net.Tests.Http
             var str = await s.ReadAsStringAsync();
             return str.Length;
         };
+
+        #endregion
     }
 }
