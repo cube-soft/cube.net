@@ -97,7 +97,6 @@ namespace Cube.Net.Tests.Http
                 mon.Uri      = new Uri("http://www.cube-soft.jp/");
 
                 var count = 0;
-
                 mon.Subscribe(_ => ++count);
                 mon.Start(mon.Interval);
                 mon.Reset();

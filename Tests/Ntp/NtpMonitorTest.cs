@@ -37,7 +37,7 @@ namespace Cube.Net.Tests
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// Monitor
         /// 
         /// <summary>
         /// NTP サーバを監視するテストを行います。
@@ -45,33 +45,54 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start()
+        public async Task Monitor()
         {
             using (var monitor = new Ntp.Monitor())
             {
-                var result = TimeSpan.Zero;
-
                 Assert.That(monitor.NetworkAvailable, Is.True);
-                Assert.That(
-                    async () =>
-                    {
-                        var cts = new CancellationTokenSource();
-                        monitor.Subscribe(x =>
-                        {
-                            result = x;
-                            cts.Cancel();
-                        });
-                        monitor.Timeout = TimeSpan.FromSeconds(2);
-                        monitor.Start();
-                        await Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token);
-                    },
-                    Throws.TypeOf<TaskCanceledException>()
-                );
 
+                monitor.Server  = "ntp.cube-soft.jp";
+                monitor.Port    = 123;
+                monitor.Timeout = TimeSpan.FromSeconds(2);
+
+                var result = TimeSpan.Zero;
+                monitor.Subscribe(x => result = x);
+                monitor.Start();
+                await Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2));
                 monitor.Stop();
 
-                Assert.That(monitor.FailedCount, Is.EqualTo(0));
                 Assert.That(result, Is.Not.EqualTo(TimeSpan.Zero));
+                Assert.That(monitor.FailedCount, Is.EqualTo(0));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        /// 
+        /// <summary>
+        /// リセット処理のテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async Task Reset()
+        {
+            using (var monitor = new Ntp.Monitor())
+            {
+                Assert.That(monitor.NetworkAvailable, Is.True);
+
+                monitor.Server  = "ntp.cube-soft.jp";
+                monitor.Port    = 123;
+                monitor.Timeout = TimeSpan.FromSeconds(2);
+
+                var count = 0;
+                monitor.Subscribe(_ => ++count);
+                monitor.Start(monitor.Interval);
+                monitor.Reset();
+                await Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2));
+                monitor.Stop();
+                Assert.That(count, Is.EqualTo(1));
             }
         }
     }
