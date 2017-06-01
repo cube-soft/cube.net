@@ -69,8 +69,10 @@ namespace Cube.Net.Tests.Http
                 var sum = 0;
                 mon.Subscribe(x => sum += x);
                 mon.Start();
+                mon.Start(); // ignore
                 await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
                 mon.Stop();
+                mon.Stop(); // ignore
 
                 Assert.That(mon.FailedCount, Is.EqualTo(0));
                 Assert.That(sum, Is.AtLeast(1));

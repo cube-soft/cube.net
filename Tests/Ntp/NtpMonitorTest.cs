@@ -47,22 +47,24 @@ namespace Cube.Net.Tests
         [Test]
         public async Task Monitor()
         {
-            using (var monitor = new Ntp.Monitor())
+            using (var mon = new Ntp.Monitor())
             {
-                Assert.That(monitor.NetworkAvailable, Is.True);
+                Assert.That(mon.NetworkAvailable, Is.True);
 
-                monitor.Server  = "ntp.cube-soft.jp";
-                monitor.Port    = 123;
-                monitor.Timeout = TimeSpan.FromSeconds(2);
+                mon.Server  = "ntp.cube-soft.jp";
+                mon.Port    = 123;
+                mon.Timeout = TimeSpan.FromSeconds(2);
 
                 var result = TimeSpan.Zero;
-                monitor.Subscribe(x => result = x);
-                monitor.Start();
-                await Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2));
-                monitor.Stop();
+                mon.Subscribe(x => result = x);
+                mon.Start();
+                mon.Start(); // ignore
+                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+                mon.Stop();
+                mon.Stop(); // ignore
 
                 Assert.That(result, Is.Not.EqualTo(TimeSpan.Zero));
-                Assert.That(monitor.FailedCount, Is.EqualTo(0));
+                Assert.That(mon.FailedCount, Is.EqualTo(0));
             }
         }
 
@@ -78,20 +80,20 @@ namespace Cube.Net.Tests
         [Test]
         public async Task Reset()
         {
-            using (var monitor = new Ntp.Monitor())
+            using (var mon = new Ntp.Monitor())
             {
-                Assert.That(monitor.NetworkAvailable, Is.True);
+                Assert.That(mon.NetworkAvailable, Is.True);
 
-                monitor.Server  = "ntp.cube-soft.jp";
-                monitor.Port    = 123;
-                monitor.Timeout = TimeSpan.FromSeconds(2);
+                mon.Server  = "ntp.cube-soft.jp";
+                mon.Port    = 123;
+                mon.Timeout = TimeSpan.FromSeconds(2);
 
                 var count = 0;
-                monitor.Subscribe(_ => ++count);
-                monitor.Start(monitor.Interval);
-                monitor.Reset();
-                await Task.Delay((int)(monitor.Timeout.TotalMilliseconds * 2));
-                monitor.Stop();
+                mon.Subscribe(_ => ++count);
+                mon.Start(mon.Interval);
+                mon.Reset();
+                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+                mon.Stop();
                 Assert.That(count, Is.EqualTo(1));
             }
         }
