@@ -51,19 +51,19 @@ namespace Cube.Net.Tests
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
-                mon.Server  = "ntp.cube-soft.jp";
+                mon.Server  = "ntp.nict.jp";
                 mon.Port    = 123;
-                mon.Timeout = TimeSpan.FromSeconds(2);
+                mon.Timeout = TimeSpan.FromSeconds(1);
 
-                var result = TimeSpan.Zero;
-                mon.Subscribe(x => result = x);
+                var count = 0;
+                mon.Subscribe(_ => ++count);
                 mon.Start();
                 mon.Start(); // ignore
-                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+                await Task.Delay(TimeSpan.FromMilliseconds(1000));
                 mon.Stop();
                 mon.Stop(); // ignore
 
-                Assert.That(result, Is.Not.EqualTo(TimeSpan.Zero));
+                Assert.That(count, Is.AtLeast(1));
                 Assert.That(mon.FailedCount, Is.EqualTo(0));
             }
         }

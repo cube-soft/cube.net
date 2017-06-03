@@ -67,22 +67,44 @@ namespace Cube.Net.Tests
         [Test]
         public async Task GetAsync()
         {
-            var pkt = await new Ntp.Client().GetAsync();
-            Assert.That(pkt.IsValid,                       Is.True);
-            Assert.That(pkt.LeapIndicator,                 Is.EqualTo(Cube.Net.Ntp.LeapIndicator.NoWarning));
-            Assert.That(pkt.Version,                       Is.EqualTo(3));
-            Assert.That(pkt.Mode,                          Is.EqualTo(Cube.Net.Ntp.Mode.Server));
-            Assert.That(pkt.Stratum,                       Is.EqualTo(Cube.Net.Ntp.Stratum.SecondaryReference));
-            Assert.That(pkt.PollInterval,                  Is.EqualTo(4));
-            Assert.That(pkt.Precision,                     Is.GreaterThan(0.0).And.LessThan(1.0));
-            Assert.That(pkt.RootDelay,                     Is.GreaterThan(0.0).And.LessThan(1.0));
-            Assert.That(pkt.RootDispersion,                Is.GreaterThan(0.0).And.LessThan(1.0));
-            Assert.That(pkt.ReferenceID,                   Is.Not.Null.And.Not.Empty);
-            Assert.That(pkt.ReferenceTimestamp,            Is.Not.Null);
-            Assert.That(pkt.KeyID,                         Is.Empty);
-            Assert.That(pkt.MessageDigest,                 Is.Empty);
-            Assert.That(pkt.NetworkDelay.TotalSeconds,     Is.GreaterThan(0.0).And.LessThan(1.0));
-            Assert.That(pkt.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(60));
+            using (var client = new Ntp.Client())
+            {
+                var pkt = await client.GetAsync();
+                Assert.That(pkt.IsValid,            Is.True);
+                Assert.That(pkt.LeapIndicator,      Is.EqualTo(Cube.Net.Ntp.LeapIndicator.NoWarning));
+                Assert.That(pkt.Version,            Is.EqualTo(3));
+                Assert.That(pkt.Mode,               Is.EqualTo(Cube.Net.Ntp.Mode.Server));
+                Assert.That(pkt.Stratum,            Is.EqualTo(Cube.Net.Ntp.Stratum.SecondaryReference));
+                Assert.That(pkt.PollInterval,       Is.EqualTo(4));
+                Assert.That(pkt.Precision,          Is.GreaterThan(0.0).And.LessThan(1.0));
+                Assert.That(pkt.RootDelay,          Is.GreaterThan(0.0).And.LessThan(1.0));
+                Assert.That(pkt.RootDispersion,     Is.GreaterThan(0.0).And.LessThan(1.0));
+                Assert.That(pkt.ReferenceID,        Is.Not.Null.And.Not.Empty);
+                Assert.That(pkt.ReferenceTimestamp, Is.Not.Null);
+                Assert.That(pkt.KeyID,              Is.Empty);
+                Assert.That(pkt.MessageDigest,      Is.Empty);
+                Assert.That(pkt.NetworkDelay.TotalSeconds,     Is.GreaterThan(0.0).And.LessThan(1.0));
+                Assert.That(pkt.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(60));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync
+        /// 
+        /// <summary>
+        /// 非同期で NTP サーバと通信するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TestCase("ntp.nict.jp")]
+        public async Task GetAsync(string server)
+        {
+            using (var client = new Ntp.Client(server))
+            {
+                var pkt = await client.GetAsync();
+                Assert.That(pkt.IsValid, Is.True);
+            }
         }
 
         /* ----------------------------------------------------------------- */
