@@ -100,6 +100,7 @@ namespace Cube.Net.Tests.Http
 
                 var count = 0;
                 mon.Subscribe(_ => ++count);
+                mon.Reset();
                 mon.Start(mon.Interval);
                 mon.Reset();
                 await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));

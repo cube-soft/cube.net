@@ -454,11 +454,7 @@ namespace Cube.Net.Ntp
             {
                 try
                 {
-                    var client = new Client(Server, Port)
-                    {
-                        Timeout = Timeout,
-                    };
-
+                    var client = new Client(Server, Port) { Timeout = Timeout };
                     var packet = await client.GetAsync();
                     if (packet != null && packet.IsValid)
                     {
