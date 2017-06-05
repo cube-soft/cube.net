@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -64,21 +65,21 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public async Task GetAsync()
+        [TestCaseSource(nameof(GetAsync_TestCases))]
+        public async Task GetAsync(string src, uint version, uint poll, Cube.Net.Ntp.Stratum stratum)
         {
-            using (var client = new Ntp.Client())
+            using (var client = new Ntp.Client(src))
             {
                 var pkt = await client.GetAsync();
                 Assert.That(pkt.IsValid,            Is.True);
                 Assert.That(pkt.LeapIndicator,      Is.EqualTo(Cube.Net.Ntp.LeapIndicator.NoWarning));
-                Assert.That(pkt.Version,            Is.EqualTo(3));
+                Assert.That(pkt.Version,            Is.EqualTo(version));
                 Assert.That(pkt.Mode,               Is.EqualTo(Cube.Net.Ntp.Mode.Server));
-                Assert.That(pkt.Stratum,            Is.EqualTo(Cube.Net.Ntp.Stratum.SecondaryReference));
-                Assert.That(pkt.PollInterval,       Is.EqualTo(4));
+                Assert.That(pkt.Stratum,            Is.EqualTo(stratum));
+                Assert.That(pkt.PollInterval,       Is.EqualTo(poll));
                 Assert.That(pkt.Precision,          Is.GreaterThan(0.0).And.LessThan(1.0));
-                Assert.That(pkt.RootDelay,          Is.GreaterThan(0.0).And.LessThan(1.0));
-                Assert.That(pkt.RootDispersion,     Is.GreaterThan(0.0).And.LessThan(1.0));
+                Assert.That(pkt.RootDelay,          Is.GreaterThanOrEqualTo(0.0));
+                Assert.That(pkt.RootDispersion,     Is.GreaterThanOrEqualTo(0.0));
                 Assert.That(pkt.ReferenceID,        Is.Not.Null.And.Not.Empty);
                 Assert.That(pkt.ReferenceTimestamp, Is.Not.Null);
                 Assert.That(pkt.KeyID,              Is.Empty);
@@ -90,20 +91,30 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsync
+        /// GetAsync_TestCases
         /// 
         /// <summary>
-        /// 非同期で NTP サーバと通信するテストを実行します。
+        /// GetAsync のテスト用データを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TestCase("ntp.nict.jp")]
-        public async Task GetAsync(string server)
+        private static IEnumerable<TestCaseData> GetAsync_TestCases
         {
-            using (var client = new Ntp.Client(server))
+            get
             {
-                var pkt = await client.GetAsync();
-                Assert.That(pkt.IsValid, Is.True);
+                yield return new TestCaseData(
+                    "ntp.nict.jp",
+                    3u,
+                    0u,
+                    Cube.Net.Ntp.Stratum.PrimaryReference
+                );
+
+                yield return new TestCaseData(
+                    "ntp.cube-soft.jp",
+                    3u,
+                    4u,
+                    Cube.Net.Ntp.Stratum.SecondaryReference
+                );
             }
         }
 
