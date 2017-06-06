@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -228,7 +229,8 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private void SendTo()
         {
-            var endpoint = new IPEndPoint(Host.AddressList[0], Port);
+            var addr = Host.AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+            var endpoint = new IPEndPoint(addr, Port);
             var packet = new Ntp.Packet();
             var sent = _socket.SendTo(packet.RawData, endpoint);
             if (sent != packet.RawData.Length) throw new SocketException();
