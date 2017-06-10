@@ -435,38 +435,39 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private async void WhenTick()
         {
-            if (State != TimerState.Run) return;
-            await GetAsync();
-        }
+            if (State != TimerState.Run || Subscriptions.Count <= 0) return;
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync
-        /// 
-        /// <summary>
-        /// 非同期で NTP サーバと通信を行います。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task GetAsync()
-        {
-            for (var i = 0; i < RetryCount; ++i )
+            for (var i = 0; i < RetryCount; ++i)
             {
                 try
                 {
                     var client = new Client(Server, Port) { Timeout = Timeout };
                     var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid)
-                    {
-                        Publish(packet.LocalClockOffset);
-                        return;
-                    }
+                    if (packet != null && packet.IsValid) Publish(packet.LocalClockOffset);
+                    else throw new ArgumentException("InvalidPacket");
+                    break;
                 }
-                catch (Exception err) { this.LogWarn(err.ToString()); }
-                ++FailedCount;
-                await Task.Delay(RetryInterval);
+                catch (Exception err)
+                {
+                    Fail(err.ToString());
+                    await Task.Delay(RetryInterval);
+                }
             }
+        }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Fail
+        ///
+        /// <summary>
+        /// 通信に失敗した事を伝える処理を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Fail(string message)
+        {
+            ++FailedCount;
+            this.LogWarn(message);
             this.LogWarn($"Failed\tCount:{FailedCount}");
         }
 
