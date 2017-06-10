@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Net;
 using System.Net.Http;
 using Cube.Conversions;
 using Cube.Log;
