@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -43,31 +44,78 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [Test]
         public void Properties_Default()
         {
-            var client = new Ntp.Client();
-
-            Assert.That(client.Host.HostName, Is.EqualTo("ntp.cube-soft.jp"));
-            Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
-            Assert.That(client.Port, Is.EqualTo(123));
-            Assert.That(client.Timeout, Is.EqualTo(TimeSpan.FromSeconds(5)));
+            using (var client = new Ntp.Client())
+            {
+                Assert.That(client.Host.HostName, Is.EqualTo("www268.ziyu.net"));
+                Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
+                Assert.That(client.Port, Is.EqualTo(123));
+                Assert.That(client.Timeout, Is.EqualTo(TimeSpan.FromSeconds(5)));
+            }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LocalClockOffset
+        /// GetAsync
         /// 
         /// <summary>
-        /// 非同期で時刻を取得するテストを行います。
+        /// 非同期で NTP サーバと通信するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TestCase(60)]
-        public async void LocalClockOffset(int delta)
+        [TestCaseSource(nameof(GetAsync_TestCases))]
+        public async void GetAsync(string src, uint version, uint poll, Cube.Net.Ntp.Stratum stratum)
         {
-            var result = await new Ntp.Client().GetAsync();
-            Assert.That(result.IsValid, Is.True);
-            Assert.That(result.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(delta));
+            using (var client = new Ntp.Client(src))
+            {
+                var pkt = await client.GetAsync();
+                Assert.That(pkt.IsValid,            Is.True);
+                Assert.That(pkt.LeapIndicator,      Is.EqualTo(Cube.Net.Ntp.LeapIndicator.NoWarning));
+                Assert.That(pkt.Version,            Is.EqualTo(version));
+                Assert.That(pkt.Mode,               Is.EqualTo(Cube.Net.Ntp.Mode.Server));
+                Assert.That(pkt.Stratum,            Is.EqualTo(stratum));
+                Assert.That(pkt.PollInterval,       Is.EqualTo(poll));
+                Assert.That(pkt.Precision,          Is.GreaterThan(0.0).And.LessThan(1.0));
+                Assert.That(pkt.RootDelay,          Is.GreaterThanOrEqualTo(0.0));
+                Assert.That(pkt.RootDispersion,     Is.GreaterThanOrEqualTo(0.0));
+                Assert.That(pkt.ReferenceID,        Is.Not.Null.And.Not.Empty);
+                Assert.That(pkt.ReferenceTimestamp, Is.Not.Null);
+                Assert.That(pkt.KeyID,              Is.Empty);
+                Assert.That(pkt.MessageDigest,      Is.Empty);
+                Assert.That(pkt.NetworkDelay.TotalSeconds,     Is.GreaterThan(0.0).And.LessThan(1.0));
+                Assert.That(pkt.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(60));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_TestCases
+        /// 
+        /// <summary>
+        /// GetAsync のテスト用データを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IEnumerable<TestCaseData> GetAsync_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData(
+                    "ntp.nict.jp",
+                    3u,
+                    0u,
+                    Cube.Net.Ntp.Stratum.PrimaryReference
+                );
+
+                yield return new TestCaseData(
+                    "ntp.cube-soft.jp",
+                    3u,
+                    4u,
+                    Cube.Net.Ntp.Stratum.SecondaryReference
+                );
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -99,7 +147,15 @@ namespace Cube.Net.Tests
         [Ignore("NUnit for .NET 3.5 does not support async/await")]
         public void Timeout_Throws()
             => Assert.That(
-            async () => await new Ntp.Client { Timeout = TimeSpan.FromMilliseconds(1) }.GetAsync(),
+            async () =>
+            {
+                using (var client = new Ntp.Client())
+                {
+                    client.Timeout = TimeSpan.FromMilliseconds(1);
+                    var result = await client.GetAsync();
+                    Assert.Fail("never reached");
+                }
+            },
             Throws.TypeOf<TimeoutException>()
         );
     }

@@ -172,32 +172,21 @@ namespace Cube.Net
             if (!e.IsAvailable) AvailabilityChanged?.Invoke(sender, e);
             else TaskEx.Run(async () =>
             {
+                var type = typeof(Network);
                 for (var i = 0; i < 24; ++i) // 5 sec * 24 = 2 min
                 {
                     if (Status == OperationalStatus.Up)
                     {
-                        Debug($"Status:Up ({i * 5} sec)");
+                        Cube.Log.Operations.Debug(type, ($"Status:Up ({i * 5} sec)"));
                         AvailabilityChanged?.Invoke(sender, e);
                         return;
                     }
                     await TaskEx.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
                 }
-                Debug($"Status:{Status} (Timeout)");
+                Cube.Log.Operations.Debug(type, $"Status:{Status} (Timeout)");
                 AvailabilityChanged?.Invoke(sender, e);
             }).Forget();
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Debug
-        /// 
-        /// <summary>
-        /// デバッグログを出力します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static void Debug(string message)
-            => Cube.Log.Operations.Debug(typeof(Network), message);
 
         #endregion
     }

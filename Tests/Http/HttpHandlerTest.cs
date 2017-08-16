@@ -16,8 +16,9 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Threading.Tasks;
 using System.Net;
+using System.Reflection;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Cube.Net.Tests
@@ -35,6 +36,8 @@ namespace Cube.Net.Tests
     [TestFixture]
     class HttpHandlerTest : NetworkResource
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// ConnectionClose
@@ -54,10 +57,14 @@ namespace Cube.Net.Tests
         [Test]
         public async void ConnectionClose()
         {
-            var uri     = new Uri("http://www.cube-soft.jp/");
-            var handler = new Cube.Net.Http.HeaderHandler { ConnectionClose = true };
-            var http    = Cube.Net.Http.ClientFactory.Create(handler);
+            var uri = new Uri("http://www.cube-soft.jp/");
+            var h   = new Cube.Net.Http.HeaderHandler
+            {
+                UserAgent       = GetUserAgent(),
+                ConnectionClose = true
+            };
 
+            using (var http = Cube.Net.Http.ClientFactory.Create(h))
             using (var response = await http.GetAsync(uri))
             {
                 Assert.That(response.Headers.Connection.Contains("Close"));
@@ -76,23 +83,49 @@ namespace Cube.Net.Tests
         [Test]
         public async void EntityTag()
         {
-            var uri     = new Uri("http://www.example.com/");
-            var handler = new Cube.Net.Http.HeaderHandler();
-            var http    = Cube.Net.Http.ClientFactory.Create(handler);
+            var uri = new Uri("http://www.example.com/");
+            var h   = new Cube.Net.Http.HeaderHandler { UserAgent = GetUserAgent() };
 
-            using (var response = await http.GetAsync(uri))
+            using (var http = Cube.Net.Http.ClientFactory.Create(h))
             {
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                if (string.IsNullOrEmpty(handler.EntityTag)) Assert.Ignore("EntityTag not set");
-            }
+                using (var response = await http.GetAsync(uri))
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    if (string.IsNullOrEmpty(h.EntityTag)) Assert.Ignore("EntityTag not set");
+                }
 
-            var etag = handler.EntityTag;
+                var etag = h.EntityTag;
 
-            using (var response = await http.GetAsync(uri))
-            {
-                if (handler.EntityTag != etag) Assert.Ignore("EntityTag changed");
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
+                using (var response = await http.GetAsync(uri))
+                {
+                    if (h.EntityTag != etag) Assert.Ignore("EntityTag changed");
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
+                }
             }
         }
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetUserAgent
+        ///
+        /// <summary>
+        /// User-Agent を表す文字列を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private string GetUserAgent()
+        {
+            var asm = new AssemblyReader(Assembly.GetExecutingAssembly());
+            var app = $"{asm.Product}/{asm.Version}";
+            var win = Environment.OSVersion.VersionString;
+            var net = $".NET {Environment.Version}";
+            return $"{app} ({win}; {net})";
+        }
+
+        #endregion
     }
 }

@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -36,6 +35,8 @@ namespace Cube.Net.Tests.Http
     [TestFixture]
     class HttpMonitorTest
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// Monitor
@@ -55,41 +56,77 @@ namespace Cube.Net.Tests.Http
         [Test]
         public async void Monitor()
         {
-            var count = 0;
-            var mon = new Cube.Net.Http.Monitor<int>(new ContentLengthConverter())
+            using (var mon = new Cube.Net.Http.Monitor<int>(Convert))
             {
-                Version  = new SoftwareVersion("1.0.0"),
-                Interval = TimeSpan.FromMilliseconds(100),
-                Timeout  = TimeSpan.FromMilliseconds(500),
-                Uri      = new Uri("http://www.cube-soft.jp/"),
-            };
+                Assert.That(mon.NetworkAvailable, Is.True);
 
-            var cts = new CancellationTokenSource();
-            mon.Subscribe(x => count++);
-            mon.Start();
-            await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token);
-            mon.Stop();
+                mon.Version  = new SoftwareVersion("1.0.0");
+                mon.Interval = TimeSpan.FromMilliseconds(100);
+                mon.Timeout  = TimeSpan.FromMilliseconds(500);
+                mon.Uri      = new Uri("http://www.cube-soft.jp/");
 
-            Assert.That(count, Is.AtLeast(1));
-            Assert.That(mon.FailedCount, Is.EqualTo(0));
+                var sum = 0;
+                mon.Subscribe(x => sum += x);
+                mon.Start();
+                mon.Start(); // ignore
+                await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+                mon.Stop();
+                mon.Stop(); // ignore
+
+                Assert.That(mon.FailedCount, Is.EqualTo(0));
+                Assert.That(sum, Is.AtLeast(1));
+            }
         }
-    }
 
-    /* --------------------------------------------------------------------- */
-    ///
-    /// ContentLengthConverter
-    ///
-    /// <summary>
-    /// コンテンツの長さを取得するクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    class ContentLengthConverter : Cube.Net.Http.IContentConverter<int>
-    {
-        public async Task<int> ConvertAsync(HttpContent src)
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        /// 
+        /// <summary>
+        /// リセット処理のテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async void Reset()
         {
-            var s = await src.ReadAsStringAsync();
-            return s.Length;
+            using (var mon = new Cube.Net.Http.Monitor<int>(Convert))
+            {
+                mon.Version  = new SoftwareVersion("1.0.0");
+                mon.Interval = TimeSpan.FromMinutes(1);
+                mon.Timeout  = TimeSpan.FromMilliseconds(500);
+                mon.Uri      = new Uri("http://www.cube-soft.jp/");
+
+                var count = 0;
+                mon.Subscribe(_ => ++count);
+                mon.Reset();
+                mon.Start(mon.Interval);
+                mon.Reset();
+                await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+                mon.Stop();
+                Assert.That(count, Is.EqualTo(1));
+            }
         }
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Convert
+        /// 
+        /// <summary>
+        /// HttpContent の変換処理を実行する関数オブジェクトです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private Func<HttpContent, Task<int>> Convert = async (s) =>
+        {
+            var str = await s.ReadAsStringAsync();
+            return str.Length;
+        };
+
+        #endregion
     }
 }

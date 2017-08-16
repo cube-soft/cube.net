@@ -58,5 +58,24 @@ namespace Cube.Net.Tests
         [Test]
         public void Available()
             => Assert.That(Network.Available);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DisableOptions
+        /// 
+        /// <summary>
+        /// 各種ネットワークオプションを無効にするテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void DisableOptions()
+        {
+            Network.DisableOptions();
+
+            Assert.That(System.Net.ServicePointManager.Expect100Continue, Is.False);
+            Assert.That(System.Net.ServicePointManager.UseNagleAlgorithm, Is.False);
+            Assert.That(System.Net.WebRequest.DefaultWebProxy, Is.Null);
+        }
     }
 }

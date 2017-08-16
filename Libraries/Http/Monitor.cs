@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Net;
 using System.Net.Http;
 using Cube.Conversions;
 using Cube.Log;
@@ -81,7 +80,7 @@ namespace Cube.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         public Monitor(Func<HttpContent, Task<TValue>> func)
-            : this(new ContentHandler<TValue>(func)) { }
+            : this(new ContentConverter<TValue>(func)) { }
 
         #endregion
 
@@ -272,7 +271,16 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public virtual void Reset() => _core.Reset();
+        public virtual void Reset()
+        {
+            var current = State;
+            _core.Reset();
+            if (current == TimerState.Run)
+            {
+                Stop();
+                Start();
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -354,7 +362,7 @@ namespace Cube.Net.Http
             if (disposing)
             {
                 _http?.Dispose();
-                _handler?.Dispose();
+                _handler.Dispose();
             }
 
             _disposed = true;

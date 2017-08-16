@@ -413,7 +413,7 @@ namespace Cube.Net.Ntp
         {
             if (_disposed) return;
 
-            if (disposing) _core?.Dispose();
+            if (disposing) _core.Dispose();
 
             _disposed = true;
         }
@@ -435,42 +435,39 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private async void WhenTick()
         {
-            if (State != TimerState.Run) return;
-            await GetAsync();
+            if (State != TimerState.Run || Subscriptions.Count <= 0) return;
+
+            for (var i = 0; i < RetryCount; ++i)
+            {
+                try
+                {
+                    var client = new Client(Server, Port) { Timeout = Timeout };
+                    var packet = await client.GetAsync();
+                    if (packet != null && packet.IsValid) Publish(packet.LocalClockOffset);
+                    else throw new ArgumentException("InvalidPacket");
+                    break;
+                }
+                catch (Exception err)
+                {
+                    Fail(err.ToString());
+                    await TaskEx.Delay(RetryInterval);
+                }
+            }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsync
-        /// 
-        /// <summary>
-        /// 非同期で NTP サーバと通信を行います。
-        /// </summary>
+        /// Fail
         ///
+        /// <summary>
+        /// 通信に失敗した事を伝える処理を実行します。
+        /// </summary>
+        /// 
         /* ----------------------------------------------------------------- */
-        private async Task GetAsync()
+        private void Fail(string message)
         {
-            for (var i = 0; i < RetryCount; ++i )
-            {
-                try
-                {
-                    var client = new Client(Server, Port)
-                    {
-                        Timeout = Timeout,
-                    };
-
-                    var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid)
-                    {
-                        Publish(packet.LocalClockOffset);
-                        return;
-                    }
-                }
-                catch (Exception err) { this.LogWarn(err.ToString()); }
-                ++FailedCount;
-                await TaskEx.Delay(RetryInterval);
-            }
-
+            ++FailedCount;
+            this.LogWarn(message);
             this.LogWarn($"Failed\tCount:{FailedCount}");
         }
 

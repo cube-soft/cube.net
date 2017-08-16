@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Cube.Net</id>
+    <version>1.4.1</version>
+    <authors>CubeSoft</authors>
+    <description>Cube network library.</description>
+    <copyright>Copyright (c) 2010 CubeSoft, Inc.</copyright>
+    <licenseUrl>https://github.com/cube-soft/Cube.Net/blob/master/License.txt</licenseUrl>
+    <projectUrl>https://github.com/cube-soft/Cube.Net</projectUrl>
+    <iconUrl>https://github.com/cube-soft/Cube.Net/blob/master/Icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes>Private release.</releaseNotes>
+    <tags>Cube Windows Network</tags>
+    <dependencies>
+      <group>
+        <dependency id="log4net" version="2.0.8" />
+        <dependency id="Cube.Core" version="1.4.3" />
+      </group>
+      <group targetFramework="net35">
+        <dependency id="AsyncBridge.Net35" version="0.2.0" />
+        <dependency id="Cube.Backwards" version="1.4.0" />
+        <dependency id="TaskParallelLibrary" version="1.0.2856.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Cube.Net.dll" target="lib\net45" />
+    <file src="bin\net35\Release\Cube.Net.dll" target="lib\net35" />
+    <file src="bin\net35\Release\Rackspace.Threading.dll" target="lib\net35" />
+    <file src="bin\net35\Release\System.Net.Http.dll" target="lib\net35" />
+  </files>
+</package>

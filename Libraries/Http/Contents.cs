@@ -110,7 +110,7 @@ namespace Cube.Net.Http
         {
             if (_disposed) return;
 
-            if (disposing) Source?.Dispose();
+            if (disposing) Source.Dispose();
 
             _disposed = true;
             base.Dispose(disposing);
@@ -144,7 +144,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected override bool TryComputeLength(out long length)
         {
-            length = Source?.Headers?.ContentLength ?? -1;
+            length = Source.Headers?.ContentLength ?? -1;
             return length != -1;
         }
 

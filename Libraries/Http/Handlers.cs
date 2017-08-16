@@ -215,7 +215,7 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ContentConvertHandler
+        /// ContentHandler
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -226,7 +226,7 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GenericContentConverter
+        /// ContentHandler
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -242,7 +242,7 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GenericContentConverter
+        /// ContentHandler
         ///
         /// <summary>
         /// オブジェクトを初期化します。

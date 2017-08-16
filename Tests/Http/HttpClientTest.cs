@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Cube.Net.Http;
@@ -40,6 +41,8 @@ namespace Cube.Net.Tests
     [TestFixture]
     public class HttpClientTest : NetworkResource
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// GetJsonAsync
@@ -91,5 +94,99 @@ namespace Cube.Net.Tests
             Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
             Assert.That(xml.People[1].Age,  Is.EqualTo(25));
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync
+        /// 
+        /// <summary>
+        /// Handler に null を指定した場合のテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async void GetAsync_NullHandler()
+        {
+            var uri  = new Uri("http://www.example.com/");
+            var time = TimeSpan.FromSeconds(5);
+
+            using (var http = ClientFactory.Create(null, time))
+            using (var response = await http.GetAsync(uri))
+            {
+                Assert.That(response.IsSuccessStatusCode);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_NotFound
+        /// 
+        /// <summary>
+        /// 存在しない URL を指定した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async void GetAsync_NotFound()
+        {
+            var uri = new Uri("http://www.cube-soft.jp/404.html");
+            using (var http = ClientFactory.Create())
+            {
+                var result = await http.GetAsync(uri, RawContent);
+                Assert.That(result, Is.Null);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_ConverterThrows
+        /// 
+        /// <summary>
+        /// 変換用オブジェクトが例外を送出した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async void GetAsync_ConverterThrows()
+        {
+            var uri = new Uri("http://www.example.com/");
+            using (var http = ClientFactory.Create())
+            {
+                var result = await http.GetAsync(uri, Throws);
+                Assert.That(result, Is.Null);
+            }
+        }
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RawContent
+        /// 
+        /// <summary>
+        /// 文字列を取得する関数オブジェクトです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private Func<HttpContent, Task<string>> RawContent = (s)
+            => s.ReadAsStringAsync();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Throws
+        /// 
+        /// <summary>
+        /// 例外を発生させる関数オブジェクトです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private Func<HttpContent, Task<string>> Throws = (s) =>
+        {
+            throw new ArgumentException("ErrorTest");
+        };
+
+        #endregion
     }
 }

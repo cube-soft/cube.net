@@ -16,7 +16,6 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -37,7 +36,7 @@ namespace Cube.Net.Tests
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// Monitor
         /// 
         /// <summary>
         /// NTP サーバを監視するテストを行います。
@@ -45,27 +44,57 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        [Ignore("NUnit for .NET 3.5 does not support async/await")]
-        public void Start()
+        public async void Monitor()
         {
-            var result = TimeSpan.Zero;
-            Assert.That(
-                async () =>
-                {
-                    var cts     = new CancellationTokenSource();
-                    var monitor = new Ntp.Monitor();
-                    monitor.Subscribe(x =>
-                    {
-                        result = x;
-                        cts.Cancel();
-                    });
-                    monitor.Timeout = TimeSpan.FromSeconds(2);
-                    monitor.Start();
-                    await TaskEx.Delay((int)(monitor.Timeout.TotalMilliseconds * 2), cts.Token);
-                },
-                Throws.TypeOf<TaskCanceledException>()
-            );
-            Assert.That(result, Is.Not.EqualTo(TimeSpan.Zero));
+            using (var mon = new Ntp.Monitor())
+            {
+                Assert.That(mon.NetworkAvailable, Is.True);
+
+                mon.Server  = "ntp.nict.jp";
+                mon.Port    = 123;
+                mon.Timeout = TimeSpan.FromSeconds(1);
+
+                var count = 0;
+                mon.Subscribe(_ => ++count);
+                mon.Start();
+                mon.Start(); // ignore
+                await TaskEx.Delay(TimeSpan.FromMilliseconds(1000));
+                mon.Stop();
+                mon.Stop(); // ignore
+
+                Assert.That(count, Is.AtLeast(1));
+                Assert.That(mon.FailedCount, Is.EqualTo(0));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        /// 
+        /// <summary>
+        /// リセット処理のテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async void Reset()
+        {
+            using (var mon = new Ntp.Monitor())
+            {
+                Assert.That(mon.NetworkAvailable, Is.True);
+
+                mon.Server  = "ntp.cube-soft.jp";
+                mon.Port    = 123;
+                mon.Timeout = TimeSpan.FromSeconds(2);
+
+                var count = 0;
+                mon.Subscribe(_ => ++count);
+                mon.Start(mon.Interval);
+                mon.Reset();
+                await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+                mon.Stop();
+                Assert.That(count, Is.EqualTo(1));
+            }
         }
     }
 }
