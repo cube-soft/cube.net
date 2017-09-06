@@ -34,7 +34,7 @@ namespace Cube.Net.Tests
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    class HttpHandlerTest : NetworkResource
+    class HttpHandlerTest : NetworkHandler
     {
         #region Tests
 
