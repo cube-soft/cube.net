@@ -36,7 +36,7 @@ namespace Cube.Net.Tests
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
+        /// Start
         /// 
         /// <summary>
         /// NTP サーバを監視するテストを行います。
@@ -44,7 +44,7 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Monitor()
+        public async Task Start()
         {
             using (var mon = new Ntp.Monitor())
             {
