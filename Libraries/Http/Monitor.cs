@@ -17,8 +17,9 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Cube.Conversions;
 using Cube.Log;
 
@@ -125,14 +126,14 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Uri
+        /// Uris
         ///
         /// <summary>
-        /// HTTP 通信を行う URL を取得または設定します。
+        /// HTTP 通信を行う URL 一覧を取得または設定します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public Uri Uri { get; set; }
+        public IList<Uri> Uris { get; } = new List<Uri>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -198,7 +199,8 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected IList<Action<TValue>> Subscriptions { get; } = new List<Action<TValue>>();
+        protected IList<Action<Uri, TValue>> Subscriptions { get; }
+            = new List<Action<Uri, TValue>>();
 
         #endregion
 
@@ -260,7 +262,7 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Subscribe(Action<TValue> action) => Subscriptions.Add(action);
+        public void Subscribe(Action<Uri, TValue> action) => Subscriptions.Add(action);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -284,14 +286,17 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetRequestUri
+        /// GetRequestUris
         ///
         /// <summary>
-        /// リクエスト送信先 URL を取得します。
+        /// リクエスト送信先 URL 一覧を取得します。
         /// </summary>
         /// 
+        /// <returns>URL 一覧</returns>
+        /// 
         /* ----------------------------------------------------------------- */
-        protected virtual Uri GetRequestUri() => Uri.With(Version);
+        protected virtual IEnumerable<Uri> GetRequestUris()
+            => Uris.Select(x => x.With(Version));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -302,11 +307,11 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected virtual void Publish(TValue value)
+        protected virtual void Publish(Uri uri, TValue value)
         {
             foreach (var action in Subscriptions)
             {
-                try { action(value); }
+                try { action(uri, value); }
                 catch (Exception err) { this.LogWarn(err.ToString()); }
             }
         }
@@ -387,9 +392,10 @@ namespace Cube.Net.Http
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
 
-            var uri = GetRequestUri();
-            if (uri == null) return;
+            var uris = GetRequestUris();
+            if (uris.Count() <= 0) return;
 
+            foreach (var uri in uris)
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
@@ -402,17 +408,17 @@ namespace Cube.Net.Http
                         var code   = (int)status;
                         var digit  = code / 100;
 
-                        if (response.Content is ValueContent<TValue> content) Publish(content.Value); // OK
+                        if (response.Content is ValueContent<TValue> content) Publish(uri, content.Value); // OK
                         else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
-                        else if (digit == 4) Fail($"HTTP:{code} {status}");
+                        else if (digit == 4) Fail(uri, $"HTTP:{code} {status}");
                         else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
-                        else Fail($"Content is not {nameof(TValue)} ({code})");
+                        else Fail(uri, $"Content is not {nameof(TValue)} ({code})");
                         break;
                     }
                 }
                 catch (Exception err)
                 {
-                    Fail(err.ToString());
+                    Fail(uri, err.ToString());
                     await Task.Delay(RetryInterval);
                 }
             }
@@ -427,9 +433,10 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void Fail(string message)
+        private void Fail(Uri uri, string message)
         {
             ++FailedCount;
+            this.LogWarn(uri.ToString());
             this.LogWarn(message);
             this.LogWarn($"Failed\tCount:{FailedCount}");
         }
