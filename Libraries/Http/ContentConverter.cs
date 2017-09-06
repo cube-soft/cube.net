@@ -20,7 +20,6 @@ using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Cube.Log;
 
 namespace Cube.Net.Http
 {
@@ -173,6 +172,39 @@ namespace Cube.Net.Http
             var stream = await src.ReadAsStreamAsync();
             var xml = new XmlSerializer(typeof(TValue));
             return xml.Deserialize(stream) as TValue;
+        }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RssContentConverter
+    ///
+    /// <summary>
+    /// HttpContent を RssFeed に変換するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class RssContentConverter : IContentConverter<Rss.RssFeed>
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ConvertAsync(TValue)
+        ///
+        /// <summary>
+        /// 非同期で変換処理を実行します。
+        /// </summary>
+        /// 
+        /// <param name="src">HttpContent オブジェクト</param>
+        /// 
+        /// <returns>変換後のオブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public async Task<Rss.RssFeed> ConvertAsync(HttpContent src)
+        {
+            if (src == null) return null;
+
+            var stream = await src.ReadAsStreamAsync();
+            return Rss.RssParser.Create(stream);
         }
     }
 }

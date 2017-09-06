@@ -37,6 +37,7 @@ namespace Cube.Net.Tests
     /// 取得しました。
     /// https://validator.w3.org/feed/docs/rss1.html
     /// https://validator.w3.org/feed/docs/rss2.html
+    /// https://validator.w3.org/feed/docs/atom.html
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */

@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -48,7 +49,7 @@ namespace Cube.Net.Tests
         /// GetJsonAsync
         /// 
         /// <summary>
-        /// JSON データを非同期で取得するテストを行います。
+        /// JSON データを非同期で取得するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -74,7 +75,7 @@ namespace Cube.Net.Tests
         /// GetXmlAsync
         /// 
         /// <summary>
-        /// XML データを非同期で取得するテストを行います。
+        /// XML データを非同期で取得するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -93,6 +94,28 @@ namespace Cube.Net.Tests
             Assert.That(xml.People[1].Id,   Is.EqualTo("0002"));
             Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
             Assert.That(xml.People[1].Age,  Is.EqualTo(25));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetRssAsync
+        /// 
+        /// <summary>
+        /// RSS フィードを非同期で取得するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async Task GetRssAsync()
+        {
+            var uri = new Uri("http://clown.hatenablog.jp/rss");
+            var rss = await ClientFactory.Create().GetRssAsync(uri);
+
+            Assert.That(rss.Id,            Is.Null);
+            Assert.That(rss.Title,         Is.EqualTo("Life like a clown"));
+            Assert.That(rss.Link,          Is.EqualTo(new Uri("http://clown.hatenablog.jp/")));
+            Assert.That(rss.Description,   Is.Empty);
+            Assert.That(rss.Items.Count(), Is.GreaterThan(5));
         }
 
         /* ----------------------------------------------------------------- */
