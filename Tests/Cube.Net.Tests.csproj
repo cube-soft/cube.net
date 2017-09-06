@@ -70,6 +70,7 @@
     <Compile Include="Ntp\NtpPacketTest.cs" />
     <Compile Include="Ntp\NtpTimestampTest.cs" />
     <Compile Include="NetworkTest.cs" />
+    <Compile Include="Rss\RssMonitorTest.cs" />
     <Compile Include="Rss\RssParserTest.cs" />
   </ItemGroup>
   <ItemGroup>

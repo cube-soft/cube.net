@@ -439,6 +439,7 @@ namespace Cube.Net.Http
             this.LogWarn(uri.ToString());
             this.LogWarn(message);
             this.LogWarn($"Failed\tCount:{FailedCount}");
+            System.Diagnostics.Debug.WriteLine(message);
         }
 
         #region Fields
