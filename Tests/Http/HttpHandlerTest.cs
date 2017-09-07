@@ -64,7 +64,7 @@ namespace Cube.Net.Tests
                 ConnectionClose = true
             };
 
-            using (var http = Cube.Net.Http.ClientFactory.Create(h))
+            using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
             using (var response = await http.GetAsync(uri))
             {
                 Assert.That(response.Headers.Connection.Contains("Close"));
@@ -86,7 +86,7 @@ namespace Cube.Net.Tests
             var uri = new Uri("http://www.example.com/");
             var h   = new Cube.Net.Http.HeaderHandler { UserAgent = GetUserAgent() };
 
-            using (var http = Cube.Net.Http.ClientFactory.Create(h))
+            using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
             {
                 using (var response = await http.GetAsync(uri))
                 {

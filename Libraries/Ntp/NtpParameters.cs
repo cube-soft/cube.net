@@ -21,6 +21,59 @@ namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
+    /// LeapIndicator
+    /// 
+    /// <summary>
+    /// 閏秒指示子 (LI: Leap Indicator) の状態を定義した列挙型です。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public enum LeapIndicator : uint
+    {
+        NoWarning    = 0,   // 0 - No warning
+        LastMinute61 = 1,   // 1 - Last minute has 61 seconds
+        LastMinute59 = 2,   // 2 - Last minute has 59 seconds
+        Alarm        = 3    // 3 - Alarm condition (clock not synchronized)
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Mode
+    /// 
+    /// <summary>
+    /// 動作モードの状態を定義した列挙型です。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public enum Mode : uint
+    {
+        Unknown          = 0,   // 0, 6, 7 - Reserved
+        SymmetricActive  = 1,   // 1 - Symmetric active
+        SymmetricPassive = 2,   // 2 - Symmetric pasive
+        Client           = 3,   // 3 - Client
+        Server           = 4,   // 4 - Server
+        Broadcast        = 5,   // 5 - Broadcast
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Stratum
+    /// 
+    /// <summary>
+    /// 階層の状態を定義した列挙型です。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public enum Stratum
+    {
+        Unspecified,            // 0 - unspecified or unavailable
+        PrimaryReference,       // 1 - primary reference (e.g. radio-clock)
+        SecondaryReference,     // 2-15 - secondary reference (via NTP or SNTP)
+        Reserved                // 16-255 - reserved
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
     /// Timestamp
     ///
     /// <summary>
@@ -87,9 +140,42 @@ namespace Cube.Net.Ntp
 
         #region Constant variables
         private static readonly ulong _CompensatingRate32 = 0x100000000L;
-        private static readonly uint  _ConpensatingRate31 = 0x80000000u;
+        private static readonly uint _ConpensatingRate31 = 0x80000000u;
         private static readonly DateTime _BaseTerm = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         private static readonly DateTime _ReverseTerm = new DateTime(2036, 2, 7, 6, 28, 16, 0, DateTimeKind.Utc);
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// FixedPoint
+    /// 
+    /// <summary>
+    /// 符号付き 32bit 固定小数点数から double への変換機能を提供するための
+    /// クラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    internal static class FixedPoint
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ToDouble
+        /// 
+        /// <summary>
+        /// 符号付き 32bit 固定小数点数から double へ変換します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static double ToDouble(Int32 value)
+        {
+            var number = (Int16)(value >> 16);
+            var fraction = (UInt16)(value & Int16.MaxValue);
+            return number + fraction / _CompensatingRate16;
+        }
+
+        #region Constant variables
+        private static readonly double _CompensatingRate16 = 0x10000d;
         #endregion
     }
 }

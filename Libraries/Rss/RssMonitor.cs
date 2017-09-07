@@ -30,7 +30,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssMonitor : Monitor<RssFeed>
+    public class RssMonitor : HttpMonitor<RssFeed>
     {
         #region Constructors
 

@@ -46,7 +46,7 @@ namespace Cube.Net.Tests
         [Test]
         public async Task Start()
         {
-            using (var mon = new Ntp.Monitor())
+            using (var mon = new Ntp.NtpMonitor())
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
@@ -79,7 +79,7 @@ namespace Cube.Net.Tests
         [Test]
         public async Task Reset()
         {
-            using (var mon = new Ntp.Monitor())
+            using (var mon = new Ntp.NtpMonitor())
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 

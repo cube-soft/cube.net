@@ -56,7 +56,7 @@ namespace Cube.Net.Tests.Http
         [Test]
         public async Task Start()
         {
-            using (var mon = new Cube.Net.Http.Monitor<int>(Convert))
+            using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
@@ -91,7 +91,7 @@ namespace Cube.Net.Tests.Http
         [Test]
         public async Task Reset()
         {
-            using (var mon = new Cube.Net.Http.Monitor<int>(Convert))
+            using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
                 mon.Version  = new SoftwareVersion("1.0.0");
                 mon.Interval = TimeSpan.FromMinutes(1);

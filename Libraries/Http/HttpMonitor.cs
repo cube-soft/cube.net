@@ -17,71 +17,71 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Win32;
+using Cube.Conversions;
 using Cube.Log;
 
-namespace Cube.Net.Ntp
+namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Monitor
+    /// HttpMonitor(TValue)
     ///
     /// <summary>
-    /// NTP サーバと定期的に通信を行い、時刻のずれを監視するクラスです。
+    /// 定期的に HTTP 通信を実行するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Monitor : IDisposable
+    public class HttpMonitor<TValue> : IDisposable
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
+        /// HttpMonitor
         ///
-        /* ----------------------------------------------------------------- */
-        public Monitor() : this(Ntp.Client.DefaultServer) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Monitor
-        /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         /// 
-        /// <param name="server">NTP サーバ</param>
+        /// <param name="handler">HTTP 通信用ハンドラ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public Monitor(string server) : this(server, Ntp.Client.DefaultPort) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Monitor
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="server">NTP サーバ</param>
-        /// <param name="port">ポート番号</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Monitor(string server, int port) : base()
+        public HttpMonitor(ContentHandler<TValue> handler) : base()
         {
-            Interval = TimeSpan.FromHours(1);
-
-            _server = server;
-            _port = port;
+            _handler = handler;
             _core.Subscribe(WhenTick);
-
-            SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// HttpMonitor
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="converter">変換用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public HttpMonitor(IContentConverter<TValue> converter)
+            : this (new ContentHandler<TValue>(converter)) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// HttpMonitor
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="func">変換用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public HttpMonitor(Func<HttpContent, Task<TValue>> func)
+            : this(new ContentConverter<TValue>(func)) { }
 
         #endregion
 
@@ -126,44 +126,14 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Server
-        /// 
+        /// Uris
+        ///
         /// <summary>
-        /// NTP サーバのアドレス (ホスト名または IP アドレス) を取得
-        /// または設定します。
+        /// HTTP 通信を行う URL 一覧を取得または設定します。
         /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Server
-        {
-            get { return _server; }
-            set
-            {
-                if (_server == value) return;
-                _server = value;
-                Reset();
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Port
         /// 
-        /// <summary>
-        /// ポート番号を取得または設定します。
-        /// </summary>
-        ///
         /* ----------------------------------------------------------------- */
-        public int Port
-        {
-            get { return _port; }
-            set
-            {
-                if (_port == value) return;
-                _port = value;
-                Reset();
-            }
-        }
+        public IList<Uri> Uris { get; } = new List<Uri>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -196,7 +166,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
+        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(10);
 
         /* --------------------------------------------------------------------- */
         ///
@@ -207,7 +177,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public TimeSpan Timeout { get; set; } = TimeSpan.FromMilliseconds(500);
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(2);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -229,38 +199,8 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected IList<Action<TimeSpan>> Subscriptions { get; } = new List<Action<TimeSpan>>();
-
-        #endregion
-
-        #region Events
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// TimeChanged
-        /// 
-        /// <summary>
-        /// システムの時刻が変更された時に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public event EventHandler TimeChanged;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnTimeChanged
-        /// 
-        /// <summary>
-        /// システムの時刻が変更された時に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void OnTimeChanged(EventArgs e)
-        {
-            if (_core.PowerMode == PowerModes.Suspend) return;
-            Reset();
-            TimeChanged?.Invoke(this, e);
-        }
+        protected IList<Action<Uri, TValue>> Subscriptions { get; }
+            = new List<Action<Uri, TValue>>();
 
         #endregion
 
@@ -322,8 +262,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Subscribe(Action<TimeSpan> action)
-            => Subscriptions.Add(action);
+        public void Subscribe(Action<Uri, TValue> action) => Subscriptions.Add(action);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -333,12 +272,6 @@ namespace Cube.Net.Ntp
         /// リセットします。
         /// </summary>
         /// 
-        /// <remarks>
-        /// リセット時に直ちに NTP サーバと通信した場合、精度が悪い傾向が
-        /// あります。現在は、500 ミリ秒の待機時間を設ける事で回避して
-        /// います。
-        /// </remarks>
-        /// 
         /* ----------------------------------------------------------------- */
         public virtual void Reset()
         {
@@ -347,9 +280,23 @@ namespace Cube.Net.Ntp
             if (current == TimerState.Run)
             {
                 Stop();
-                Start(TimeSpan.FromMilliseconds(500));
+                Start();
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetRequestUris
+        ///
+        /// <summary>
+        /// リクエスト送信先 URL 一覧を取得します。
+        /// </summary>
+        /// 
+        /// <returns>URL 一覧</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual IEnumerable<Uri> GetRequestUris()
+            => Uris.Select(x => x.With(Version));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -360,9 +307,13 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected virtual void Publish(TimeSpan value)
+        protected virtual void Publish(Uri uri, TValue value)
         {
-            foreach (var action in Subscriptions) action(value);
+            foreach (var action in Subscriptions)
+            {
+                try { action(uri, value); }
+                catch (Exception err) { this.LogWarn(err.ToString()); }
+            }
         }
 
         #region IDisposable
@@ -376,7 +327,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        ~Monitor()
+        ~HttpMonitor()
         {
             Dispose(false);
         }
@@ -413,7 +364,11 @@ namespace Cube.Net.Ntp
         {
             if (_disposed) return;
 
-            if (disposing) _core.Dispose();
+            if (disposing)
+            {
+                _http?.Dispose();
+                _handler.Dispose();
+            }
 
             _disposed = true;
         }
@@ -427,29 +382,43 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// WhenTick
-        /// 
-        /// <summary>
-        /// 一定間隔毎に実行されます。
-        /// </summary>
         ///
+        /// <summary>
+        /// 一定間隔で実行されます。
+        /// </summary>
+        /// 
         /* ----------------------------------------------------------------- */
         private async void WhenTick()
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
 
+            var uris = GetRequestUris();
+            if (uris.Count() <= 0) return;
+
+            foreach (var uri in uris)
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
                 {
-                    var client = new Client(Server, Port) { Timeout = Timeout };
-                    var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid) Publish(packet.LocalClockOffset);
-                    else throw new ArgumentException("InvalidPacket");
-                    break;
+                    if (_http == null) _http = HttpClientFactory.Create(_handler, Timeout);
+
+                    using (var response = await _http.GetAsync(uri))
+                    {
+                        var status = response.StatusCode;
+                        var code   = (int)status;
+                        var digit  = code / 100;
+
+                        if (response.Content is ValueContent<TValue> content) Publish(uri, content.Value); // OK
+                        else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
+                        else if (digit == 4) Fail(uri, $"HTTP:{code} {status}");
+                        else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
+                        else Fail(uri, $"Content is not {nameof(TValue)} ({code})");
+                        break;
+                    }
                 }
                 catch (Exception err)
                 {
-                    Fail(err.ToString());
+                    Fail(uri, err.ToString());
                     await Task.Delay(RetryInterval);
                 }
             }
@@ -464,17 +433,19 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void Fail(string message)
+        private void Fail(Uri uri, string message)
         {
             ++FailedCount;
+            this.LogWarn(uri.ToString());
             this.LogWarn(message);
             this.LogWarn($"Failed\tCount:{FailedCount}");
+            System.Diagnostics.Debug.WriteLine(message);
         }
 
         #region Fields
         private bool _disposed = false;
-        private string _server = string.Empty;
-        private int _port = Client.DefaultPort;
+        private HttpClient _http;
+        private ContentHandler<TValue> _handler;
         private NetworkAwareTimer _core = new NetworkAwareTimer();
         #endregion
 

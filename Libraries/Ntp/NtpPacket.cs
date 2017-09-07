@@ -23,27 +23,27 @@ namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Packet
+    /// NtpPacket
     /// 
     /// <summary>
     /// NTP パケットを表すクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Packet
+    public class NtpPacket
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Packet
+        /// NtpPacket
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Packet()
+        public NtpPacket()
         {
             CreationTime = DateTime.Now;
             RawData = CreateNewPacket();
@@ -51,14 +51,14 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Packet
+        /// NtpPacket
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Packet(byte[] rawdata)
+        public NtpPacket(byte[] rawdata)
         {
             if (rawdata.Length < _MinimumPacketSize)
             {

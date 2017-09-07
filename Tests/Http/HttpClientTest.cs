@@ -56,9 +56,9 @@ namespace Cube.Net.Tests
         [Test]
         public async Task GetJsonAsync()
         {
-            var uri = new Uri("http://dev.cielquis.net/tests/example.json");
-            var json = await ClientFactory.Create()
-                                          .GetJsonAsync<PeopleContainer>(uri);
+            var uri    = new Uri("http://dev.cielquis.net/tests/example.json");
+            var client = HttpClientFactory.Create();
+            var json   = await client.GetJsonAsync<PeopleContainer>(uri);
 
             Assert.That(json.People, Is.Not.Null);
             Assert.That(json.People.Count,   Is.EqualTo(2));
@@ -82,9 +82,9 @@ namespace Cube.Net.Tests
         [Test]
         public async Task GetXmlAsync()
         {
-            var uri = new Uri("http://dev.cielquis.net/tests/example.xml");
-            var xml = await ClientFactory.Create()
-                                         .GetXmlAsync<PeopleContainer>(uri);
+            var uri    = new Uri("http://dev.cielquis.net/tests/example.xml");
+            var client = HttpClientFactory.Create();
+            var xml    = await client.GetXmlAsync<PeopleContainer>(uri);
 
             Assert.That(xml.People, Is.Not.Null);
             Assert.That(xml.People.Count,   Is.EqualTo(2));
@@ -109,7 +109,7 @@ namespace Cube.Net.Tests
         public async Task GetRssAsync()
         {
             var uri = new Uri("http://clown.hatenablog.jp/rss");
-            var rss = await ClientFactory.Create().GetRssAsync(uri);
+            var rss = await HttpClientFactory.Create().GetRssAsync(uri);
 
             Assert.That(rss.Id,            Is.Null);
             Assert.That(rss.Title,         Is.EqualTo("Life like a clown"));
@@ -133,7 +133,7 @@ namespace Cube.Net.Tests
             var uri  = new Uri("http://www.example.com/");
             var time = TimeSpan.FromSeconds(5);
 
-            using (var http = ClientFactory.Create(null, time))
+            using (var http = HttpClientFactory.Create(null, time))
             using (var response = await http.GetAsync(uri))
             {
                 Assert.That(response.IsSuccessStatusCode);
@@ -153,7 +153,7 @@ namespace Cube.Net.Tests
         public async Task GetAsync_NotFound()
         {
             var uri = new Uri("http://www.cube-soft.jp/404.html");
-            using (var http = ClientFactory.Create())
+            using (var http = HttpClientFactory.Create())
             {
                 var result = await http.GetAsync(uri, RawContent);
                 Assert.That(result, Is.Null);
@@ -173,7 +173,7 @@ namespace Cube.Net.Tests
         public async Task GetAsync_ConverterThrows()
         {
             var uri = new Uri("http://www.example.com/");
-            using (var http = ClientFactory.Create())
+            using (var http = HttpClientFactory.Create())
             {
                 var result = await http.GetAsync(uri, Throws);
                 Assert.That(result, Is.Null);
