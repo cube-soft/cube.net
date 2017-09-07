@@ -73,6 +73,26 @@ namespace Cube.Net.Tests
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ParseFeed_Content
+        /// 
+        /// <summary>
+        /// RSS フィードの最初の Item から Content を取得するテストを
+        /// 実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TestCase("SampleRss20-02.xml", ExpectedResult = 873)]
+        [TestCase("SampleAtom-01.xml",  ExpectedResult =  24)]
+        public int ParseFeed_Content(string filename)
+        {
+            using (var stream = File.OpenRead(Example(filename)))
+            {
+                return RssParser.Create(stream).Items.First().Content.Length;
+            }
+        }
+
         #endregion
 
         #region TestCases
@@ -98,6 +118,15 @@ namespace Cube.Net.Tests
                     Icon        = null,
                     Link        = new Uri("http://www.scripting.com/"),
                 }).Returns(9);
+
+                yield return new TestCaseData("SampleRss20-02.xml", new RssFeed
+                {
+                    Id          = null,
+                    Title       = "SoGap",
+                    Description = "SoGap is a service for searching for popular news by using social signals.",
+                    Icon        = null,
+                    Link        = new Uri("http://sogap.cielquis.net/")
+                }).Returns(3);
 
                 yield return new TestCaseData("SampleAtom-01.xml", new RssFeed
                 {

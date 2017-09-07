@@ -13,5 +13,6 @@
     <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
     <updated>2003-12-13T18:30:02Z</updated>
     <summary>Some text.</summary>
+    <content>Longer text for content.</content>
   </entry>
 </feed>
