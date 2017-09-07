@@ -90,10 +90,37 @@ namespace Cube.Net.Rss
                 Id          = src.Id,
                 Title       = src.Title?.Text,
                 Summary     = src.Summary?.Text,
+                Content     = GetContent(src),
                 Categories  = src.Categories?.Select(x => x.Name),
                 Link        = src.Links?.FirstOrDefault()?.Uri,
                 PublishTime = src.PublishDate.LocalDateTime,
             };
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetContent
+        /// 
+        /// <summary>
+        /// Content の内容を取得します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// content:encoded タグが存在する場合、その内容を優先します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static string GetContent(SyndicationItem src)
+        {
+            foreach (var extension in src.ElementExtensions)
+            {
+                var element = extension.GetObject<XmlElement>();
+                if (element.Name != "content:encoded") continue;
+                return element.InnerText;
+            }
+
+            if (src.Content is TextSyndicationContent tsc) return tsc.Text;
+            else return null;
         }
 
         /* ----------------------------------------------------------------- */
