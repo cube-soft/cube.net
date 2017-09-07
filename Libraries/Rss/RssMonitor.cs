@@ -56,7 +56,8 @@ namespace Cube.Net.Rss
         /// <param name="converter">変換用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor(IContentConverter<RssFeed> converter) : base(converter) { }
+        public RssMonitor(IContentConverter<RssFeed> converter)
+            : base(new ContentHandler<RssFeed>(converter) { UseEntityTag = false }) { }
 
         #endregion
 
