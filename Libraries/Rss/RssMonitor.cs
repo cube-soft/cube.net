@@ -15,67 +15,67 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System.Net.NetworkInformation;
-using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using Cube.Net.Http;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkTest
+    /// RssMonitor
     ///
     /// <summary>
-    /// Network のテスト用クラスです。
+    /// 定期的に登録した URL からフィードを取得するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [Parallelizable]
-    [TestFixture]
-    class NetworkTest : NetworkHandler
+    public class RssMonitor : HttpMonitor<RssFeed>
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Status
-        /// 
-        /// <summary>
-        /// ネットワーク状況を取得するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Status()
-            => Assert.That(Network.Status, Is.EqualTo(OperationalStatus.Up));
+        #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Available
-        /// 
+        /// RssMonitor
+        ///
         /// <summary>
-        /// ネットワークが利用可能かどうか判別するテストを実行します。
+        /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void Available()
-            => Assert.That(Network.Available);
+        public RssMonitor() : this(new RssContentConverter()) { }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DisableOptions
-        /// 
+        /// Monitor
+        ///
         /// <summary>
-        /// 各種ネットワークオプションを無効にするテストを実行します。
+        /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <param name="converter">変換用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void DisableOptions()
-        {
-            Network.DisableOptions();
+        public RssMonitor(IContentConverter<RssFeed> converter)
+            : base(new ContentHandler<RssFeed>(converter) { UseEntityTag = false }) { }
 
-            Assert.That(System.Net.ServicePointManager.Expect100Continue, Is.False);
-            Assert.That(System.Net.ServicePointManager.UseNagleAlgorithm, Is.False);
-            Assert.That(System.Net.WebRequest.DefaultWebProxy, Is.Null);
-        }
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetRequestUris
+        ///
+        /// <summary>
+        /// リクエスト送信先 URL 一覧を取得します。
+        /// </summary>
+        /// 
+        /// <returns>URL 一覧</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected override IEnumerable<Uri> GetRequestUris() => Uris;
+
+        #endregion
     }
 }

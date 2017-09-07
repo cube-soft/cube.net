@@ -46,27 +46,27 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\ClientFactory.cs" />
+    <Compile Include="Http\HttpClientFactory.cs" />
     <Compile Include="Http\Contents.cs" />
     <Compile Include="Http\Operations.cs" />
     <Compile Include="Http\ContentConverter.cs" />
     <Compile Include="Http\Handlers.cs" />
-    <Compile Include="Http\Monitor.cs" />
-    <Compile Include="Ntp\Client.cs" />
-    <Compile Include="Ntp\FixedPoint.cs" />
-    <Compile Include="Ntp\LeapIndicator.cs" />
-    <Compile Include="Ntp\Mode.cs" />
-    <Compile Include="Ntp\Monitor.cs" />
-    <Compile Include="Ntp\Packet.cs" />
-    <Compile Include="Ntp\Stratum.cs" />
-    <Compile Include="Ntp\Timestamp.cs" />
+    <Compile Include="Http\HttpMonitor.cs" />
+    <Compile Include="Ntp\NtpClient.cs" />
+    <Compile Include="Ntp\NtpParameters.cs" />
+    <Compile Include="Ntp\NtpMonitor.cs" />
+    <Compile Include="Ntp\NtpPacket.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="NetworkAwareTimer.cs" />
+    <Compile Include="Rss\RssFeed.cs" />
+    <Compile Include="Rss\RssMonitor.cs" />
+    <Compile Include="Rss\RssParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

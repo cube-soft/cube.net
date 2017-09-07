@@ -16,39 +16,56 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using NUnit.Framework;
 
-namespace Cube.Net.Ntp
+namespace Cube.Net.Tests.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FixedPoint
-    /// 
+    /// RssMonitorTest
+    ///
     /// <summary>
-    /// 符号付き 32bit 固定小数点数から double への変換機能を提供するための
-    /// クラスです。
+    /// RssMonitor のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class FixedPoint
+    [Parallelizable]
+    [TestFixture]
+    class RssMonitorTest : NetworkHandler
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// ToDouble
+        /// Start
         /// 
         /// <summary>
-        /// 符号付き 32bit 固定小数点数から double へ変換します。
+        /// 監視テストを実行します。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
-        public static double ToDouble(Int32 value)
+        [Test]
+        public async Task Start()
         {
-            var number = (Int16)(value >> 16);
-            var fraction = (UInt16)(value & Int16.MaxValue);
-            return number + fraction / _CompensatingRate16;
-        }
+            using (var mon = new Cube.Net.Rss.RssMonitor())
+            {
+                Assert.That(mon.NetworkAvailable, Is.True);
 
-        #region Constant variables
-        private static readonly double _CompensatingRate16 = 0x10000d;
-        #endregion
+                mon.Version = new SoftwareVersion("1.0.0");
+                mon.Timeout = TimeSpan.FromMilliseconds(500);
+                mon.Uris.Add(new Uri("http://blog.cube-soft.jp/?feed=rss2"));
+                mon.Uris.Add(new Uri("http://clown.hatenablog.jp/rss"));
+
+                var count = 0;
+                mon.Subscribe((u, x) => count++);
+                mon.Start();
+                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 4));
+                mon.Stop();
+
+                Assert.That(mon.FailedCount, Is.EqualTo(0));
+                Assert.That(count, Is.EqualTo(2));
+            }
+        }
     }
 }

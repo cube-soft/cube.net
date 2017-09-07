@@ -59,8 +59,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Details\NetworkResource.cs" />
-    <Compile Include="Details\Persion.cs" />
+    <Compile Include="Details\FileHandler.cs" />
+    <Compile Include="Details\NetworkHandler.cs" />
+    <Compile Include="Details\Person.cs" />
     <Compile Include="Http\HttpClientTest.cs" />
     <Compile Include="Http\HttpHandlerTest.cs" />
     <Compile Include="Http\HttpMonitorTest.cs" />
@@ -69,6 +70,8 @@
     <Compile Include="Ntp\NtpPacketTest.cs" />
     <Compile Include="Ntp\NtpTimestampTest.cs" />
     <Compile Include="NetworkTest.cs" />
+    <Compile Include="Rss\RssMonitorTest.cs" />
+    <Compile Include="Rss\RssParserTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -76,6 +79,37 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Examples\SampleRss20-01.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Examples\SampleRss091.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Examples\SampleRss092.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Examples\SampleRss10-01.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Examples\SampleRss10-02.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Examples\SampleAtom-01.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Examples\SampleRss20-02.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -15,22 +15,43 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-namespace Cube.Net.Ntp
+using System.Net.NetworkInformation;
+using NUnit.Framework;
+
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// LeapIndicator
+    /// NetworkHandler
     /// 
     /// <summary>
-    /// 閏秒指示子 (LI: Leap Indicator) の状態を定義した列挙型です。
+    /// ネットワークのテストに関連する処理を定義するクラスです。
     /// </summary>
-    ///
+    /// 
     /* --------------------------------------------------------------------- */
-    public enum LeapIndicator : uint
+    public class NetworkHandler
     {
-        NoWarning    = 0,   // 0 - No warning
-        LastMinute61 = 1,   // 1 - Last minute has 61 seconds
-        LastMinute59 = 2,   // 2 - Last minute has 59 seconds
-        Alarm        = 3    // 3 - Alarm condition (clock not synchronized)
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SetUp
+        /// 
+        /// <summary>
+        /// 各テストの直前に実行されます。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// ネットワークの利用可能状況を取得し、利用不可能な場合は
+        /// Ignore を実行します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        [SetUp]
+        public virtual void SetUp()
+        {
+            if (!NetworkInterface.GetIsNetworkAvailable())
+            {
+                Assert.Ignore("Network is not available");
+            }
+        }
     }
 }

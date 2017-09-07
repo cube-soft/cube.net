@@ -32,11 +32,11 @@ namespace Cube.Net.Tests
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    class NtpMonitorTest : NetworkResource
+    class NtpMonitorTest : NetworkHandler
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
+        /// Start
         /// 
         /// <summary>
         /// NTP サーバを監視するテストを行います。
@@ -44,21 +44,21 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Monitor()
+        public async Task Start()
         {
-            using (var mon = new Ntp.Monitor())
+            using (var mon = new Ntp.NtpMonitor())
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
                 mon.Server  = "ntp.nict.jp";
                 mon.Port    = 123;
-                mon.Timeout = TimeSpan.FromSeconds(1);
+                mon.Timeout = TimeSpan.FromMilliseconds(500);
 
                 var count = 0;
                 mon.Subscribe(_ => ++count);
                 mon.Start();
                 mon.Start(); // ignore
-                await Task.Delay(TimeSpan.FromMilliseconds(1000));
+                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
                 mon.Stop();
                 mon.Stop(); // ignore
 
@@ -79,13 +79,13 @@ namespace Cube.Net.Tests
         [Test]
         public async Task Reset()
         {
-            using (var mon = new Ntp.Monitor())
+            using (var mon = new Ntp.NtpMonitor())
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
                 mon.Server  = "ntp.cube-soft.jp";
                 mon.Port    = 123;
-                mon.Timeout = TimeSpan.FromSeconds(2);
+                mon.Timeout = TimeSpan.FromMilliseconds(500);
 
                 var count = 0;
                 mon.Subscribe(_ => ++count);

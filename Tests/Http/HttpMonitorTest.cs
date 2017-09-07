@@ -33,13 +33,13 @@ namespace Cube.Net.Tests.Http
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    class HttpMonitorTest
+    class HttpMonitorTest : NetworkHandler
     {
         #region Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
+        /// Start
         /// 
         /// <summary>
         /// 監視テストを実行します。
@@ -54,19 +54,20 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Monitor()
+        public async Task Start()
         {
-            using (var mon = new Cube.Net.Http.Monitor<int>(Convert))
+            using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
                 mon.Version  = new SoftwareVersion("1.0.0");
                 mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Timeout  = TimeSpan.FromMilliseconds(500);
-                mon.Uri      = new Uri("http://www.cube-soft.jp/");
+                mon.Uris.Add(new Uri("http://www.cube-soft.jp/"));
+                mon.Uris.Add(new Uri("http://s.cube-soft.jp/"));
 
                 var sum = 0;
-                mon.Subscribe(x => sum += x);
+                mon.Subscribe((u, x) => sum += x);
                 mon.Start();
                 mon.Start(); // ignore
                 await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
@@ -90,15 +91,15 @@ namespace Cube.Net.Tests.Http
         [Test]
         public async Task Reset()
         {
-            using (var mon = new Cube.Net.Http.Monitor<int>(Convert))
+            using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
                 mon.Version  = new SoftwareVersion("1.0.0");
                 mon.Interval = TimeSpan.FromMinutes(1);
                 mon.Timeout  = TimeSpan.FromMilliseconds(500);
-                mon.Uri      = new Uri("http://www.cube-soft.jp/");
+                mon.Uris.Add(new Uri("http://www.cube-soft.jp/"));
 
                 var count = 0;
-                mon.Subscribe(_ => ++count);
+                mon.Subscribe((u, x) => ++count);
                 mon.Reset();
                 mon.Start(mon.Interval);
                 mon.Reset();

@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -39,7 +40,7 @@ namespace Cube.Net.Tests
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    public class HttpClientTest : NetworkResource
+    public class HttpClientTest : NetworkHandler
     {
         #region Tests
 
@@ -48,16 +49,16 @@ namespace Cube.Net.Tests
         /// GetJsonAsync
         /// 
         /// <summary>
-        /// JSON データを非同期で取得するテストを行います。
+        /// JSON データを非同期で取得するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
         public async Task GetJsonAsync()
         {
-            var uri = new Uri("http://dev.cielquis.net/tests/example.json");
-            var json = await ClientFactory.Create()
-                                          .GetJsonAsync<PeopleContainer>(uri);
+            var uri    = new Uri("http://dev.cielquis.net/tests/example.json");
+            var client = HttpClientFactory.Create();
+            var json   = await client.GetJsonAsync<PeopleContainer>(uri);
 
             Assert.That(json.People, Is.Not.Null);
             Assert.That(json.People.Count,   Is.EqualTo(2));
@@ -74,16 +75,16 @@ namespace Cube.Net.Tests
         /// GetXmlAsync
         /// 
         /// <summary>
-        /// XML データを非同期で取得するテストを行います。
+        /// XML データを非同期で取得するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
         public async Task GetXmlAsync()
         {
-            var uri = new Uri("http://dev.cielquis.net/tests/example.xml");
-            var xml = await ClientFactory.Create()
-                                         .GetXmlAsync<PeopleContainer>(uri);
+            var uri    = new Uri("http://dev.cielquis.net/tests/example.xml");
+            var client = HttpClientFactory.Create();
+            var xml    = await client.GetXmlAsync<PeopleContainer>(uri);
 
             Assert.That(xml.People, Is.Not.Null);
             Assert.That(xml.People.Count,   Is.EqualTo(2));
@@ -93,6 +94,28 @@ namespace Cube.Net.Tests
             Assert.That(xml.People[1].Id,   Is.EqualTo("0002"));
             Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
             Assert.That(xml.People[1].Age,  Is.EqualTo(25));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetRssAsync
+        /// 
+        /// <summary>
+        /// RSS フィードを非同期で取得するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public async Task GetRssAsync()
+        {
+            var uri = new Uri("http://clown.hatenablog.jp/rss");
+            var rss = await HttpClientFactory.Create().GetRssAsync(uri);
+
+            Assert.That(rss.Id,            Is.Null);
+            Assert.That(rss.Title,         Is.EqualTo("Life like a clown"));
+            Assert.That(rss.Link,          Is.EqualTo(new Uri("http://clown.hatenablog.jp/")));
+            Assert.That(rss.Description,   Is.Empty);
+            Assert.That(rss.Items.Count(), Is.GreaterThan(5));
         }
 
         /* ----------------------------------------------------------------- */
@@ -110,7 +133,7 @@ namespace Cube.Net.Tests
             var uri  = new Uri("http://www.example.com/");
             var time = TimeSpan.FromSeconds(5);
 
-            using (var http = ClientFactory.Create(null, time))
+            using (var http = HttpClientFactory.Create(null, time))
             using (var response = await http.GetAsync(uri))
             {
                 Assert.That(response.IsSuccessStatusCode);
@@ -130,7 +153,7 @@ namespace Cube.Net.Tests
         public async Task GetAsync_NotFound()
         {
             var uri = new Uri("http://www.cube-soft.jp/404.html");
-            using (var http = ClientFactory.Create())
+            using (var http = HttpClientFactory.Create())
             {
                 var result = await http.GetAsync(uri, RawContent);
                 Assert.That(result, Is.Null);
@@ -150,7 +173,7 @@ namespace Cube.Net.Tests
         public async Task GetAsync_ConverterThrows()
         {
             var uri = new Uri("http://www.example.com/");
-            using (var http = ClientFactory.Create())
+            using (var http = HttpClientFactory.Create())
             {
                 var result = await http.GetAsync(uri, Throws);
                 Assert.That(result, Is.Null);

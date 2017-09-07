@@ -33,7 +33,7 @@ namespace Cube.Net.Tests
     /* --------------------------------------------------------------------- */
     [Parallelizable]
     [TestFixture]
-    class NtpClientTest : NetworkResource
+    class NtpClientTest : NetworkHandler
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -47,7 +47,7 @@ namespace Cube.Net.Tests
         [Test]
         public void Properties_Default()
         {
-            using (var client = new Ntp.Client())
+            using (var client = new Ntp.NtpClient())
             {
                 Assert.That(client.Host.HostName, Is.EqualTo("www268.ziyu.net"));
                 Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
@@ -68,7 +68,7 @@ namespace Cube.Net.Tests
         [TestCaseSource(nameof(GetAsync_TestCases))]
         public async Task GetAsync(string src, uint version, uint poll, Cube.Net.Ntp.Stratum stratum)
         {
-            using (var client = new Ntp.Client(src))
+            using (var client = new Ntp.NtpClient(src))
             {
                 var pkt = await client.GetAsync();
                 Assert.That(pkt.IsValid,            Is.True);
@@ -130,7 +130,7 @@ namespace Cube.Net.Tests
         [Test]
         public void NotFound_Throws()
             => Assert.That(
-            () => new Ntp.Client("404.not.found"),
+            () => new Ntp.NtpClient("404.not.found"),
             Throws.TypeOf<System.Net.Sockets.SocketException>()
         );
 
@@ -145,10 +145,9 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         [Test]
         public void Timeout_Throws()
-            => Assert.That(
-            async () =>
+            => Assert.That(async () =>
             {
-                using (var client = new Ntp.Client())
+                using (var client = new Ntp.NtpClient())
                 {
                     client.Timeout = TimeSpan.FromMilliseconds(1);
                     var result = await client.GetAsync();
