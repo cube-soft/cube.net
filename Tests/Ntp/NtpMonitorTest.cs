@@ -52,13 +52,13 @@ namespace Cube.Net.Tests
 
                 mon.Server  = "ntp.nict.jp";
                 mon.Port    = 123;
-                mon.Timeout = TimeSpan.FromSeconds(1);
+                mon.Timeout = TimeSpan.FromMilliseconds(500);
 
                 var count = 0;
                 mon.Subscribe(_ => ++count);
                 mon.Start();
                 mon.Start(); // ignore
-                await Task.Delay(TimeSpan.FromMilliseconds(1000));
+                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
                 mon.Stop();
                 mon.Stop(); // ignore
 
@@ -85,7 +85,7 @@ namespace Cube.Net.Tests
 
                 mon.Server  = "ntp.cube-soft.jp";
                 mon.Port    = 123;
-                mon.Timeout = TimeSpan.FromSeconds(2);
+                mon.Timeout = TimeSpan.FromMilliseconds(500);
 
                 var count = 0;
                 mon.Subscribe(_ => ++count);

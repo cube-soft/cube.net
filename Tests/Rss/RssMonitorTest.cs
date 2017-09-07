@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -51,22 +52,19 @@ namespace Cube.Net.Tests.Rss
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
-                mon.Version  = new SoftwareVersion("1.0.0");
-                mon.Interval = TimeSpan.FromMilliseconds(100);
-                mon.Timeout  = TimeSpan.FromMilliseconds(500);
+                mon.Version = new SoftwareVersion("1.0.0");
+                mon.Timeout = TimeSpan.FromMilliseconds(500);
                 mon.Uris.Add(new Uri("http://blog.cube-soft.jp/?feed=rss2"));
                 mon.Uris.Add(new Uri("http://clown.hatenablog.jp/rss"));
 
-                var sum = 0;
-                mon.Subscribe((u, x) => sum += x.Items.Count());
+                var count = 0;
+                mon.Subscribe((u, x) => count++);
                 mon.Start();
-                mon.Start(); // ignore
                 await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 4));
                 mon.Stop();
-                mon.Stop(); // ignore
 
                 Assert.That(mon.FailedCount, Is.EqualTo(0));
-                Assert.That(sum, Is.AtLeast(2));
+                Assert.That(count, Is.EqualTo(2));
             }
         }
     }
