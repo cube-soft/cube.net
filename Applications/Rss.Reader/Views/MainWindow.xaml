@@ -1,0 +1,73 @@
+﻿<Window x:Class="Cube.Net.Applications.Rss.Reader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:my="clr-namespace:Cube.Net.Applications.Rss.Reader"
+        xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net"
+        mc:Ignorable="d"
+        
+        Title="CubeRSS Reader"
+        Icon="pack://application:,,,/App.ico"
+        FontFamily="Meiryo UI"
+        Width="800"
+        Height="600"
+        Background="WhiteSmoke">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/Styles/MainStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <DockPanel>
+        <!-- Header -->
+        <ToolBar Name="Header" DockPanel.Dock="Top" ToolBarTray.IsLocked="True" 
+                 Style="{StaticResource HeaderStyle}" Loaded="WhenToolBarLoaded">
+            <Button Content="&#xf067;" ToolTip="追加" Style="{StaticResource HeaderButtonStyle}"/>
+            <Button Content="&#xf068;" ToolTip="削除" Style="{StaticResource HeaderButtonStyle}"/>
+            <Button Content="&#xf021;" ToolTip="更新" Style="{StaticResource HeaderButtonStyle}"/>
+        </ToolBar>
+        <!-- Header -->
+
+        <!-- Footer -->
+        <StatusBar Name="Footer" DockPanel.Dock="Bottom" Style="{StaticResource FooterStyle}">
+            <StatusBarItem Content="Ready"/>
+        </StatusBar>
+        <!-- Footer -->
+
+        <!-- Categories and Sites -->
+        <TreeView Name="Sites" DockPanel.Dock="Left"
+                  Style="{StaticResource SitesStyle}" ItemsSource="{Binding Categories}">
+            <TreeView.Resources>
+                <!-- Category -->
+                <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xf07b;" FontFamily="{StaticResource FontAwesome}" Margin="0,2,5,2"/>
+                        <TextBlock Text="{Binding Title}"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <!-- Category -->
+                
+                <!-- Site -->
+                <HierarchicalDataTemplate DataType="{x:Type my:RssSite}">
+                    <TextBlock Text="{Binding Title}" Margin="0,2,0,2"/>
+                </HierarchicalDataTemplate>
+                <!-- Site -->
+            </TreeView.Resources>
+        </TreeView>
+        <!-- Category and Sites -->
+
+        <!-- Feeds -->
+        <ListView Name="Feeds" DockPanel.Dock="Top"
+                  Style="{StaticResource FeedsStyle}"/>
+        <!-- Feeds -->
+
+        <!-- WebBrowser -->
+        <Border DockPanel.Dock="Bottom" Style="{StaticResource BrowserBorderStyle}">
+            <WebBrowser Name="Browser"/>
+        </Border>
+        <!-- WebBrowser -->
+    </DockPanel>
+</Window>
