@@ -48,7 +48,7 @@ namespace Cube.Net.Applications.Rss.Reader
             var filename = "Feeds.json";
             if (System.IO.File.Exists(filename))
             {
-                var src = FileType.Json.Load<List<RssCategory>>(filename);
+                var src = SettingsType.Json.Load<List<RssCategory>>(filename);
                 foreach (var item in src) Categories.Add(item);
             }
         }
