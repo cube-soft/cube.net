@@ -15,6 +15,7 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
+using System.Reflection;
 using System.Windows;
 
 namespace Cube.Net.Applications.Rss.Reader
@@ -28,5 +29,22 @@ namespace Cube.Net.Applications.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public partial class App : Application { }
+    public partial class App : Application
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Application_Startup
+        /// 
+        /// <summary>
+        /// 起動時に実行されるハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            Cube.Log.Operations.Configure();
+            Cube.Log.Operations.ObserveTaskException();
+            Cube.Log.Operations.Info(GetType(), Assembly.GetExecutingAssembly());
+        }
+    }
 }
