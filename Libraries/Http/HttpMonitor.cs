@@ -262,7 +262,11 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Subscribe(Action<Uri, TValue> action) => Subscriptions.Add(action);
+        public IDisposable Subscribe(Action<Uri, TValue> action)
+        {
+            Subscriptions.Add(action);
+            return Disposable.Create(() => Subscriptions.Remove(action));
+        }
 
         /* ----------------------------------------------------------------- */
         ///

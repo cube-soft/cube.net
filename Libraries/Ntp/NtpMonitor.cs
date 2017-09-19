@@ -322,8 +322,11 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Subscribe(Action<TimeSpan> action)
-            => Subscriptions.Add(action);
+        public IDisposable Subscribe(Action<TimeSpan> action)
+        {
+            Subscriptions.Add(action);
+            return Disposable.Create(() => Subscriptions.Remove(action));
+        }
 
         /* ----------------------------------------------------------------- */
         ///
