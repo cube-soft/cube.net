@@ -6,17 +6,16 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
+    <copyright>$copyright$</copyright>
+    <description>Cube network library.</description>
+    <releaseNotes>Private release.</releaseNotes>
+    <tags>Cube Windows Network</tags>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>https://github.com/cube-soft/Cube.Net/blob/master/License.txt</licenseUrl>
     <projectUrl>https://github.com/cube-soft/Cube.Net</projectUrl>
     <iconUrl>https://github.com/cube-soft/Cube.Net/blob/master/Icon.png</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Cube network library.</description>
-    <releaseNotes>Private release.</releaseNotes>
-    <copyright>$copyright$</copyright>
-    <tags>Cube Windows Network</tags>
-    <dependencies>
-      <dependency id="Cube.Core" version="1.5.0" />
-      <dependency id="log4net" version="2.0.8" />
-    </dependencies>
   </metadata>
+  <files>
+    <file src="bin\Release\Cube.Net.dll" target="lib\net45" />
+  </files>
 </package>
