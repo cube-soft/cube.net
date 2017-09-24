@@ -29,7 +29,6 @@ namespace Cube.Net.Tests
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [Parallelizable]
     [TestFixture]
     class NtpPacketTest
     {

@@ -30,9 +30,8 @@ namespace Cube.Net.Tests
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [Parallelizable]
     [TestFixture]
-    class NtpMonitorTest : NetworkHandler
+    class NtpMonitorTest : NetworkHelper
     {
         /* ----------------------------------------------------------------- */
         ///

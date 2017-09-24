@@ -15,55 +15,42 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.NetworkInformation;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests.Rss
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssMonitorTest
-    ///
+    /// NetworkHelper
+    /// 
     /// <summary>
-    /// RssMonitor のテスト用クラスです。
+    /// ネットワークのテストに関連する処理を定義するクラスです。
     /// </summary>
-    ///
+    /// 
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class RssMonitorTest : NetworkHelper
+    public class NetworkHelper
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// SetUp
         /// 
         /// <summary>
-        /// 監視テストを実行します。
+        /// 各テストの直前に実行されます。
         /// </summary>
         /// 
+        /// <remarks>
+        /// ネットワークの利用可能状況を取得し、利用不可能な場合は
+        /// Ignore を実行します。
+        /// </remarks>
+        ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public async Task Start()
+        [SetUp]
+        public virtual void SetUp()
         {
-            using (var mon = new Cube.Net.Rss.RssMonitor())
+            if (!NetworkInterface.GetIsNetworkAvailable())
             {
-                Assert.That(mon.NetworkAvailable, Is.True);
-
-                mon.Version = new SoftwareVersion("1.0.0");
-                mon.Timeout = TimeSpan.FromMilliseconds(500);
-                mon.Uris.Add(new Uri("http://blog.cube-soft.jp/?feed=rss2"));
-                mon.Uris.Add(new Uri("http://clown.hatenablog.jp/rss"));
-
-                var count = 0;
-                mon.Subscribe((u, x) => count++);
-                mon.Start();
-                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 4));
-                mon.Stop();
-
-                Assert.That(mon.FailedCount, Is.EqualTo(0));
-                Assert.That(count, Is.EqualTo(2));
+                Assert.Ignore("Network is not available");
             }
         }
     }

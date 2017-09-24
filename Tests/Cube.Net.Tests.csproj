@@ -59,8 +59,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Details\FileHandler.cs" />
-    <Compile Include="Details\NetworkHandler.cs" />
+    <Compile Include="Details\FileHelper.cs" />
+    <Compile Include="Details\GlobalSetup.cs" />
+    <Compile Include="Details\NetworkHelper.cs" />
     <Compile Include="Details\Person.cs" />
     <Compile Include="Http\HttpClientTest.cs" />
     <Compile Include="Http\HttpHandlerTest.cs" />
@@ -75,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="App.config" />
     <None Include="Packages.config" />
   </ItemGroup>
   <ItemGroup>

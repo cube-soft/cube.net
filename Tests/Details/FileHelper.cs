@@ -22,14 +22,14 @@ namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FileHandler
+    /// FileHelper
     /// 
     /// <summary>
     /// テストでファイルを使用するためのクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    class FileHandler
+    class FileHelper
     {
         #region Constructors
 
@@ -42,7 +42,7 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected FileHandler()
+        protected FileHelper()
         {
             var reader = new AssemblyReader(Assembly.GetExecutingAssembly());
             Root = Path.GetDirectoryName(reader.Location);

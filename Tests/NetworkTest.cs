@@ -29,9 +29,8 @@ namespace Cube.Net.Tests
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [Parallelizable]
     [TestFixture]
-    class NetworkTest : NetworkHandler
+    class NetworkTest : NetworkHelper
     {
         /* ----------------------------------------------------------------- */
         ///

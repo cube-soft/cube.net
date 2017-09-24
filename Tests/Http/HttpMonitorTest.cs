@@ -31,9 +31,8 @@ namespace Cube.Net.Tests.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [Parallelizable]
     [TestFixture]
-    class HttpMonitorTest : NetworkHandler
+    class HttpMonitorTest : NetworkHelper
     {
         #region Tests
 

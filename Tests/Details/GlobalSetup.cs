@@ -15,43 +15,38 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System.Net.NetworkInformation;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkHandler
+    /// GlobalSetup
     /// 
     /// <summary>
-    /// ネットワークのテストに関連する処理を定義するクラスです。
+    /// NUnit で最初に実行する処理を記述するテストです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class NetworkHandler
+    [SetUpFixture]
+    public class GlobalSetup
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// SetUp
-        /// 
+        /// OneTimeSetup
+        ///
         /// <summary>
-        /// 各テストの直前に実行されます。
+        /// 一度だけ実行される初期化処理です。
         /// </summary>
-        /// 
-        /// <remarks>
-        /// ネットワークの利用可能状況を取得し、利用不可能な場合は
-        /// Ignore を実行します。
-        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        [SetUp]
-        public virtual void SetUp()
+        [OneTimeSetUp]
+        public void OneTimeSetup()
         {
-            if (!NetworkInterface.GetIsNetworkAvailable())
-            {
-                Assert.Ignore("Network is not available");
-            }
+            Cube.Log.Operations.Configure();
+            Cube.Log.Operations.ObserveTaskException();
+            Cube.Log.Operations.Info(typeof(GlobalSetup), Assembly.GetExecutingAssembly());
         }
     }
 }

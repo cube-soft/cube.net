@@ -41,9 +41,8 @@ namespace Cube.Net.Tests
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    [Parallelizable]
     [TestFixture]
-    class RssParserTest : FileHandler
+    class RssParserTest : FileHelper
     {
         #region Tests
 
