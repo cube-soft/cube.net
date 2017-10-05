@@ -1,7 +1,7 @@
 version: 1.4.4.{build}
 branches:
-    except:
-        - net35
+    only:
+        - master
 skip_tags: true
 clone_folder: C:\Cube\Cube.Net
 image: Visual Studio 2017
@@ -19,7 +19,7 @@ build:
     publish_nuget: true
     verbosity: normal
 test_script:
-    - ..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:nunit3-console.exe -targetargs:Cube.Net.Tests.dll -targetdir:Tests\bin\Release -hideskipped:All -output:CoverResult.xml -filter:"+[*]* -[*]*NativeMethods -[*]*Properties.*"
+    - ..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:nunit3-console.exe -targetargs:Cube.Net.Tests.dll -targetdir:Tests\bin\Release -returntargetcode -hideskipped:All -output:CoverResult.xml -filter:"+[*]* -[*]*NativeMethods -[*]*Properties.*"
 after_test:
     - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
     - pip install codecov

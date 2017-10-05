@@ -301,7 +301,7 @@ namespace Cube.Net.Http
 
             if ((int)response.StatusCode / 100 == 2) // 2XX
             {
-                response.Content = new ValueContent<TValue>(
+                response.Content = new HttpValueContent<TValue>(
                     response.Content,
                     await Converter.ConvertAsync(response.Content)
                 );

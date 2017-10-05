@@ -412,7 +412,7 @@ namespace Cube.Net.Http
                         var code   = (int)status;
                         var digit  = code / 100;
 
-                        if (response.Content is ValueContent<TValue> content) Publish(uri, content.Value); // OK
+                        if (response.Content is HttpValueContent<TValue> content) Publish(uri, content.Value); // OK
                         else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
                         else if (digit == 4) Fail(uri, $"HTTP:{code} {status}");
                         else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");

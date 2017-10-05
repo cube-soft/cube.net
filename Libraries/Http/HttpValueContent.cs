@@ -24,20 +24,20 @@ namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ValueContent(TValue)
+    /// HttpValueContent(TValue)
     ///
     /// <summary>
     /// HttpContent を変換した結果を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal class ValueContent<TValue> : HttpContent
+    internal class HttpValueContent<TValue> : HttpContent
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ValueContent
+        /// HttpValueContent
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -47,7 +47,7 @@ namespace Cube.Net.Http
         /// <param name="value">変換後のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public ValueContent(HttpContent src, TValue value)
+        public HttpValueContent(HttpContent src, TValue value)
         {
             Source = src;
             Value = value;
@@ -92,7 +92,7 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        ~ValueContent()
+        ~HttpValueContent()
         {
             Dispose(false);
         }
