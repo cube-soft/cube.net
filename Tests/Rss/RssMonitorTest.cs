@@ -62,8 +62,8 @@ namespace Cube.Net.Tests.Rss
                 await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 4));
                 mon.Stop();
 
-                Assert.That(mon.FailedCount, Is.EqualTo(0));
                 Assert.That(count, Is.EqualTo(2));
+                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
     }

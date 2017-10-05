@@ -62,7 +62,7 @@ namespace Cube.Net.Tests
                 mon.Stop(); // ignore
 
                 Assert.That(count, Is.AtLeast(1));
-                Assert.That(mon.FailedCount, Is.EqualTo(0));
+                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
 
@@ -92,7 +92,9 @@ namespace Cube.Net.Tests
                 mon.Reset();
                 await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
                 mon.Stop();
+
                 Assert.That(count, Is.EqualTo(1));
+                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
     }
