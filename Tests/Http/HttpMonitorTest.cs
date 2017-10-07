@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -53,7 +54,7 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Start()
+        public void Start()
         {
             using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
@@ -61,15 +62,22 @@ namespace Cube.Net.Tests.Http
 
                 mon.Version  = new SoftwareVersion("1.0.0");
                 mon.Interval = TimeSpan.FromMilliseconds(100);
-                mon.Timeout  = TimeSpan.FromMilliseconds(500);
+                mon.Timeout  = TimeSpan.FromMilliseconds(1000);
                 mon.Uris.Add(new Uri("http://www.cube-soft.jp/"));
                 mon.Uris.Add(new Uri("http://s.cube-soft.jp/"));
 
+                var cts = new CancellationTokenSource();
                 var sum = 0;
-                mon.Subscribe((u, x) => sum += x);
+
+                mon.Subscribe((u, x) => { sum += x; cts.Cancel(); });
                 mon.Start();
                 mon.Start(); // ignore
-                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+
+                Assert.That(
+                    async() => await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token),
+                    Throws.TypeOf<TaskCanceledException>()
+                );
+
                 mon.Stop();
                 mon.Stop(); // ignore
 
@@ -88,21 +96,28 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Reset()
+        public void Reset()
         {
             using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
                 mon.Version  = new SoftwareVersion("1.0.0");
                 mon.Interval = TimeSpan.FromMinutes(1);
-                mon.Timeout  = TimeSpan.FromMilliseconds(500);
+                mon.Timeout  = TimeSpan.FromMilliseconds(1000);
                 mon.Uris.Add(new Uri("http://www.cube-soft.jp/"));
 
+                var cts   = new CancellationTokenSource();
                 var count = 0;
-                mon.Subscribe((u, x) => ++count);
+
+                mon.Subscribe((u, x) => { ++count; cts.Cancel(); });
                 mon.Reset();
                 mon.Start(mon.Interval);
                 mon.Reset();
-                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+
+                Assert.That(
+                    async() => await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token),
+                    Throws.TypeOf<TaskCanceledException>()
+                );
+
                 mon.Stop();
 
                 Assert.That(count, Is.EqualTo(1));

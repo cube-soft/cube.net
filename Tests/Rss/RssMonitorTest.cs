@@ -16,8 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -45,24 +44,30 @@ namespace Cube.Net.Tests.Rss
         /// 
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Start()
+        public void Start()
         {
             using (var mon = new Cube.Net.Rss.RssMonitor())
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
                 mon.Version = new SoftwareVersion("1.0.0");
-                mon.Timeout = TimeSpan.FromMilliseconds(500);
-                mon.Uris.Add(new Uri("http://blog.cube-soft.jp/?feed=rss2"));
+                mon.Timeout = TimeSpan.FromMilliseconds(1000);
                 mon.Uris.Add(new Uri("http://clown.hatenablog.jp/rss"));
 
+                var cts   = new CancellationTokenSource();
                 var count = 0;
-                mon.Subscribe((u, x) => count++);
+
+                mon.Subscribe((u, x) => { count++; cts.Cancel(); });
                 mon.Start();
-                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 4));
+
+                Assert.That(
+                    async() => await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token),
+                    Throws.TypeOf<TaskCanceledException>()
+                );
+
                 mon.Stop();
 
-                Assert.That(count, Is.EqualTo(2));
+                Assert.That(count, Is.EqualTo(1));
                 Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
