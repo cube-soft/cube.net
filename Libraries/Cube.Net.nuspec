@@ -17,5 +17,6 @@
   </metadata>
   <files>
     <file src="bin\net35\Release\Cube.Net.dll" target="lib\net35" />
+    <file src="bin\net35\Release\System.Net.Http.dll" target="lib\net35" />
   </files>
 </package>
