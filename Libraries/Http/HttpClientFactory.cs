@@ -23,14 +23,14 @@ namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ClientFactory
+    /// HttpClientFactory
     /// 
     /// <summary>
     /// HTTP クライアントを生成するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class ClientFactory
+    public static class HttpClientFactory
     {
         /* ----------------------------------------------------------------- */
         ///

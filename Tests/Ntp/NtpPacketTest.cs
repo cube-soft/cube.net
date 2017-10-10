@@ -29,7 +29,6 @@ namespace Cube.Net.Tests
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [Parallelizable]
     [TestFixture]
     class NtpPacketTest
     {
@@ -45,7 +44,7 @@ namespace Cube.Net.Tests
         [Test]
         public void TooManyBytes_Throws()
             =>Assert.That(
-            () => new Ntp.Packet(new byte[47]),
+            () => new Ntp.NtpPacket(new byte[47]),
             Throws.TypeOf<ArgumentException>()
         );
     }

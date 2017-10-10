@@ -30,13 +30,12 @@ namespace Cube.Net.Tests
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [Parallelizable]
     [TestFixture]
-    class NtpMonitorTest : NetworkResource
+    class NtpMonitorTest : NetworkHelper
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
+        /// Start
         /// 
         /// <summary>
         /// NTP サーバを監視するテストを行います。
@@ -44,26 +43,26 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async void Monitor()
+        public async void Start()
         {
-            using (var mon = new Ntp.Monitor())
+            using (var mon = new Ntp.NtpMonitor())
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
                 mon.Server  = "ntp.nict.jp";
                 mon.Port    = 123;
-                mon.Timeout = TimeSpan.FromSeconds(1);
+                mon.Timeout = TimeSpan.FromMilliseconds(500);
 
                 var count = 0;
                 mon.Subscribe(_ => ++count);
                 mon.Start();
                 mon.Start(); // ignore
-                await TaskEx.Delay(TimeSpan.FromMilliseconds(1000));
+                await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
                 mon.Stop();
                 mon.Stop(); // ignore
 
                 Assert.That(count, Is.AtLeast(1));
-                Assert.That(mon.FailedCount, Is.EqualTo(0));
+                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
 
@@ -79,13 +78,13 @@ namespace Cube.Net.Tests
         [Test]
         public async void Reset()
         {
-            using (var mon = new Ntp.Monitor())
+            using (var mon = new Ntp.NtpMonitor())
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
                 mon.Server  = "ntp.cube-soft.jp";
                 mon.Port    = 123;
-                mon.Timeout = TimeSpan.FromSeconds(2);
+                mon.Timeout = TimeSpan.FromMilliseconds(500);
 
                 var count = 0;
                 mon.Subscribe(_ => ++count);
@@ -93,7 +92,9 @@ namespace Cube.Net.Tests
                 mon.Reset();
                 await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
                 mon.Stop();
+
                 Assert.That(count, Is.EqualTo(1));
+                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
     }

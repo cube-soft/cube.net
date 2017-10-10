@@ -26,49 +26,49 @@ namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Client
+    /// NtpClient
     ///
     /// <summary>
     /// NTP サーバと通信するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Client : IDisposable
+    public class NtpClient : IDisposable
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Client
+        /// NtpClient
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Client() : this(DefaultServer) { }
+        public NtpClient() : this(DefaultServer) { }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Client
+        /// NtpClient
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Client(string server) : this(server, DefaultPort) { }
+        public NtpClient(string server) : this(server, DefaultPort) { }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Client
+        /// NtpClient
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Client(string server, int port)
+        public NtpClient(string server, int port)
         {
             Timeout = TimeSpan.FromSeconds(5);
             Host = Dns.GetHostEntry(server);
@@ -149,7 +149,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        ~Client()
+        ~NtpClient()
         {
             Dispose(false);
         }
@@ -196,7 +196,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Task<Packet> GetAsync()
+        public Task<NtpPacket> GetAsync()
             => GetAsyncCore().Timeout(Timeout);
 
         #endregion
@@ -212,7 +212,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Task<Packet> GetAsyncCore() => TaskEx.Run(() =>
+        private Task<NtpPacket> GetAsyncCore() => TaskEx.Run(() =>
         {
             SendTo();
             return ReceiveFrom();
@@ -231,7 +231,7 @@ namespace Cube.Net.Ntp
         {
             var addr = Host.AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
             var endpoint = new IPEndPoint(addr, Port);
-            var packet = new Ntp.Packet();
+            var packet = new Ntp.NtpPacket();
             var sent = _socket.SendTo(packet.RawData, endpoint);
             if (sent != packet.RawData.Length) throw new SocketException();
         }
@@ -245,12 +245,12 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Packet ReceiveFrom()
+        private NtpPacket ReceiveFrom()
         {
             var endpoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
             var raw = new byte[48 + (32 + 128) / 8];
             var bytes = _socket.ReceiveFrom(raw, ref endpoint);
-            return new Packet(raw);
+            return new NtpPacket(raw);
         }
 
         #region Fields

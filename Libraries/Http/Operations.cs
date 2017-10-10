@@ -33,8 +33,6 @@ namespace Cube.Net.Http
     /* --------------------------------------------------------------------- */
     public static class Operations
     {
-        #region HttpClient
-
         /* --------------------------------------------------------------------- */
         ///
         /// GetAsync(T)
@@ -129,6 +127,21 @@ namespace Cube.Net.Http
         public static Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri) where T : class
             => client.GetAsync(uri, new XmlContentConverter<T>());
 
-        #endregion
+        /* --------------------------------------------------------------------- */
+        ///
+        /// GetRssAsync
+        /// 
+        /// <summary>
+        /// RSS または Atom 形式のデータを非同期で取得します。
+        /// </summary>
+        ///
+        /// <param name="client">HTTP クライアント</param>
+        /// <param name="uri">レスポンス取得 URL</param>
+        /// 
+        /// <returns>RSS または Atom 形式データの変換結果</returns>
+        ///
+        /* --------------------------------------------------------------------- */
+        public static Task<Rss.RssFeed> GetRssAsync(this HttpClient client, Uri uri)
+            => client.GetAsync(uri, new RssContentConverter());
     }
 }

@@ -37,6 +37,24 @@ namespace Cube.Net.Http
     {
         /* ----------------------------------------------------------------- */
         ///
+        /// IgnoreException
+        ///
+        /// <summary>
+        /// 例外を無視するかどうかを示す値を取得または設定します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// HttpMonitor のように、例外発生時に既定回数再試行するような
+        /// クラスで使用された場合、変換の失敗が原因で余分な通信を発生
+        /// させる可能性があります。そのような場合には IgnoreException を
+        /// true にして抑制します。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        bool IgnoreException { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// ConvertAsync(TValue)
         ///
         /// <summary>
@@ -82,6 +100,21 @@ namespace Cube.Net.Http
 
         #endregion
 
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IgnoreException
+        ///
+        /// <summary>
+        /// 例外を無視するかどうかを示す値を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public bool IgnoreException { get; set; } = false;
+
+        #endregion
+
         #region Methods
 
         /* ----------------------------------------------------------------- */
@@ -97,7 +130,16 @@ namespace Cube.Net.Http
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public Task<TValue> ConvertAsync(HttpContent src) => _func(src);
+        public async Task<TValue> ConvertAsync(HttpContent src)
+        {
+            try { return await _func(src); }
+            catch (Exception err)
+            {
+                if (IgnoreException) this.LogWarn(err.ToString(), err);
+                else throw;
+            }
+            return default(TValue);
+        }
 
         #endregion
 
@@ -120,6 +162,17 @@ namespace Cube.Net.Http
     {
         /* ----------------------------------------------------------------- */
         ///
+        /// IgnoreException
+        ///
+        /// <summary>
+        /// 例外を無視するかどうかを示す値を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public bool IgnoreException { get; set; } = false;
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// ConvertAsync(TValue)
         ///
         /// <summary>
@@ -133,11 +186,19 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public async Task<TValue> ConvertAsync(HttpContent src)
         {
-            if (src == null) return null;
-
-            var stream = await src.ReadAsStreamAsync();
-            var json = new DataContractJsonSerializer(typeof(TValue));
-            return json.ReadObject(stream) as TValue;
+            try
+            {
+                if (src == null) return default(TValue);
+                var stream = await src.ReadAsStreamAsync();
+                var json = new DataContractJsonSerializer(typeof(TValue));
+                return json.ReadObject(stream) as TValue;
+            }
+            catch (Exception err)
+            {
+                if (IgnoreException) this.LogWarn(err.ToString(), err);
+                else throw;
+            }
+            return default(TValue);
         }
     }
 
@@ -155,6 +216,17 @@ namespace Cube.Net.Http
     {
         /* ----------------------------------------------------------------- */
         ///
+        /// IgnoreException
+        ///
+        /// <summary>
+        /// 例外を無視するかどうかを示す値を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public bool IgnoreException { get; set; } = false;
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// ConvertAsync(TValue)
         ///
         /// <summary>
@@ -168,11 +240,71 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public async Task<TValue> ConvertAsync(HttpContent src)
         {
-            if (src == null) return null;
+            try
+            {
+                if (src == null) return default(TValue);
+                var stream = await src.ReadAsStreamAsync();
+                var xml = new XmlSerializer(typeof(TValue));
+                return xml.Deserialize(stream) as TValue;
+            }
+            catch (Exception err)
+            {
+                if (IgnoreException) this.LogWarn(err.ToString(), err);
+                else throw;
+            }
+            return default(TValue);
+        }
+    }
 
-            var stream = await src.ReadAsStreamAsync();
-            var xml = new XmlSerializer(typeof(TValue));
-            return xml.Deserialize(stream) as TValue;
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RssContentConverter
+    ///
+    /// <summary>
+    /// HttpContent を RssFeed に変換するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class RssContentConverter : IContentConverter<Rss.RssFeed>
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IgnoreException
+        ///
+        /// <summary>
+        /// 例外を無視するかどうかを示す値を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public bool IgnoreException { get; set; } = false;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ConvertAsync(TValue)
+        ///
+        /// <summary>
+        /// 非同期で変換処理を実行します。
+        /// </summary>
+        /// 
+        /// <param name="src">HttpContent オブジェクト</param>
+        /// 
+        /// <returns>変換後のオブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public async Task<Rss.RssFeed> ConvertAsync(HttpContent src)
+        {
+            try
+            {
+                if (src == null) return default(Rss.RssFeed);
+                var stream = await src.ReadAsStreamAsync();
+                return Rss.RssParser.Create(stream);
+            }
+            catch (Exception err)
+            {
+                if (IgnoreException) this.LogWarn(err.ToString(), err);
+                else throw;
+            }
+            return default(Rss.RssFeed);
         }
     }
 }

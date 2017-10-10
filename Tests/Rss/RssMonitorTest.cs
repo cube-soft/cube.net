@@ -15,42 +15,61 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System.Net.NetworkInformation;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Tests.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkResource
-    /// 
+    /// RssMonitorTest
+    ///
     /// <summary>
-    /// ネットワークのテストに関連する処理を定義するクラスです。
+    /// RssMonitor のテスト用クラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public class NetworkResource
+    [TestFixture]
+    [Ignore("NUnit for .NET 3.5 does not support async/await")]
+    class RssMonitorTest : NetworkHelper
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// SetUp
+        /// Start
         /// 
         /// <summary>
-        /// 各テストの直前に実行されます。
+        /// 監視テストを実行します。
         /// </summary>
         /// 
-        /// <remarks>
-        /// ネットワークの利用可能状況を取得し、利用不可能な場合は
-        /// Ignore を実行します。
-        /// </remarks>
-        ///
         /* ----------------------------------------------------------------- */
-        [SetUp]
-        public virtual void SetUp()
+        [Test]
+        public void Start()
         {
-            if (!NetworkInterface.GetIsNetworkAvailable())
+            using (var mon = new Cube.Net.Rss.RssMonitor())
             {
-                Assert.Ignore("Network is not available");
+                Assert.That(mon.NetworkAvailable, Is.True);
+
+                mon.Version = new SoftwareVersion("1.0.0");
+                mon.Timeout = TimeSpan.FromMilliseconds(1000);
+                mon.Uris.Add(new Uri("http://clown.hatenablog.jp/rss"));
+
+                var cts   = new CancellationTokenSource();
+                var count = 0;
+
+                mon.Subscribe((u, x) => { count++; cts.Cancel(); });
+                mon.Start();
+
+                Assert.That(
+                    async() => await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token),
+                    Throws.TypeOf<TaskCanceledException>()
+                );
+
+                mon.Stop();
+
+                Assert.That(count, Is.EqualTo(1));
+                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
     }

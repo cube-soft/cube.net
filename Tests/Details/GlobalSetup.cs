@@ -15,40 +15,38 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
+using System.Reflection;
+using NUnit.Framework;
 
-namespace Cube.Net.Ntp
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FixedPoint
+    /// GlobalSetup
     /// 
     /// <summary>
-    /// 符号付き 32bit 固定小数点数から double への変換機能を提供するための
-    /// クラスです。
+    /// NUnit で最初に実行する処理を記述するテストです。
     /// </summary>
-    ///
+    /// 
     /* --------------------------------------------------------------------- */
-    internal static class FixedPoint
+    [SetUpFixture]
+    public class GlobalSetup
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// ToDouble
-        /// 
+        /// OneTimeSetup
+        ///
         /// <summary>
-        /// 符号付き 32bit 固定小数点数から double へ変換します。
+        /// 一度だけ実行される初期化処理です。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static double ToDouble(Int32 value)
+        [OneTimeSetUp]
+        public void OneTimeSetup()
         {
-            var number = (Int16)(value >> 16);
-            var fraction = (UInt16)(value & Int16.MaxValue);
-            return number + fraction / _CompensatingRate16;
+            Cube.Log.Operations.Configure();
+            Cube.Log.Operations.ObserveTaskException();
+            Cube.Log.Operations.Info(typeof(GlobalSetup), Assembly.GetExecutingAssembly());
         }
-
-        #region Constant variables
-        private static readonly double _CompensatingRate16 = 0x10000d;
-        #endregion
     }
 }

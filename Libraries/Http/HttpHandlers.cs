@@ -77,14 +77,25 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// EntityTag
+        /// UseEntityTag
         ///
         /// <summary>
-        /// EntityTag (ETag) を取得または設定します。
+        /// EntityTag (ETag) を利用するかどうかを示す値を取得します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public string EntityTag { get; set; }
+        public bool UseEntityTag { get; set; } = true;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// EntityTag
+        ///
+        /// <summary>
+        /// EntityTag (ETag) を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public string EntityTag { get; protected set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -174,7 +185,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private void SetEntityTag(HttpRequestHeaders headers)
         {
-            if (string.IsNullOrEmpty(EntityTag)) return;
+            if (!UseEntityTag || string.IsNullOrEmpty(EntityTag)) return;
 
             try
             {
@@ -290,7 +301,7 @@ namespace Cube.Net.Http
 
             if ((int)response.StatusCode / 100 == 2) // 2XX
             {
-                response.Content = new ValueContent<TValue>(
+                response.Content = new HttpValueContent<TValue>(
                     response.Content,
                     await Converter.ConvertAsync(response.Content)
                 );
