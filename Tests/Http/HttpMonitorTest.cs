@@ -66,6 +66,8 @@ namespace Cube.Net.Tests.Http
                 mon.Uris.Add(new Uri("http://www.cube-soft.jp/"));
                 mon.Uris.Add(new Uri("http://s.cube-soft.jp/"));
 
+                Assert.That(mon.Uri, Is.EqualTo(new Uri("http://www.cube-soft.jp/")));
+
                 var cts = new CancellationTokenSource();
                 var sum = 0;
 
