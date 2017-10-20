@@ -31,7 +31,7 @@ namespace Cube.Net.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal class HttpValueContent<TValue> : HttpContent
+    internal sealed class HttpValueContent<TValue> : HttpContent
     {
         #region Constructors
 

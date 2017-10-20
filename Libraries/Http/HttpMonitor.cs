@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Cube.Conversions;
 using Cube.Log;
@@ -344,7 +345,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         ~HttpMonitor()
         {
-            Dispose(false);
+            DisposeOnce(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -358,7 +359,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            Dispose(true);
+            DisposeOnce(true);
             GC.SuppressFinalize(this);
         }
 
@@ -377,15 +378,36 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
-
             if (disposing)
             {
                 _http?.Dispose();
                 _handler.Dispose();
             }
+        }
 
-            _disposed = true;
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DisposeOnce
+        ///
+        /// <summary>
+        /// Dispose を一度だけ実行します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// 継承クラスで disposed のチェックを省略するために、
+        /// Dispose(bool) は一度しか実行されない事をこのメソッドで保証
+        /// します。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void DisposeOnce(bool disposing)
+        {
+            try
+            {
+                if (_disposed) return;
+                Dispose(disposing);
+            }
+            finally { _disposed = true; }
         }
 
         #endregion
@@ -406,36 +428,62 @@ namespace Cube.Net.Http
         private async void WhenTick()
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
+            if (_http == null) _http = HttpClientFactory.Create(_handler, Timeout);
+            foreach (var uri in GetRequestUris()) await RetryAsync(uri);
+        }
 
-            var uris = GetRequestUris();
-            if (uris.Count() <= 0) return;
-
-            foreach (var uri in uris)
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RetryAsync
+        ///
+        /// <summary>
+        /// 処理を既定回数実行します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// 処理に成功した時点で終了します。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private async Task RetryAsync(Uri uri)
+        {
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
                 {
-                    if (_http == null) _http = HttpClientFactory.Create(_handler, Timeout);
-
-                    using (var response = await _http.GetAsync(uri))
-                    {
-                        var status = response.StatusCode;
-                        var code   = (int)status;
-                        var digit  = code / 100;
-
-                        if (response.Content is HttpValueContent<TValue> content) Publish(uri, content.Value); // OK
-                        else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
-                        else if (digit == 4) Fail(uri, $"HTTP:{code} {status}");
-                        else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
-                        else Fail(uri, $"Content is not {nameof(TValue)} ({code})");
-                        break;
-                    }
+                    await ExecuteCore(uri);
+                    break;
                 }
                 catch (Exception err)
                 {
                     Fail(uri, err.ToString());
                     await Task.Delay(RetryInterval);
                 }
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ExecuteAsync
+        ///
+        /// <summary>
+        /// 処理を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private async Task ExecuteCore(Uri uri)
+        {
+            using (var response = await _http.GetAsync(uri))
+            {
+                var status = response.StatusCode;
+                var code   = (int)status;
+                var digit  = code / 100;
+
+                if (response.Content is HttpValueContent<TValue> content) Publish(uri, content.Value); // OK
+                else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
+                else if (digit == 4) Fail(uri, $"HTTP:{code} {status}");
+                else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
+                else Fail(uri, $"Content is not {nameof(TValue)} ({code})");
             }
         }
 

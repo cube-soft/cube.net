@@ -71,8 +71,8 @@ namespace Cube.Net.Ntp
         public NtpClient(string server, int port)
         {
             Timeout = TimeSpan.FromSeconds(5);
-            Host = Dns.GetHostEntry(server);
-            Port = port;
+            Host    = Dns.GetHostEntry(server);
+            Port    = port;
         }
 
         #endregion
@@ -138,6 +138,18 @@ namespace Cube.Net.Ntp
 
         #region Methods
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync
+        /// 
+        /// <summary>
+        /// NTP サーバと通信を行い、NTP パケットを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Task<NtpPacket> GetAsync()
+            => GetAsyncCore().Timeout(Timeout);
+
         #region IDisposable
 
         /* ----------------------------------------------------------------- */
@@ -151,7 +163,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ~NtpClient()
         {
-            Dispose(false);
+            DisposeOnce(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -159,45 +171,60 @@ namespace Cube.Net.Ntp
         /// Dispose
         /// 
         /// <summary>
-        /// オブジェクトを破棄します。
+        /// リソースを開放します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            Dispose(true);
+            DisposeOnce(true);
             GC.SuppressFinalize(this);
         }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
         ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージリソースを解放するかどうかを示す値
+        /// </param>
+        /// 
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
-            _disposed = true;
             if (disposing) _socket.Dispose();
         }
 
-        #endregion
-
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsync
-        /// 
+        /// DisposeOnce
+        ///
         /// <summary>
-        /// NTP サーバと通信を行い、NTP パケットを取得します。
+        /// Dispose を一度だけ実行します。
         /// </summary>
-        ///
+        /// 
+        /// <remarks>
+        /// 継承クラスで disposed のチェックを省略するために、
+        /// Dispose(bool) は一度しか実行されない事をこのメソッドで保証
+        /// します。
+        /// </remarks>
+        /// 
         /* ----------------------------------------------------------------- */
-        public Task<NtpPacket> GetAsync()
-            => GetAsyncCore().Timeout(Timeout);
+        private void DisposeOnce(bool disposing)
+        {
+            try
+            {
+                if (_disposed) return;
+                Dispose(disposing);
+            }
+            finally { _disposed = true; }
+        }
+
+        #endregion
 
         #endregion
 

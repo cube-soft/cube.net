@@ -144,16 +144,12 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetConnectionClose(HttpRequestHeaders headers)
+        private void SetConnectionClose(HttpRequestHeaders headers) => Execute(() =>
         {
-            try
-            {
-                if (headers.ConnectionClose.HasValue &&
-                    headers.ConnectionClose == ConnectionClose) return;
-                headers.ConnectionClose = ConnectionClose;
-            }
-            catch (Exception err) { this.LogWarn(err.ToString()); }
-        }
+            if (headers.ConnectionClose.HasValue &&
+                headers.ConnectionClose == ConnectionClose) return;
+            headers.ConnectionClose = ConnectionClose;
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -164,15 +160,11 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetUserAgent(HttpRequestHeaders headers)
+        private void SetUserAgent(HttpRequestHeaders headers) => Execute(() =>
         {
-            try
-            {
-                if (string.IsNullOrEmpty(UserAgent)) return;
-                headers.UserAgent.ParseAdd(UserAgent);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString()); }
-        }
+            if (string.IsNullOrEmpty(UserAgent)) return;
+            headers.UserAgent.ParseAdd(UserAgent);
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -183,17 +175,12 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetEntityTag(HttpRequestHeaders headers)
+        private void SetEntityTag(HttpRequestHeaders headers) => Execute(() =>
         {
             if (!UseEntityTag || string.IsNullOrEmpty(EntityTag)) return;
-
-            try
-            {
-                var etag = EntityTagHeaderValue.Parse(EntityTag);
-                headers.IfNoneMatch.Add(etag);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString()); }
-        }
+            var etag = EntityTagHeaderValue.Parse(EntityTag);
+            headers.IfNoneMatch.Add(etag);
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -206,6 +193,21 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private void GetEntityTag(HttpResponseHeaders headers)
             => EntityTag = headers?.ETag?.Tag ?? string.Empty;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Execute
+        ///
+        /// <summary>
+        /// 処理を実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Execute(Action action)
+        {
+            try { action(); }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+        }
 
         #endregion
     }

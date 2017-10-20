@@ -63,7 +63,7 @@ namespace Cube.Net.Http
                 try { return await converter.ConvertAsync(response.Content); }
                 catch (Exception err)
                 {
-                    client.LogWarn(err.ToString());
+                    client.LogWarn(err.ToString(), err);
                     if (response.Content != null)
                     {
                         var s = await response.Content.ReadAsStringAsync();

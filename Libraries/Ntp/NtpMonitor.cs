@@ -381,7 +381,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ~NtpMonitor()
         {
-            Dispose(false);
+            DisposeOnce(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -395,7 +395,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            Dispose(true);
+            DisposeOnce(true);
             GC.SuppressFinalize(this);
         }
 
@@ -414,11 +414,32 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
-
             if (disposing) _core.Dispose();
+        }
 
-            _disposed = true;
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DisposeOnce
+        ///
+        /// <summary>
+        /// Dispose を一度だけ実行します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// 継承クラスで disposed のチェックを省略するために、
+        /// Dispose(bool) は一度しか実行されない事をこのメソッドで保証
+        /// します。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void DisposeOnce(bool disposing)
+        {
+            try
+            {
+                if (_disposed) return;
+                Dispose(disposing);
+            }
+            finally { _disposed = true; }
         }
 
         #endregion
