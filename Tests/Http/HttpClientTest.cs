@@ -21,6 +21,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Cube.Net.Http;
+using Cube.Net.Rss;
 
 namespace Cube.Net.Tests
 {
