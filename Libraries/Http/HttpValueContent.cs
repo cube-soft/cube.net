@@ -85,20 +85,6 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ~ValueContent
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        ~HttpValueContent()
-        {
-            Dispose(false);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Dispose
         ///
         /// <summary>
@@ -108,12 +94,16 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
-
-            if (disposing) Source.Dispose();
-
-            _disposed = true;
-            base.Dispose(disposing);
+            try
+            {
+                if (_disposed) return;
+                if (disposing) Source.Dispose();
+            }
+            finally
+            {
+                _disposed = true;
+                base.Dispose(disposing);
+            }
         }
 
         #endregion

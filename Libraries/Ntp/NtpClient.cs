@@ -70,9 +70,10 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public NtpClient(string server, int port)
         {
-            Timeout = TimeSpan.FromSeconds(5);
-            Host    = Dns.GetHostEntry(server);
-            Port    = port;
+            Timeout  = TimeSpan.FromSeconds(5);
+            Host     = Dns.GetHostEntry(server);
+            Port     = port;
+            _dispose = new OnceAction<bool>(Dispose);
         }
 
         #endregion
@@ -147,8 +148,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Task<NtpPacket> GetAsync()
-            => GetAsyncCore().Timeout(Timeout);
+        public Task<NtpPacket> GetAsync() => GetAsyncCore().Timeout(Timeout);
 
         #region IDisposable
 
@@ -163,7 +163,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ~NtpClient()
         {
-            DisposeOnce(false);
+            _dispose.Invoke(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -177,7 +177,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            DisposeOnce(true);
+            _dispose.Invoke(true);
             GC.SuppressFinalize(this);
         }
 
@@ -197,31 +197,6 @@ namespace Cube.Net.Ntp
         protected virtual void Dispose(bool disposing)
         {
             if (disposing) _socket.Dispose();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DisposeOnce
-        ///
-        /// <summary>
-        /// Dispose を一度だけ実行します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// 継承クラスで disposed のチェックを省略するために、
-        /// Dispose(bool) は一度しか実行されない事をこのメソッドで保証
-        /// します。
-        /// </remarks>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void DisposeOnce(bool disposing)
-        {
-            try
-            {
-                if (_disposed) return;
-                Dispose(disposing);
-            }
-            finally { _disposed = true; }
         }
 
         #endregion
@@ -281,7 +256,7 @@ namespace Cube.Net.Ntp
         }
 
         #region Fields
-        private bool _disposed = false;
+        private OnceAction<bool> _dispose;
         private Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         #endregion
 

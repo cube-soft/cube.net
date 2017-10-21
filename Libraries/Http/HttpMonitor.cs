@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using Cube.Conversions;
 using Cube.Log;
@@ -52,6 +51,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public HttpMonitor(ContentHandler<TValue> handler) : base()
         {
+            _dispose = new OnceAction<bool>(Dispose);
             _handler = handler;
             _core.Subscribe(WhenTick);
         }
@@ -345,7 +345,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         ~HttpMonitor()
         {
-            DisposeOnce(false);
+            _dispose.Invoke(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -359,7 +359,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            DisposeOnce(true);
+            _dispose.Invoke(true);
             GC.SuppressFinalize(this);
         }
 
@@ -383,31 +383,6 @@ namespace Cube.Net.Http
                 _http?.Dispose();
                 _handler.Dispose();
             }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DisposeOnce
-        ///
-        /// <summary>
-        /// Dispose を一度だけ実行します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// 継承クラスで disposed のチェックを省略するために、
-        /// Dispose(bool) は一度しか実行されない事をこのメソッドで保証
-        /// します。
-        /// </remarks>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void DisposeOnce(bool disposing)
-        {
-            try
-            {
-                if (_disposed) return;
-                Dispose(disposing);
-            }
-            finally { _disposed = true; }
         }
 
         #endregion
@@ -505,7 +480,7 @@ namespace Cube.Net.Http
         }
 
         #region Fields
-        private bool _disposed = false;
+        private OnceAction<bool> _dispose;
         private HttpClient _http;
         private ContentHandler<TValue> _handler;
         private NetworkAwareTimer _core = new NetworkAwareTimer();

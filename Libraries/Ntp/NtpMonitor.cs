@@ -45,7 +45,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public NtpMonitor() : this(Ntp.NtpClient.DefaultServer) { }
+        public NtpMonitor() : this(NtpClient.DefaultServer) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -58,7 +58,7 @@ namespace Cube.Net.Ntp
         /// <param name="server">NTP サーバ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public NtpMonitor(string server) : this(server, Ntp.NtpClient.DefaultPort) { }
+        public NtpMonitor(string server) : this(server, NtpClient.DefaultPort) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -75,11 +75,10 @@ namespace Cube.Net.Ntp
         public NtpMonitor(string server, int port) : base()
         {
             Interval = TimeSpan.FromHours(1);
-
-            _server = server;
-            _port = port;
+            _dispose = new OnceAction<bool>(Dispose);
+            _server  = server;
+            _port    = port;
             _core.Subscribe(WhenTick);
-
             SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
 
@@ -381,7 +380,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ~NtpMonitor()
         {
-            DisposeOnce(false);
+            _dispose.Invoke(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -395,7 +394,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            DisposeOnce(true);
+            _dispose.Invoke(true);
             GC.SuppressFinalize(this);
         }
 
@@ -415,31 +414,6 @@ namespace Cube.Net.Ntp
         protected virtual void Dispose(bool disposing)
         {
             if (disposing) _core.Dispose();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DisposeOnce
-        ///
-        /// <summary>
-        /// Dispose を一度だけ実行します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// 継承クラスで disposed のチェックを省略するために、
-        /// Dispose(bool) は一度しか実行されない事をこのメソッドで保証
-        /// します。
-        /// </remarks>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void DisposeOnce(bool disposing)
-        {
-            try
-            {
-                if (_disposed) return;
-                Dispose(disposing);
-            }
-            finally { _disposed = true; }
         }
 
         #endregion
@@ -496,7 +470,7 @@ namespace Cube.Net.Ntp
         }
 
         #region Fields
-        private bool _disposed = false;
+        private OnceAction<bool> _dispose;
         private string _server = string.Empty;
         private int _port = NtpClient.DefaultPort;
         private NetworkAwareTimer _core = new NetworkAwareTimer();
