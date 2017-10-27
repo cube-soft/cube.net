@@ -1,19 +1,19 @@
 ﻿/* ------------------------------------------------------------------------- */
-///
-/// Copyright (c) 2010 CubeSoft, Inc.
-/// 
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///  http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
+//
+// Copyright (c) 2010 CubeSoft, Inc.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public NtpMonitor() : this(Ntp.NtpClient.DefaultServer) { }
+        public NtpMonitor() : this(NtpClient.DefaultServer) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -58,7 +58,7 @@ namespace Cube.Net.Ntp
         /// <param name="server">NTP サーバ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public NtpMonitor(string server) : this(server, Ntp.NtpClient.DefaultPort) { }
+        public NtpMonitor(string server) : this(server, NtpClient.DefaultPort) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -75,11 +75,10 @@ namespace Cube.Net.Ntp
         public NtpMonitor(string server, int port) : base()
         {
             Interval = TimeSpan.FromHours(1);
-
-            _server = server;
-            _port = port;
+            _dispose = new OnceAction<bool>(Dispose);
+            _server  = server;
+            _port    = port;
             _core.Subscribe(WhenTick);
-
             SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
 
@@ -381,7 +380,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ~NtpMonitor()
         {
-            Dispose(false);
+            _dispose.Invoke(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -395,7 +394,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            Dispose(true);
+            _dispose.Invoke(true);
             GC.SuppressFinalize(this);
         }
 
@@ -414,11 +413,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
-
             if (disposing) _core.Dispose();
-
-            _disposed = true;
         }
 
         #endregion
@@ -475,7 +470,7 @@ namespace Cube.Net.Ntp
         }
 
         #region Fields
-        private bool _disposed = false;
+        private OnceAction<bool> _dispose;
         private string _server = string.Empty;
         private int _port = NtpClient.DefaultPort;
         private NetworkAwareTimer _core = new NetworkAwareTimer();

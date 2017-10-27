@@ -1,19 +1,19 @@
 ﻿/* ------------------------------------------------------------------------- */
-///
-/// Copyright (c) 2010 CubeSoft, Inc.
-/// 
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///  http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
+//
+// Copyright (c) 2010 CubeSoft, Inc.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
@@ -51,6 +51,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public HttpMonitor(ContentHandler<TValue> handler) : base()
         {
+            _dispose = new OnceAction<bool>(Dispose);
             _handler = handler;
             _core.Subscribe(WhenTick);
         }
@@ -134,6 +135,17 @@ namespace Cube.Net.Http
         /// 
         /* ----------------------------------------------------------------- */
         public IList<Uri> Uris { get; } = new List<Uri>();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Uri
+        ///
+        /// <summary>
+        /// Uris の最初の項目を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public Uri Uri => Uris.FirstOrDefault();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -333,7 +345,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         ~HttpMonitor()
         {
-            Dispose(false);
+            _dispose.Invoke(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -347,7 +359,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            Dispose(true);
+            _dispose.Invoke(true);
             GC.SuppressFinalize(this);
         }
 
@@ -366,15 +378,11 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
-
             if (disposing)
             {
                 _http?.Dispose();
                 _handler.Dispose();
             }
-
-            _disposed = true;
         }
 
         #endregion
@@ -395,36 +403,62 @@ namespace Cube.Net.Http
         private async void WhenTick()
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
+            if (_http == null) _http = HttpClientFactory.Create(_handler, Timeout);
+            foreach (var uri in GetRequestUris()) await RetryAsync(uri);
+        }
 
-            var uris = GetRequestUris();
-            if (uris.Count() <= 0) return;
-
-            foreach (var uri in uris)
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RetryAsync
+        ///
+        /// <summary>
+        /// 処理を既定回数実行します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// 処理に成功した時点で終了します。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private async Task RetryAsync(Uri uri)
+        {
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
                 {
-                    if (_http == null) _http = HttpClientFactory.Create(_handler, Timeout);
-
-                    using (var response = await _http.GetAsync(uri))
-                    {
-                        var status = response.StatusCode;
-                        var code   = (int)status;
-                        var digit  = code / 100;
-
-                        if (response.Content is HttpValueContent<TValue> content) Publish(uri, content.Value); // OK
-                        else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
-                        else if (digit == 4) Fail(uri, $"HTTP:{code} {status}");
-                        else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
-                        else Fail(uri, $"Content is not {nameof(TValue)} ({code})");
-                        break;
-                    }
+                    await ExecuteCore(uri);
+                    break;
                 }
                 catch (Exception err)
                 {
                     Fail(uri, err.ToString());
                     await TaskEx.Delay(RetryInterval);
                 }
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ExecuteAsync
+        ///
+        /// <summary>
+        /// 処理を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private async Task ExecuteCore(Uri uri)
+        {
+            using (var response = await _http.GetAsync(uri))
+            {
+                var status = response.StatusCode;
+                var code   = (int)status;
+                var digit  = code / 100;
+
+                if (response.Content is HttpValueContent<TValue> content) Publish(uri, content.Value); // OK
+                else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
+                else if (digit == 4) Fail(uri, $"HTTP:{code} {status}");
+                else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
+                else Fail(uri, $"Content is not {nameof(TValue)} ({code})");
             }
         }
 
@@ -446,7 +480,7 @@ namespace Cube.Net.Http
         }
 
         #region Fields
-        private bool _disposed = false;
+        private OnceAction<bool> _dispose;
         private HttpClient _http;
         private ContentHandler<TValue> _handler;
         private NetworkAwareTimer _core = new NetworkAwareTimer();

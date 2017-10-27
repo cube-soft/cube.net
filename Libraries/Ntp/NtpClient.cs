@@ -1,19 +1,19 @@
 ﻿/* ------------------------------------------------------------------------- */
-///
-/// Copyright (c) 2010 CubeSoft, Inc.
-/// 
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///  http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
+//
+// Copyright (c) 2010 CubeSoft, Inc.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Linq;
@@ -70,9 +70,10 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public NtpClient(string server, int port)
         {
-            Timeout = TimeSpan.FromSeconds(5);
-            Host = Dns.GetHostEntry(server);
-            Port = port;
+            Timeout  = TimeSpan.FromSeconds(5);
+            Host     = Dns.GetHostEntry(server);
+            Port     = port;
+            _dispose = new OnceAction<bool>(Dispose);
         }
 
         #endregion
@@ -138,6 +139,17 @@ namespace Cube.Net.Ntp
 
         #region Methods
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync
+        /// 
+        /// <summary>
+        /// NTP サーバと通信を行い、NTP パケットを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Task<NtpPacket> GetAsync() => GetAsyncCore().Timeout(Timeout);
+
         #region IDisposable
 
         /* ----------------------------------------------------------------- */
@@ -151,7 +163,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ~NtpClient()
         {
-            Dispose(false);
+            _dispose.Invoke(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -159,45 +171,35 @@ namespace Cube.Net.Ntp
         /// Dispose
         /// 
         /// <summary>
-        /// オブジェクトを破棄します。
+        /// リソースを開放します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            Dispose(true);
+            _dispose.Invoke(true);
             GC.SuppressFinalize(this);
         }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
         ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージリソースを解放するかどうかを示す値
+        /// </param>
+        /// 
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
-            _disposed = true;
             //if (disposing) _socket.Dispose();
         }
 
         #endregion
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync
-        /// 
-        /// <summary>
-        /// NTP サーバと通信を行い、NTP パケットを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Task<NtpPacket> GetAsync()
-            => GetAsyncCore().Timeout(Timeout);
 
         #endregion
 
@@ -254,7 +256,7 @@ namespace Cube.Net.Ntp
         }
 
         #region Fields
-        private bool _disposed = false;
+        private OnceAction<bool> _dispose;
         private Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         #endregion
 
