@@ -1,19 +1,19 @@
 ﻿/* ------------------------------------------------------------------------- */
-///
-/// Copyright (c) 2010 CubeSoft, Inc.
-/// 
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///  http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
+//
+// Copyright (c) 2010 CubeSoft, Inc.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 /* ------------------------------------------------------------------------- */
 using System.IO;
 using System.Net;
@@ -24,20 +24,20 @@ namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ValueContent(TValue)
+    /// HttpValueContent(TValue)
     ///
     /// <summary>
     /// HttpContent を変換した結果を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal class ValueContent<TValue> : HttpContent
+    internal sealed class HttpValueContent<TValue> : HttpContent
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ValueContent
+        /// HttpValueContent
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -47,7 +47,7 @@ namespace Cube.Net.Http
         /// <param name="value">変換後のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public ValueContent(HttpContent src, TValue value)
+        public HttpValueContent(HttpContent src, TValue value)
         {
             Source = src;
             Value = value;
@@ -85,20 +85,6 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ~ValueContent
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        ~ValueContent()
-        {
-            Dispose(false);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Dispose
         ///
         /// <summary>
@@ -108,12 +94,16 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
-
-            if (disposing) Source.Dispose();
-
-            _disposed = true;
-            base.Dispose(disposing);
+            try
+            {
+                if (_disposed) return;
+                if (disposing) Source.Dispose();
+            }
+            finally
+            {
+                _disposed = true;
+                base.Dispose(disposing);
+            }
         }
 
         #endregion

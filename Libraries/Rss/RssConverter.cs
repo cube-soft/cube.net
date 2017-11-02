@@ -15,66 +15,67 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Net.NetworkInformation;
-using NUnit.Framework;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Cube.Net.Http;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkTest
+    /// RssContentConverter
     ///
     /// <summary>
-    /// Network のテスト用クラスです。
+    /// HttpContent を RssFeed に変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class NetworkTest : NetworkHelper
+    public class RssContentConverter : Cube.Net.Http.ContentConverter<RssFeed>
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Status
-        /// 
+        /// RssContentConverter
+        ///
         /// <summary>
-        /// ネットワーク状況を取得するテストを実行します。
+        /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void Status()
-            => Assert.That(Network.Status, Is.EqualTo(OperationalStatus.Up));
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Available
-        /// 
-        /// <summary>
-        /// ネットワークが利用可能かどうか判別するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Available()
-            => Assert.That(Network.Available);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DisableOptions
-        /// 
-        /// <summary>
-        /// 各種ネットワークオプションを無効にするテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void DisableOptions()
+        public RssContentConverter() : base(async (src) =>
         {
-            Network.DisableOptions();
+            if (src == null) return default(RssFeed);
+            var stream = await src.ReadAsStreamAsync();
+            return RssParser.Create(stream);
+        }) { }
+    }
 
-            Assert.That(System.Net.ServicePointManager.Expect100Continue, Is.False);
-            Assert.That(System.Net.ServicePointManager.UseNagleAlgorithm, Is.False);
-            Assert.That(System.Net.WebRequest.DefaultWebProxy, Is.Null);
-        }
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RssOperations
+    ///
+    /// <summary>
+    /// RSS に関する拡張用クラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static class RssOperations
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetRssAsync
+        /// 
+        /// <summary>
+        /// RSS または Atom 形式のデータを非同期で取得します。
+        /// </summary>
+        ///
+        /// <param name="client">HTTP クライアント</param>
+        /// <param name="uri">レスポンス取得 URL</param>
+        /// 
+        /// <returns>RSS または Atom 形式データの変換結果</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static Task<RssFeed> GetRssAsync(this HttpClient client, Uri uri)
+            => client.GetAsync(uri, new RssContentConverter());
     }
 }

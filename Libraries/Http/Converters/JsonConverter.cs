@@ -16,66 +16,67 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
-using Cube.Net.Http;
+using System.Net.Http;
+using System.Runtime.Serialization.Json;
+using System.Threading.Tasks;
 
-namespace Cube.Net.Rss
+namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssMonitor
+    /// JsonContentConverter(TValue)
     ///
     /// <summary>
-    /// 定期的に登録した URL からフィードを取得するためのクラスです。
+    /// JSON 形式の HttpContent を変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssMonitor : HttpMonitor<RssFeed>
+    public class JsonContentConverter<TValue> : ContentConverter<TValue> where TValue : class
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
-        /// RssMonitor
+        /// JsonContentConverter
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor() : this(new RssContentConverter()) { }
+        public JsonContentConverter() : base(async (src) =>
+        {
+            if (src == null) return default(TValue);
+            var stream = await src.ReadAsStreamAsync();
+            var json = new DataContractJsonSerializer(typeof(TValue));
+            return json.ReadObject(stream) as TValue;
+        }) { }
+    }
 
+    /* --------------------------------------------------------------------- */
+    ///
+    /// JsonOperations
+    ///
+    /// <summary>
+    /// JSON に関する拡張用クラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static class JsonOperations
+    {
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
-        ///
+        /// GetJsonAsync
+        /// 
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// JSON 形式のデータを非同期で取得します。
         /// </summary>
         /// 
-        /// <param name="converter">変換用オブジェクト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public RssMonitor(IContentConverter<RssFeed> converter)
-            : base(new ContentHandler<RssFeed>(converter) { UseEntityTag = false }) { }
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetRequestUris
-        ///
-        /// <summary>
-        /// リクエスト送信先 URL 一覧を取得します。
-        /// </summary>
+        /// <param name="client">HTTP クライアント</param>
+        /// <param name="uri">レスポンス取得 URL</param>
         /// 
-        /// <returns>URL 一覧</returns>
-        /// 
+        /// <returns>JSON 形式データの変換結果</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        protected override IEnumerable<Uri> GetRequestUris() => Uris;
-
-        #endregion
+        public static Task<T> GetJsonAsync<T>(this HttpClient client, Uri uri) where T : class
+            => client.GetAsync(uri, new JsonContentConverter<T>());
     }
 }

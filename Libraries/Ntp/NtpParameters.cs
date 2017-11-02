@@ -1,19 +1,19 @@
 ﻿/* ------------------------------------------------------------------------- */
-///
-/// Copyright (c) 2010 CubeSoft, Inc.
-/// 
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///  http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
+//
+// Copyright (c) 2010 CubeSoft, Inc.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 /* ------------------------------------------------------------------------- */
 using System;
 
@@ -30,10 +30,14 @@ namespace Cube.Net.Ntp
     /* --------------------------------------------------------------------- */
     public enum LeapIndicator : uint
     {
-        NoWarning    = 0,   // 0 - No warning
-        LastMinute61 = 1,   // 1 - Last minute has 61 seconds
-        LastMinute59 = 2,   // 2 - Last minute has 59 seconds
-        Alarm        = 3    // 3 - Alarm condition (clock not synchronized)
+        /// <summary>警告なし</summary>
+        NoWarning = 0,
+        /// <summary>61 秒ある分</summary>
+        LastMinute61 = 1,
+        /// <summary>59 秒ある分</summary>
+        LastMinute59 = 2,
+        /// <summary>警告</summary>
+        Alarm = 3,
     }
 
     /* --------------------------------------------------------------------- */
@@ -47,12 +51,18 @@ namespace Cube.Net.Ntp
     /* --------------------------------------------------------------------- */
     public enum Mode : uint
     {
-        Unknown          = 0,   // 0, 6, 7 - Reserved
-        SymmetricActive  = 1,   // 1 - Symmetric active
-        SymmetricPassive = 2,   // 2 - Symmetric pasive
-        Client           = 3,   // 3 - Client
-        Server           = 4,   // 4 - Server
-        Broadcast        = 5,   // 5 - Broadcast
+        /// <summary>不明 (Reserved)</summary>
+        Unknown = 0,   // 0, 6, 7 - Reserved
+        /// <summary>Symmetric active</summary>
+        SymmetricActive = 1,
+        /// <summary>Symmetric pasive</summary>
+        SymmetricPassive = 2,
+        /// <summary>クライアント</summary>
+        Client = 3,
+        /// <summary>サーバ</summary>
+        Server = 4,
+        /// <summary>ブロードキャスト</summary>
+        Broadcast = 5,
     }
 
     /* --------------------------------------------------------------------- */
@@ -66,10 +76,14 @@ namespace Cube.Net.Ntp
     /* --------------------------------------------------------------------- */
     public enum Stratum
     {
-        Unspecified,            // 0 - unspecified or unavailable
-        PrimaryReference,       // 1 - primary reference (e.g. radio-clock)
-        SecondaryReference,     // 2-15 - secondary reference (via NTP or SNTP)
-        Reserved                // 16-255 - reserved
+        /// <summary>Unspecified or Unavailable</summary>
+        Unspecified,
+        /// <summary>Primary reference (e.g. radio-clock)</summary>
+        PrimaryReference,
+        /// <summary>Secondary reference (via NTP or SNTP)</summary>
+        SecondaryReference,
+        /// <summary>reserved (16-255)</summary>
+        Reserved,
     }
 
     /* --------------------------------------------------------------------- */

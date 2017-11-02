@@ -15,37 +15,38 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NtpPacketTest
-    ///
+    /// GlobalSetup
+    /// 
     /// <summary>
-    /// Ntp.Packet のテスト用クラスです。
+    /// NUnit で最初に実行する処理を記述するテストです。
     /// </summary>
-    ///
+    /// 
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class NtpPacketTest
+    [SetUpFixture]
+    public class GlobalSetup
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// TooManyBytes_Throws
-        /// 
+        /// OneTimeSetup
+        ///
         /// <summary>
-        /// NTP パケットの初期化に失敗するテストを行います。
+        /// 一度だけ実行される初期化処理です。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void TooManyBytes_Throws()
-            =>Assert.That(
-            () => new Ntp.NtpPacket(new byte[47]),
-            Throws.TypeOf<ArgumentException>()
-        );
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            Cube.Log.Operations.Configure();
+            Cube.Log.Operations.ObserveTaskException();
+            Cube.Log.Operations.Info(typeof(GlobalSetup), Assembly.GetExecutingAssembly());
+        }
     }
 }

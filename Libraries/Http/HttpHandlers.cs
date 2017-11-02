@@ -1,19 +1,19 @@
 ﻿/* ------------------------------------------------------------------------- */
-///
-/// Copyright (c) 2010 CubeSoft, Inc.
-/// 
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///  http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
+//
+// Copyright (c) 2010 CubeSoft, Inc.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net;
@@ -144,16 +144,12 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetConnectionClose(HttpRequestHeaders headers)
+        private void SetConnectionClose(HttpRequestHeaders headers) => Execute(() =>
         {
-            try
-            {
-                if (headers.ConnectionClose.HasValue &&
-                    headers.ConnectionClose == ConnectionClose) return;
-                headers.ConnectionClose = ConnectionClose;
-            }
-            catch (Exception err) { this.LogWarn(err.ToString()); }
-        }
+            if (headers.ConnectionClose.HasValue &&
+                headers.ConnectionClose == ConnectionClose) return;
+            headers.ConnectionClose = ConnectionClose;
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -164,15 +160,11 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetUserAgent(HttpRequestHeaders headers)
+        private void SetUserAgent(HttpRequestHeaders headers) => Execute(() =>
         {
-            try
-            {
-                if (string.IsNullOrEmpty(UserAgent)) return;
-                headers.UserAgent.ParseAdd(UserAgent);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString()); }
-        }
+            if (string.IsNullOrEmpty(UserAgent)) return;
+            headers.UserAgent.ParseAdd(UserAgent);
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -183,17 +175,12 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetEntityTag(HttpRequestHeaders headers)
+        private void SetEntityTag(HttpRequestHeaders headers) => Execute(() =>
         {
             if (!UseEntityTag || string.IsNullOrEmpty(EntityTag)) return;
-
-            try
-            {
-                var etag = EntityTagHeaderValue.Parse(EntityTag);
-                headers.IfNoneMatch.Add(etag);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString()); }
-        }
+            var etag = EntityTagHeaderValue.Parse(EntityTag);
+            headers.IfNoneMatch.Add(etag);
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -206,6 +193,21 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private void GetEntityTag(HttpResponseHeaders headers)
             => EntityTag = headers?.ETag?.Tag ?? string.Empty;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Execute
+        ///
+        /// <summary>
+        /// 処理を実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Execute(Action action)
+        {
+            try { action(); }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+        }
 
         #endregion
     }
@@ -301,7 +303,7 @@ namespace Cube.Net.Http
 
             if ((int)response.StatusCode / 100 == 2) // 2XX
             {
-                response.Content = new ValueContent<TValue>(
+                response.Content = new HttpValueContent<TValue>(
                     response.Content,
                     await Converter.ConvertAsync(response.Content)
                 );

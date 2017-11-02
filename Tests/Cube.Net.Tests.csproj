@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Debug\Cube.Net.Tests.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\Cube.Net.Tests.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Libraries\Cube.Net.csproj">
@@ -41,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.1.5.0\lib\net45\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.1.5.3\lib\net45\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -59,8 +61,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Details\FileHandler.cs" />
-    <Compile Include="Details\NetworkHandler.cs" />
+    <Compile Include="Details\FileHelper.cs" />
+    <Compile Include="Details\GlobalSetup.cs" />
+    <Compile Include="Details\NetworkHelper.cs" />
     <Compile Include="Details\Person.cs" />
     <Compile Include="Http\HttpClientTest.cs" />
     <Compile Include="Http\HttpHandlerTest.cs" />
@@ -69,12 +72,13 @@
     <Compile Include="Ntp\NtpMonitorTest.cs" />
     <Compile Include="Ntp\NtpPacketTest.cs" />
     <Compile Include="Ntp\NtpTimestampTest.cs" />
-    <Compile Include="NetworkTest.cs" />
     <Compile Include="Rss\RssMonitorTest.cs" />
     <Compile Include="Rss\RssParserTest.cs" />
+    <Compile Include="NetworkTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="App.config" />
     <None Include="Packages.config" />
   </ItemGroup>
   <ItemGroup>

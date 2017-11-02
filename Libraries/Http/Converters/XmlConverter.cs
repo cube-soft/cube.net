@@ -16,66 +16,67 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
-using Cube.Net.Http;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 
-namespace Cube.Net.Rss
+namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssMonitor
+    /// XmlContentConverter(TValue)
     ///
     /// <summary>
-    /// 定期的に登録した URL からフィードを取得するためのクラスです。
+    /// XML 形式の HttpContent を変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssMonitor : HttpMonitor<RssFeed>
+    public class XmlContentConverter<TValue> : ContentConverter<TValue> where TValue : class
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
-        /// RssMonitor
+        /// XmlContentConverter
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor() : this(new RssContentConverter()) { }
+        public XmlContentConverter() : base(async (src) =>
+        {
+            if (src == null) return default(TValue);
+            var stream = await src.ReadAsStreamAsync();
+            var xml = new XmlSerializer(typeof(TValue));
+            return xml.Deserialize(stream) as TValue;
+        }) { }
+    }
 
+    /* --------------------------------------------------------------------- */
+    ///
+    /// XmlOperations
+    ///
+    /// <summary>
+    /// XML に関する拡張用クラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static class XmlOperations
+    {
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
-        ///
+        /// GetXmlAsync
+        /// 
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// XML 形式のデータを非同期で取得します。
         /// </summary>
+        ///
+        /// <param name="client">HTTP クライアント</param>
+        /// <param name="uri">レスポンス取得 URL</param>
         /// 
-        /// <param name="converter">変換用オブジェクト</param>
+        /// <returns>XML 形式データの変換結果</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor(IContentConverter<RssFeed> converter)
-            : base(new ContentHandler<RssFeed>(converter) { UseEntityTag = false }) { }
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetRequestUris
-        ///
-        /// <summary>
-        /// リクエスト送信先 URL 一覧を取得します。
-        /// </summary>
-        /// 
-        /// <returns>URL 一覧</returns>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected override IEnumerable<Uri> GetRequestUris() => Uris;
-
-        #endregion
+        public static Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri) where T : class
+            => client.GetAsync(uri, new XmlContentConverter<T>());
     }
 }
