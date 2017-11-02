@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net", "Libraries\Cube.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net.Tests", "Tests\Cube.Net.Tests.csproj", "{03DB8859-93F8-4335-BBA1-0C04981A970A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net.Applications.Rss.Reader", "Applications\Rss.Reader\Cube.Net.Applications.Rss.Reader.csproj", "{C7742724-1786-4FDB-86C1-10090245D25E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net.App.Rss.Reader", "Applications\Rss.Reader\Cube.Net.App.Rss.Reader.csproj", "{C7742724-1786-4FDB-86C1-10090245D25E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
