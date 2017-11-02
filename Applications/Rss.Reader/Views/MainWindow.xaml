@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:my="clr-namespace:Cube.Net.Applications.Rss.Reader"
-        xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net"
+        xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
         mc:Ignorable="d"
         
         Title="CubeRSS Reader"
