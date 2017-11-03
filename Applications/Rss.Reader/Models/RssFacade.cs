@@ -130,14 +130,15 @@ namespace Cube.Net.Applications.Rss.Reader
         /// RSS フィード中の記事を選択します。
         /// </summary>
         /// 
-        /// <param name="entry">対象とする記事</param>
+        /// <param name="rss">対象とする記事</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Select(RssArticle entry)
+        public void Select(RssArticle rss)
         {
-            Content.Value = !string.IsNullOrEmpty(entry.Content) ?
-                            entry.Content :
-                            entry.Summary;
+            Content.Value = string.Format(
+                Properties.Resources.Skeleton,
+                !string.IsNullOrEmpty(rss.Content) ? rss.Content : rss.Summary
+            );
         }
 
         #endregion

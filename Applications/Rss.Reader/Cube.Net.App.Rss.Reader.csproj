@@ -89,6 +89,7 @@
     <Compile Include="Xui\Behaviors\CommandBehavior.cs" />
     <Compile Include="Xui\Behaviors\SelectedItemChanged.cs" />
     <Compile Include="Xui\Behaviors\SelectionChanged.cs" />
+    <Compile Include="Xui\Behaviors\WebDocument.cs" />
     <Compile Include="Xui\Bindable.cs" />
     <Compile Include="Xui\BindableCollection.cs" />
   </ItemGroup>
@@ -147,6 +148,7 @@
     <None Include="App.config" />
     <None Include="App.manifest" />
     <None Include="Packages.config" />
+    <None Include="Resources\Others\Skeleton.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Cube.Net.csproj">
@@ -154,6 +156,5 @@
       <Name>Cube.Net</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

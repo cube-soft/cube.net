@@ -83,7 +83,11 @@
 
         <!-- WebBrowser -->
         <Border Style="{StaticResource BrowserBorderStyle}" DockPanel.Dock="Bottom">
-            <WebBrowser/>
+            <WebBrowser>
+                <i:Interaction.Behaviors>
+                    <xb:WebDocument Text="{Binding Content.Value}"/>
+                </i:Interaction.Behaviors>
+            </WebBrowser>
         </Border>
         <!-- WebBrowser -->
     </DockPanel>
