@@ -16,71 +16,56 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Interactivity;
 
 namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SelectedItemChanged
+    /// EventToCommandBase(T)
     ///
     /// <summary>
-    /// TreeView の SelectedItemChanged イベントと Command を関連付ける
-    /// ための Behavior クラスです。
+    /// イベントと Command を関連付ける Behavior の基底クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class SelectedItemChanged : EventToCommandBase<TreeView>
+    public abstract class EventToCommandBase<T> : Behavior<T> where T : DependencyObject
     {
-        #region Implementations
+        #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnAttached
+        /// Command
         /// 
         /// <summary>
-        /// 要素へ接続された時に実行します。
+        /// SelectedItemChanged イベント発生時に実行されるコマンドを
+        /// 取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnAttached()
+        public ICommand Command
         {
-            base.OnAttached();
-            AssociatedObject.SelectedItemChanged += WhenSelectedItemChanged;
+            get => GetValue(CommandProperty) as ICommand;
+            set => SetValue(CommandProperty, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnDetaching
+        /// CommandProperty
         /// 
         /// <summary>
-        /// 要素から解除された時に実行します。
+        /// Command を保持するための DependencyProperty です。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnDetaching()
-        {
-            if (AssociatedObject != null)
-            {
-                AssociatedObject.SelectedItemChanged -= WhenSelectedItemChanged;
-            }
-            base.OnDetaching();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenSelectedItemChanged
-        /// 
-        /// <summary>
-        /// SelectedItemChanged イベント発生時に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenSelectedItemChanged(object s, RoutedPropertyChangedEventArgs<object> e)
-        {
-            if (Command == null) return;
-            if (Command.CanExecute(e.NewValue)) Command.Execute(e.NewValue);
-        }
+        public static readonly DependencyProperty CommandProperty
+            = DependencyProperty.RegisterAttached(
+                "Command",
+                typeof(ICommand),
+                typeof(EventToCommandBase<T>),
+                new UIPropertyMetadata(null)
+            );
 
         #endregion
     }
