@@ -30,7 +30,7 @@ namespace Cube.Xui.Behaviors
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class SelectedItemChanged : EventToCommandBase<TreeView>
+    public class SelectedItemChanged : CommandBehavior<TreeView>
     {
         #region Implementations
 

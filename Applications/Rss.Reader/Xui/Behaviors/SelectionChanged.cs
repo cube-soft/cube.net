@@ -31,7 +31,7 @@ namespace Cube.Xui.Behaviors
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class SelectionChanged : EventToCommandBase<ListBox>
+    public class SelectionChanged : CommandBehavior<ListBox>
     {
         #region Implementations
 
@@ -116,7 +116,7 @@ namespace Cube.Xui.Behaviors
         public SelectionList(IList removd, IList added)
         {
             RemovedItems = removd;
-            AddedItems = added;
+            AddedItems   = added;
         }
 
         #endregion

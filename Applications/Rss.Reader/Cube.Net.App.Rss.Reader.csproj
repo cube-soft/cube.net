@@ -86,7 +86,7 @@
     <Compile Include="Models\RssEntry.cs" />
     <Compile Include="Models\RssFacade.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="Xui\Behaviors\EventToCommandBase.cs" />
+    <Compile Include="Xui\Behaviors\CommandBehavior.cs" />
     <Compile Include="Xui\Behaviors\SelectedItemChanged.cs" />
     <Compile Include="Xui\Behaviors\SelectionChanged.cs" />
     <Compile Include="Xui\Bindable.cs" />

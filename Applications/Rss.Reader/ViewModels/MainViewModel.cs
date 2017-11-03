@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Cube.Net.Rss;
 using Cube.Xui;
@@ -32,7 +31,7 @@ namespace Cube.Net.Applications.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel
     {
         #region Properties
 

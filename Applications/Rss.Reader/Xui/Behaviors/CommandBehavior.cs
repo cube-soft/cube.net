@@ -23,14 +23,14 @@ namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// EventToCommandBase(T)
+    /// CommandBehavior(T)
     ///
     /// <summary>
     /// イベントと Command を関連付ける Behavior の基底クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public abstract class EventToCommandBase<T> : Behavior<T> where T : DependencyObject
+    public abstract class CommandBehavior<T> : Behavior<T> where T : DependencyObject
     {
         #region Properties
 
@@ -63,7 +63,7 @@ namespace Cube.Xui.Behaviors
             = DependencyProperty.RegisterAttached(
                 "Command",
                 typeof(ICommand),
-                typeof(EventToCommandBase<T>),
+                typeof(CommandBehavior<T>),
                 new UIPropertyMetadata(null)
             );
 
