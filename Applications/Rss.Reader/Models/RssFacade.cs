@@ -91,6 +91,17 @@ namespace Cube.Net.Applications.Rss.Reader
         /* ----------------------------------------------------------------- */
         public Bindable<RssFeed> Feed { get; } = new Bindable<RssFeed>();
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Content
+        /// 
+        /// <summary>
+        /// 対象とする記事の内容を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<string> Content { get; } = new Bindable<string>();
+
         #endregion
 
         #region Methods
@@ -109,6 +120,24 @@ namespace Cube.Net.Applications.Rss.Reader
         public void Select(RssEntry entry)
         {
             Feed.Value = _feeds.FirstOrDefault(e => e.Key == entry.Uri).Value;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Select
+        /// 
+        /// <summary>
+        /// RSS フィード中の記事を選択します。
+        /// </summary>
+        /// 
+        /// <param name="entry">対象とする記事</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Select(RssArticle entry)
+        {
+            Content.Value = !string.IsNullOrEmpty(entry.Content) ?
+                            entry.Content :
+                            entry.Summary;
         }
 
         #endregion

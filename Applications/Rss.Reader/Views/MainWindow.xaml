@@ -68,12 +68,16 @@
         <!-- Feeds -->
         <ListView ItemsSource="{Binding Feed.Value.Items}"
                   Style="{StaticResource FeedsStyle}"
+                  SelectionMode="Single"
                   DockPanel.Dock="Top">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Title}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <i:Interaction.Behaviors>
+                <xb:SelectionChanged Command="{Binding SelectArticle}"/>
+            </i:Interaction.Behaviors>
         </ListView>
         <!-- Feeds -->
 

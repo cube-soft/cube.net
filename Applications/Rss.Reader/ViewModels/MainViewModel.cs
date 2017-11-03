@@ -19,6 +19,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Cube.Net.Rss;
 using Cube.Xui;
+using Cube.Xui.Behaviors;
 
 namespace Cube.Net.Applications.Rss.Reader
 {
@@ -57,6 +58,17 @@ namespace Cube.Net.Applications.Rss.Reader
         /* ----------------------------------------------------------------- */
         public Bindable<RssFeed> Feed => _model.Feed;
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Content
+        /// 
+        /// <summary>
+        /// 対象とする記事の内容を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<string> Content => _model.Content;
+
         #endregion
 
         #region Commands
@@ -76,11 +88,27 @@ namespace Cube.Net.Applications.Rss.Reader
                 e => e is RssEntry
             );
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SelectArticle
+        /// 
+        /// <summary>
+        /// RssArticle 選択時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RelayCommand<SelectionList> SelectArticle
+            => _selectArticle = _selectArticle ?? new RelayCommand<SelectionList>(
+                e => _model.Select(e.SelectedItem as RssArticle),
+                e => e.SelectedItem is RssArticle
+            );
+
         #endregion
 
         #region Fields
         private RssFacade _model = new RssFacade();
         private RelayCommand<object> _selectEntry;
+        private RelayCommand<SelectionList> _selectArticle;
         #endregion
     }
 }
