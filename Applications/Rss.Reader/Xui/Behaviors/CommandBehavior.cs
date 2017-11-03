@@ -61,7 +61,7 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         public static readonly DependencyProperty CommandProperty
             = DependencyProperty.RegisterAttached(
-                "Command",
+                nameof(Command),
                 typeof(ICommand),
                 typeof(CommandBehavior<T>),
                 new UIPropertyMetadata(null)
