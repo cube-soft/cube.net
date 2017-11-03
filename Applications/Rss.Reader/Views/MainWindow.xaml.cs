@@ -45,7 +45,7 @@ namespace Cube.Net.Applications.Rss.Reader
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new RssViewModel();
+            DataContext = new MainViewModel();
         }
 
         #endregion

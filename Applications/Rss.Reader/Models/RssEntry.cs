@@ -25,15 +25,15 @@ namespace Cube.Net.Applications.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssSite
+    /// RssEntry
     ///
     /// <summary>
-    /// RSS フィードを購読するサイトの情報を保持するクラスです。
+    /// RSS フィードを購読する Web サイトの情報を保持するクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class RssSite
+    public class RssEntry
     {
         #region Properties
 
@@ -51,7 +51,7 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Feed
+        /// Uri
         /// 
         /// <summary>
         /// RSS フィードを取得するための URL を取得または設定します。
@@ -59,7 +59,7 @@ namespace Cube.Net.Applications.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public Uri Feed { get; set; }
+        public Uri Uri { get; set; }
 
         #endregion
     }
@@ -104,7 +104,7 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Feeds
+        /// Entries
         /// 
         /// <summary>
         /// 登録した Web サイト一覧を取得または設定します。
@@ -112,7 +112,7 @@ namespace Cube.Net.Applications.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public ObservableCollection<RssSite> Feeds { get; set; }
+        public ObservableCollection<RssEntry> Entries { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -126,7 +126,7 @@ namespace Cube.Net.Applications.Rss.Reader
         public IEnumerable Items => new CompositeCollection
         {
             new CollectionContainer { Collection = Categories },
-            new CollectionContainer { Collection = Feeds },
+            new CollectionContainer { Collection = Entries },
         };
 
         #endregion

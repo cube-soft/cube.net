@@ -18,8 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Cube.Net.Rss;
 using Cube.Settings;
+using Cube.Xui;
 
 namespace Cube.Net.Applications.Rss.Reader
 {
@@ -58,9 +60,9 @@ namespace Cube.Net.Applications.Rss.Reader
                 }
             }
 
-            Monitor.Interval = TimeSpan.FromHours(1);
-            Monitor.Subscribe(WhenReceived);
-            Monitor.Start();
+            _monitor.Interval = TimeSpan.FromHours(1);
+            _monitor.Subscribe(WhenReceived);
+            _monitor.Start();
         }
 
         #endregion
@@ -81,26 +83,34 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Feeds
+        /// Feed
         /// 
         /// <summary>
-        /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
+        /// 対象とする URL に対応する新着フィード一覧を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IDictionary<Uri, RssFeed> Feeds { get; }
-            = new Dictionary<Uri, RssFeed>();
+        public Bindable<RssFeed> Feed { get; } = new Bindable<RssFeed>();
+
+        #endregion
+
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
+        /// Select
         /// 
         /// <summary>
-        /// RSS フィード監視用オブジェクトを取得します。
+        /// RSS フィードを選択します。
         /// </summary>
+        /// 
+        /// <param name="entry">対象とする Web サイト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor Monitor { get; } = new RssMonitor();
+        public void Select(RssEntry entry)
+        {
+            Feed.Value = _feeds.FirstOrDefault(e => e.Key == entry.Uri).Value;
+        }
 
         #endregion
 
@@ -117,7 +127,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Add(RssCategory category)
         {
-            foreach (var f in category.Feeds) Monitor.Uris.Add(f.Feed);
+            foreach (var f in category.Entries) _monitor.Uris.Add(f.Uri);
             if (category.Categories == null) return;
             foreach (var c in category.Categories) Add(c);
         }
@@ -133,9 +143,14 @@ namespace Cube.Net.Applications.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void WhenReceived(Uri uri, RssFeed feed)
         {
-            if (Feeds.ContainsKey(uri)) Feeds[uri] = feed;
-            else Feeds.Add(uri, feed);
+            if (_feeds.ContainsKey(uri)) _feeds[uri] = feed;
+            else _feeds.Add(uri, feed);
         }
+
+        #region Fields
+        private Dictionary<Uri, RssFeed> _feeds = new Dictionary<Uri, RssFeed>();
+        private RssMonitor _monitor = new RssMonitor();
+        #endregion
 
         #endregion
     }
