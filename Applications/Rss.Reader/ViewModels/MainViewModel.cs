@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Cube.Net.Rss;
@@ -45,7 +44,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ObservableCollection<RssCategory> Categories => _model.Categories;
+        public BindableCollection<RssCategory> Categories => _model.Categories;
 
         /* ----------------------------------------------------------------- */
         ///

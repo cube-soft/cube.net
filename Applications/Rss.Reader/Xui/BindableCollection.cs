@@ -15,140 +15,128 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Cube.Net.Rss;
-using Cube.Settings;
-using Cube.Xui;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading;
+using System.Collections.Specialized;
 
-namespace Cube.Net.Applications.Rss.Reader
+namespace Cube.Xui
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssFacade
+    /// BindableCollection(T)
     ///
     /// <summary>
-    /// RSS フィードに関連する処理の窓口となるクラスです。
+    /// コレクションを Binding 可能にするためのクラスです。
     /// </summary>
     /// 
+    /// <remarks>
+    /// ObservableCollection(T) で発生する PropertyChanged および
+    /// CollectionChanged イベントをコンストラクタで指定された同期
+    /// コンテキストを用いて伝搬させます。
+    /// </remarks>
+    /// 
     /* --------------------------------------------------------------------- */
-    public class RssFacade
+    public class BindableCollection<T> : ObservableCollection<T>
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssFacade
+        /// BindableCollection
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFacade()
+        public BindableCollection() : this(SynchronizationContext.Current) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// BindableCollection
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="context">同期コンテキスト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public BindableCollection(SynchronizationContext context) : base()
         {
-            var filename = "Feeds.json";
-            if (System.IO.File.Exists(filename))
-            {
-                var src = SettingsType.Json.Load<List<RssCategory>>(filename);
-                foreach (var item in src)
-                {
-                    Categories.Add(item);
-                    Add(item);
-                }
-            }
-
-            _monitor.Interval = TimeSpan.FromHours(1);
-            _monitor.Subscribe(WhenReceived);
-            _monitor.Start();
-        }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Categories
-        /// 
-        /// <summary>
-        /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public BindableCollection<RssCategory> Categories { get; }
-            = new BindableCollection<RssCategory>();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Feed
-        /// 
-        /// <summary>
-        /// 対象とする URL に対応する新着フィード一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Bindable<RssFeed> Feed { get; } = new Bindable<RssFeed>();
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Select
-        /// 
-        /// <summary>
-        /// RSS フィードを選択します。
-        /// </summary>
-        /// 
-        /// <param name="entry">対象とする Web サイト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Select(RssEntry entry)
-        {
-            Feed.Value = _feeds.FirstOrDefault(e => e.Key == entry.Uri).Value;
-        }
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Add
-        /// 
-        /// <summary>
-        /// RSS フィードを RssMonitor オブジェクトに登録します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Add(RssCategory category)
-        {
-            foreach (var f in category.Entries) _monitor.Uris.Add(f.Uri);
-            if (category.Categories == null) return;
-            foreach (var c in category.Categories) Add(c);
+            _context = context;
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WhenReceived
+        /// BindableCollection
         /// 
         /// <summary>
-        /// RSS フィードを RssMonitor オブジェクトに登録します。
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="collection">コピー元となるコレクション</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public BindableCollection(IEnumerable<T> collection)
+            : this(collection, SynchronizationContext.Current) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// BindableCollection
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="collection">コピー元となるコレクション</param>
+        /// <param name="context">同期コンテキスト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public BindableCollection(IEnumerable<T> collection, SynchronizationContext context)
+            : base(collection)
+        {
+            _context = context;
+        }
+
+        #endregion
+
+        #region Fields
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnPropertyChanged
+        /// 
+        /// <summary>
+        /// PropertyChanged イベントを発生させます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenReceived(Uri uri, RssFeed feed)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (_feeds.ContainsKey(uri)) _feeds[uri] = feed;
-            else _feeds.Add(uri, feed);
+            if (_context != null) _context.Post(_ => base.OnPropertyChanged(e), null);
+            else base.OnPropertyChanged(e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnCollectionChanged
+        /// 
+        /// <summary>
+        /// CollectionChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            if (_context != null) _context.Post(_ => base.OnCollectionChanged(e), null);
+            else base.OnCollectionChanged(e);
         }
 
         #region Fields
-        private Dictionary<Uri, RssFeed> _feeds = new Dictionary<Uri, RssFeed>();
-        private RssMonitor _monitor = new RssMonitor();
+        private SynchronizationContext _context = SynchronizationContext.Current;
         #endregion
 
         #endregion
