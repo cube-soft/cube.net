@@ -28,20 +28,36 @@ namespace Cube.Xui.Behaviors
     ///
     /// <summary>
     /// TreeView の SelectedItemChanged イベントと Command を関連付ける
-    /// ための添付ビヘイビアクラスです。
+    /// ための Behavior クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
     public class SelectedItemChanged : Behavior<TreeView>
     {
-        #region DependencyProperty
+        #region Properties
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Command
+        /// 
+        /// <summary>
+        /// SelectedItemChanged イベント発生時に実行されるコマンドを
+        /// 取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Command
+        {
+            get => GetValue(CommandProperty) as ICommand;
+            set => SetValue(CommandProperty, value);
+        }
+        
         /* ----------------------------------------------------------------- */
         ///
         /// CommandProperty
         /// 
         /// <summary>
-        /// Command を保持するための DependencyProperty を取得します。
+        /// Command を保持するための DependencyProperty です。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -50,39 +66,8 @@ namespace Cube.Xui.Behaviors
                 "Command",
                 typeof(ICommand),
                 typeof(SelectedItemChanged),
-                new PropertyMetadata(null, WhenCommandChanged)
+                new UIPropertyMetadata(null)
             );
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetCommand
-        /// 
-        /// <summary>
-        /// ICommand オブジェクトを取得します。
-        /// </summary>
-        /// 
-        /// <param name="obj">イベントの送信者</param>
-        /// 
-        /// <returns>ICommand オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static ICommand GetCommand(DependencyObject obj)
-            => obj.GetValue(CommandProperty) as ICommand;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SetCommand
-        /// 
-        /// <summary>
-        /// Command オブジェクトを設定します。
-        /// </summary>
-        ///
-        /// <param name="obj">イベントの送信者</param>
-        /// <param name="value">コマンド</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public static void SetCommand(DependencyObject obj, ICommand value)
-            => obj.SetValue(CommandProperty, value);
 
         #endregion
 
@@ -90,20 +75,35 @@ namespace Cube.Xui.Behaviors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WhenCommandChanged
+        /// OnAttached
         /// 
         /// <summary>
-        /// CommandProperty の内容が変化した時に実行されるハンドラです。
+        /// 要素へ接続された時に実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static void WhenCommandChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
+        protected override void OnAttached()
         {
-            if (s is TreeView tv)
+            base.OnAttached();
+            AssociatedObject.SelectedItemChanged += WhenSelectedItemChanged;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnDetaching
+        /// 
+        /// <summary>
+        /// 要素から解除された時に実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnDetaching()
+        {
+            if (AssociatedObject != null)
             {
-                if (e.NewValue is ICommand) tv.SelectedItemChanged += WhenSelectedItemChanged;
-                else tv.SelectedItemChanged += WhenSelectedItemChanged;
+                AssociatedObject.SelectedItemChanged -= WhenSelectedItemChanged;
             }
+            base.OnDetaching();
         }
 
         /* ----------------------------------------------------------------- */
@@ -115,13 +115,10 @@ namespace Cube.Xui.Behaviors
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static void WhenSelectedItemChanged(object s, RoutedPropertyChangedEventArgs<object> e)
+        private void WhenSelectedItemChanged(object s, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (s is TreeView tv)
-            {
-                var cmd = GetCommand(tv);
-                if (cmd.CanExecute(e.NewValue)) cmd.Execute(e.NewValue);
-            }
+            if (Command == null) return;
+            if (Command.CanExecute(e.NewValue)) Command.Execute(e.NewValue);
         }
 
         #endregion
