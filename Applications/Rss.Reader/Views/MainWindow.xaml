@@ -21,6 +21,10 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
+
+    <Window.DataContext>
+        <my:MainViewModel/>
+    </Window.DataContext>
     
     <DockPanel>
         <!-- Header -->
