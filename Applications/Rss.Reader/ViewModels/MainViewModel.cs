@@ -15,7 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using Cube.Net.Rss;
 using Cube.Xui;
 using Cube.Xui.Behaviors;
@@ -31,8 +33,23 @@ namespace Cube.Net.Applications.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class MainViewModel
+    public class MainViewModel : ViewModelBase
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// MainViewModel
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public MainViewModel() : base(Messenger.Default) { }
+
+        #endregion
+
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -74,6 +91,20 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Add
+        /// 
+        /// <summary>
+        /// フィード追加時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RelayCommand Add
+            => _add = _add ?? new RelayCommand(
+                () => MessengerInstance.Send<AddViewModel>(new AddViewModel())
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// SelectEntry
         /// 
         /// <summary>
@@ -106,6 +137,7 @@ namespace Cube.Net.Applications.Rss.Reader
 
         #region Fields
         private RssFacade _model = new RssFacade();
+        private RelayCommand _add;
         private RelayCommand<object> _selectEntry;
         private RelayCommand<SelectionList> _selectArticle;
         #endregion

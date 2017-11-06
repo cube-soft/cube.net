@@ -14,6 +14,10 @@
         Width="800"
         Height="600"
         Background="WhiteSmoke">
+    <Window.DataContext>
+        <my:MainViewModel/>
+    </Window.DataContext>
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -22,9 +26,11 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Window.DataContext>
-        <my:MainViewModel/>
-    </Window.DataContext>
+    <i:Interaction.Triggers>
+        <my:AddWindowTrigger>
+            <my:AddWindowAction/>
+        </my:AddWindowTrigger>
+    </i:Interaction.Triggers>
     
     <DockPanel>
         <!-- Footer -->
@@ -69,7 +75,8 @@
             <!-- Category and Entries -->
 
             <!-- NewFeed -->
-            <Button Content="＋ 新しいフィード"
+            <Button Command="{Binding Add}"
+                    Content="＋ 新しいフィード"
                     Style="{StaticResource NewFeedStyle}"
                     Grid.Row="1" Height="40"/>
             <!-- NewFeed -->
