@@ -1,4 +1,7 @@
-﻿/* ------------------------------------------------------------------------- */
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
 // 
@@ -21,25 +24,25 @@ namespace Cube.Net.Applications.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MainWindow
+    /// AddWindow
     ///
     /// <summary>
-    /// メイン画面を表すクラスです。
+    /// 新しいフィードを追加するための画面を表すクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public partial class MainWindow : Window
+    public partial class AddWindow : Window
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// MainWindow
+        /// AddWindow
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainWindow()
+        public AddWindow()
         {
             InitializeComponent();
         }

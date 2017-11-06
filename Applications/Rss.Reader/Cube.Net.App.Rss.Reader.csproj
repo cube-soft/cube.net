@@ -83,6 +83,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Views\AddWindow.xaml.cs">
+      <DependentUpon>AddWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\RssEntry.cs" />
     <Compile Include="Models\RssFacade.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -98,6 +101,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Views\AddWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Fonts\FontFamily.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
