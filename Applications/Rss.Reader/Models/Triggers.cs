@@ -19,29 +19,25 @@ using Cube.Xui.Triggers;
 
 namespace Cube.Net.Applications.Rss.Reader
 {
-    #region AddWindow
-
     /* --------------------------------------------------------------------- */
     ///
-    /// AddWindowTrigger
+    /// AddViewModelTrigger
     ///
     /// <summary>
-    /// AddWindow を表示するための Trigger クラスです。
+    /// AddViewModel を介した MesengerTrigger です。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class AddWindowTrigger : WindowTrigger<AddViewModel> { }
+    public class AddViewModelTrigger : MessengerTrigger<AddViewModel> { }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// AddWindowAction
+    /// ShowAddWindowAction
     ///
     /// <summary>
     /// AddWindow を表示するための Action クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class AddWindowAction : DialogAction<AddWindow> { }
-
-    #endregion
+    public class ShowAddWindowAction : ShowDialogAction<AddWindow> { }
 }
