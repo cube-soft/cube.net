@@ -201,6 +201,19 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
+        /// BurstInterval
+        /// 
+        /// <summary>
+        /// 複数の URL に対して通信を試みる場合、直前の URL が終了して
+        /// から次の URL に対してリクエストを送信するまでの間隔を取得
+        /// または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public TimeSpan BurstInterval { get; set; } = TimeSpan.FromSeconds(1);
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// FailedCount
         /// 
         /// <summary>
@@ -500,7 +513,11 @@ namespace Cube.Net.Http
         private async void WhenTick()
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
-            foreach (var uri in GetRequestUris()) await RetryAsync(uri);
+            foreach (var uri in GetRequestUris())
+            {
+                await RetryAsync(uri);
+                await Task.Delay(BurstInterval);
+            }
         }
 
         /* ----------------------------------------------------------------- */
