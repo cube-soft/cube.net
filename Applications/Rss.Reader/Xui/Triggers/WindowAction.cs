@@ -17,70 +17,19 @@
 /* ------------------------------------------------------------------------- */
 using System.Windows;
 using System.Windows.Interactivity;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace Cube.Xui.Triggers
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// WindowTrigger(T)
+    /// ShowAction(TView)
     ///
     /// <summary>
-    /// Window を表示する Trigger の基底クラスです。
-    /// </summary>
-    /// 
-    /// <remarks>
-    /// 引数で指定された型で Messenger.Default に登録されます。
-    /// </remarks>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public abstract class WindowTrigger<TDataContext> : TriggerBase<DependencyObject>
-    {
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnAttached
-        /// 
-        /// <summary>
-        /// 要素へ接続された時に実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-            Messenger.Default.Register<TDataContext>(AssociatedObject, e => InvokeActions(e));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnDetaching
-        /// 
-        /// <summary>
-        /// 要素から解除された時に実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnDetaching()
-        {
-            Messenger.Default.Unregister<TDataContext>(AssociatedObject);
-            base.OnDetaching();
-        }
-
-        #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// WindowAction(TView)
-    ///
-    /// <summary>
-    /// Window を表示する Trigger の基底クラスです。
+    /// Window を表示する TriggerAction です。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class WindowAction<TView> : TriggerAction<DependencyObject>
+    public class ShowAction<TView> : TriggerAction<DependencyObject>
         where TView : Window, new()
     {
         /* ----------------------------------------------------------------- */
@@ -91,8 +40,8 @@ namespace Cube.Xui.Triggers
         /// 処理を実行します。
         /// </summary>
         /// 
-        /// <param name="parameter">DataContext</param>
-        ///
+        /// <param name="parameter">DataContext オブジェクト</param>
+        /// 
         /* ----------------------------------------------------------------- */
         protected override void Invoke(object parameter)
             => new TView { DataContext = parameter }.Show();
@@ -100,10 +49,10 @@ namespace Cube.Xui.Triggers
 
     /* --------------------------------------------------------------------- */
     ///
-    /// WindowAction(TView)
+    /// ShowDialogAction(TView)
     ///
     /// <summary>
-    /// Window を表示する Trigger の基底クラスです。
+    /// Window を表示する TriggerAction です。
     /// </summary>
     /// 
     /// <remarks>
@@ -111,7 +60,7 @@ namespace Cube.Xui.Triggers
     /// </remarks>
     /// 
     /* --------------------------------------------------------------------- */
-    public class DialogAction<TView> : TriggerAction<DependencyObject>
+    public class ShowDialogAction<TView> : TriggerAction<DependencyObject>
         where TView : Window, new()
     {
         /* ----------------------------------------------------------------- */
@@ -122,10 +71,36 @@ namespace Cube.Xui.Triggers
         /// 処理を実行します。
         /// </summary>
         /// 
-        /// <param name="parameter">DataContext</param>
+        /// <param name="parameter">DataContext オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
         protected override void Invoke(object parameter)
             => new TView { DataContext = parameter }.ShowDialog();
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// CloseAction
+    ///
+    /// <summary>
+    /// Window を閉じる TriggerAction です。
+    /// </summary>
+    /// 
+    /* --------------------------------------------------------------------- */
+    public class CloseAction : TriggerAction<DependencyObject>
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Invoke
+        /// 
+        /// <summary>
+        /// 処理を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected override void Invoke(object notused)
+        {
+            if (AssociatedObject is Window w) w.Close();
+        }
     }
 }
