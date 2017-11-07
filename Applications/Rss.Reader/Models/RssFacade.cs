@@ -153,6 +153,11 @@ namespace Cube.Net.Applications.Rss.Reader
         {
             Content.Value = string.Format(
                 Properties.Resources.Skeleton,
+                Properties.Resources.SkeletonStyle,
+                src.Link,
+                src.Link,
+                src.Title,
+                src.PublishTime,
                 !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
             );
         }

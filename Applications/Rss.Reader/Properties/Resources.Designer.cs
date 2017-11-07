@@ -19,7 +19,7 @@ namespace Cube.Net.Applications.Rss.Reader.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -63,19 +63,37 @@ namespace Cube.Net.Applications.Rss.Reader.Properties {
         /// <summary>
         ///   &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;
         ///&lt;html&gt;
+        ///
         ///&lt;head&gt;
-        ///    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;&gt;    
+        ///&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot;&gt;
+        ///&lt;meta http-equiv=&quot;Content-Style-Type&quot; content=&quot;text/css&quot;&gt;
+        ///&lt;meta http-equiv=&quot;Content-Script-Type&quot; content=&quot;text/javascript&quot;&gt;
+        ///
+        ///&lt;style type=&quot;text/css&quot;&gt;
+        ///{0}
+        ///&lt;/style&gt;
         ///&lt;/head&gt;
+        ///
         ///&lt;body&gt;
-        ///    &lt;div&gt;
-        ///    {0}
-        ///    &lt;/div&gt;
+        ///&lt;div&gt;
+        ///{1}
+        ///&lt;/div&gt;
         ///&lt;/body&gt;
+        ///
         ///&lt;/html&gt; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Skeleton {
             get {
                 return ResourceManager.GetString("Skeleton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   body { padding : 0; } に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string SkeletonStyle {
+            get {
+                return ResourceManager.GetString("SkeletonStyle", resourceCulture);
             }
         }
     }

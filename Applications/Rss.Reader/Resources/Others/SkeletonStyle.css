@@ -1,0 +1,33 @@
+body {
+    margin          : 0;
+    padding         : 0;
+    border          : 0;
+    color           : #222;
+    font-family     : "メイリオ", "Meiryo",
+    "游ゴシック", "Yu Gothic", "游ゴシック体", "YuGothic",
+    "ＭＳ Ｐゴシック", "MS PGothic",
+    sans-serif;
+}
+
+a, a:visited {
+    color           : #00007f;
+    text-decoration : none;
+}
+
+.cuberss-container {
+    margin          : 1em;
+}
+
+.cuberss-title {
+    margin          : 0;
+    padding         : 0;
+    font-size       : 20px;
+    font-weight     : bold;
+}
+
+.cuberss-time {
+    padding         : 1em;
+    font-size       : 12px;
+    color           : #7f7f7f;
+    text-align      : right;
+}
