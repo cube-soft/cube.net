@@ -65,14 +65,14 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Feed
+        /// Entry
         /// 
         /// <summary>
         /// 対象となる Web サイトの RSS フィードを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssFeed> Feed => _model.Feed;
+        public Bindable<RssEntry> Entry => _model.Entry;
 
         /* ----------------------------------------------------------------- */
         ///

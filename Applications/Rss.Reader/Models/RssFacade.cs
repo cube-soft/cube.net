@@ -51,14 +51,13 @@ namespace Cube.Net.Applications.Rss.Reader
             var filename = "Feeds.json";
             if (System.IO.File.Exists(filename))
             {
-                var src = SettingsType.Json.Load<List<RssCategory>>(filename);
-                foreach (var item in src)
-                {
-                    Categories.Add(item);
-                    Add(item);
-                }
+                var src = SettingsType.Json.Load<List<RssCategory.Json>>(filename);
+                var cvt = src.Select(e => e.Convert());
+                Categories = new BindableCollection<RssCategory>(cvt);
+                Flatten(Categories);
             }
 
+            _monitor.Uris = _entries.Keys;
             _monitor.Interval = TimeSpan.FromHours(1);
             _monitor.Subscribe(WhenReceived);
             _monitor.Start();
@@ -78,7 +77,6 @@ namespace Cube.Net.Applications.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public BindableCollection<RssCategory> Categories { get; }
-            = new BindableCollection<RssCategory>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -89,7 +87,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssFeed> Feed { get; } = new Bindable<RssFeed>();
+        public Bindable<RssEntry> Entry { get; } = new Bindable<RssEntry>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -135,7 +133,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Select(RssEntry src)
         {
-            Feed.Value = _feeds.FirstOrDefault(e => e.Key == src.Uri).Value;
+            Entry.Value = _entries.Values.FirstOrDefault(e => e.Uri == src.Uri);
         }
 
         /* ----------------------------------------------------------------- */
@@ -168,18 +166,21 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Add
+        /// Flatten
         /// 
         /// <summary>
-        /// RSS フィードを RssMonitor オブジェクトに登録します。
+        /// Tree 構造を Flat 化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void Add(RssCategory category)
+        private void Flatten(IEnumerable<RssCategory> categories)
         {
-            foreach (var f in category.Entries) _monitor.Uris.Add(f.Uri);
-            if (category.Categories == null) return;
-            foreach (var c in category.Categories) Add(c);
+            if (categories == null) return;
+            foreach (var category in categories)
+            {
+                foreach (var entry in category.Entries) _entries.Add(entry.Uri, entry);
+                Flatten(category.Categories);
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -193,12 +194,12 @@ namespace Cube.Net.Applications.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void WhenReceived(Uri uri, RssFeed feed)
         {
-            if (_feeds.ContainsKey(uri)) _feeds[uri] = feed;
-            else _feeds.Add(uri, feed);
+            if (!_entries.ContainsKey(uri)) return;
+            _entries[uri].Feed = feed;
         }
 
         #region Fields
-        private Dictionary<Uri, RssFeed> _feeds = new Dictionary<Uri, RssFeed>();
+        private Dictionary<Uri, RssEntry> _entries = new Dictionary<Uri, RssEntry>();
         private RssMonitor _monitor = new RssMonitor();
         #endregion
 

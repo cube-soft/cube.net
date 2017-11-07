@@ -51,7 +51,7 @@ namespace Cube.Net.Tests.Rss
                 Assert.That(mon.NetworkAvailable, Is.True);
 
                 mon.Timeout = TimeSpan.FromMilliseconds(1000);
-                mon.Uris.Add(new Uri("http://clown.hatenablog.jp/rss"));
+                mon.Uris    = new[] { new Uri("http://clown.hatenablog.jp/rss") };
 
                 var cts   = new CancellationTokenSource();
                 var count = 0;

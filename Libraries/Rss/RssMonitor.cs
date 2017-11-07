@@ -68,11 +68,11 @@ namespace Cube.Net.Rss
         /// Uris
         ///
         /// <summary>
-        /// RSS フィードの取得 URL 一覧を取得します。
+        /// RSS フィードの取得 URL 一覧を取得または設定します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public IList<Uri> Uris { get; } = new List<Uri>();
+        public IEnumerable<Uri> Uris { get; set; }
 
         #endregion
 

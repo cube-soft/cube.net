@@ -49,7 +49,7 @@ namespace Cube.Xui
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable() : this(SynchronizationContext.Current) { }
+        public Bindable() : this(default(T)) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -59,11 +59,26 @@ namespace Cube.Xui
         /// オブジェクトを初期化します。
         /// </summary>
         /// 
+        /// <param name="value">初期値</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable(T value) : this(value, SynchronizationContext.Current) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Bindable
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /// <param name="value">初期値</param>
         /// <param name="context">同期コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable(SynchronizationContext context)
+        public Bindable(T value, SynchronizationContext context)
         {
+            _value   = value;
             _context = context;
         }
 

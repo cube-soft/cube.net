@@ -51,23 +51,7 @@ namespace Cube.Xui
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection() : this(SynchronizationContext.Current) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// BindableCollection
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="context">同期コンテキスト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public BindableCollection(SynchronizationContext context) : base()
-        {
-            _context = context;
-        }
+        public BindableCollection() : this(default(IEnumerable<T>)) { }
 
         /* ----------------------------------------------------------------- */
         ///

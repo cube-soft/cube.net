@@ -13,7 +13,7 @@
         FontFamily="Meiryo UI"
         Width="800"
         Height="600"
-        Background="WhiteSmoke">
+        Background="#FFF1F1F1">
     <Window.DataContext>
         <my:MainViewModel/>
     </Window.DataContext>
@@ -88,7 +88,7 @@
         <!-- Sidebar -->
         
         <!-- Feeds -->
-        <ListView ItemsSource="{Binding Feed.Value.Items}"
+        <ListView ItemsSource="{Binding Entry.Value.Feed.Items}"
                   Style="{StaticResource FeedsStyle}"
                   ItemContainerStyle="{StaticResource FeedsItemStyle}"
                   SelectionMode="Single"

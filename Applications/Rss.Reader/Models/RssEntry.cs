@@ -17,9 +17,11 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Data;
+using Cube.Net.Rss;
 
 namespace Cube.Net.Applications.Rss.Reader
 {
@@ -32,7 +34,6 @@ namespace Cube.Net.Applications.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    [DataContract]
     public class RssEntry
     {
         #region Properties
@@ -46,7 +47,6 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public string Title { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -58,8 +58,43 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public Uri Uri { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Feed
+        /// 
+        /// <summary>
+        /// RSS フィードを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssFeed Feed { get; set; }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssEntry.Json
+        /// 
+        /// <summary>
+        /// JSON 解析用クラスです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataContract]
+        internal class Json
+        {
+            [DataMember] public string Title { get; set; }
+            [DataMember] public Uri Uri { get; set; }
+            public RssEntry Convert() => new RssEntry
+            {
+                Title = Title,
+                Uri   = Uri,
+            };
+        }
 
         #endregion
     }
@@ -73,7 +108,6 @@ namespace Cube.Net.Applications.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    [DataContract]
     public class RssCategory
     {
         #region Properties
@@ -87,7 +121,6 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public string Title { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -99,8 +132,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
-        public ObservableCollection<RssCategory> Categories { get; set; }
+        public IEnumerable<RssCategory> Categories { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -111,8 +143,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
-        public ObservableCollection<RssEntry> Entries { get; set; }
+        public IEnumerable<RssEntry> Entries { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -128,6 +159,33 @@ namespace Cube.Net.Applications.Rss.Reader
             new CollectionContainer { Collection = Categories },
             new CollectionContainer { Collection = Entries },
         };
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssEntry.Json
+        /// 
+        /// <summary>
+        /// JSON 解析用クラスです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataContract]
+        internal class Json
+        {
+            [DataMember] string Title { get; set; }
+            [DataMember] List<Json> Categories { get; set; }
+            [DataMember] List<RssEntry.Json> Entries { get; set; }
+            public RssCategory Convert() => new RssCategory
+            {
+                Title      = Title,
+                Entries    = Entries.Select(e => e.Convert()),
+                Categories = Categories?.Select(e => e.Convert()),
+            };
+        }
 
         #endregion
     }
