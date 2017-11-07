@@ -50,7 +50,6 @@ namespace Cube.Net.Tests.Rss
             {
                 Assert.That(mon.NetworkAvailable, Is.True);
 
-                mon.Version = new SoftwareVersion("1.0.0");
                 mon.Timeout = TimeSpan.FromMilliseconds(1000);
                 mon.Uris.Add(new Uri("http://clown.hatenablog.jp/rss"));
 

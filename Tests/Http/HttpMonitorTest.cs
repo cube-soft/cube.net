@@ -63,8 +63,7 @@ namespace Cube.Net.Tests.Http
                 mon.Version  = new SoftwareVersion("1.0.0");
                 mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Timeout  = TimeSpan.FromMilliseconds(1000);
-                mon.Uris.Add(new Uri("http://www.cube-soft.jp/"));
-                mon.Uris.Add(new Uri("http://s.cube-soft.jp/"));
+                mon.Uri      = new Uri("http://www.cube-soft.jp/");
 
                 Assert.That(mon.Uri, Is.EqualTo(new Uri("http://www.cube-soft.jp/")));
 
@@ -102,10 +101,11 @@ namespace Cube.Net.Tests.Http
         {
             using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
-                mon.Version  = new SoftwareVersion("1.0.0");
-                mon.Interval = TimeSpan.FromMinutes(1);
-                mon.Timeout  = TimeSpan.FromMilliseconds(1000);
-                mon.Uris.Add(new Uri("http://www.cube-soft.jp/"));
+                mon.Version   = new SoftwareVersion("1.0.0");
+                mon.UserAgent = $"Cube.Net.Tests/{mon.Version.ToString(false)}";
+                mon.Interval  = TimeSpan.FromMinutes(1);
+                mon.Timeout   = TimeSpan.FromMilliseconds(1000);
+                mon.Uri       = new Uri("http://www.cube-soft.jp/");
 
                 var cts   = new CancellationTokenSource();
                 var count = 0;

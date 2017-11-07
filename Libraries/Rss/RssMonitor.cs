@@ -30,7 +30,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssMonitor : HttpMonitor<RssFeed>
+    public class RssMonitor : HttpMonitorBase<RssFeed>
     {
         #region Constructors
 
@@ -58,6 +58,21 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public RssMonitor(IContentConverter<RssFeed> converter)
             : base(new ContentHandler<RssFeed>(converter) { UseEntityTag = false }) { }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Uri
+        ///
+        /// <summary>
+        /// リクエスト送信先 URL 一覧を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public IList<Uri> Uris { get; } = new List<Uri>();
 
         #endregion
 
