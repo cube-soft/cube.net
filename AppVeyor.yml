@@ -12,6 +12,7 @@ platform: Any CPU
 configuration: Release
 before_build:
     - nuget sources add -name Cube.Core -source https://ci.appveyor.com/nuget/cube.core
+    - nuget sources add -name Cube.Images -source https://ci.appveyor.com/nuget/cube.images
     - nuget restore Cube.Net.sln
 build: 
     parallel: true
