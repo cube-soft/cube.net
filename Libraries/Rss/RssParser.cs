@@ -80,12 +80,12 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static RssItem Convert(SyndicationItem src)
+        private static RssArticle Convert(SyndicationItem src)
         {
             var count = src.Links?.Count ?? 0;
             if (count > 1) LogWarn($"Item.Links.Count:{count}\tId:{src.Id}");
 
-            return new RssItem
+            return new RssArticle
             {
                 Id          = src.Id,
                 Title       = src.Title?.Text,

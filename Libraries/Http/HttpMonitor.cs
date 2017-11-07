@@ -404,7 +404,11 @@ namespace Cube.Net.Http
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
             if (_http == null) _http = HttpClientFactory.Create(_handler, Timeout);
-            foreach (var uri in GetRequestUris()) await RetryAsync(uri);
+            foreach (var uri in GetRequestUris())
+            {
+                await RetryAsync(uri);
+                await Task.Delay(1000);
+            }
         }
 
         /* ----------------------------------------------------------------- */

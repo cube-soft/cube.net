@@ -97,21 +97,21 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssItem> Items { get; set; }
+        public IEnumerable<RssArticle> Items { get; set; }
 
         #endregion
     }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// RssItem
+    /// RssArticle
     ///
     /// <summary>
     /// RSS の項目情報を保持するクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class RssItem
+    public class RssArticle
     {
         #region Properties
 
