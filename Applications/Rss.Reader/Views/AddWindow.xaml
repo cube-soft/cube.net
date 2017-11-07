@@ -11,7 +11,7 @@
         Title="新しいフィードを追加"
         Height="200"
         Width="400"
-        Background="#FFF0F0F0">
+        Background="#FFF1F1F1">
     <i:Interaction.Triggers>
         <my:AddViewModelTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>

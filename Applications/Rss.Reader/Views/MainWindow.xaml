@@ -33,6 +33,10 @@
     </i:Interaction.Triggers>
     
     <DockPanel>
+        <!-- Header -->
+        <Border Style="{StaticResource HeaderStyle}" DockPanel.Dock="Top"/>
+        <!-- Header -->
+        
         <!-- Footer -->
         <StatusBar Style="{StaticResource FooterStyle}" DockPanel.Dock="Bottom">
             <StatusBarItem Content="Ready"/>
@@ -43,12 +47,12 @@
         <Grid DockPanel.Dock="Left">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="40"/>
+                <RowDefinition Height="32"/>
             </Grid.RowDefinitions>
             
             <!-- Categories and Entries -->
             <TreeView ItemsSource="{Binding Categories}"
-                  Style="{StaticResource EntriesStyle}">
+                      Style="{StaticResource EntriesStyle}">
                 <TreeView.Resources>
                     <!-- Category -->
                     <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
@@ -78,7 +82,7 @@
             <Button Command="{Binding Add}"
                     Content="＋ 新しいフィード"
                     Style="{StaticResource NewFeedStyle}"
-                    Grid.Row="1" Height="40"/>
+                    Grid.Row="1"/>
             <!-- NewFeed -->
         </Grid>
         <!-- Sidebar -->
@@ -86,6 +90,7 @@
         <!-- Feeds -->
         <ListView ItemsSource="{Binding Feed.Value.Items}"
                   Style="{StaticResource FeedsStyle}"
+                  ItemContainerStyle="{StaticResource FeedsItemStyle}"
                   SelectionMode="Single"
                   DockPanel.Dock="Top">
             <ListView.ItemTemplate>
