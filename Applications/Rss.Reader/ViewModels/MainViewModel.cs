@@ -100,7 +100,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand Add
             => _add = _add ?? new RelayCommand(
-                () => MessengerInstance.Send<AddViewModel>(new AddViewModel())
+                () => MessengerInstance.Send(new AddViewModel(e => _model.Add(e)))
             );
 
         /* ----------------------------------------------------------------- */

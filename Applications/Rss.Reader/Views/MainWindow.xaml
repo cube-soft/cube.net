@@ -27,9 +27,9 @@
     </Window.Resources>
 
     <i:Interaction.Triggers>
-        <my:AddWindowTrigger>
-            <my:AddWindowAction/>
-        </my:AddWindowTrigger>
+        <my:AddViewModelTrigger>
+            <my:ShowAddWindowAction/>
+        </my:AddViewModelTrigger>
     </i:Interaction.Triggers>
     
     <DockPanel>

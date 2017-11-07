@@ -108,18 +108,34 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Add
+        /// 
+        /// <summary>
+        /// RSS フィードを追加します。
+        /// </summary>
+        /// 
+        /// <param name="src">追加する RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Add(RssFeed src)
+        {
+
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Select
         /// 
         /// <summary>
         /// RSS フィードを選択します。
         /// </summary>
         /// 
-        /// <param name="entry">対象とする Web サイト</param>
+        /// <param name="src">対象とする Web サイト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Select(RssEntry entry)
+        public void Select(RssEntry src)
         {
-            Feed.Value = _feeds.FirstOrDefault(e => e.Key == entry.Uri).Value;
+            Feed.Value = _feeds.FirstOrDefault(e => e.Key == src.Uri).Value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -130,14 +146,14 @@ namespace Cube.Net.Applications.Rss.Reader
         /// RSS フィード中の記事を選択します。
         /// </summary>
         /// 
-        /// <param name="rss">対象とする記事</param>
+        /// <param name="src">対象とする記事</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Select(RssArticle rss)
+        public void Select(RssArticle src)
         {
             Content.Value = string.Format(
                 Properties.Resources.Skeleton,
-                !string.IsNullOrEmpty(rss.Content) ? rss.Content : rss.Summary
+                !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
             );
         }
 

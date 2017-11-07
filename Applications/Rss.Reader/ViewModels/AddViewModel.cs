@@ -15,6 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using Cube.Net.Http;
 using Cube.Net.Rss;
 using Cube.Xui;
 
@@ -29,8 +34,27 @@ namespace Cube.Net.Applications.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class AddViewModel
+    public class AddViewModel : ViewModelBase
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// AddViewModel
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public AddViewModel(Action<RssFeed> callback) : base(new Messenger())
+        {
+            _callback = callback;
+            Url.PropertyChanged += (s, e) => Invoke.RaiseCanExecuteChanged();
+        }
+
+        #endregion
+
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -42,19 +66,48 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<string> Url { get; set; }
+        public Bindable<string> Url { get; } = new Bindable<string>();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Feed
+        /// Messenger
         /// 
         /// <summary>
-        /// 追加されたフィードの新着情報を取得または設定します。
+        /// Messenger オブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssFeed> Feed { get; set; }
+        public IMessenger Messenger => MessengerInstance;
 
+        #endregion
+
+        #region Commands
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Invoke
+        /// 
+        /// <summary>
+        /// 処理を実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RelayCommand Invoke
+            => _invoke = _invoke ?? new RelayCommand(
+                async () =>
+                {
+                    var rss = await HttpClientFactory.Create().GetRssAsync(new Uri(Url.Value));
+                    _callback(rss);
+                    MessengerInstance.Send<AddViewModel>(null);
+                },
+                () => !string.IsNullOrEmpty(Url.Value)
+            );
+
+        #endregion
+
+        #region Fields
+        private Action<RssFeed> _callback;
+        private RelayCommand _invoke;
         #endregion
     }
 }

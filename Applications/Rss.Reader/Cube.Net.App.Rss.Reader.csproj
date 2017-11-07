@@ -83,7 +83,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\WindowTriggers.cs" />
+    <Compile Include="Models\Triggers.cs" />
     <Compile Include="ViewModels\AddViewModel.cs" />
     <Compile Include="Views\AddWindow.xaml.cs">
       <DependentUpon>AddWindow.xaml</DependentUpon>
@@ -97,7 +97,8 @@
     <Compile Include="Xui\Behaviors\WebDocument.cs" />
     <Compile Include="Xui\Bindable.cs" />
     <Compile Include="Xui\BindableCollection.cs" />
-    <Compile Include="Xui\Triggers\WindowTrigger.cs" />
+    <Compile Include="Xui\Triggers\MessageTrigger.cs" />
+    <Compile Include="Xui\Triggers\WindowAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
