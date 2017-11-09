@@ -68,6 +68,7 @@
     <Compile Include="Http\HttpMonitor.cs" />
     <Compile Include="Http\HttpOperations.cs" />
     <Compile Include="Http\HttpValueContent.cs" />
+    <Compile Include="NativeMethods\UrlMon.cs" />
     <Compile Include="Ntp\NtpClient.cs" />
     <Compile Include="Ntp\NtpParameters.cs" />
     <Compile Include="Ntp\NtpMonitor.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Rss\RssFeed.cs" />
     <Compile Include="Rss\RssMonitor.cs" />
     <Compile Include="Rss\RssParser.cs" />
+    <Compile Include="BrowserSettings.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="NetworkAwareTimer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

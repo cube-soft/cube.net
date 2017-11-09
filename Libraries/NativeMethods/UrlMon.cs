@@ -15,38 +15,48 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Reflection;
-using System.Windows;
+using System.Runtime.InteropServices;
+using System.Text;
 
-namespace Cube.Net.Applications.Rss.Reader
+namespace Cube.Net.UrlMon
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// App
-    ///
-    /// <summary>
-    /// メインプログラムを表すクラスです。
-    /// </summary>
+    /// UrlMon.NativeMethods
     /// 
+    /// <summary>
+    /// urlmon.dll に定義された関数を宣言するためのクラスです。
+    /// </summary>
+    ///
     /* --------------------------------------------------------------------- */
-    public partial class App : Application
+    internal static class NativeMethods
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Application_Startup
-        /// 
+        /// CoInternetIsFeatureEnabled
+        ///
         /// <summary>
-        /// 起動時に実行されるハンドラです。
+        /// https://msdn.microsoft.com/ja-jp/library/ms537164.aspx
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            Cube.Log.Operations.Configure();
-            Cube.Log.Operations.ObserveTaskException();
-            Cube.Log.Operations.Info(GetType(), Assembly.GetExecutingAssembly());
+        [DllImport(LibName)]
+        public static extern int CoInternetIsFeatureEnabled(int featureEntry, int dwFlags);
 
-            BrowserSettings.Version = BrowserVersion.Latest;
-        }
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CoInternetSetFeatureEnabled
+        ///
+        /// <summary>
+        /// https://msdn.microsoft.com/ja-jp/library/ms537168.aspx
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DllImport(LibName)]
+        public static extern int CoInternetSetFeatureEnabled(int FeatureEntry, int dwFlags, bool fEnable);
+
+        #region Fields
+        const string LibName = "urlmon.dll";
+        #endregion
     }
 }
