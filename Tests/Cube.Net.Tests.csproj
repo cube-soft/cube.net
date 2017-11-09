@@ -74,6 +74,7 @@
     <Compile Include="Ntp\NtpTimestampTest.cs" />
     <Compile Include="Rss\RssMonitorTest.cs" />
     <Compile Include="Rss\RssParserTest.cs" />
+    <Compile Include="BrowserSettingsTest.cs" />
     <Compile Include="NetworkTest.cs" />
   </ItemGroup>
   <ItemGroup>
