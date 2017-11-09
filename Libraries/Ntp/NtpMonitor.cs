@@ -125,6 +125,17 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
+        /// LastPublished
+        /// 
+        /// <summary>
+        /// 最後に Publish が実行された日時を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public DateTime LastPublished => _core.LastPublished;
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Server
         /// 
         /// <summary>
@@ -309,7 +320,7 @@ namespace Cube.Net.Ntp
             var state = _core.State;
             _core.Stop();
             if (state == TimerState.Stop) return;
-            this.LogDebug($"Stop\tLast:{_core.LastExecuted}\tFaild:{FailedCount}");
+            this.LogDebug($"Stop\tLast:{_core.LastPublished}\tFaild:{FailedCount}");
         }
 
         /* ----------------------------------------------------------------- */

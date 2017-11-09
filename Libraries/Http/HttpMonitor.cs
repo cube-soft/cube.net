@@ -186,6 +186,17 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
+        /// LastPublished
+        /// 
+        /// <summary>
+        /// 最後に Publish が実行された日時を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public DateTime LastPublished => _core.LastPublished;
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Interval
         /// 
         /// <summary>
@@ -346,7 +357,7 @@ namespace Cube.Net.Http
             var state = _core.State;
             _core.Stop();
             if (state == TimerState.Stop) return;
-            this.LogDebug($"Stop\tLast:{_core.LastExecuted}\tFaild:{FailedCount}");
+            this.LogDebug($"Stop\tLast:{_core.LastPublished}\tFaild:{FailedCount}");
         }
 
         /* ----------------------------------------------------------------- */
