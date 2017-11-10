@@ -156,6 +156,7 @@
     <None Include="App.config" />
     <None Include="App.manifest" />
     <None Include="Packages.config" />
+    <None Include="Resources\Others\Feeds.json" />
     <None Include="Resources\Others\Skeleton.html" />
     <None Include="Resources\Others\SkeletonStyle.css" />
   </ItemGroup>

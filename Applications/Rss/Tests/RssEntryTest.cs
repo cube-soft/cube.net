@@ -49,6 +49,33 @@ namespace Cube.Net.App.Rss.Tests
             src.Load(Example("Feeds.json"));
 
             Assert.That(src.Count(), Is.EqualTo(3));
+
+            var category = src.First(e => e.Default);
+            Assert.That(category.Title,                  Is.EqualTo("未分類"));
+            Assert.That(category.Entries.Count(),        Is.EqualTo(1));
+            Assert.That(category.Categories,             Is.Null);
+            Assert.That(category.Items,                  Is.Not.Null);
+            Assert.That(category.Entries.First().Parent, Is.EqualTo(category));
         }
+
+        #region Helpers
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        /// 
+        /// <summary>
+        /// RssSubscribeCollection オブジェクトを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private RssSubscribeCollection Create()
+        {
+            var dest = new RssSubscribeCollection();
+            dest.Load(Example("Feeds.json"));
+            return dest;
+        }
+
+        #endregion
     }
 }
