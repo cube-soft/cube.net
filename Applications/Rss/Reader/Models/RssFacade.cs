@@ -16,41 +16,41 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using Cube.Net.Http;
 using Cube.Net.Rss;
-using Cube.Xui;
 
-namespace Cube.Net.Applications.Rss.Reader
+namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// AddViewModel
+    /// RssFacade
     ///
     /// <summary>
-    /// フィードの追加画面とモデルを関連付けるための ViewModel です。
+    /// RSS フィードに関連する処理の窓口となるクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class AddViewModel : ViewModelBase
+    public class RssFacade
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// AddViewModel
+        /// RssFacade
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public AddViewModel(Action<RssFeed> callback) : base(new Messenger())
+        public RssFacade()
         {
-            _callback = callback;
-            Url.PropertyChanged += (s, e) => Invoke.RaiseCanExecuteChanged();
+            var json = "Feeds.json";
+            if (System.IO.File.Exists(json)) Items.Load(json);
+
+            _monitor.Uris = Items.Uris;
+            _monitor.Interval = TimeSpan.FromHours(1);
+            _monitor.Subscribe(WhenReceived);
+            _monitor.Start();
         }
 
         #endregion
@@ -59,55 +59,81 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Url
+        /// Items
         /// 
         /// <summary>
-        /// 追加するフィードの URL を取得または設定します。
+        /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<string> Url { get; } = new Bindable<string>();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Messenger
-        /// 
-        /// <summary>
-        /// Messenger オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IMessenger Messenger => MessengerInstance;
+        public RssSubscribeCollection Items { get; } = new RssSubscribeCollection();
 
         #endregion
 
-        #region Commands
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Invoke
+        /// Add
         /// 
         /// <summary>
-        /// 処理を実行します。
+        /// RSS フィードを追加します。
+        /// </summary>
+        /// 
+        /// <param name="src">追加する RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Add(RssFeed src)
+        {
+
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Format
+        /// 
+        /// <summary>
+        /// RSS フィード中の記事内容を整形します。
+        /// </summary>
+        /// 
+        /// <param name="src">対象とする記事</param>
+        /// 
+        /// <returns>表示する文字列</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Format(RssArticle src) => string.Format(
+            Properties.Resources.Skeleton,
+            Properties.Resources.SkeletonStyle,
+            src.Link,
+            src.Link,
+            src.Title,
+            src.PublishTime,
+            !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
+        );
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenReceived
+        /// 
+        /// <summary>
+        /// RSS フィードを RssMonitor オブジェクトに登録します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Invoke
-            => _invoke = _invoke ?? new RelayCommand(
-                async () =>
-                {
-                    var rss = await HttpClientFactory.Create().GetRssAsync(new Uri(Url.Value));
-                    _callback(rss);
-                    MessengerInstance.Send<AddViewModel>(null);
-                },
-                () => !string.IsNullOrEmpty(Url.Value)
-            );
-
-        #endregion
+        private void WhenReceived(Uri uri, RssFeed feed)
+        {
+            var entry = Items.Lookup(uri);
+            if (entry != null) entry.Feed = feed;
+        }
 
         #region Fields
-        private Action<RssFeed> _callback;
-        private RelayCommand _invoke;
+        private RssMonitor _monitor = new RssMonitor();
+        #endregion
+
         #endregion
     }
 }

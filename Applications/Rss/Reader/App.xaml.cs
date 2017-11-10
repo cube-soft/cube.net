@@ -18,7 +18,7 @@
 using System.Reflection;
 using System.Windows;
 
-namespace Cube.Net.Applications.Rss.Reader
+namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

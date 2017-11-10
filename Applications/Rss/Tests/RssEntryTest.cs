@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-/* ------------------------------------------------------------------------- */
+﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
 // 
@@ -18,33 +15,40 @@ using System.Linq;
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Windows;
+using System.Linq;
+using Cube.Net.App.Rss.Reader;
+using NUnit.Framework;
 
-namespace Cube.Net.Applications.Rss.Reader
+namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// AddWindow
+    /// ClientTest
     ///
     /// <summary>
-    /// 新しいフィードを追加するための画面を表すクラスです。
+    /// Cube.Net.Ntp.Client のテストクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public partial class AddWindow : Window
+    [TestFixture]
+    class RssEntryTest : FileHelper
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// AddWindow
+        /// Load
         /// 
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// JSON ファイルをロードするテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public AddWindow()
+        [Test]
+        public void Load()
         {
-            InitializeComponent();
+            var src = new RssSubscribeCollection();
+            src.Load(Example("Feeds.json"));
+
+            Assert.That(src.Count(), Is.EqualTo(3));
         }
     }
 }

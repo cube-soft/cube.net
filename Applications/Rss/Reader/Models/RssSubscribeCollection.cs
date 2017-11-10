@@ -18,58 +18,157 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Windows.Data;
-using Cube.Net.Rss;
+using Cube.Settings;
+using Cube.Xui;
 
-namespace Cube.Net.Applications.Rss.Reader
+namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssEntry
+    /// RssSubscribeCollection
     ///
     /// <summary>
-    /// RSS フィードを購読する Web サイトの情報を保持するクラスです。
+    /// 購読フィード一覧を管理するクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class RssEntry
+    public sealed class RssSubscribeCollection : IEnumerable<RssCategory>, INotifyCollectionChanged
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssSubscribeCollection
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssSubscribeCollection()
+        {
+            _items.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, e);
+        }
+
+        #endregion
+
         #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Title
+        /// Uris
         /// 
         /// <summary>
-        /// Web サイトのタイトルを取得または設定します。
+        /// 購読しているフィードの URL 一覧を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Title { get; set; }
+        public IEnumerable<Uri> Uris => _lookup.Keys;
+
+        #endregion
+
+        #region Events
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Uri
+        /// CollectionChanged
         /// 
         /// <summary>
-        /// RSS フィードを取得するための URL を取得または設定します。
+        /// コレクション変更時に発生するイベントです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Uri Uri { get; set; }
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        #endregion
+
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Feed
+        /// Clear
         /// 
         /// <summary>
-        /// RSS フィードを取得または設定します。
+        /// コレクションの内容をクリアします。
         /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Clear()
+        {
+            _items.Clear();
+            _lookup.Clear();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Load
+        /// 
+        /// <summary>
+        /// JSON ファイルを読み込みます。
+        /// </summary>
+        /// 
+        /// <param name="json">JSON ファイルのパス</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFeed Feed { get; set; }
+        public void Load(string json)
+        {
+            Clear();
+            var src = SettingsType.Json.Load<List<RssCategory.Json>>(json);
+            foreach (var item in src.Select(e => e.Convert()))
+            {
+                MakeLookup(item);
+                _items.Add(item);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Lookup
+        /// 
+        /// <summary>
+        /// URL に対応するオブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <param name="uri">URL</param>
+        /// 
+        /// <returns>RssEntry オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssEntry Lookup(Uri uri)
+            => _lookup.ContainsKey(uri) ? _lookup[uri] : null;
+
+        #region IEnumerable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetEnumerator
+        /// 
+        /// <summary>
+        /// 反復用オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <returns>反復用オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IEnumerator<RssCategory> GetEnumerator()
+            => _items.GetEnumerator();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetEnumerator
+        /// 
+        /// <summary>
+        /// 反復用オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <returns>反復用オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #endregion
 
         #endregion
 
@@ -77,115 +176,29 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssEntry.Json
+        /// MakeLookup
         /// 
         /// <summary>
-        /// JSON 解析用クラスです。
+        /// 検索用ディクショナリを作成します。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
-        [DataContract]
-        internal class Json
+        private void MakeLookup(RssCategory src)
         {
-            [DataMember] public string Title { get; set; }
-            [DataMember] public Uri Uri { get; set; }
-            public RssEntry Convert() => new RssEntry
+            foreach (var entry in src.Entries)
             {
-                Title = Title,
-                Uri   = Uri,
-            };
+                if (_lookup.ContainsKey(entry.Uri)) continue;
+                _lookup.Add(entry.Uri, entry);
+            }
+
+            if (src.Categories == null) return;
+            foreach (var category in src.Categories) MakeLookup(category);
         }
 
+        #region Fields
+        private BindableCollection<RssCategory> _items = new BindableCollection<RssCategory>();
+        private Dictionary<Uri, RssEntry> _lookup = new Dictionary<Uri, RssEntry>();
         #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// RssCategory
-    ///
-    /// <summary>
-    /// 登録サイトが属するカテゴリ情報を保持するクラスです。
-    /// </summary>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public class RssCategory
-    {
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Title
-        /// 
-        /// <summary>
-        /// カテゴリのタイトルを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Title { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Categories
-        /// 
-        /// <summary>
-        /// サブカテゴリ一覧を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IEnumerable<RssCategory> Categories { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Entries
-        /// 
-        /// <summary>
-        /// 登録した Web サイト一覧を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IEnumerable<RssEntry> Entries { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Items
-        /// 
-        /// <summary>
-        /// 表示項目一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IEnumerable Items => new CompositeCollection
-        {
-            new CollectionContainer { Collection = Categories },
-            new CollectionContainer { Collection = Entries },
-        };
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RssEntry.Json
-        /// 
-        /// <summary>
-        /// JSON 解析用クラスです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataContract]
-        internal class Json
-        {
-            [DataMember] string Title { get; set; }
-            [DataMember] List<Json> Categories { get; set; }
-            [DataMember] List<RssEntry.Json> Entries { get; set; }
-            public RssCategory Convert() => new RssCategory
-            {
-                Title      = Title,
-                Entries    = Entries.Select(e => e.Convert()),
-                Categories = Categories?.Select(e => e.Convert()),
-            };
-        }
 
         #endregion
     }

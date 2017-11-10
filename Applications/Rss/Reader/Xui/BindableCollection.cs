@@ -51,7 +51,7 @@ namespace Cube.Xui
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection() : this(default(IEnumerable<T>)) { }
+        public BindableCollection() : base() { }
 
         /* ----------------------------------------------------------------- */
         ///

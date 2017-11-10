@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Cube.Net.Applications.Rss.Reader.Properties {
+namespace Cube.Net.App.Rss.Reader.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Cube.Net.Applications.Rss.Reader.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Cube.Net.Applications.Rss.Reader.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Cube.Net.App.Rss.Reader.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -72,15 +72,14 @@ namespace Cube.Net.Applications.Rss.Reader.Properties {
         ///&lt;style type=&quot;text/css&quot;&gt;
         ///{0}
         ///&lt;/style&gt;
+        ///
+        ///&lt;base href=&quot;{1}&quot;&gt;
         ///&lt;/head&gt;
         ///
         ///&lt;body&gt;
-        ///&lt;div&gt;
-        ///{1}
-        ///&lt;/div&gt;
-        ///&lt;/body&gt;
-        ///
-        ///&lt;/html&gt; に類似しているローカライズされた文字列を検索します。
+        ///&lt;div class=&quot;cuberss-container&quot;&gt;
+        ///&lt;div class=&quot;cuberss-title&quot;&gt;&lt;a href=&quot;{2}&quot; target=&quot;_blank&quot;&gt;{3}&lt;/a&gt;&lt;/div&gt;
+        ///&lt;div cla [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Skeleton {
             get {
@@ -89,7 +88,31 @@ namespace Cube.Net.Applications.Rss.Reader.Properties {
         }
         
         /// <summary>
-        ///   body { padding : 0; } に類似しているローカライズされた文字列を検索します。
+        ///   body {
+        ///    margin          : 0;
+        ///    padding         : 0;
+        ///    border          : 0;
+        ///    color           : #222;
+        ///    font-family     : &quot;メイリオ&quot;, &quot;Meiryo&quot;,
+        ///    &quot;游ゴシック&quot;, &quot;Yu Gothic&quot;, &quot;游ゴシック体&quot;, &quot;YuGothic&quot;,
+        ///    &quot;ＭＳ Ｐゴシック&quot;, &quot;MS PGothic&quot;,
+        ///    sans-serif;
+        ///}
+        ///
+        ///a, a:visited {
+        ///    color           : #00007f;
+        ///    text-decoration : none;
+        ///}
+        ///
+        ///.cuberss-container {
+        ///    margin          : 1em;
+        ///}
+        ///
+        ///.cuberss-title {
+        ///    margin          : 0;
+        ///    padding         : 0;
+        ///    font-size       : 20px;
+        ///    font-weight    [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string SkeletonStyle {
             get {

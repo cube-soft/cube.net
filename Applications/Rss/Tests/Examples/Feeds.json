@@ -1,0 +1,73 @@
+[
+    {
+        "Title": "キューブ・ソフト",
+        "Categories": null,
+        "Entries": [
+            {
+                "Uri": "http:\/\/blog.cube-soft.jp\/?feed=rss2",
+                "Title": "CubeSoft Blog"
+            }
+        ]
+    },
+    {
+        "Title": "Microsoft",
+        "Categories": [
+            {
+                "Title": "Windows",
+                "Categories": null,
+                "Entries": [
+                    {
+                        "Uri": "http:\/\/blogs.windows.com\/feed",
+                        "Title": "Windows Blog"
+                    },
+                    {
+                        "Uri": "http:\/\/blogs.windows.com\/buildingapps\/feed",
+                        "Title": "Building Apps for Windows"
+                    }
+                ]
+            },
+            {
+                "Title": "Development",
+                "Categories": null,
+                "Entries": [
+                    {
+                        "Uri": "https:\/\/blogs.msdn.microsoft.com\/visualstudio\/feed\/",
+                        "Title": "The Visual Studio Blog"
+                    },
+                    {
+                        "Uri": "https:\/\/blogs.msdn.microsoft.com\/dotnet\/feed",
+                        "Title": ".NET Blog"
+                    }
+                ]
+            }
+        ],
+        "Entries": [
+            {
+                "Uri": "http:\/\/blogs.microsoft.com\/feed",
+                "Title": "Official Microsoft Blog"
+            },
+            {
+                "Uri": "http:\/\/blogs.microsoft.com\/on-the-issues\/feed",
+                "Title": "Microsoft on the Issues"
+            },
+            {
+                "Uri": "http:\/\/blogs.microsoft.com\/next\/feed",
+                "Title": "Next at Microsoft"
+            },
+            {
+                "Uri": "http:\/\/blogs.microsoft.com\/iot\/feed",
+                "Title": "Internet of Things"
+            }
+        ]
+    },
+    {
+        "Title": "未分類",
+        "Categories": null,
+        "Entries": [
+            {
+                "Uri": "https:\/\/github.com\/blog.atom",
+                "Title": "The GitHub Blog"
+            }
+        ]
+    }
+]

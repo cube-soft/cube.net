@@ -22,7 +22,7 @@ using Cube.Net.Rss;
 using Cube.Xui;
 using Cube.Xui.Behaviors;
 
-namespace Cube.Net.Applications.Rss.Reader
+namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -54,14 +54,14 @@ namespace Cube.Net.Applications.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Categories
+        /// Items
         /// 
         /// <summary>
         /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection<RssCategory> Categories => _model.Categories;
+        public RssSubscribeCollection Items => _model.Items;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -72,7 +72,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssEntry> Entry => _model.Entry;
+        public Bindable<RssEntry> Entry { get; } = new Bindable<RssEntry>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -83,7 +83,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<string> Content => _model.Content;
+        public Bindable<string> Content { get; } = new Bindable<string>();
 
         #endregion
 
@@ -114,7 +114,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand<object> SelectEntry
             => _selectEntry = _selectEntry ?? new RelayCommand<object>(
-                e => _model.Select(e as RssEntry),
+                e => Entry.Value = e as RssEntry,
                 e => e is RssEntry
             );
 
@@ -129,7 +129,7 @@ namespace Cube.Net.Applications.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand<SelectionList> SelectArticle
             => _selectArticle = _selectArticle ?? new RelayCommand<SelectionList>(
-                e => _model.Select(e.SelectedItem as RssArticle),
+                e => Content.Value = _model.Format(e.SelectedItem as RssArticle),
                 e => e.SelectedItem is RssArticle
             );
 
