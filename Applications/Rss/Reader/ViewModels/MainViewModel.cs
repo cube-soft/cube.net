@@ -21,6 +21,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Cube.Net.Rss;
 using Cube.Xui;
 using Cube.Xui.Behaviors;
+using System.Collections.Generic;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -61,18 +62,18 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscribeCollection Items => _model.Items;
+        public IEnumerable<RssCategory> Categories => _model.Items;
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Entry
+        /// Feed
         /// 
         /// <summary>
         /// 対象となる Web サイトの RSS フィードを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssEntry> Entry { get; } = new Bindable<RssEntry>();
+        public Bindable<RssFeed> Feed { get; } = new Bindable<RssFeed>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -114,7 +115,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand<object> SelectEntry
             => _selectEntry = _selectEntry ?? new RelayCommand<object>(
-                e => Entry.Value = e as RssEntry,
+                e => Feed.Value = _model.Lookup(e as RssEntry),
                 e => e is RssEntry
             );
 

@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using Cube.Net.Rss;
 using Cube.Settings;
 using Cube.Xui;
 
@@ -34,7 +35,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public sealed class RssSubscribeCollection : IEnumerable<RssCategory>, INotifyCollectionChanged
+    public sealed class RssSubscribeCollection : IEnumerable<RssCategory>
     {
         #region Constructors
 
@@ -65,7 +66,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<Uri> Uris => _lookup.Keys;
+        public IEnumerable<Uri> Uris => _feeds.Keys;
 
         #endregion
 
@@ -97,8 +98,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Clear()
         {
-            _items.Clear();
-            _lookup.Clear();
+            if (_items.Count > 0)
+            {
+                _items.Clear();
+                _feeds.Clear();
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -118,7 +122,7 @@ namespace Cube.Net.App.Rss.Reader
             var src = SettingsType.Json.Load<List<RssCategory.Json>>(json);
             foreach (var item in src.Select(e => e.Convert()))
             {
-                MakeLookup(item);
+                MakeFeed(item);
                 _items.Add(item);
             }
         }
@@ -128,16 +132,16 @@ namespace Cube.Net.App.Rss.Reader
         /// Lookup
         /// 
         /// <summary>
-        /// URL に対応するオブジェクトを取得します。
+        /// URL に対応する RSS フィードを取得します。
         /// </summary>
         /// 
         /// <param name="uri">URL</param>
         /// 
-        /// <returns>RssEntry オブジェクト</returns>
+        /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry Lookup(Uri uri)
-            => _lookup.ContainsKey(uri) ? _lookup[uri] : null;
+        public RssFeed Lookup(Uri uri)
+            => _feeds.ContainsKey(uri) ? _feeds[uri] : null;
 
         #region IEnumerable
 
@@ -176,28 +180,34 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// MakeLookup
+        /// MakeFeed
         /// 
         /// <summary>
-        /// 検索用ディクショナリを作成します。
+        /// RSS フィード用のオブジェクトを初期化します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void MakeLookup(RssCategory src)
+        private void MakeFeed(RssCategory src)
         {
             foreach (var entry in src.Entries)
             {
-                if (_lookup.ContainsKey(entry.Uri)) continue;
-                _lookup.Add(entry.Uri, entry);
+                if (_feeds.ContainsKey(entry.Uri)) continue;
+
+                _feeds.Add(entry.Uri, new RssFeed
+                {
+                    Title = entry.Title,
+                    Link  = entry.Uri,
+                    Items = new RssArticle[0],
+                });
             }
 
             if (src.Categories == null) return;
-            foreach (var category in src.Categories) MakeLookup(category);
+            foreach (var category in src.Categories) MakeFeed(category);
         }
 
         #region Fields
         private BindableCollection<RssCategory> _items = new BindableCollection<RssCategory>();
-        private Dictionary<Uri, RssEntry> _lookup = new Dictionary<Uri, RssEntry>();
+        private Dictionary<Uri, RssFeed> _feeds = new Dictionary<Uri, RssFeed>();
         #endregion
 
         #endregion

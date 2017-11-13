@@ -46,10 +46,13 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Load()
         {
+            var count = 0;
             var src = new RssSubscribeCollection();
+            src.CollectionChanged += (s, e) => count++;
             src.Load(Example("Feeds.json"));
 
             Assert.That(src.Count(), Is.EqualTo(3));
+            Assert.That(count, Is.EqualTo(3), nameof(src.CollectionChanged));
 
             var item = src.First(e => string.IsNullOrEmpty(e.Title));
             Assert.That(item.Categories, Is.Null);

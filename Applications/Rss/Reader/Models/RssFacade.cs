@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using Cube.FileSystem;
 using Cube.Net.Rss;
 
 namespace Cube.Net.App.Rss.Reader
@@ -44,7 +45,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssFacade()
         {
-            var json = "Feeds.json";
+            var dir = _io.Get(AssemblyReader.Default.Location).DirectoryName;
+            var json = _io.Combine(dir, "Feeds.json");
             if (System.IO.File.Exists(json)) Items.Load(json);
 
             _monitor.Uris = Items.Uris;
@@ -90,6 +92,21 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Lookup
+        /// 
+        /// <summary>
+        /// RssEntry オブジェクトに対応する RSS フィードを取得します。
+        /// </summary>
+        /// 
+        /// <param name="entry">RssEntry オブジェクト</param>
+        /// 
+        /// <returns>RssFeed オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssFeed Lookup(RssEntry entry) => Items.Lookup(entry.Uri);
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Format
         /// 
         /// <summary>
@@ -120,18 +137,23 @@ namespace Cube.Net.App.Rss.Reader
         /// WhenReceived
         /// 
         /// <summary>
-        /// RSS フィードを RssMonitor オブジェクトに登録します。
+        /// 新着フィード受信時に実行されるハンドラです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         private void WhenReceived(Uri uri, RssFeed feed)
         {
-            var entry = Items.Lookup(uri);
-            if (entry != null) entry.Feed = feed;
+            var dest = Items.Lookup(uri);
+            if (dest == null) return;
+
+            dest.Id    = feed.Id;
+            dest.Icon  = feed.Icon;
+            dest.Items = feed.Items;
         }
 
         #region Fields
         private RssMonitor _monitor = new RssMonitor();
+        private Operator _io = new Operator();
         #endregion
 
         #endregion

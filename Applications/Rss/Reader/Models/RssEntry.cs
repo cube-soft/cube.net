@@ -71,17 +71,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssCategory Parent { get; set; }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Feed
-        /// 
-        /// <summary>
-        /// RSS フィードを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public RssFeed Feed { get; set; }
-
         #endregion
 
         #region Implementations
