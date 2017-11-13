@@ -52,7 +52,7 @@ namespace Cube.Net.App.Rss.Tests
             src.Load(Example("Feeds.json"));
 
             Assert.That(src.Categories.Count(), Is.EqualTo(3));
-            Assert.That(count, Is.EqualTo(3), nameof(src.CollectionChanged));
+            Assert.That(count, Is.EqualTo(1), nameof(src.CollectionChanged));
 
             var item = src.Categories.First(e => string.IsNullOrEmpty(e.Title));
             Assert.That(item.Categories.Count, Is.EqualTo(0));
@@ -69,7 +69,7 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(src.Lookup(uri), Is.Null);
 
             Assert.That(src.Categories.Count(), Is.EqualTo(0));
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(2));
         }
     }
 }
