@@ -46,6 +46,7 @@ namespace Cube.Net.App.Rss.Reader
             Cube.Log.Operations.ObserveTaskException();
             Cube.Log.Operations.Info(GetType(), Assembly.GetExecutingAssembly());
 
+            System.Net.ServicePointManager.DefaultConnectionLimit = 10;
             BrowserSettings.Version = BrowserVersion.Latest;
         }
     }

@@ -82,13 +82,10 @@ namespace Cube.Net.App.Rss.Reader
         /// RSS フィードを追加します。
         /// </summary>
         /// 
-        /// <param name="src">追加する RSS フィード</param>
+        /// <param name="feed">追加する RSS フィード</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Add(RssFeed src)
-        {
-
-        }
+        public void Add(RssFeed feed) => Items.Add(feed);
 
         /* ----------------------------------------------------------------- */
         ///

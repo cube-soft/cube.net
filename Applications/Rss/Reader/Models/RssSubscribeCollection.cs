@@ -18,11 +18,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
 using Cube.Net.Rss;
 using Cube.Settings;
-using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -35,7 +36,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public sealed class RssSubscribeCollection : IEnumerable
+    public sealed class RssSubscribeCollection : IEnumerable, INotifyCollectionChanged
     {
         #region Constructors
 
@@ -50,12 +51,23 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssSubscribeCollection()
         {
-            _items.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, e);
+            _items.CollectionChanged += WhenCollectionChanged;
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Default
+        /// 
+        /// <summary>
+        /// 未整理用のエントリを格納するカテゴリを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssCategory Default => _items.First(e => string.IsNullOrEmpty(e.Title));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -100,6 +112,28 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Add
+        /// 
+        /// <summary>
+        /// 新しい RSS フィードを追加します。
+        /// </summary>
+        /// 
+        /// <param name="feed">RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Add(RssFeed feed)
+        {
+            Default.Entries.Add(new RssEntry
+            {
+                Title = feed.Title,
+                Uri   = feed.Link,
+            });
+            _feeds.Add(feed.Link, feed);
+            RaiseResetAction();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Clear
         /// 
         /// <summary>
@@ -127,7 +161,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="json">JSON ファイルのパス</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Load(string json)
+        public void Load(string json) => Suppress(() =>
         {
             Clear();
             var src = SettingsType.Json.Load<List<RssCategory.Json>>(json);
@@ -136,7 +170,8 @@ namespace Cube.Net.App.Rss.Reader
                 MakeFeed(item);
                 _items.Add(item);
             }
-        }
+            RaiseResetAction();
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -153,8 +188,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssFeed Lookup(Uri uri)
             => _feeds.ContainsKey(uri) ? _feeds[uri] : null;
-
-        #region IEnumerable
 
         /* ----------------------------------------------------------------- */
         ///
@@ -187,9 +220,26 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
-        #endregion
-
         #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Suppress
+        /// 
+        /// <summary>
+        /// CollectionChanged イベントを抑制した状態で処理を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Suppress(Action action)
+        {
+            try
+            {
+                _items.CollectionChanged -= WhenCollectionChanged;
+                action();
+            }
+            finally { _items.CollectionChanged += WhenCollectionChanged; }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -218,9 +268,41 @@ namespace Cube.Net.App.Rss.Reader
             foreach (var category in src.Categories) MakeFeed(category);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RaiseResetAction
+        /// 
+        /// <summary>
+        /// NotifyCollectionChangedAction.Reset を指定されたイベントを
+        /// 発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void RaiseResetAction()
+            => CollectionChanged?.Invoke(
+                this,
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenCollectionChanged
+        /// 
+        /// <summary>
+        /// CollectionChanged イベントを発生時に実行されるハンドラです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void WhenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (_context != null) _context.Post(_ => CollectionChanged?.Invoke(this, e), null);
+            else CollectionChanged?.Invoke(this, e);
+        }
+
         #region Fields
-        private BindableCollection<RssCategory> _items = new BindableCollection<RssCategory>();
+        private ObservableCollection<RssCategory> _items = new ObservableCollection<RssCategory>();
         private Dictionary<Uri, RssFeed> _feeds = new Dictionary<Uri, RssFeed>();
+        private SynchronizationContext _context = SynchronizationContext.Current;
         #endregion
 
         #endregion

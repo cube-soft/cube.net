@@ -132,7 +132,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssCategory> Categories { get; set; }
+        public IList<RssCategory> Categories { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -143,7 +143,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssEntry> Entries { get; set; }
+        public IList<RssEntry> Entries { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -184,9 +184,9 @@ namespace Cube.Net.App.Rss.Reader
                 var dest = new RssCategory
                 {
                     Title      = Title,
-                    Categories = Categories?.Select(e => e.Convert()),
+                    Categories = Categories?.Select(e => e.Convert()).ToList() ?? new List<RssCategory>(),
                 };
-                dest.Entries = Entries.Select(e => e.Convert(dest));
+                dest.Entries = Entries.Select(e => e.Convert(dest)).ToList();
                 return dest;
             }
         }
