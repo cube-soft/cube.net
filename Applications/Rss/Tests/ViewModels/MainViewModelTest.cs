@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Cube.Net.App.Rss.Reader;
@@ -50,14 +51,16 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new MainViewModel();
 
-            vm.SelectEntry.Execute(vm.Categories.First().Entries.First());
+            var entry = vm.Items.OfType<RssCategory>().First().Entries.First();
+            Assert.That(entry.Uri, Is.EqualTo(new Uri("http://blog.cube-soft.jp/?feed=rss2")));
+            vm.SelectEntry.Execute(entry);
 
             Assert.That(vm.Feed.Value.Items.Count(), Is.EqualTo(0));
             Assert.That(await Wait(vm), Is.GreaterThan(1), "Timeout");
 
             vm.SelectArticle.Execute(new Cube.Xui.Behaviors.SelectionList(
                 new object[0],
-                new [] { vm.Feed.Value.Items.First() }
+                new[] { vm.Feed.Value.Items.First() }
             ));
 
             Assert.That(vm.Content.Value, Is.Not.Null.And.Not.Empty);

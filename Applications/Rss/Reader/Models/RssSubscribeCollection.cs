@@ -35,7 +35,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public sealed class RssSubscribeCollection : IEnumerable<RssCategory>
+    public sealed class RssSubscribeCollection : IEnumerable
     {
         #region Constructors
 
@@ -56,6 +56,17 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Categories
+        /// 
+        /// <summary>
+        /// カテゴリ一覧を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IEnumerable<RssCategory> Categories => _items;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -154,23 +165,25 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /// <returns>反復用オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IEnumerator<RssCategory> GetEnumerator()
-            => _items.GetEnumerator();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetEnumerator
         /// 
-        /// <summary>
-        /// 反復用オブジェクトを取得します。
-        /// </summary>
-        /// 
-        /// <returns>反復用オブジェクト</returns>
+        /// <remarks>
+        /// GetEnumerator() メソッドは無名カテゴリの場合、カテゴリ中の
+        /// エントリーを直接返します。全てのカテゴリを取得する場合は
+        /// Categories プロパティを利用して下さい。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public IEnumerator GetEnumerator()
+        {
+            foreach (var category in _items)
+            {
+                if (!string.IsNullOrEmpty(category.Title)) yield return category;
+                else if (category.Entries != null)
+                {
+                    foreach (var entry in category.Entries) yield return entry;
+                }
+            }
+        }
 
         #endregion
 

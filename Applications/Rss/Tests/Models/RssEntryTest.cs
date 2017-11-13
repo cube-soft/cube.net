@@ -51,24 +51,24 @@ namespace Cube.Net.App.Rss.Tests
             src.CollectionChanged += (s, e) => count++;
             src.Load(Example("Feeds.json"));
 
-            Assert.That(src.Count(), Is.EqualTo(3));
+            Assert.That(src.Categories.Count(), Is.EqualTo(3));
             Assert.That(count, Is.EqualTo(3), nameof(src.CollectionChanged));
 
-            var item = src.First(e => string.IsNullOrEmpty(e.Title));
+            var item = src.Categories.First(e => string.IsNullOrEmpty(e.Title));
             Assert.That(item.Categories, Is.Null);
-            Assert.That(item.Items,      Is.Not.Null);
+            Assert.That(item.Items, Is.Not.Null);
 
             var uri = new Uri("https://github.com/blog.atom");
-            Assert.That(item.Entries.Count(),        Is.EqualTo(1));
-            Assert.That(item.Entries.First().Title,  Is.EqualTo("The GitHub Blog"));
-            Assert.That(item.Entries.First().Uri,    Is.EqualTo(uri));
+            Assert.That(item.Entries.Count(), Is.EqualTo(1));
+            Assert.That(item.Entries.First().Title, Is.EqualTo("The GitHub Blog"));
+            Assert.That(item.Entries.First().Uri, Is.EqualTo(uri));
             Assert.That(item.Entries.First().Parent, Is.EqualTo(item));
 
             Assert.That(src.Lookup(uri), Is.Not.Null);
             src.Clear();
             Assert.That(src.Lookup(uri), Is.Null);
 
-            Assert.That(src.Count(), Is.EqualTo(0));
+            Assert.That(src.Categories.Count(), Is.EqualTo(0));
             Assert.That(count, Is.EqualTo(4));
         }
     }

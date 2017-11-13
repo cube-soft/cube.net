@@ -51,7 +51,7 @@
             </Grid.RowDefinitions>
             
             <!-- Categories and Entries -->
-            <TreeView ItemsSource="{Binding Categories}"
+            <TreeView ItemsSource="{Binding Items}"
                       Style="{StaticResource EntriesStyle}">
                 <TreeView.Resources>
                     <!-- Category -->

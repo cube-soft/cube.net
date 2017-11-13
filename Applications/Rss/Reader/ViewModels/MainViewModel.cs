@@ -15,13 +15,13 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System.Collections;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Cube.Net.Rss;
 using Cube.Xui;
 using Cube.Xui.Behaviors;
-using System.Collections.Generic;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -62,7 +62,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssCategory> Categories => _model.Items;
+        public IEnumerable Items => _model.Items;
 
         /* ----------------------------------------------------------------- */
         ///
