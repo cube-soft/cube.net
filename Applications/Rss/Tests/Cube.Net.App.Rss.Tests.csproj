@@ -67,7 +67,8 @@
   <ItemGroup>
     <Compile Include="Details\FileHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RssEntryTest.cs" />
+    <Compile Include="Models\RssEntryTest.cs" />
+    <Compile Include="ViewModels\AddViewModelTest.cs" />
     <Compile Include="ViewModels\MainViewModelTest.cs" />
     <None Include="Examples\Feeds.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

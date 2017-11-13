@@ -58,30 +58,18 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(item.Categories, Is.Null);
             Assert.That(item.Items,      Is.Not.Null);
 
+            var uri = new Uri("https://github.com/blog.atom");
             Assert.That(item.Entries.Count(),        Is.EqualTo(1));
             Assert.That(item.Entries.First().Title,  Is.EqualTo("The GitHub Blog"));
-            Assert.That(item.Entries.First().Uri,    Is.EqualTo(new Uri("https://github.com/blog.atom")));
+            Assert.That(item.Entries.First().Uri,    Is.EqualTo(uri));
             Assert.That(item.Entries.First().Parent, Is.EqualTo(item));
+
+            Assert.That(src.Lookup(uri), Is.Not.Null);
+            src.Clear();
+            Assert.That(src.Lookup(uri), Is.Null);
+
+            Assert.That(src.Count(), Is.EqualTo(0));
+            Assert.That(count, Is.EqualTo(4));
         }
-
-        #region Helpers
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Create
-        /// 
-        /// <summary>
-        /// RssSubscribeCollection オブジェクトを生成します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private RssSubscribeCollection Create()
-        {
-            var dest = new RssSubscribeCollection();
-            dest.Load(Example("Feeds.json"));
-            return dest;
-        }
-
-        #endregion
     }
 }
