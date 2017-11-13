@@ -61,8 +61,7 @@
         ]
     },
     {
-        "Default": true,
-        "Title": "未分類",
+        "Title": "",
         "Categories": null,
         "Entries": [
             {

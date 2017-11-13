@@ -126,18 +126,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Default
-        /// 
-        /// <summary>
-        /// デフォルトに指定されているカテゴリかどうかを表す値を取得
-        /// または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool Default { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Title
         /// 
         /// <summary>
@@ -200,7 +188,6 @@ namespace Cube.Net.App.Rss.Reader
         [DataContract]
         internal class Json
         {
-            [DataMember] bool Default { get; set; }
             [DataMember] string Title { get; set; }
             [DataMember] List<Json> Categories { get; set; }
             [DataMember] List<RssEntry.Json> Entries { get; set; }
@@ -208,7 +195,6 @@ namespace Cube.Net.App.Rss.Reader
             {
                 var dest = new RssCategory
                 {
-                    Default    = Default,
                     Title      = Title,
                     Categories = Categories?.Select(e => e.Convert()),
                 };

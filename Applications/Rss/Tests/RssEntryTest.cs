@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Linq;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
@@ -23,10 +24,10 @@ namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ClientTest
+    /// RssEntryTest
     ///
     /// <summary>
-    /// Cube.Net.Ntp.Client のテストクラスです。
+    /// RssEntry およびそれに付随するクラスのテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -50,12 +51,14 @@ namespace Cube.Net.App.Rss.Tests
 
             Assert.That(src.Count(), Is.EqualTo(3));
 
-            var category = src.First(e => e.Default);
-            Assert.That(category.Title,                  Is.EqualTo("未分類"));
-            Assert.That(category.Entries.Count(),        Is.EqualTo(1));
-            Assert.That(category.Categories,             Is.Null);
-            Assert.That(category.Items,                  Is.Not.Null);
-            Assert.That(category.Entries.First().Parent, Is.EqualTo(category));
+            var item = src.First(e => string.IsNullOrEmpty(e.Title));
+            Assert.That(item.Categories, Is.Null);
+            Assert.That(item.Items,      Is.Not.Null);
+
+            Assert.That(item.Entries.Count(),        Is.EqualTo(1));
+            Assert.That(item.Entries.First().Title,  Is.EqualTo("The GitHub Blog"));
+            Assert.That(item.Entries.First().Uri,    Is.EqualTo(new Uri("https://github.com/blog.atom")));
+            Assert.That(item.Entries.First().Parent, Is.EqualTo(item));
         }
 
         #region Helpers
