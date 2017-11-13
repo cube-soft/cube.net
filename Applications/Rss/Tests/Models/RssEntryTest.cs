@@ -55,7 +55,7 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(count, Is.EqualTo(3), nameof(src.CollectionChanged));
 
             var item = src.Categories.First(e => string.IsNullOrEmpty(e.Title));
-            Assert.That(item.Categories, Is.Null);
+            Assert.That(item.Categories.Count, Is.EqualTo(0));
             Assert.That(item.Items, Is.Not.Null);
 
             var uri = new Uri("https://github.com/blog.atom");
