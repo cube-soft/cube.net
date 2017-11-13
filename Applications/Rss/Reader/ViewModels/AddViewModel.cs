@@ -50,7 +50,7 @@ namespace Cube.Net.App.Rss.Reader
         public AddViewModel(Action<RssFeed> callback) : base(new Messenger())
         {
             _callback = callback;
-            Url.PropertyChanged += (s, e) => Invoke.RaiseCanExecuteChanged();
+            Url.PropertyChanged += (s, e) => Add.RaiseCanExecuteChanged();
         }
 
         #endregion
@@ -85,20 +85,20 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Invoke
+        /// Add
         /// 
         /// <summary>
-        /// 処理を実行します。
+        /// 新しい RSS フィードを追加するコマンドを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Invoke
-            => _invoke = _invoke ?? new RelayCommand(
+        public RelayCommand Add
+            => _add = _add ?? new RelayCommand(
                 async () =>
                 {
                     var rss = await HttpClientFactory.Create().GetRssAsync(new Uri(Url.Value));
                     _callback(rss);
-                    MessengerInstance.Send<AddViewModel>(null);
+                    Messenger.Send(this);
                 },
                 () => !string.IsNullOrEmpty(Url.Value)
             );
@@ -107,7 +107,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private Action<RssFeed> _callback;
-        private RelayCommand _invoke;
+        private RelayCommand _add;
         #endregion
     }
 }
