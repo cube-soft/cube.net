@@ -49,13 +49,11 @@ namespace Cube.Net.App.Rss.Tests
         public async Task Select()
         {
             var vm = new MainViewModel();
-            await Task.Delay(1000);
 
-            var entry = vm.Categories.First().Entries.First();
-            vm.SelectEntry.Execute(entry);
+            vm.SelectEntry.Execute(vm.Categories.First().Entries.First());
 
-            Assert.That(vm.Feed.Value, Is.Not.Null);
-            Assert.That(vm.Feed.Value.Items.Count(), Is.GreaterThan(1));
+            Assert.That(vm.Feed.Value.Items.Count(), Is.EqualTo(0));
+            Assert.That(await Wait(vm), Is.GreaterThan(1), "Timeout");
 
             vm.SelectArticle.Execute(new Cube.Xui.Behaviors.SelectionList(
                 new object[0],
@@ -87,6 +85,26 @@ namespace Cube.Net.App.Rss.Tests
             var dest     = IO.Combine(dir, filename);
 
             IO.Copy(src, dest, true);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Wait
+        /// 
+        /// <summary>
+        /// 処理が終了するまで待機します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task<int> Wait(MainViewModel vm)
+        {
+            for (var i = 0; i < 100; i++)
+            {
+                var count = vm.Feed.Value.Items.Count();
+                if (count > 0) return count;
+                await Task.Delay(50);
+            }
+            return vm.Feed.Value.Items.Count();
         }
 
         #endregion
