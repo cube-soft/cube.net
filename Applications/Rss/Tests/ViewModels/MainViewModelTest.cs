@@ -56,7 +56,12 @@ namespace Cube.Net.App.Rss.Tests
             vm.SelectEntry.Execute(entry);
 
             Assert.That(vm.Feed.Value.Items.Count(), Is.EqualTo(0));
-            Assert.That(await Wait(vm), Is.GreaterThan(1), "Timeout");
+            for (var i = 0; i < 100; i++)
+            {
+                if (vm.Feed.Value.Items.Count() > 0) break;
+                await Task.Delay(50);
+            }
+            Assert.That(vm.Feed.Value.Items.Count(), Is.GreaterThan(1), "Timeout");
 
             vm.SelectArticle.Execute(new Cube.Xui.Behaviors.SelectionList(
                 new object[0],
@@ -88,26 +93,6 @@ namespace Cube.Net.App.Rss.Tests
             var dest     = IO.Combine(dir, filename);
 
             IO.Copy(src, dest, true);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Wait
-        /// 
-        /// <summary>
-        /// 処理が終了するまで待機します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task<int> Wait(MainViewModel vm)
-        {
-            for (var i = 0; i < 100; i++)
-            {
-                var count = vm.Feed.Value.Items.Count();
-                if (count > 0) return count;
-                await Task.Delay(50);
-            }
-            return vm.Feed.Value.Items.Count();
         }
 
         #endregion
