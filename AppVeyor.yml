@@ -12,15 +12,16 @@ platform: Any CPU
 configuration: Release
 before_build:
     - nuget sources add -name Cube.Core -source https://ci.appveyor.com/nuget/cube.core
-    - nuget sources add -name Cube.Images -source https://ci.appveyor.com/nuget/cube.images
-    - nuget restore Cube.Net.sln
+    - nuget sources add -name Cube.FileSystem -source https://ci.appveyor.com/nuget/cube.filesystem
+    - nuget restore Cube.Net.Rss.sln
 build: 
     parallel: true
-    project: Cube.Net.sln
+    project: Cube.Net.Rss.sln
     publish_nuget: true
     verbosity: normal
 test_script:
     - ..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:nunit3-console.exe -targetargs:Cube.Net.Tests.dll -targetdir:Tests\bin\Release -returntargetcode -hideskipped:All -output:CoverResult.xml -filter:"+[*]* -[*]*NativeMethods -[*]*Properties.*"
+    - ..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:nunit3-console.exe -targetargs:Cube.Net.App.Rss.Tests.dll -targetdir:Applications\Rss\Tests\bin\Release -returntargetcode -hideskipped:All -mergeoutput -output:CoverResult.xml -filter:"+[*]* -[*]*NativeMethods -[*]*Properties.* -[*]*Window -[*]*.App -[*]Cube.Xui.*"
 after_test:
     - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
     - pip install codecov
