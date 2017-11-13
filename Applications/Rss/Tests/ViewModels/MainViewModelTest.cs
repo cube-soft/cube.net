@@ -49,7 +49,7 @@ namespace Cube.Net.App.Rss.Tests
         public async Task Select()
         {
             var vm = new MainViewModel();
-            await Task.Delay(500);
+            await Task.Delay(1000);
 
             var entry = vm.Categories.First().Entries.First();
             vm.SelectEntry.Execute(entry);
