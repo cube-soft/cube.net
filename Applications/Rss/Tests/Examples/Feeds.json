@@ -51,10 +51,6 @@
                 "Title": "Microsoft on the Issues"
             },
             {
-                "Uri": "http:\/\/blogs.microsoft.com\/next\/feed",
-                "Title": "Next at Microsoft"
-            },
-            {
                 "Uri": "http:\/\/blogs.microsoft.com\/iot\/feed",
                 "Title": "Internet of Things"
             }

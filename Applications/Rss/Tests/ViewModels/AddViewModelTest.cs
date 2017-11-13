@@ -15,10 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Cube.Net.Rss;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
 
@@ -36,6 +36,8 @@ namespace Cube.Net.App.Rss.Tests.ViewModels
     [TestFixture]
     class AddViewModelTest
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// Add
@@ -46,13 +48,29 @@ namespace Cube.Net.App.Rss.Tests.ViewModels
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Add()
+        public void Add()
         {
-            var result = default(RssFeed);
-            var vm = new AddViewModel(e => result = e);
+            var vm = new MainViewModel();
+            vm.Messenger.Register<AddViewModel>(this, e => AddCommand(e).Wait());
+            vm.Add.Execute(null);
 
+            var entry = vm.Items.OfType<RssEntry>().FirstOrDefault(e => e.Uri == _uri);
+            Assert.That(entry, Is.Not.Null);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// AddCommand
+        /// 
+        /// <summary>
+        /// Add コマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task AddCommand(AddViewModel vm)
+        {
             Assert.That(vm.Add.CanExecute(null), Is.False);
-            vm.Url.Value = "https://github.com/blog.atom";
+            vm.Url.Value = _uri.ToString();
             Assert.That(vm.Add.CanExecute(null), Is.True);
 
             try
@@ -60,12 +78,15 @@ namespace Cube.Net.App.Rss.Tests.ViewModels
                 var cts = new CancellationTokenSource();
                 vm.Messenger.Register<AddViewModel>(this, _ => cts.Cancel());
                 vm.Add.Execute(null);
-                await Task.Delay(5000, cts.Token);
+                await Task.Delay(5000, cts.Token).ConfigureAwait(false);
             }
             catch (TaskCanceledException /* err */) { /* OK */ }
-
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Items.Count(), Is.GreaterThan(1));
         }
+
+        #endregion
+
+        #region Fields
+        private Uri _uri = new Uri("https://blogs.microsoft.com/ai/feed");
+        #endregion
     }
 }

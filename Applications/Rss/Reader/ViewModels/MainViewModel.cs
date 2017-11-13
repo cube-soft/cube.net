@@ -47,7 +47,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainViewModel() : base(Messenger.Default) { }
+        public MainViewModel() : base(GalaSoft.MvvmLight.Messaging.Messenger.Default) { }
 
         #endregion
 
@@ -86,6 +86,17 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public Bindable<string> Content { get; } = new Bindable<string>();
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Messenger
+        /// 
+        /// <summary>
+        /// Messenger オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IMessenger Messenger => MessengerInstance;
+
         #endregion
 
         #region Commands
@@ -101,7 +112,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand Add
             => _add = _add ?? new RelayCommand(
-                () => MessengerInstance.Send(new AddViewModel(e => _model.Add(e)))
+                () => Messenger.Send(new AddViewModel(e => _model.Add(e)))
             );
 
         /* ----------------------------------------------------------------- */
