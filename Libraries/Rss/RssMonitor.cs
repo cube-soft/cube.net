@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cube.Net.Http;
 
 namespace Cube.Net.Rss
@@ -89,7 +90,7 @@ namespace Cube.Net.Rss
         /// <returns>URL 一覧</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        protected override IEnumerable<Uri> GetRequestUris() => Uris;
+        protected override IEnumerable<Uri> GetRequestUris() => Uris.ToArray();
 
         #endregion
     }

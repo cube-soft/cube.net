@@ -31,7 +31,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssContentConverter : Cube.Net.Http.ContentConverter<RssFeed>
+    public class RssContentConverter : ContentConverter<RssFeed>
     {
         /* ----------------------------------------------------------------- */
         ///
