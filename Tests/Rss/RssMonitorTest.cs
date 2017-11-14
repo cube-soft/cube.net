@@ -16,8 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -59,26 +57,7 @@ namespace Cube.Net.Tests.Rss
                 mon.Stop();
             }
 
-            var path = GetPath(uri, Results);
-            Assert.That(IO.Exists(path), Is.True);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetPath
-        ///
-        /// <summary>
-        /// 保存用パスを取得します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private string GetPath(Uri uri, string directory)
-        {
-            var md5 = new MD5CryptoServiceProvider();
-            var data = Encoding.UTF8.GetBytes(uri.ToString());
-            var hash = md5.ComputeHash(data);
-            var name = BitConverter.ToString(hash).ToLower().Replace("-", "");
-            return IO.Combine(directory, name);
+            Assert.That(IO.Exists(Result("722a6df5a86c7464e1eeaeb691ba50be")), Is.True);
         }
     }
 }
