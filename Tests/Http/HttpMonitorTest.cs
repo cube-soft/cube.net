@@ -68,8 +68,8 @@ namespace Cube.Net.Tests.Http
 
                 mon.Subscribe((u, x) =>
                 {
-                    count++;
                     if (count >= 3) cts.Cancel();
+                    count++;
                 });
 
                 mon.Start();
