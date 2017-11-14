@@ -80,22 +80,16 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static RssArticle Convert(SyndicationItem src)
+        private static RssArticle Convert(SyndicationItem src) => new RssArticle
         {
-            var count = src.Links?.Count ?? 0;
-            if (count > 1) LogWarn($"Item.Links.Count:{count}\tId:{src.Id}");
-
-            return new RssArticle
-            {
-                Id          = src.Id,
-                Title       = src.Title?.Text,
-                Summary     = src.Summary?.Text,
-                Content     = GetContent(src),
-                Categories  = src.Categories?.Select(x => x.Name),
-                Link        = src.Links?.FirstOrDefault()?.Uri,
-                PublishTime = src.PublishDate.LocalDateTime,
-            };
-        }
+            Id          = src.Id,
+            Title       = src.Title?.Text,
+            Summary     = src.Summary?.Text,
+            Content     = GetContent(src),
+            Categories  = src.Categories?.Select(x => x.Name),
+            Links       = src.Links?.Select(e => e.Uri),
+            PublishTime = src.PublishDate.LocalDateTime,
+        };
 
         /* ----------------------------------------------------------------- */
         ///

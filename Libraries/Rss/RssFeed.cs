@@ -17,6 +17,8 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Cube.Net.Rss
 {
@@ -29,6 +31,7 @@ namespace Cube.Net.Rss
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
+    [DataContract]
     public class RssFeed
     {
         #region Properties
@@ -42,6 +45,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public string Id { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -53,6 +57,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public string Title { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -64,6 +69,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public string Description { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -75,6 +81,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public Uri Link { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -86,7 +93,20 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public Uri Icon { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LastChecked
+        /// 
+        /// <summary>
+        /// RSS フィードを最後にチェックした日時を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public DateTime LastChecked { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -97,6 +117,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public IEnumerable<RssArticle> Items { get; set; }
 
         #endregion
@@ -111,6 +132,7 @@ namespace Cube.Net.Rss
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
+    [DataContract]
     public class RssArticle
     {
         #region Properties
@@ -124,6 +146,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public string Id { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -135,6 +158,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public string Title { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -150,6 +174,7 @@ namespace Cube.Net.Rss
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public string Summary { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -161,6 +186,7 @@ namespace Cube.Net.Rss
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public string Content { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -168,11 +194,23 @@ namespace Cube.Net.Rss
         /// Link
         /// 
         /// <summary>
-        /// 記事の URL を取得または設定します。
+        /// 記事の URL 一覧を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Uri Link { get; set; }
+        [DataMember]
+        public IEnumerable<Uri> Links { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Link
+        /// 
+        /// <summary>
+        /// 記事で最初に出現した URL を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Uri Link => Links?.FirstOrDefault();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -183,6 +221,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public DateTime PublishTime { get; set; }
 
         /* ----------------------------------------------------------------- */
@@ -194,6 +233,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [DataMember]
         public IEnumerable<string> Categories { get; set; }
 
         #endregion
