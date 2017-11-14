@@ -16,7 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Reflection;
-using System.IO;
+using Cube.FileSystem;
 
 namespace Cube.Net.Tests
 {
@@ -29,31 +29,56 @@ namespace Cube.Net.Tests
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    class FileHelper
+    class FileHelper : NetworkHelper
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// FileHandler
+        /// FileHelper
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected FileHelper()
-        {
-            Root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            _folder = GetType().FullName;
+        protected FileHelper() : this(new Operator()) { }
 
-            if (!Directory.Exists(Results)) Directory.CreateDirectory(Results);
-            Clean(Results);
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FileHelper
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="io">ファイル操作用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected FileHelper(Operator io)
+        {
+            IO = io;
+            Root = IO.Get(Assembly.GetExecutingAssembly().Location).DirectoryName;
+            _directory = GetType().FullName;
+
+            if (!IO.Exists(Results)) IO.CreateDirectory(Results);
+            Delete(Results);
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IO
+        ///
+        /// <summary>
+        /// ファイル操作用オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected Operator IO { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -76,7 +101,7 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected string Examples => Path.Combine(Root, "Examples");
+        protected string Examples => IO.Combine(Root, "Examples");
 
         /* ----------------------------------------------------------------- */
         ///
@@ -87,7 +112,7 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected string Results => Path.Combine(Root, $@"Results\{_folder}");
+        protected string Results => IO.Combine(Root, $@"Results\{_directory}");
 
         #endregion
 
@@ -103,11 +128,11 @@ namespace Cube.Net.Tests
         /// </summary>
         /// 
         /// <param name="filename">ファイル名</param>
-        /// 
         /// <returns>パス</returns>
         ///
         /* ----------------------------------------------------------------- */
-        protected string Example(string filename) => Path.Combine(Examples, filename);
+        protected string Example(string filename)
+            => IO.Combine(Examples, filename);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -122,7 +147,8 @@ namespace Cube.Net.Tests
         /// <returns>パス</returns>
         ///
         /* ----------------------------------------------------------------- */
-        protected string Result(string filename) => Path.Combine(Results, filename);
+        protected string Result(string filename)
+            => IO.Combine(Results, filename);
 
         #endregion
 
@@ -130,7 +156,7 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Clean
+        /// Delete
         /// 
         /// <summary>
         /// 指定されたフォルダ内に存在する全てのファイルおよびフォルダを
@@ -138,23 +164,18 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void Clean(string folder)
+        private void Delete(string directory)
         {
-            foreach (string file in Directory.GetFiles(folder))
+            foreach (string f in IO.GetFiles(directory)) IO.Delete(f);
+            foreach (string d in IO.GetDirectories(directory))
             {
-                File.SetAttributes(file, FileAttributes.Normal);
-                File.Delete(file);
-            }
-
-            foreach (string sub in Directory.GetDirectories(folder))
-            {
-                Clean(sub);
-                Directory.Delete(sub);
+                Delete(d);
+                IO.Delete(d);
             }
         }
 
         #region Fields
-        private string _folder = string.Empty;
+        private string _directory = string.Empty;
         #endregion
 
         #endregion

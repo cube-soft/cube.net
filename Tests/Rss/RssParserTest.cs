@@ -115,7 +115,7 @@ namespace Cube.Net.Tests
                     Title       = "Scripting News",
                     Description = "A weblog about scripting and stuff like that.",
                     Icon        = null,
-                    Link        = new Uri("http://www.scripting.com/"),
+                    Links       = new[] { new Uri("http://www.scripting.com/") },
                 }).Returns(9);
 
                 yield return new TestCaseData("SampleRss20-02.xml", new RssFeed
@@ -124,7 +124,7 @@ namespace Cube.Net.Tests
                     Title       = "SoGap",
                     Description = "SoGap is a service for searching for popular news by using social signals.",
                     Icon        = null,
-                    Link        = new Uri("http://sogap.cielquis.net/")
+                    Links       = new[] { new Uri("http://sogap.cielquis.net/") },
                 }).Returns(3);
 
                 yield return new TestCaseData("SampleAtom-01.xml", new RssFeed
@@ -133,7 +133,7 @@ namespace Cube.Net.Tests
                     Title       = "Example Feed",
                     Description = null,
                     Icon        = null,
-                    Link        = new Uri("http://example.org/"),
+                    Links       = new[] { new Uri("http://example.org/") },
                 }).Returns(1);
             }
         }

@@ -16,7 +16,8 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Threading;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -32,7 +33,7 @@ namespace Cube.Net.Tests.Rss
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssMonitorTest : NetworkHelper
+    class RssMonitorTest : FileHelper
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -44,31 +45,40 @@ namespace Cube.Net.Tests.Rss
         /// 
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start()
+        public async Task Start()
         {
+            var uri = new Uri("http://blog.cube-soft.jp/?feed=rss2");
+
             using (var mon = new Cube.Net.Rss.RssMonitor())
             {
-                Assert.That(mon.NetworkAvailable, Is.True);
-
-                mon.Timeout = TimeSpan.FromMilliseconds(1000);
-                mon.Uris    = new[] { new Uri("http://clown.hatenablog.jp/rss") };
-
-                var cts   = new CancellationTokenSource();
-                var count = 0;
-
-                mon.Subscribe((u, x) => { count++; cts.Cancel(); });
+                mon.Timeout = TimeSpan.FromMilliseconds(500);
+                mon.CacheDirectory = Results;
+                mon.Add(uri);
                 mon.Start();
-
-                Assert.That(
-                    async() => await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token),
-                    Throws.TypeOf<TaskCanceledException>()
-                );
-
+                await Task.Delay(1000);
                 mon.Stop();
-
-                Assert.That(count, Is.EqualTo(1));
-                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
+
+            var path = GetPath(uri, Results);
+            Assert.That(IO.Exists(path), Is.True);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetPath
+        ///
+        /// <summary>
+        /// 保存用パスを取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private string GetPath(Uri uri, string directory)
+        {
+            var md5 = new MD5CryptoServiceProvider();
+            var data = Encoding.UTF8.GetBytes(uri.ToString());
+            var hash = md5.ComputeHash(data);
+            var name = BitConverter.ToString(hash).ToLower().Replace("-", "");
+            return IO.Combine(directory, name);
         }
     }
 }

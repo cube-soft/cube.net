@@ -59,7 +59,7 @@ namespace Cube.Net.Tests.Http
             using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
                 mon.UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}";
-                mon.Interval  = TimeSpan.FromMilliseconds(50);
+                mon.Interval  = TimeSpan.FromMilliseconds(100);
                 mon.Timeout   = TimeSpan.FromMilliseconds(1000);
                 mon.Uri       = new Uri("http://www.cube-soft.jp/");
 
