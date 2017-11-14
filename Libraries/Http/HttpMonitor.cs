@@ -215,7 +215,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected async Task PublishAsync(Uri uri)
         {
-            using (var response = await _http.GetAsync(uri))
+            using (var response = await _http.GetAsync(uri, HttpCompletionOption.ResponseContentRead))
             {
                 var status = response.StatusCode;
                 var code   = (int)status;
