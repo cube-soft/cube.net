@@ -51,10 +51,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssSubscribeCollection()
         {
-            var io  = _monitor.IO;
-            var dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-            _monitor.CacheDirectory = io.Combine(dir, @"CubeSoft\CubeRssReader\Cache");
             _monitor.Interval = TimeSpan.FromHours(1);
             _monitor.Feeds = _feeds;
             _items.CollectionChanged += WhenCollectionChanged;

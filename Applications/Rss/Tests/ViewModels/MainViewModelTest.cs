@@ -49,7 +49,7 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public async Task Select()
         {
-            var vm = new MainViewModel();
+            var vm = new MainViewModel(new SettingsFolder(Results, IO));
 
             var entry = vm.Items.OfType<RssCategory>().First().Entries.First();
             Assert.That(entry.Uri, Is.EqualTo(new Uri("http://blog.cube-soft.jp/?feed=rss2")));
@@ -89,8 +89,7 @@ namespace Cube.Net.App.Rss.Tests
         {
             var filename = "Feeds.json";
             var src      = Example(filename);
-            var dir      = IO.Get(AssemblyReader.Default.Location).DirectoryName;
-            var dest     = IO.Combine(dir, filename);
+            var dest     = IO.Combine(Results, filename);
 
             IO.Copy(src, dest, true);
         }

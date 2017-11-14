@@ -16,40 +16,70 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Runtime.Serialization;
 using Cube.FileSystem;
-using Cube.Net.Rss;
+using Cube.Settings;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssFacade
+    /// Settings
     ///
     /// <summary>
-    /// RSS フィードに関連する処理の窓口となるクラスです。
+    /// ユーザ設定を保持するためのクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class RssFacade
+    [DataContract]
+    public class Settings : ObservableProperty { }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// SettingsFolder
+    ///
+    /// <summary>
+    /// ユーザ設定を保持するためのクラスです。
+    /// </summary>
+    /// 
+    /* --------------------------------------------------------------------- */
+    public class SettingsFolder : SettingsFolder<Settings>
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssFacade
+        /// SettingsFolder
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SettingsFolder() : this(System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            AssemblyReader.Default.Company,
+            AssemblyReader.Default.Product
+        ), new Operator()) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SettingsFolder
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         /// 
-        /// <param name="settings">設定用オブジェクト</param>
+        /// <param name="root">設定用フォルダのルートパス</param>
+        /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFacade(SettingsFolder settings)
+        public SettingsFolder(string root, Operator io) : base(SettingsType.Json)
         {
-            if (_io.Exists(settings.FeedPath)) Items.Load(settings.FeedPath);
-            Items.CacheDirectory = settings.CacheDirectory;
-            Items.CollectionChanged += (s, e) => Items.Save(settings.FeedPath);
+            AutoSave = false;
+            Path = System.IO.Path.Combine(root, "Settings.json");
+            IO = io;
+            RootDirectory = root;
         }
 
         #endregion
@@ -58,74 +88,49 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Items
+        /// IO
         /// 
         /// <summary>
-        /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
+        /// 入出力用オブジェクトを取得または設定します。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
-        public RssSubscribeCollection Items { get; } = new RssSubscribeCollection();
-
-        #endregion
-
-        #region Methods
+        public Operator IO { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Add
+        /// RootDirectory
         /// 
         /// <summary>
-        /// RSS フィードを追加します。
+        /// 各種ユーザ設定を保持するディレクトリのルートディレクトリと
+        /// なるパスを取得します。
         /// </summary>
         /// 
-        /// <param name="feed">追加する RSS フィード</param>
-        ///
         /* ----------------------------------------------------------------- */
-        public void Add(RssFeed feed) => Items.Add(feed);
+        public string RootDirectory { get; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Lookup
+        /// CacheDirectory
         /// 
         /// <summary>
-        /// RssEntry オブジェクトに対応する RSS フィードを取得します。
+        /// キャッシュ用ディレクトリのパスを取得します。
         /// </summary>
         /// 
-        /// <param name="entry">RssEntry オブジェクト</param>
-        /// 
-        /// <returns>RssFeed オブジェクト</returns>
-        ///
         /* ----------------------------------------------------------------- */
-        public RssFeed Lookup(RssEntry entry) => Items.Lookup(entry.Uri);
+        public string CacheDirectory => IO.Combine(RootDirectory, "Cache");
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Format
+        /// FeedPath
         /// 
         /// <summary>
-        /// RSS フィード中の記事内容を整形します。
+        /// 購読フィード一覧を保持するためのファイルのパスを取得します。
         /// </summary>
         /// 
-        /// <param name="src">対象とする記事</param>
-        /// 
-        /// <returns>表示する文字列</returns>
-        ///
         /* ----------------------------------------------------------------- */
-        public string Format(RssArticle src) => string.Format(
-            Properties.Resources.Skeleton,
-            Properties.Resources.SkeletonStyle,
-            src.Link,
-            src.Link,
-            src.Title,
-            src.PublishTime,
-            !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
-        );
+        public string FeedPath => IO.Combine(RootDirectory, "Feeds.json");
 
-        #endregion
-
-        #region Fields
-        private Operator _io = new Operator();
         #endregion
     }
 }

@@ -47,7 +47,22 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainViewModel() : base(GalaSoft.MvvmLight.Messaging.Messenger.Default) { }
+        public MainViewModel() : this(new SettingsFolder()) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// MainViewModel
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public MainViewModel(SettingsFolder settings)
+            : base(GalaSoft.MvvmLight.Messaging.Messenger.Default)
+        {
+            _model = new RssFacade(settings);
+        }
 
         #endregion
 
@@ -148,7 +163,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private RssFacade _model = new RssFacade();
+        private RssFacade _model;
         private RelayCommand _add;
         private RelayCommand<object> _selectEntry;
         private RelayCommand<SelectionList> _selectArticle;

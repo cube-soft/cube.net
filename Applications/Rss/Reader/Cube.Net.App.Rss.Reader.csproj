@@ -83,6 +83,7 @@
     <Compile Include="Models\RssFacade.cs" />
     <Compile Include="Models\RssSubscribeCollection.cs" />
     <Compile Include="Models\Triggers.cs" />
+    <Compile Include="Settings\Settings.cs" />
     <Compile Include="ViewModels\AddViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Xui\Behaviors\CommandBehavior.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="Xui\Behaviors\WebDocument.cs" />
     <Compile Include="Xui\Bindable.cs" />
     <Compile Include="Xui\BindableCollection.cs" />
-    <Compile Include="Xui\Triggers\MessageTrigger.cs" />
+    <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
     <Compile Include="Xui\Triggers\WindowAction.cs" />
   </ItemGroup>
   <ItemGroup>
