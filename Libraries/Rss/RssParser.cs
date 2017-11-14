@@ -53,16 +53,13 @@ namespace Cube.Net.Rss
             {
                 var feed = SyndicationFeed.Load(reader);
 
-                var count = feed.Links.Count;
-                if (count > 1) LogWarn($"Feed.Links.Count:{count}");
-
                 return new RssFeed
                 {
                     Id          = feed.Id,
                     Title       = feed.Title?.Text,
                     Description = feed.Description?.Text,
-                    Link        = feed.Links?.FirstOrDefault()?.Uri,
-                    Items       = feed.Items?.Select(x => Convert(x)),
+                    Links       = feed.Links?.Select(e => e.Uri),
+                    Items       = feed.Items?.Select(e => Convert(e)),
                 };
             }
         }
