@@ -58,23 +58,27 @@ namespace Cube.Net.Tests.Http
         {
             using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
-                mon.Interval = TimeSpan.FromMilliseconds(100);
-                mon.Timeout  = TimeSpan.FromMilliseconds(1000);
-                mon.Uri      = new Uri("http://www.cube-soft.jp/");
+                mon.UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}";
+                mon.Interval  = TimeSpan.FromMilliseconds(50);
+                mon.Timeout   = TimeSpan.FromMilliseconds(1000);
+                mon.Uri       = new Uri("http://www.cube-soft.jp/");
 
-                var cts = new CancellationTokenSource();
-                var sum = 0;
+                var cts   = new CancellationTokenSource();
+                var count = 0;
 
-                mon.Subscribe((u, x) => { sum += x; cts.Cancel(); });
+                mon.Subscribe((u, x) =>
+                {
+                    count++;
+                    if (count >= 3) cts.Cancel();
+                });
+
                 mon.Start();
                 mon.Start(); // ignore
-
                 await WaitAsync(cts.Token);
-
                 mon.Stop();
                 mon.Stop(); // ignore
 
-                Assert.That(sum, Is.AtLeast(1));
+                Assert.That(count, Is.EqualTo(3));
             }
         }
 
@@ -104,9 +108,7 @@ namespace Cube.Net.Tests.Http
                 mon.Reset();
                 mon.Start(mon.Interval);
                 mon.Reset();
-
                 await WaitAsync(cts.Token);
-
                 mon.Stop();
 
                 Assert.That(count, Is.EqualTo(1));
