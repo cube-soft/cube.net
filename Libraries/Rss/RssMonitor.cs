@@ -18,7 +18,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Cube.FileSystem;
 using Cube.Net.Http;
+using Cube.Settings;
+using Cube.Log;
 
 namespace Cube.Net.Rss
 {
@@ -31,7 +38,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssMonitor : HttpMonitorBase<RssFeed>
+    public class RssMonitor : NetworkMonitorBase
     {
         #region Constructors
 
@@ -48,7 +55,7 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
+        /// RssMonitor
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -58,7 +65,26 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         public RssMonitor(IContentConverter<RssFeed> converter)
-            : base(new ContentHandler<RssFeed>(converter) { UseEntityTag = false }) { }
+            : this(new ContentHandler<RssFeed>(converter) { UseEntityTag = false }) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssMonitor
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="handler">HTTP 通信用ハンドラ</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssMonitor(ContentHandler<RssFeed> handler) : base()
+        {
+            _http   = HttpClientFactory.Create(handler);
+            Handler = handler;
+            Timeout = TimeSpan.FromSeconds(10);
+            Timer.Subscribe(WhenTick);
+        }
 
         #endregion
 
@@ -66,14 +92,146 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Uris
+        /// Feeds
         ///
         /// <summary>
-        /// RSS フィードの取得 URL 一覧を取得または設定します。
+        /// RSS フィードの管理用コレクションを取得または設定します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public IEnumerable<Uri> Uris { get; set; }
+        public IDictionary<Uri, RssFeed> Feeds { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CacheDirectory
+        ///
+        /// <summary>
+        /// キャッシュの存在するディレクトリのパスを取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public string CacheDirectory { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IO
+        ///
+        /// <summary>
+        /// 入出力用オブジェクトを取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public Operator IO { get; set; } = new Operator();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Handler
+        ///
+        /// <summary>
+        /// HTTP ハンドラを取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected ContentHandler<RssFeed> Handler { get; }
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Add
+        ///
+        /// <summary>
+        /// 監視対象となる URL を追加します。
+        /// </summary>
+        /// 
+        /// <param name="uri">URL</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Add(Uri uri)
+        {
+            if (Feeds == null) Feeds = new Dictionary<Uri, RssFeed>();
+            if (!Feeds.ContainsKey(uri)) Feeds.Add(uri, default(RssFeed));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Load
+        ///
+        /// <summary>
+        /// キャッシュファイルを読み込みます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Load()
+        {
+            if (Feeds == null || string.IsNullOrEmpty(CacheDirectory)) return;
+            foreach (var uri in Feeds.Keys.ToArray())
+            {
+                Log(() =>
+                {
+                    var feed = Load(uri);
+                    if (feed != null) Feeds[uri] = feed;
+                });
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Save
+        ///
+        /// <summary>
+        /// 現在の内容をファイルに保存します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Save()
+        {
+            if (Feeds == null || string.IsNullOrEmpty(CacheDirectory)) return;
+            foreach (var kv in Feeds) Log(() => Save(kv.Key, kv.Value));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Stop
+        ///
+        /// <summary>
+        /// 監視を停止します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public override void Stop()
+        {
+            base.Stop();
+            _http.CancelPendingRequests();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージリソースを解放するかどうかを示す値
+        /// </param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _http.Dispose();
+                Handler.Dispose();
+            }
+        }
+
+        #region Protected
+
+        #endregion
 
         #endregion
 
@@ -81,16 +239,194 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetRequestUris
+        /// Save
         ///
         /// <summary>
-        /// リクエスト送信先 URL 一覧を取得します。
+        /// RSS フィードをファイルに保存します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Save(Uri uri, RssFeed feed)
+        {
+            if (string.IsNullOrEmpty(CacheDirectory)) return;
+            if (!IO.Exists(CacheDirectory)) IO.CreateDirectory(CacheDirectory);
+            SettingsType.Json.Save(GetPath(uri), feed);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Load
+        ///
+        /// <summary>
+        /// RSS フィードをファイルから読み込みます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private RssFeed Load(Uri uri)
+        {
+            if (string.IsNullOrEmpty(CacheDirectory)) return default(RssFeed);
+
+            var path = GetPath(uri);
+            if (!IO.Exists(path)) return default(RssFeed);
+
+            return SettingsType.Json.Load<RssFeed>(path);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// RSS フィードの内容を更新します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Update(Uri uri, RssFeed feed)
+        {
+            feed.LastChecked = DateTime.Now;
+            if (Feeds.ContainsKey(uri)) Feeds[uri] = feed;
+            Save(uri, feed);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsyncCore
+        ///
+        /// <summary>
+        /// 指定された URL から RSS フィードを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task GetAsyncCore(Uri uri)
+        {
+            _http.CancelPendingRequests();
+            using (var response = await _http.GetAsync(uri))
+            {
+                var status = response.StatusCode;
+                var code = (int)status;
+                var digit = code / 100;
+
+                if (response.Content is HttpValueContent<RssFeed> content) Update(uri, content.Value); // OK
+                else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
+                else if (digit == 4) LogMessage(uri, $"HTTP:{code} {status}");
+                else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
+                else LogMessage(uri, $"Content is not {nameof(RssFeed)} ({code})");
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync
+        ///
+        /// <summary>
+        /// 指定された URL から RSS フィードを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task GetAsync(Uri uri)
+        {
+            for (var i = 0; i < RetryCount; ++i)
+            {
+                try
+                {
+                    await GetAsyncCore(uri);
+                    break;
+                }
+                catch (Exception err)
+                {
+                    this.LogWarn(err.ToString(), err);
+                    await Task.Delay(RetryInterval);
+                    this.LogDebug($"Retry\tCount:{i + 1}\tUrl:{uri}");
+                }
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenTick
+        ///
+        /// <summary>
+        /// 一定間隔で実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async void WhenTick()
+        {
+            if (Feeds == null) return;
+            SetTimeout();
+            foreach (var uri in Feeds.Keys.ToArray())
+            {
+                await GetAsync(uri);
+                await Task.Delay(1000);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SetTimeout
+        ///
+        /// <summary>
+        /// タイムアウト時間を設定します。
         /// </summary>
         /// 
-        /// <returns>URL 一覧</returns>
+        /* ----------------------------------------------------------------- */
+        private void SetTimeout()
+        {
+            try { if (_http.Timeout != Timeout) _http.Timeout = Timeout; }
+            catch (Exception /* err */) { this.LogWarn("Timeout cannot be applied"); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetPath
+        ///
+        /// <summary>
+        /// 保存用パスを取得します。
+        /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected override IEnumerable<Uri> GetRequestUris() => Uris.ToArray();
+        private string GetPath(Uri uri)
+        {
+            var md5  = new MD5CryptoServiceProvider();
+            var data = Encoding.UTF8.GetBytes(uri.ToString());
+            var hash = md5.ComputeHash(data);
+            var name = BitConverter.ToString(hash).ToLower().Replace("-", "");
+            return IO.Combine(CacheDirectory, name);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LogMessage
+        ///
+        /// <summary>
+        /// エラー内容をログに出力します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void LogMessage(Uri uri, string message)
+        {
+            this.LogWarn(uri.ToString());
+            this.LogWarn(message);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Log
+        ///
+        /// <summary>
+        /// エラー内容をログに出力します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Log(Action action)
+        {
+            try { action(); }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+        }
+
+        #region Fields
+        private HttpClient _http;
+        #endregion
 
         #endregion
     }
