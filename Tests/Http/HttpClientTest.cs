@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -155,8 +156,8 @@ namespace Cube.Net.Tests
             var uri = new Uri("http://www.cube-soft.jp/404.html");
             using (var http = HttpClientFactory.Create())
             {
-                var result = await http.GetAsync(uri, RawContent);
-                Assert.That(result, Is.Null);
+                var result = await http.GetAsync(uri, s => s.ReadByte());
+                Assert.That(result, Is.EqualTo(0L));
             }
         }
 
@@ -176,25 +177,13 @@ namespace Cube.Net.Tests
             using (var http = HttpClientFactory.Create())
             {
                 var result = await http.GetAsync(uri, Throws);
-                Assert.That(result, Is.Null);
+                Assert.That(result, Is.EqualTo(0L));
             }
         }
 
         #endregion
 
         #region Helper methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RawContent
-        /// 
-        /// <summary>
-        /// 文字列を取得する関数オブジェクトです。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private Func<HttpContent, Task<string>> RawContent = (s)
-            => s.ReadAsStringAsync();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -205,7 +194,7 @@ namespace Cube.Net.Tests
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private Func<HttpContent, Task<string>> Throws = (s) =>
+        private Func<Stream, long> Throws = (_) =>
         {
             throw new ArgumentException("ErrorTest");
         };

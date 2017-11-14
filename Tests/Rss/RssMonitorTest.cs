@@ -49,7 +49,7 @@ namespace Cube.Net.Tests.Rss
 
             using (var mon = new Cube.Net.Rss.RssMonitor())
             {
-                mon.Timeout = TimeSpan.FromMilliseconds(1000);
+                mon.Timeout = TimeSpan.FromMilliseconds(2000);
                 mon.CacheDirectory = Results;
                 mon.Add(uri);
                 mon.Start();

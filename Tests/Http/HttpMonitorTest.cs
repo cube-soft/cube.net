@@ -16,7 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Net.Http;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -56,7 +56,7 @@ namespace Cube.Net.Tests.Http
         [Test]
         public async Task Start()
         {
-            using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
+            using (var mon = new Cube.Net.Http.HttpMonitor<int>(ReadByte))
             {
                 mon.UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}";
                 mon.Interval  = TimeSpan.FromMilliseconds(100);
@@ -94,7 +94,7 @@ namespace Cube.Net.Tests.Http
         [Test]
         public async Task Reset()
         {
-            using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
+            using (var mon = new Cube.Net.Http.HttpMonitor<int>(ReadByte))
             {
                 mon.UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}";
                 mon.Interval  = TimeSpan.FromMinutes(1);
@@ -121,18 +121,14 @@ namespace Cube.Net.Tests.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Convert
+        /// ReadByte
         /// 
         /// <summary>
-        /// HttpContent の変換処理を実行する関数オブジェクトです。
+        /// 変換処理を実行する関数オブジェクトです。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private Func<HttpContent, Task<int>> Convert = async (s) =>
-        {
-            var str = await s.ReadAsStringAsync();
-            return str.Length;
-        };
+        private Func<Stream, int> ReadByte = (s) => s.ReadByte();
 
         #endregion
     }

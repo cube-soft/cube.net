@@ -42,12 +42,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssContentConverter() : base(async (src) =>
-        {
-            if (src == null) return default(RssFeed);
-            var stream = await src.ReadAsStreamAsync();
-            return RssParser.Create(stream);
-        }) { }
+        public RssContentConverter() : base(s => RssParser.Create(s)) { }
     }
 
     /* --------------------------------------------------------------------- */

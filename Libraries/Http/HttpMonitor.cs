@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cube.Log;
@@ -80,7 +81,7 @@ namespace Cube.Net.Http
         /// <param name="func">変換用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public HttpMonitor(Func<HttpContent, Task<TValue>> func)
+        public HttpMonitor(Func<Stream, TValue> func)
             : this(new ContentConverter<TValue>(func)) { }
 
         #endregion

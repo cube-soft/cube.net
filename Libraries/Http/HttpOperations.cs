@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cube.Log;
@@ -49,29 +50,25 @@ namespace Cube.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         public static async Task<T> GetAsync<T>(this HttpClient client,
-            Uri uri, IContentConverter<T> converter) where T : class
+            Uri uri, IContentConverter<T> converter)
         {
             using (var response = await client.GetAsync(uri))
             {
-                if (response == null) return null;
+                if (response == null) return default(T);
                 else if (!response.IsSuccessStatusCode)
                 {
                     client.LogWarn($"StatusCode:{response.StatusCode}");
-                    return null;
+                    return default(T);
                 }
 
-                try { return await converter.ConvertAsync(response.Content); }
-                catch (Exception err)
+                try
                 {
-                    client.LogWarn(err.ToString(), err);
-                    if (response.Content != null)
-                    {
-                        var s = await response.Content.ReadAsStringAsync();
-                        client.LogWarn(s);
-                    }
-                    return null;
+                    var stream = await response.Content.ReadAsStreamAsync();
+                    return converter.Invoke(stream);
                 }
+                catch (Exception err) { client.LogWarn(err.ToString(), err); }
             }
+            return default(T);
         }
 
         /* ----------------------------------------------------------------- */
@@ -90,7 +87,7 @@ namespace Cube.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         public static Task<T> GetAsync<T>(this HttpClient client,
-            Uri uri, Func<HttpContent, Task<T>> func) where T : class
+            Uri uri, Func<Stream, T> func)
             => client.GetAsync(uri, new ContentConverter<T>(func));
     }
 }

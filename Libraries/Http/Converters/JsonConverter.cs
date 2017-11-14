@@ -42,12 +42,11 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public JsonContentConverter() : base(async (src) =>
+        public JsonContentConverter() : base(s =>
         {
-            if (src == null) return default(TValue);
-            var stream = await src.ReadAsStreamAsync();
+            if (s == null) return default(TValue);
             var json = new DataContractJsonSerializer(typeof(TValue));
-            return json.ReadObject(stream) as TValue;
+            return json.ReadObject(s) as TValue;
         }) { }
     }
 

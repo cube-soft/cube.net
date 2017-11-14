@@ -16,8 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.IO;
 using Cube.Log;
 
 namespace Cube.Net.Http
@@ -53,18 +52,18 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ConvertAsync(TValue)
+        /// Invoke
         ///
         /// <summary>
-        /// 非同期で変換処理を実行します。
+        /// 変換処理を実行します。
         /// </summary>
         /// 
-        /// <param name="src">HttpContent オブジェクト</param>
+        /// <param name="src">Stream オブジェクト</param>
         /// 
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        Task<TValue> ConvertAsync(HttpContent src);
+        TValue Invoke(Stream src);
     }
 
     /* --------------------------------------------------------------------- */
@@ -112,20 +111,20 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ConvertAsync(TValue)
+        /// Invoke
         ///
         /// <summary>
-        /// 非同期で変換処理を実行します。
+        /// 変換処理を実行します。
         /// </summary>
         /// 
-        /// <param name="src">HttpContent オブジェクト</param>
+        /// <param name="src">Stream オブジェクト</param>
         /// 
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public async Task<TValue> ConvertAsync(HttpContent src)
+        public TValue Invoke(Stream src)
         {
-            try { return await ConvertCoreAsync(src); }
+            try { return OnInvoke(src); }
             catch (Exception err)
             {
                 if (IgnoreException) this.LogWarn(err.ToString(), err);
@@ -136,19 +135,18 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ConvertCoreAsync(TValue)
+        /// OnInvoke
         ///
         /// <summary>
-        /// 非同期で変換処理を実行します。
+        /// 変換処理を実行します。
         /// </summary>
         /// 
-        /// <param name="src">HttpContent オブジェクト</param>
+        /// <param name="src">Stream オブジェクト</param>
         /// 
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual Task<TValue> ConvertCoreAsync(HttpContent src)
-            => throw new NotImplementedException();
+        protected virtual TValue OnInvoke(Stream src) => throw new NotImplementedException();
 
         #endregion
     }
@@ -177,7 +175,7 @@ namespace Cube.Net.Http
         /// <param name="func">変換用オブジェクト</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public ContentConverter(Func<HttpContent, Task<TValue>> func)
+        public ContentConverter(Func<Stream, TValue> func)
         {
             _func = func;
         }
@@ -188,23 +186,23 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ConvertCoreAsync(TValue)
+        /// OnInvoke
         ///
         /// <summary>
-        /// 非同期で変換処理を実行します。
+        /// 変換処理を実行します。
         /// </summary>
         /// 
-        /// <param name="src">HttpContent オブジェクト</param>
+        /// <param name="src">Stream オブジェクト</param>
         /// 
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        protected override Task<TValue> ConvertCoreAsync(HttpContent src) => _func(src);
+        protected override TValue OnInvoke(Stream src) => _func(src);
 
         #endregion
 
         #region Fields
-        private Func<HttpContent, Task<TValue>> _func;
+        private Func<Stream, TValue> _func;
         #endregion
     }
 }

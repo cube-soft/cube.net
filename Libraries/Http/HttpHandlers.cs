@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -264,7 +265,7 @@ namespace Cube.Net.Http
         /// <param name="func">変換用オブジェクト</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public ContentHandler(Func<HttpContent, Task<TValue>> func)
+        public ContentHandler(Func<Stream, TValue> func)
             : this(new ContentConverter<TValue>(func)) { }
 
         #endregion
@@ -303,9 +304,10 @@ namespace Cube.Net.Http
 
             if (response.IsSuccessStatusCode)
             {
+                var stream = await response.Content.ReadAsStreamAsync();
                 response.Content = new HttpValueContent<TValue>(
                     response.Content,
-                    await Converter.ConvertAsync(response.Content)
+                    Converter.Invoke(stream)
                 );
             }
             return response;

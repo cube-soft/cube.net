@@ -42,12 +42,11 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public XmlContentConverter() : base(async (src) =>
+        public XmlContentConverter() : base(s =>
         {
-            if (src == null) return default(TValue);
-            var stream = await src.ReadAsStreamAsync();
+            if (s == null) return default(TValue);
             var xml = new XmlSerializer(typeof(TValue));
-            return xml.Deserialize(stream) as TValue;
+            return xml.Deserialize(s) as TValue;
         }) { }
     }
 
