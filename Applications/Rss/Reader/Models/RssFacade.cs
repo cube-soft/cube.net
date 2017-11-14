@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 
@@ -47,14 +46,39 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssFacade(SettingsFolder settings)
         {
-            if (_io.Exists(settings.FeedPath)) Items.Load(settings.FeedPath);
-            Items.CacheDirectory = settings.CacheDirectory;
-            Items.CollectionChanged += (s, e) => Items.Save(settings.FeedPath);
+            Settings = settings;
+
+            Items.IO = Settings.IO;
+            Items.CacheDirectory = Settings.Cache;
+            if (IO.Exists(settings.Feed)) Items.Load(settings.Feed);
+            Items.CollectionChanged += (s, e) => Items.Save(Settings.Feed);
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Settings
+        /// 
+        /// <summary>
+        /// ユーザ設定を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SettingsFolder Settings { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IO
+        /// 
+        /// <summary>
+        /// 入出力用オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Operator IO => Settings.IO;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -122,10 +146,6 @@ namespace Cube.Net.App.Rss.Reader
             !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
         );
 
-        #endregion
-
-        #region Fields
-        private Operator _io = new Operator();
         #endregion
     }
 }

@@ -87,9 +87,9 @@ namespace Cube.Net.App.Rss.Tests
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            var filename = "Feeds.json";
-            var src      = Example(filename);
-            var dest     = IO.Combine(Results, filename);
+            var json = "Feeds.json";
+            var src  = Example(json);
+            var dest = IO.Combine(Results, json);
 
             IO.Copy(src, dest, true);
         }

@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
 
-namespace Cube.Net.App.Rss.Tests.ViewModels
+namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -34,7 +34,7 @@ namespace Cube.Net.App.Rss.Tests.ViewModels
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class AddViewModelTest
+    class AddViewModelTest : FileHelper
     {
         #region Tests
 
@@ -50,7 +50,7 @@ namespace Cube.Net.App.Rss.Tests.ViewModels
         [Test]
         public void Add()
         {
-            var vm = new MainViewModel();
+            var vm = new MainViewModel(new SettingsFolder(Results, IO));
             vm.Messenger.Register<AddViewModel>(this, e => AddCommand(e).Wait());
             vm.Add.Execute(null);
 
@@ -81,6 +81,29 @@ namespace Cube.Net.App.Rss.Tests.ViewModels
                 await Task.Delay(5000, cts.Token).ConfigureAwait(false);
             }
             catch (TaskCanceledException /* err */) { /* OK */ }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OneTimeSetup
+        /// 
+        /// <summary>
+        /// 一度だけ初期化されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            var json = "Feeds.json";
+            var src  = Example(json);
+            var dest = IO.Combine(Results, json);
+
+            IO.Copy(src, dest, true);
         }
 
         #endregion

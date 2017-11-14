@@ -63,13 +63,6 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(item.Entries.First().Title, Is.EqualTo("The GitHub Blog"));
             Assert.That(item.Entries.First().Uri, Is.EqualTo(uri));
             Assert.That(item.Entries.First().Parent, Is.EqualTo(item));
-
-            Assert.That(src.Lookup(uri), Is.Not.Null);
-            src.Clear();
-            Assert.That(src.Lookup(uri), Is.Null);
-
-            Assert.That(src.Categories.Count(), Is.EqualTo(0));
-            Assert.That(count, Is.EqualTo(2));
         }
     }
 }

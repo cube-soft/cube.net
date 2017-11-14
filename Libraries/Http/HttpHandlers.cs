@@ -301,7 +301,7 @@ namespace Cube.Net.Http
             var response = await base.SendAsync(request, cancellationToken);
             if (response == null || Converter == null) return response;
 
-            if ((int)response.StatusCode / 100 == 2) // 2XX
+            if (response.IsSuccessStatusCode)
             {
                 response.Content = new HttpValueContent<TValue>(
                     response.Content,

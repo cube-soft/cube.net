@@ -77,9 +77,9 @@ namespace Cube.Net.App.Rss.Reader
         public SettingsFolder(string root, Operator io) : base(SettingsType.Json)
         {
             AutoSave = false;
-            Path = System.IO.Path.Combine(root, "Settings.json");
+            Path = io.Combine(root, "Settings.json");
             IO = io;
-            RootDirectory = root;
+            Root = root;
         }
 
         #endregion
@@ -99,7 +99,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RootDirectory
+        /// Root
         /// 
         /// <summary>
         /// 各種ユーザ設定を保持するディレクトリのルートディレクトリと
@@ -107,29 +107,29 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public string RootDirectory { get; }
+        public string Root { get; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// CacheDirectory
+        /// Cache
         /// 
         /// <summary>
         /// キャッシュ用ディレクトリのパスを取得します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public string CacheDirectory => IO.Combine(RootDirectory, "Cache");
+        public string Cache => IO.Combine(Root, "Cache");
 
         /* ----------------------------------------------------------------- */
         ///
-        /// FeedPath
+        /// Feed
         /// 
         /// <summary>
         /// 購読フィード一覧を保持するためのファイルのパスを取得します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public string FeedPath => IO.Combine(RootDirectory, "Feeds.json");
+        public string Feed => IO.Combine(Root, "Feeds.json");
 
         #endregion
     }

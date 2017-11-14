@@ -82,7 +82,7 @@ namespace Cube.Net.Rss
         {
             _http   = HttpClientFactory.Create(handler);
             Handler = handler;
-            Timeout = TimeSpan.FromSeconds(10);
+            Timeout = TimeSpan.FromSeconds(2);
             Timer.Subscribe(WhenTick);
         }
 
@@ -152,7 +152,7 @@ namespace Cube.Net.Rss
         public void Add(Uri uri)
         {
             if (Feeds == null) Feeds = new Dictionary<Uri, RssFeed>();
-            if (!Feeds.ContainsKey(uri)) Feeds.Add(uri, default(RssFeed));
+            if (!Feeds.ContainsKey(uri)) Feeds.Add(uri, new RssFeed());
         }
 
         /* ----------------------------------------------------------------- */
@@ -250,7 +250,8 @@ namespace Cube.Net.Rss
         {
             if (string.IsNullOrEmpty(CacheDirectory)) return;
             if (!IO.Exists(CacheDirectory)) IO.CreateDirectory(CacheDirectory);
-            SettingsType.Json.Save(GetPath(uri), feed);
+
+            using (var s = IO.OpenWrite(GetPath(uri))) SettingsType.Json.Save(s, feed);
         }
 
         /* ----------------------------------------------------------------- */
@@ -269,7 +270,7 @@ namespace Cube.Net.Rss
             var path = GetPath(uri);
             if (!IO.Exists(path)) return default(RssFeed);
 
-            return SettingsType.Json.Load<RssFeed>(path);
+            using (var s = IO.OpenRead(path)) return SettingsType.Json.Load<RssFeed>(s);
         }
 
         /* ----------------------------------------------------------------- */
@@ -283,8 +284,12 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private void Update(Uri uri, RssFeed feed)
         {
-            feed.LastChecked = DateTime.Now;
-            if (Feeds.ContainsKey(uri)) Feeds[uri] = feed;
+            if (Feeds.ContainsKey(uri))
+            {
+                Feeds[uri].Title       = feed.Title;
+                Feeds[uri].Items       = feed.Items;
+                Feeds[uri].LastChecked = DateTime.Now;
+            }
             Save(uri, feed);
         }
 
@@ -299,8 +304,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private async Task GetAsyncCore(Uri uri)
         {
-            _http.CancelPendingRequests();
-            using (var response = await _http.GetAsync(uri))
+            using (var response = await _http.GetAsync(uri, HttpCompletionOption.ResponseContentRead))
             {
                 var status = response.StatusCode;
                 var code = (int)status;

@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
+using Cube.FileSystem;
 using Cube.Net.Rss;
 using Cube.Settings;
 
@@ -36,7 +37,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public sealed class RssSubscribeCollection : IEnumerable, INotifyCollectionChanged
+    public sealed class RssSubscribeCollection : IEnumerable, INotifyCollectionChanged, IDisposable
     {
         #region Constructors
 
@@ -59,6 +60,21 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IO
+        /// 
+        /// <summary>
+        /// 入出力用のオブジェクトを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Operator IO
+        {
+            get => _monitor.IO;
+            set => _monitor.IO = value;
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -125,18 +141,24 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /// <param name="feed">RSS フィード</param>
+        /// 
+        /// <remarks>
+        /// TODO: Reset イベントではなく Add イベントを発生させるように
+        /// 修正する。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public void Add(RssFeed feed)
+        public void Add(RssFeed feed) => Reset(() =>
         {
             Default.Entries.Add(new RssEntry
             {
                 Title = feed.Title,
                 Uri   = feed.Link,
             });
+
             _feeds.Add(feed.Link, feed);
-            RaiseResetAction();
-        }
+            _monitor.Start();
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -150,6 +172,7 @@ namespace Cube.Net.App.Rss.Reader
         public void Clear()
         {
             _monitor.Stop();
+
             if (_items.Count > 0)
             {
                 _items.Clear();
@@ -168,18 +191,22 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="json">JSON ファイルのパス</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Load(string json) => Suppress(() =>
+        public void Load(string json) => Reset(() =>
         {
             Clear();
-            var src = SettingsType.Json.Load<List<RssCategory.Json>>(json);
-            foreach (var item in src.Select(e => e.Convert()))
+
+            using (var s = IO.OpenRead(json))
             {
-                MakeFeed(item);
-                _items.Add(item);
+                var src = SettingsType.Json.Load<List<RssCategory.Json>>(s);
+                foreach (var item in src.Select(e => e.Convert()))
+                {
+                    MakeFeed(item);
+                    _items.Add(item);
+                }
             }
+
             _monitor.Load();
             _monitor.Start();
-            RaiseResetAction();
         });
 
         /* ----------------------------------------------------------------- */
@@ -195,8 +222,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Save(string json)
         {
-            var data = _items.Select(e => new RssCategory.Json(e));
-            SettingsType.Json.Save(json, data);
+            using (var s = IO.OpenWrite(json))
+            {
+                var data = _items.Select(e => new RssCategory.Json(e));
+                SettingsType.Json.Save(s, data);
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -212,8 +242,9 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFeed Lookup(Uri uri)
-            => _feeds.ContainsKey(uri) ? _feeds[uri] : null;
+        public RssFeed Lookup(Uri uri) => _feeds.ContainsKey(uri) ? _feeds[uri] : null;
+
+        #region IEnumerable
 
         /* ----------------------------------------------------------------- */
         ///
@@ -246,25 +277,78 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
+        #region IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~RssSubscribeCollection
+        /// 
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        ~RssSubscribeCollection() { Dispose(false); }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            _disposed = true;
+            if (disposing) _monitor.Dispose();
+        }
+
+        #endregion
+
+        #endregion
+
         #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Suppress
+        /// Reset
         /// 
         /// <summary>
-        /// CollectionChanged イベントを抑制した状態で処理を実行します。
+        /// コレクション内容をリセットします。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void Suppress(Action action)
+        private void Reset(Action action)
         {
             try
             {
                 _items.CollectionChanged -= WhenCollectionChanged;
                 action();
             }
-            finally { _items.CollectionChanged += WhenCollectionChanged; }
+            finally
+            {
+                _items.CollectionChanged += WhenCollectionChanged;
+                var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+                CollectionChanged?.Invoke(this, e);
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -296,22 +380,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RaiseResetAction
-        /// 
-        /// <summary>
-        /// NotifyCollectionChangedAction.Reset を指定されたイベントを
-        /// 発生させます。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void RaiseResetAction()
-            => CollectionChanged?.Invoke(
-                this,
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
-            );
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// WhenCollectionChanged
         /// 
         /// <summary>
@@ -326,9 +394,10 @@ namespace Cube.Net.App.Rss.Reader
         }
 
         #region Fields
+        private bool _disposed = false;
+        private SynchronizationContext _context = SynchronizationContext.Current;
         private ObservableCollection<RssCategory> _items = new ObservableCollection<RssCategory>();
         private Dictionary<Uri, RssFeed> _feeds = new Dictionary<Uri, RssFeed>();
-        private SynchronizationContext _context = SynchronizationContext.Current;
         private RssMonitor _monitor = new RssMonitor();
         #endregion
 
