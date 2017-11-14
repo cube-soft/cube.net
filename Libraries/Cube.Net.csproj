@@ -69,6 +69,7 @@
     <Compile Include="Http\HttpOperations.cs" />
     <Compile Include="Http\HttpValueContent.cs" />
     <Compile Include="NativeMethods\UrlMon.cs" />
+    <Compile Include="NetworkMonitorBase.cs" />
     <Compile Include="Ntp\NtpClient.cs" />
     <Compile Include="Ntp\NtpParameters.cs" />
     <Compile Include="Ntp\NtpMonitor.cs" />

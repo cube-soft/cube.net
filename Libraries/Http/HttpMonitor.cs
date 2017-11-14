@@ -32,7 +32,7 @@ namespace Cube.Net.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class HttpMonitor<TValue> : IDisposable
+    public class HttpMonitor<TValue> : NetworkMonitorBase
     {
         #region Constructors
 
@@ -47,13 +47,12 @@ namespace Cube.Net.Http
         /// <param name="handler">HTTP 通信用ハンドラ</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected HttpMonitor(ContentHandler<TValue> handler) : base()
+        public HttpMonitor(ContentHandler<TValue> handler) : base()
         {
-            _dispose = new OnceAction<bool>(Dispose);
-            _http    = HttpClientFactory.Create(handler);
-            Handler  = handler;
-
-            _core.Subscribe(WhenTick);
+            _http   = HttpClientFactory.Create(handler);
+            Handler = handler;
+            Timeout = TimeSpan.FromSeconds(2);
+            Timer.Subscribe(WhenTick);
         }
 
         /* ----------------------------------------------------------------- */
@@ -99,80 +98,6 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public Uri Uri { get; set; }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// State
-        /// 
-        /// <summary>
-        /// オブジェクトの状態を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimerState State => _core.State;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LastPublished
-        /// 
-        /// <summary>
-        /// 最後に Publish が実行された日時を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public DateTime LastPublished => _core.LastPublished;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Interval
-        /// 
-        /// <summary>
-        /// 実行間隔を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimeSpan Interval
-        {
-            get => _core.Interval;
-            set => _core.Interval = value;
-        }
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryCount
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する最大回数を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public int RetryCount { get; set; } = 5;
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryInterval
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する間隔を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(10);
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Timeout
-        /// 
-        /// <summary>
-        /// タイムアウト時間を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan Timeout
-        {
-            get => _http.Timeout;
-            set => _http.Timeout = value;
-        }
-
         /* --------------------------------------------------------------------- */
         ///
         /// UserAgent
@@ -217,53 +142,6 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
-        ///
-        /// <summary>
-        /// 監視を実行します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Start() => Start(TimeSpan.Zero);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Start
-        ///
-        /// <summary>
-        /// 監視を実行します。
-        /// </summary>
-        /// 
-        /// <param name="delay">初期遅延時間</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Start(TimeSpan delay)
-        {
-            var state = _core.State;
-            _core.Start(delay);
-            if (state != TimerState.Stop) return;
-            this.LogDebug($"Start\tInterval:{Interval}\tInitialDelay:{delay}");
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Stop
-        ///
-        /// <summary>
-        /// 監視を停止します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Stop()
-        {
-            var state = _core.State;
-            _core.Stop();
-            if (state == TimerState.Stop) return;
-            this.LogDebug($"Stop\tLastPublished:{_core.LastPublished}");
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Subscribe
         ///
         /// <summary>
@@ -279,23 +157,20 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Reset
+        /// Stop
         ///
         /// <summary>
-        /// リセットします。
+        /// 監視を停止します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public virtual void Reset()
+        public override void Stop()
         {
-            var current = State;
-            _core.Reset();
-            if (current == TimerState.Run)
-            {
-                Stop();
-                Start();
-            }
+            base.Stop();
+            _http.CancelPendingRequests();
         }
+
+        #region Protected
 
         /* ----------------------------------------------------------------- */
         ///
@@ -324,7 +199,7 @@ namespace Cube.Net.Http
             foreach (var action in Subscriptions)
             {
                 try { action(uri, value); }
-                catch (Exception err) { this.LogWarn(err.ToString()); }
+                catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
         }
 
@@ -354,37 +229,6 @@ namespace Cube.Net.Http
             }
         }
 
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// HttpMonitorBase
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        ~HttpMonitor()
-        {
-            _dispose.Invoke(false);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
@@ -398,7 +242,7 @@ namespace Cube.Net.Http
         /// </param>
         /// 
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -426,7 +270,9 @@ namespace Cube.Net.Http
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
 
+            SetTimeout();
             var uri = GetRequestUri();
+
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
@@ -445,6 +291,21 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
+        /// SetTimeout
+        ///
+        /// <summary>
+        /// タイムアウト時間を設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void SetTimeout()
+        {
+            try { if (_http.Timeout != Timeout) _http.Timeout = Timeout; }
+            catch (Exception /* err */) { this.LogWarn("Timeout cannot be applied"); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// LogWarn
         ///
         /// <summary>
@@ -459,9 +320,7 @@ namespace Cube.Net.Http
         }
 
         #region Fields
-        private OnceAction<bool> _dispose;
         private HttpClient _http;
-        private NetworkAwareTimer _core = new NetworkAwareTimer();
         #endregion
 
         #endregion

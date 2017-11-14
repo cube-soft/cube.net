@@ -32,7 +32,7 @@ namespace Cube.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class NtpMonitor : IDisposable
+    public class NtpMonitor : NetworkMonitorBase
     {
         #region Constructors
 
@@ -75,53 +75,15 @@ namespace Cube.Net.Ntp
         public NtpMonitor(string server, int port) : base()
         {
             Interval = TimeSpan.FromHours(1);
-            _dispose = new OnceAction<bool>(Dispose);
             _server  = server;
             _port    = port;
-            _core.Subscribe(WhenTick);
+            Timer.Subscribe(WhenTick);
             SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
 
         #endregion
 
         #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// State
-        /// 
-        /// <summary>
-        /// オブジェクトの状態を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimerState State => _core.State;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Interval
-        /// 
-        /// <summary>
-        /// 実行間隔を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimeSpan Interval
-        {
-            get { return _core.Interval; }
-            set { _core.Interval = value; }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LastPublished
-        /// 
-        /// <summary>
-        /// 最後に Publish が実行された日時を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public DateTime LastPublished => _core.LastPublished;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -163,39 +125,6 @@ namespace Cube.Net.Ntp
                 Reset();
             }
         }
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryCount
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する最大回数を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public int RetryCount { get; set; } = 5;
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryInterval
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する間隔を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Timeout
-        /// 
-        /// <summary>
-        /// タイムアウト時間を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan Timeout { get; set; } = TimeSpan.FromMilliseconds(500);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -245,7 +174,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         protected virtual void OnTimeChanged(EventArgs e)
         {
-            if (_core.PowerMode == PowerModes.Suspend) return;
+            if (Timer.PowerMode == PowerModes.Suspend) return;
             Reset();
             TimeChanged?.Invoke(this, e);
         }
@@ -253,53 +182,6 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Start
-        ///
-        /// <summary>
-        /// 監視を実行します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Start() => Start(TimeSpan.Zero);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Start
-        ///
-        /// <summary>
-        /// 監視を実行します。
-        /// </summary>
-        /// 
-        /// <param name="delay">初期遅延時間</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Start(TimeSpan delay)
-        {
-            var state = _core.State;
-            _core.Start(delay);
-            if (state != TimerState.Stop) return;
-            this.LogDebug($"Start\tInterval:{Interval}\tInitialDelay:{delay}");
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Stop
-        ///
-        /// <summary>
-        /// 監視を停止します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Stop()
-        {
-            var state = _core.State;
-            _core.Stop();
-            if (state == TimerState.Stop) return;
-            this.LogDebug($"Stop\tLastPublished:{_core.LastPublished}");
-        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -318,32 +200,6 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Reset
-        ///
-        /// <summary>
-        /// リセットします。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// リセット時に直ちに NTP サーバと通信した場合、精度が悪い傾向が
-        /// あります。現在は、500 ミリ秒の待機時間を設ける事で回避して
-        /// います。
-        /// </remarks>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public virtual void Reset()
-        {
-            var current = State;
-            _core.Reset();
-            if (current == TimerState.Run)
-            {
-                Stop();
-                Start(TimeSpan.FromMilliseconds(500));
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Publish
         ///
         /// <summary>
@@ -356,57 +212,6 @@ namespace Cube.Net.Ntp
             foreach (var action in Subscriptions) action(value);
         }
 
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Monitor
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        ~NtpMonitor()
-        {
-            _dispose.Invoke(false);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        /// 
-        /// <param name="disposing">
-        /// マネージリソースを解放するかどうかを示す値
-        /// </param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing) _core.Dispose();
-        }
-
-        #endregion
-
         #endregion
 
         #region Implementations
@@ -418,11 +223,19 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// 一定間隔毎に実行されます。
         /// </summary>
+        /// 
+        /// <remarks>
+        /// アプリケーションの起動直後等に NTP 通信を実行すると精度の
+        /// 悪い傾向が確認されています。そのため、毎回の実行時の最初に
+        /// 500 ミリ秒の待機時間を設ける事としています。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         private async void WhenTick()
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
+
+            await Task.Delay(500); // see ramarks
 
             for (var i = 0; i < RetryCount; ++i)
             {
@@ -443,10 +256,8 @@ namespace Cube.Net.Ntp
         }
 
         #region Fields
-        private OnceAction<bool> _dispose;
         private string _server = string.Empty;
         private int _port = NtpClient.DefaultPort;
-        private NetworkAwareTimer _core = new NetworkAwareTimer();
         #endregion
 
         #endregion
