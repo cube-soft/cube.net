@@ -45,14 +45,12 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssFacade()
         {
-            var dir = _io.Get(AssemblyReader.Default.Location).DirectoryName;
-            var json = _io.Combine(dir, "Feeds.json");
-            if (System.IO.File.Exists(json)) Items.Load(json);
-
-            _monitor.Uris = Items.Uris;
-            _monitor.Interval = TimeSpan.FromHours(1);
-            _monitor.Subscribe(WhenReceived);
-            _monitor.Start();
+            var root  = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var dir   = @"CubeSoft\CubeRssReader";
+            var json = _io.Combine(root, dir, "Feeds.json");
+            if (_io.Exists(json)) Items.Load(json);
+            Items.CacheDirectory = _io.Combine(root, dir, "Cache");
+            Items.CollectionChanged += (s, e) => Items.Save(json);
         }
 
         #endregion
@@ -127,32 +125,8 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenReceived
-        /// 
-        /// <summary>
-        /// 新着フィード受信時に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenReceived(Uri uri, RssFeed feed)
-        {
-            var dest = Items.Lookup(uri);
-            if (dest == null) return;
-
-            dest.Id    = feed.Id;
-            dest.Icon  = feed.Icon;
-            dest.Items = feed.Items;
-        }
-
         #region Fields
-        private RssMonitor _monitor = new RssMonitor();
         private Operator _io = new Operator();
-        #endregion
-
         #endregion
     }
 }

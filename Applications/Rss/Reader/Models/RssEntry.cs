@@ -88,6 +88,13 @@ namespace Cube.Net.App.Rss.Reader
         {
             [DataMember] public string Title { get; set; }
             [DataMember] public Uri Uri { get; set; }
+
+            public Json(RssEntry src)
+            {
+                Title = src.Title;
+                Uri   = src.Uri;
+            }
+
             public RssEntry Convert(RssCategory src) => new RssEntry
             {
                 Title  = Title,
@@ -177,8 +184,16 @@ namespace Cube.Net.App.Rss.Reader
         internal class Json
         {
             [DataMember] string Title { get; set; }
-            [DataMember] List<Json> Categories { get; set; }
-            [DataMember] List<RssEntry.Json> Entries { get; set; }
+            [DataMember] IEnumerable<Json> Categories { get; set; }
+            [DataMember] IEnumerable<RssEntry.Json> Entries { get; set; }
+
+            public Json(RssCategory src)
+            {
+                Title      = src.Title;
+                Entries    = src.Entries?.Select(e => new RssEntry.Json(e));
+                Categories = src.Categories?.Select(e => new Json(e));
+            }
+
             public RssCategory Convert()
             {
                 var dest = new RssCategory

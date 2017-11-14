@@ -51,12 +51,33 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssSubscribeCollection()
         {
+            var io  = _monitor.IO;
+            var dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+            _monitor.CacheDirectory = io.Combine(dir, @"CubeSoft\CubeRssReader\Cache");
+            _monitor.Interval = TimeSpan.FromHours(1);
+            _monitor.Feeds = _feeds;
             _items.CollectionChanged += WhenCollectionChanged;
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CacheDirectory
+        /// 
+        /// <summary>
+        /// キャッシュ用ディレクトリのパスを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string CacheDirectory
+        {
+            get => _monitor.CacheDirectory;
+            set => _monitor.CacheDirectory = value;
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -79,17 +100,6 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public IEnumerable<RssCategory> Categories => _items;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Uris
-        /// 
-        /// <summary>
-        /// 購読しているフィードの URL 一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IEnumerable<Uri> Uris => _feeds.Keys;
 
         #endregion
 
@@ -143,6 +153,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Clear()
         {
+            _monitor.Stop();
             if (_items.Count > 0)
             {
                 _items.Clear();
@@ -170,8 +181,27 @@ namespace Cube.Net.App.Rss.Reader
                 MakeFeed(item);
                 _items.Add(item);
             }
+            _monitor.Load();
+            _monitor.Start();
             RaiseResetAction();
         });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Save
+        /// 
+        /// <summary>
+        /// JSON ファイルに保存します。
+        /// </summary>
+        /// 
+        /// <param name="json">JSON ファイルのパス</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Save(string json)
+        {
+            var data = _items.Select(e => new RssCategory.Json(e));
+            SettingsType.Json.Save(json, data);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -259,7 +289,7 @@ namespace Cube.Net.App.Rss.Reader
                 _feeds.Add(entry.Uri, new RssFeed
                 {
                     Title = entry.Title,
-                    Link  = entry.Uri,
+                    Links = new[] { entry.Uri },
                     Items = new RssArticle[0],
                 });
             }
@@ -303,6 +333,7 @@ namespace Cube.Net.App.Rss.Reader
         private ObservableCollection<RssCategory> _items = new ObservableCollection<RssCategory>();
         private Dictionary<Uri, RssFeed> _feeds = new Dictionary<Uri, RssFeed>();
         private SynchronizationContext _context = SynchronizationContext.Current;
+        private RssMonitor _monitor = new RssMonitor();
         #endregion
 
         #endregion
