@@ -57,7 +57,10 @@
                     <!-- Category -->
                     <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xf07b;" FontFamily="{StaticResource FontAwesome}" Margin="0,2,5,2"/>
+                            <TextBlock Text="&#xf07b;"
+                                       FontFamily="{StaticResource FontAwesome}"
+                                       FontSize="14"
+                                       Margin="0,2,8,0"/>
                             <TextBlock Text="{Binding Title}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
@@ -66,7 +69,10 @@
                     <!-- Entry -->
                     <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xf15b;" FontFamily="{StaticResource FontAwesome}" Margin="0,2,5,2"/>
+                            <TextBlock Text="&#xf0f6;"
+                                       FontFamily="{StaticResource FontAwesome}"
+                                       FontSize="14"
+                                       Margin="0,2,8,0"/>
                             <TextBlock Text="{Binding Title}" Margin="0,2,0,2"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
