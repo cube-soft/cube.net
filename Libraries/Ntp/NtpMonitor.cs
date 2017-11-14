@@ -88,17 +88,6 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// NetworkAvailable
-        /// 
-        /// <summary>
-        /// ネットワークが使用可能な状態かどうかを表す値を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool NetworkAvailable => _core.NetworkAvailable;
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// State
         /// 
         /// <summary>
@@ -174,17 +163,6 @@ namespace Cube.Net.Ntp
                 Reset();
             }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FailedCount
-        /// 
-        /// <summary>
-        /// サーバとの通信に失敗した回数を取得します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public int FailedCount { get; protected set; } = 0;
 
         /* --------------------------------------------------------------------- */
         ///
@@ -320,7 +298,7 @@ namespace Cube.Net.Ntp
             var state = _core.State;
             _core.Stop();
             if (state == TimerState.Stop) return;
-            this.LogDebug($"Stop\tLast:{_core.LastPublished}\tFaild:{FailedCount}");
+            this.LogDebug($"Stop\tLastPublished:{_core.LastPublished}");
         }
 
         /* ----------------------------------------------------------------- */
@@ -458,26 +436,10 @@ namespace Cube.Net.Ntp
                 }
                 catch (Exception err)
                 {
-                    Fail(err.ToString());
+                    this.LogWarn(err.ToString(), err);
                     await Task.Delay(RetryInterval);
                 }
             }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Fail
-        ///
-        /// <summary>
-        /// 通信に失敗した事を伝える処理を実行します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void Fail(string message)
-        {
-            ++FailedCount;
-            this.LogWarn(message);
-            this.LogWarn($"Failed\tCount:{FailedCount}");
         }
 
         #region Fields

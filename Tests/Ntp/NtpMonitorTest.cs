@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -47,22 +48,21 @@ namespace Cube.Net.Tests
         {
             using (var mon = new Ntp.NtpMonitor())
             {
-                Assert.That(mon.NetworkAvailable, Is.True);
-
                 mon.Server  = "ntp.nict.jp";
                 mon.Port    = 123;
                 mon.Timeout = TimeSpan.FromMilliseconds(500);
 
+                var cts   = new CancellationTokenSource();
                 var count = 0;
-                mon.Subscribe(_ => ++count);
+
+                mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start();
                 mon.Start(); // ignore
-                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+                await WaitAsync(cts.Token);
                 mon.Stop();
                 mon.Stop(); // ignore
 
                 Assert.That(count, Is.AtLeast(1));
-                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
 
@@ -80,21 +80,20 @@ namespace Cube.Net.Tests
         {
             using (var mon = new Ntp.NtpMonitor())
             {
-                Assert.That(mon.NetworkAvailable, Is.True);
-
                 mon.Server  = "ntp.cube-soft.jp";
                 mon.Port    = 123;
                 mon.Timeout = TimeSpan.FromMilliseconds(500);
 
+                var cts   = new CancellationTokenSource();
                 var count = 0;
-                mon.Subscribe(_ => ++count);
+
+                mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start(mon.Interval);
                 mon.Reset();
-                await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2));
+                await WaitAsync(cts.Token);
                 mon.Stop();
 
                 Assert.That(count, Is.EqualTo(1));
-                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
     }

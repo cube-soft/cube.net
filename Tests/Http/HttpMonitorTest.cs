@@ -54,18 +54,13 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start()
+        public async Task Start()
         {
             using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
-                Assert.That(mon.NetworkAvailable, Is.True);
-
-                mon.Version  = new SoftwareVersion("1.0.0");
                 mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Timeout  = TimeSpan.FromMilliseconds(1000);
                 mon.Uri      = new Uri("http://www.cube-soft.jp/");
-
-                Assert.That(mon.Uri, Is.EqualTo(new Uri("http://www.cube-soft.jp/")));
 
                 var cts = new CancellationTokenSource();
                 var sum = 0;
@@ -74,16 +69,12 @@ namespace Cube.Net.Tests.Http
                 mon.Start();
                 mon.Start(); // ignore
 
-                Assert.That(
-                    async() => await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token),
-                    Throws.TypeOf<TaskCanceledException>()
-                );
+                await WaitAsync(cts.Token);
 
                 mon.Stop();
                 mon.Stop(); // ignore
 
                 Assert.That(sum, Is.AtLeast(1));
-                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
 
@@ -97,12 +88,11 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Reset()
+        public async Task Reset()
         {
             using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
             {
-                mon.Version   = new SoftwareVersion("1.0.0");
-                mon.UserAgent = $"Cube.Net.Tests/{mon.Version.ToString(false)}";
+                mon.UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}";
                 mon.Interval  = TimeSpan.FromMinutes(1);
                 mon.Timeout   = TimeSpan.FromMilliseconds(1000);
                 mon.Uri       = new Uri("http://www.cube-soft.jp/");
@@ -115,15 +105,11 @@ namespace Cube.Net.Tests.Http
                 mon.Start(mon.Interval);
                 mon.Reset();
 
-                Assert.That(
-                    async() => await Task.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token),
-                    Throws.TypeOf<TaskCanceledException>()
-                );
+                await WaitAsync(cts.Token);
 
                 mon.Stop();
 
                 Assert.That(count, Is.EqualTo(1));
-                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
 

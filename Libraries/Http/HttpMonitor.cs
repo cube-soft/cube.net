@@ -19,21 +19,20 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Cube.Conversions;
 using Cube.Log;
 
 namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// HttpMonitor(TValue)
+    /// HttpMonitor
     ///
     /// <summary>
     /// 定期的に HTTP 通信を実行するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class HttpMonitor<TValue> : HttpMonitorBase<TValue>
+    public class HttpMonitor<TValue> : IDisposable
     {
         #region Constructors
 
@@ -48,7 +47,14 @@ namespace Cube.Net.Http
         /// <param name="handler">HTTP 通信用ハンドラ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public HttpMonitor(ContentHandler<TValue> handler) : base(handler) { }
+        protected HttpMonitor(ContentHandler<TValue> handler) : base()
+        {
+            _dispose = new OnceAction<bool>(Dispose);
+            _http    = HttpClientFactory.Create(handler);
+            Handler  = handler;
+
+            _core.Subscribe(WhenTick);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -95,86 +101,6 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Version
-        ///
-        /// <summary>
-        /// アプリケーションのバージョンを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SoftwareVersion Version { get; set; } = new SoftwareVersion();
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetRequestUris
-        ///
-        /// <summary>
-        /// リクエスト送信先 URL 一覧を取得します。
-        /// </summary>
-        /// 
-        /// <returns>URL 一覧</returns>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected override IEnumerable<Uri> GetRequestUris()
-            => new[] { Uri.With(Version) };
-
-        #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// HttpMonitorBase
-    ///
-    /// <summary>
-    /// 定期的に HTTP 通信を実行するための基底クラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public abstract class HttpMonitorBase<TValue> : IDisposable
-    {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// HttpMonitor
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="handler">HTTP 通信用ハンドラ</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected HttpMonitorBase(ContentHandler<TValue> handler) : base()
-        {
-            _dispose = new OnceAction<bool>(Dispose);
-            _http    = HttpClientFactory.Create(handler);
-            Handler  = handler;
-
-            _core.Subscribe(WhenTick);
-        }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// NetworkAvailable
-        /// 
-        /// <summary>
-        /// ネットワークが使用可能な状態かどうかを表す値を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool NetworkAvailable => _core.NetworkAvailable;
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// State
         /// 
         /// <summary>
@@ -209,30 +135,6 @@ namespace Cube.Net.Http
             get => _core.Interval;
             set => _core.Interval = value;
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// BurstInterval
-        /// 
-        /// <summary>
-        /// 複数の URL に対して通信を試みる場合、直前の URL が終了して
-        /// から次の URL に対してリクエストを送信するまでの間隔を取得
-        /// または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimeSpan BurstInterval { get; set; } = TimeSpan.FromSeconds(1);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FailedCount
-        /// 
-        /// <summary>
-        /// サーバとの通信に失敗した回数を取得します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public int FailedCount { get; protected set; } = 0;
 
         /* --------------------------------------------------------------------- */
         ///
@@ -357,7 +259,7 @@ namespace Cube.Net.Http
             var state = _core.State;
             _core.Stop();
             if (state == TimerState.Stop) return;
-            this.LogDebug($"Stop\tLast:{_core.LastPublished}\tFaild:{FailedCount}");
+            this.LogDebug($"Stop\tLastPublished:{_core.LastPublished}");
         }
 
         /* ----------------------------------------------------------------- */
@@ -406,8 +308,7 @@ namespace Cube.Net.Http
         /// <returns>URL 一覧</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        protected virtual IEnumerable<Uri> GetRequestUris()
-            => throw new NotImplementedException();
+        protected virtual Uri GetRequestUri() => Uri;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -447,9 +348,9 @@ namespace Cube.Net.Http
 
                 if (response.Content is HttpValueContent<TValue> content) Publish(uri, content.Value); // OK
                 else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
-                else if (digit == 4) Fail(uri, $"HTTP:{code} {status}");
+                else if (digit == 4) LogWarn(uri, $"HTTP:{code} {status}");
                 else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
-                else Fail(uri, $"Content is not {nameof(TValue)} ({code})");
+                else LogWarn(uri, $"Content is not {nameof(TValue)} ({code})");
             }
         }
 
@@ -464,7 +365,7 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        ~HttpMonitorBase()
+        ~HttpMonitor()
         {
             _dispose.Invoke(false);
         }
@@ -524,28 +425,8 @@ namespace Cube.Net.Http
         private async void WhenTick()
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
-            foreach (var uri in GetRequestUris())
-            {
-                await RetryAsync(uri);
-                await Task.Delay(BurstInterval);
-            }
-        }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RetryAsync
-        ///
-        /// <summary>
-        /// 処理を既定回数実行します。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// 処理に成功した時点で終了します。
-        /// </remarks>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private async Task RetryAsync(Uri uri)
-        {
+            var uri = GetRequestUri();
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
@@ -555,27 +436,26 @@ namespace Cube.Net.Http
                 }
                 catch (Exception err)
                 {
-                    Fail(uri, err.ToString());
+                    this.LogWarn(err.ToString(), err);
                     await Task.Delay(RetryInterval);
+                    this.LogDebug($"Retry\tCount:{i + 1}\tUrl:{uri}");
                 }
             }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Fail
+        /// LogWarn
         ///
         /// <summary>
-        /// 通信に失敗した事を伝える処理を実行します。
+        /// エラー内容をログに出力します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void Fail(Uri uri, string message)
+        private void LogWarn(Uri uri, string message)
         {
-            ++FailedCount;
             this.LogWarn(uri.ToString());
             this.LogWarn(message);
-            this.LogWarn($"Failed\tCount:{FailedCount}");
         }
 
         #region Fields

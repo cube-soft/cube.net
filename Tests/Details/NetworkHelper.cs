@@ -16,6 +16,8 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Net.NetworkInformation;
+using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Cube.Net.Tests
@@ -52,6 +54,21 @@ namespace Cube.Net.Tests
             {
                 Assert.Ignore("Network is not available");
             }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WaitAsync
+        /// 
+        /// <summary>
+        /// 一定時間待機します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected async Task WaitAsync(CancellationToken token)
+        {
+            try { await Task.Delay(5000, token); }
+            catch (TaskCanceledException /* err */) { /* OK */ }
         }
     }
 }
