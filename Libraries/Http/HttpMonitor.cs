@@ -156,21 +156,6 @@ namespace Cube.Net.Http
             return Disposable.Create(() => Subscriptions.Remove(action));
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Stop
-        ///
-        /// <summary>
-        /// 監視を停止します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public override void Stop()
-        {
-            base.Stop();
-            _http.CancelPendingRequests();
-        }
-
         #region Protected
 
         /* ----------------------------------------------------------------- */
