@@ -304,6 +304,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private async Task GetAsyncCore(Uri uri)
         {
+            using (var _ = _lock.LockAsync())
             using (var response = await _http.GetAsync(uri, HttpCompletionOption.ResponseContentRead))
             {
                 var status = response.StatusCode;
@@ -430,6 +431,7 @@ namespace Cube.Net.Rss
 
         #region Fields
         private HttpClient _http;
+        private readonly AsyncLock _lock = new AsyncLock();
         #endregion
 
         #endregion

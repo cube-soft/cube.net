@@ -216,6 +216,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected async Task PublishAsync(Uri uri)
         {
+            using (var _ = _lock.LockAsync())
             using (var response = await _http.GetAsync(uri, HttpCompletionOption.ResponseContentRead))
             {
                 var status = response.StatusCode;
@@ -269,7 +270,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private async void WhenTick()
         {
-            if (State != TimerState.Run || Subscriptions.Count <= 0) return;
+            if (Subscriptions.Count <= 0) return;
 
             SetTimeout();
             var uri = GetRequestUri();
@@ -322,6 +323,7 @@ namespace Cube.Net.Http
 
         #region Fields
         private HttpClient _http;
+        private readonly AsyncLock _lock = new AsyncLock();
         #endregion
 
         #endregion
