@@ -18,8 +18,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Cube.Net.Http;
 using Cube.Net.Rss;
@@ -55,13 +53,13 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task GetJsonAsync()
+        public void GetJsonAsync()
         {
             var uri    = new Uri("http://dev.cielquis.net/tests/example.json");
             var client = HttpClientFactory.Create();
-            var json   = await client.GetJsonAsync<PeopleContainer>(uri);
+            var json   = client.GetJsonAsync<PeopleContainer>(uri).Result;
 
-            Assert.That(json.People, Is.Not.Null);
+            Assert.That(json.People,         Is.Not.Null);
             Assert.That(json.People.Count,   Is.EqualTo(2));
             Assert.That(json.People[0].Id,   Is.EqualTo("0001"));
             Assert.That(json.People[0].Name, Is.EqualTo("Jack Daniel"));
@@ -81,11 +79,11 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task GetXmlAsync()
+        public void GetXmlAsync()
         {
             var uri    = new Uri("http://dev.cielquis.net/tests/example.xml");
             var client = HttpClientFactory.Create();
-            var xml    = await client.GetXmlAsync<PeopleContainer>(uri);
+            var xml    = client.GetXmlAsync<PeopleContainer>(uri).Result;
 
             Assert.That(xml.People, Is.Not.Null);
             Assert.That(xml.People.Count,   Is.EqualTo(2));
@@ -107,10 +105,10 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task GetRssAsync()
+        public void GetRssAsync()
         {
             var uri = new Uri("http://clown.hatenablog.jp/rss");
-            var rss = await HttpClientFactory.Create().GetRssAsync(uri);
+            var rss = HttpClientFactory.Create().GetRssAsync(uri).Result;
 
             Assert.That(rss.Id,            Is.Null);
             Assert.That(rss.Title,         Is.EqualTo("Life like a clown"));
@@ -129,13 +127,13 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task GetAsync_NullHandler()
+        public void GetAsync_NullHandler()
         {
             var uri  = new Uri("http://www.example.com/");
             var time = TimeSpan.FromSeconds(5);
 
             using (var http = HttpClientFactory.Create(null, time))
-            using (var response = await http.GetAsync(uri))
+            using (var response = http.GetAsync(uri).Result)
             {
                 Assert.That(response.IsSuccessStatusCode);
             }
@@ -151,12 +149,12 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task GetAsync_NotFound()
+        public void GetAsync_NotFound()
         {
             var uri = new Uri("http://www.cube-soft.jp/404.html");
             using (var http = HttpClientFactory.Create())
             {
-                var result = await http.GetAsync(uri, s => s.ReadByte());
+                var result = http.GetAsync(uri, s => s.ReadByte()).Result;
                 Assert.That(result, Is.EqualTo(0L));
             }
         }
@@ -171,12 +169,40 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task GetAsync_ConverterThrows()
+        public void GetAsync_ConverterThrows()
         {
             var uri = new Uri("http://www.example.com/");
             using (var http = HttpClientFactory.Create())
             {
-                var result = await http.GetAsync(uri, Throws);
+                Assert.That(
+                    () => http.GetAsync(uri, Error).Result,
+                    Throws.TypeOf<AggregateException>()
+                          .And
+                          .InnerException
+                          .InstanceOf<ArgumentException>()
+                );
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_IgnoreException
+        /// 
+        /// <summary>
+        /// 変換用オブジェクトが例外を無視する時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void GetAsync_IgnoreException()
+        {
+            var uri = new Uri("http://www.example.com/");
+            using (var http = HttpClientFactory.Create())
+            {
+                var result = http.GetAsync(
+                    uri,
+                    new ContentConverter<long>(Error) { IgnoreException = true }
+                ).Result;
                 Assert.That(result, Is.EqualTo(0L));
             }
         }
@@ -194,7 +220,7 @@ namespace Cube.Net.Tests
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private Func<Stream, long> Throws = (_) =>
+        private Func<Stream, long> Error = (_) =>
         {
             throw new ArgumentException("ErrorTest");
         };

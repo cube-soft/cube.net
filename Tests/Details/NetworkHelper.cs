@@ -67,7 +67,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         protected async Task WaitAsync(CancellationToken token)
         {
-            try { await Task.Delay(5000, token); }
+            try { await Task.Delay(10000, token); }
             catch (TaskCanceledException /* err */) { /* OK */ }
         }
     }

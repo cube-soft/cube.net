@@ -16,9 +16,9 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Cube.Net.Http;
 using NUnit.Framework;
 
 namespace Cube.Net.Tests.Http
@@ -28,7 +28,7 @@ namespace Cube.Net.Tests.Http
     /// HttpMonitorTest
     ///
     /// <summary>
-    /// Http.Monitor(T) のテスト用クラスです。
+    /// HttpMonitor(T) のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -54,32 +54,80 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Start()
+        public void Start()
         {
-            using (var mon = new Cube.Net.Http.HttpMonitor<int>(ReadByte))
+            var count = 0;
+            using (var mon = Create())
             {
-                mon.UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}";
-                mon.Interval  = TimeSpan.FromMilliseconds(100);
-                mon.Timeout   = TimeSpan.FromMilliseconds(1000);
-                mon.Uri       = new Uri("http://www.cube-soft.jp/");
+                Assert.That(mon.UserAgent, Does.StartWith("Cube.Net.Tests"));
 
-                var cts   = new CancellationTokenSource();
-                var count = 0;
+                mon.Interval = TimeSpan.FromMilliseconds(200);
+                mon.Uri = new Uri("http://www.example.com/");
 
+                var cts = new CancellationTokenSource();
                 mon.Subscribe((u, x) =>
                 {
-                    if (count >= 3) cts.Cancel();
                     count++;
+                    if (count >= 3) cts.Cancel();
                 });
 
                 mon.Start();
                 mon.Start(); // ignore
-                await WaitAsync(cts.Token);
+                WaitAsync(cts.Token).Wait();
                 mon.Stop();
                 mon.Stop(); // ignore
-
-                Assert.That(count, Is.EqualTo(3));
             }
+            Assert.That(count, Is.GreaterThanOrEqualTo(3));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Start_NoSubscriptions
+        /// 
+        /// <summary>
+        /// Subscribe している要素がない状態で監視した時の挙動を
+        /// 確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Start_NoSubscriptions() => Assert.DoesNotThrow(() =>
+        {
+            using (var mon = Create())
+            {
+                mon.Interval = TimeSpan.FromMilliseconds(10);
+                mon.Uri = new Uri("http://www.example.com/");
+
+                mon.Start();
+                Task.Delay(100).Wait();
+                mon.Stop();
+            }
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Start_NotFound
+        /// 
+        /// <summary>
+        /// 存在しない Web ページを監視した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Start_NotFound()
+        {
+            var count = 0;
+            using (var mon = Create())
+            {
+                mon.Interval = TimeSpan.FromMilliseconds(100);
+                mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
+                mon.Subscribe((_, x) => count++);
+
+                mon.Start();
+                Task.Delay(200).Wait();
+                mon.Stop();
+            }
+            Assert.That(count, Is.EqualTo(0));
         }
 
         /* ----------------------------------------------------------------- */
@@ -92,27 +140,23 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Reset()
+        public void Reset()
         {
-            using (var mon = new Cube.Net.Http.HttpMonitor<int>(ReadByte))
+            var count = 0;
+            using (var mon = Create())
             {
-                mon.UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}";
-                mon.Interval  = TimeSpan.FromMinutes(1);
-                mon.Timeout   = TimeSpan.FromMilliseconds(1000);
-                mon.Uri       = new Uri("http://www.cube-soft.jp/");
-
-                var cts   = new CancellationTokenSource();
-                var count = 0;
-
+                mon.Interval = TimeSpan.FromMinutes(1);
+                mon.Uri = new Uri("http://www.example.com/");
+                var cts = new CancellationTokenSource();
                 mon.Subscribe((u, x) => { ++count; cts.Cancel(); });
+
                 mon.Reset();
                 mon.Start(mon.Interval);
                 mon.Reset();
-                await WaitAsync(cts.Token);
+                WaitAsync(cts.Token).Wait();
                 mon.Stop();
-
-                Assert.That(count, Is.EqualTo(1));
             }
+            Assert.That(count, Is.EqualTo(1));
         }
 
         #endregion
@@ -121,14 +165,25 @@ namespace Cube.Net.Tests.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ReadByte
+        /// Create
         /// 
         /// <summary>
-        /// 変換処理を実行する関数オブジェクトです。
+        /// HttpMonitor オブジェクトを生成します。
         /// </summary>
         /// 
+        /// <remarks>
+        /// テスト中で 3XX が返されると不都合な項目があるため
+        /// HttpMonitor のテストでは EntityTag は無効に設定しています。
+        /// </remarks>
+        /// 
         /* ----------------------------------------------------------------- */
-        private Func<Stream, int> ReadByte = (s) => s.ReadByte();
+        private HttpMonitor<int> Create() => new HttpMonitor<int>(
+            new ContentHandler<int>(s => s.ReadByte()) { UseEntityTag = false })
+        {
+            Interval  = TimeSpan.FromMinutes(1),
+            Timeout   = TimeSpan.FromSeconds(2),
+            UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}",
+        };
 
         #endregion
     }
