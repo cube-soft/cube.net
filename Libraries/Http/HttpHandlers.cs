@@ -307,7 +307,7 @@ namespace Cube.Net.Http
                 var stream = await response.Content.ReadAsStreamAsync();
                 response.Content = new HttpValueContent<TValue>(
                     response.Content,
-                    Converter.Invoke(stream)
+                    Converter.Convert(stream)
                 );
             }
             return response;
