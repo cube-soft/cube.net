@@ -52,7 +52,7 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Invoke
+        /// Convert
         ///
         /// <summary>
         /// 変換処理を実行します。
@@ -63,7 +63,7 @@ namespace Cube.Net.Http
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        TValue Invoke(Stream src);
+        TValue Convert(Stream src);
     }
 
     /* --------------------------------------------------------------------- */
@@ -122,9 +122,9 @@ namespace Cube.Net.Http
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public TValue Invoke(Stream src)
+        public TValue Convert(Stream src)
         {
-            try { return OnInvoke(src); }
+            try { return OnConvert(src); }
             catch (Exception err)
             {
                 if (IgnoreException) this.LogWarn(err.ToString(), err);
@@ -135,7 +135,7 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnInvoke
+        /// OnConvert
         ///
         /// <summary>
         /// 変換処理を実行します。
@@ -144,9 +144,14 @@ namespace Cube.Net.Http
         /// <param name="src">Stream オブジェクト</param>
         /// 
         /// <returns>変換後のオブジェクト</returns>
+        /// 
+        /// <remarks>
+        /// 継承したクラスで実装する必要があります。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual TValue OnInvoke(Stream src) => throw new NotImplementedException();
+        protected virtual TValue OnConvert(Stream src)
+            => throw new NotImplementedException();
 
         #endregion
     }
@@ -186,7 +191,7 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnInvoke
+        /// OnConvert
         ///
         /// <summary>
         /// 変換処理を実行します。
@@ -197,7 +202,7 @@ namespace Cube.Net.Http
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        protected override TValue OnInvoke(Stream src) => _func(src);
+        protected override TValue OnConvert(Stream src) => _func(src);
 
         #endregion
 
