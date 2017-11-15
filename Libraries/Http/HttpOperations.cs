@@ -54,17 +54,14 @@ namespace Cube.Net.Http
         {
             using (var response = await client.GetAsync(uri))
             {
-                if (response == null) return default(T);
-                else if (!response.IsSuccessStatusCode)
-                {
-                    client.LogWarn($"StatusCode:{response.StatusCode}");
-                    return default(T);
-                }
-
                 try
                 {
-                    var stream = await response.Content.ReadAsStreamAsync();
-                    return converter.Invoke(stream);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stream = await response.Content.ReadAsStreamAsync();
+                        return converter.Invoke(stream);
+                    }
+                    else client.LogWarn($"StatusCode:{response.StatusCode}");
                 }
                 catch (Exception err) { client.LogWarn(err.ToString(), err); }
             }
