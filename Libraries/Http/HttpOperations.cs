@@ -47,23 +47,32 @@ namespace Cube.Net.Http
         /// <param name="converter">変換用オブジェクト</param>
         /// 
         /// <returns>変換結果</returns>
+        /// 
+        /// <remarks>
+        /// 例外の扱いについては、IContentConverter(T).IgnoreException の
+        /// 設定に準じます。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         public static async Task<T> GetAsync<T>(this HttpClient client,
             Uri uri, IContentConverter<T> converter)
         {
-            using (var response = await client.GetAsync(uri))
+            try
             {
-                try
+                using (var response = await client.GetAsync(uri))
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         var stream = await response.Content.ReadAsStreamAsync();
-                        return converter.Invoke(stream);
+                        return converter.Convert(stream);
                     }
                     else client.LogWarn($"StatusCode:{response.StatusCode}");
                 }
-                catch (Exception err) { client.LogWarn(err.ToString(), err); }
+            }
+            catch (Exception err)
+            {
+                if (converter.IgnoreException) client.LogWarn(err.ToString(), err);
+                else throw;
             }
             return default(T);
         }
