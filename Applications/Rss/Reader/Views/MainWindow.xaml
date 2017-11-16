@@ -94,7 +94,7 @@
         <!-- Sidebar -->
         
         <!-- Feeds -->
-        <ListView ItemsSource="{Binding Feed.Value.Items}"
+        <ListView ItemsSource="{Binding Feed.Value.UnreadItems}"
                   Style="{StaticResource FeedsStyle}"
                   ItemContainerStyle="{StaticResource FeedsItemStyle}"
                   SelectionMode="Single"
