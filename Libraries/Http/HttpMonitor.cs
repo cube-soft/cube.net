@@ -134,8 +134,8 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected IList<Action<Uri, TValue>> Subscriptions { get; }
-            = new List<Action<Uri, TValue>>();
+        protected IList<Func<Uri, TValue, Task>> Subscriptions { get; }
+            = new List<Func<Uri, TValue, Task>>();
 
         #endregion
 
@@ -146,15 +146,35 @@ namespace Cube.Net.Http
         /// Subscribe
         ///
         /// <summary>
-        /// データ受信時に実行する処理を登録します。
+        /// データ受信時に非同期実行する処理を登録します。
         /// </summary>
         /// 
+        /// <param name="action">非同期実行する処理</param>
+        /// 
+        /// <returns>登録解除用オブジェクト</returns>
+        /// 
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<Uri, TValue> action)
+        public IDisposable Subscribe(Func<Uri, TValue, Task> action)
         {
             Subscriptions.Add(action);
             return Disposable.Create(() => Subscriptions.Remove(action));
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscribe
+        ///
+        /// <summary>
+        /// データ受信時に実行する処理を登録します。
+        /// </summary>
+        /// 
+        /// <param name="action">実行する処理</param>
+        /// 
+        /// <returns>登録解除用オブジェクト</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public IDisposable Subscribe(Action<Uri, TValue> action)
+            => Subscribe((u, v) => Task.Run(() => action(u, v)));
 
         #region Protected
 
@@ -180,11 +200,11 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected virtual void Publish(Uri uri, TValue value)
+        protected virtual async Task Publish(Uri uri, TValue value)
         {
             foreach (var action in Subscriptions)
             {
-                try { action(uri, value); }
+                try { await action(uri, value); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
         }
@@ -208,7 +228,7 @@ namespace Cube.Net.Http
                 var code   = (int)status;
                 var digit  = code / 100;
 
-                if (response.Content is HttpValueContent<TValue> content) Publish(uri, content.Value); // OK
+                if (response.Content is HttpValueContent<TValue> c) await Publish(uri, c.Value); // OK
                 else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
                 else if (digit == 4) LogWarn(uri, $"HTTP:{code} {status}");
                 else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
@@ -253,7 +273,7 @@ namespace Cube.Net.Http
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private async void WhenTick()
+        private async Task WhenTick()
         {
             if (Subscriptions.Count <= 0) return;
 

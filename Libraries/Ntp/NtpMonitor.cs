@@ -146,7 +146,8 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected IList<Action<TimeSpan>> Subscriptions { get; } = new List<Action<TimeSpan>>();
+        protected IList<Func<TimeSpan, Task>> Subscriptions { get; }
+            = new List<Func<TimeSpan, Task>>();
 
         #endregion
 
@@ -174,7 +175,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         protected virtual void OnTimeChanged(EventArgs e)
         {
-            if (Timer.PowerMode == PowerModes.Suspend) return;
+            if (Power.Mode == PowerModes.Suspend) return;
             Reset();
             TimeChanged?.Invoke(this, e);
         }
@@ -192,11 +193,23 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<TimeSpan> action)
+        public IDisposable Subscribe(Func<TimeSpan, Task> action)
         {
             Subscriptions.Add(action);
             return Disposable.Create(() => Subscriptions.Remove(action));
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscribe
+        ///
+        /// <summary>
+        /// データ受信時に実行する処理を登録します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public IDisposable Subscribe(Action<TimeSpan> action)
+            => Subscribe(e => Task.Run(() => action(e)));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -207,9 +220,13 @@ namespace Cube.Net.Ntp
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected virtual void Publish(TimeSpan value)
+        protected virtual async Task Publish(TimeSpan value)
         {
-            foreach (var action in Subscriptions) action(value);
+            foreach (var action in Subscriptions)
+            {
+                try { await action(value); }
+                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            }
         }
 
         #endregion
@@ -231,7 +248,7 @@ namespace Cube.Net.Ntp
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        private async void WhenTick()
+        private async Task WhenTick()
         {
             if (State != TimerState.Run || Subscriptions.Count <= 0) return;
 
@@ -243,7 +260,7 @@ namespace Cube.Net.Ntp
                 {
                     var client = new NtpClient(Server, Port) { Timeout = Timeout };
                     var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid) Publish(packet.LocalClockOffset);
+                    if (packet != null && packet.IsValid) await Publish(packet.LocalClockOffset);
                     else throw new ArgumentException("InvalidPacket");
                     break;
                 }
@@ -251,6 +268,7 @@ namespace Cube.Net.Ntp
                 {
                     this.LogWarn(err.ToString(), err);
                     await Task.Delay(RetryInterval);
+                    this.LogDebug($"Retry\tCount:{i + 1}\tServer:{Server}");
                 }
             }
         }

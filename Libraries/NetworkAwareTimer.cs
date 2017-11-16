@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using Microsoft.Win32;
 
 namespace Cube.Net
@@ -63,21 +64,6 @@ namespace Cube.Net
 
         #endregion
 
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// NetworkAvailable
-        /// 
-        /// <summary>
-        /// ネットワークが使用可能な状態かどうかを表す値を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool NetworkAvailable => Network.Available;
-
-        #endregion
-
         #region Events
 
         /* ----------------------------------------------------------------- */
@@ -102,8 +88,8 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
-            if (NetworkAvailable && State == TimerState.Suspend) Resume();
-            else if (!NetworkAvailable && State == TimerState.Run) Suspend();
+            if (Network.Available && State == TimerState.Suspend) Resume();
+            else if (!Network.Available && State == TimerState.Run) Suspend();
             NetworkChanged?.Invoke(this, e);
         }
 
@@ -125,10 +111,10 @@ namespace Cube.Net
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void Publish()
+        protected override async Task Publish()
         {
-            if (!NetworkAvailable) Suspend();
-            else base.Publish();
+            if (!Network.Available) Suspend();
+            else await base.Publish();
         }
 
         /* ----------------------------------------------------------------- */
@@ -142,7 +128,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected override void OnPowerModeChanged(PowerModeChangedEventArgs e)
         {
-            if (!NetworkAvailable)
+            if (!Network.Available)
             {
                 if (State == TimerState.Run) Suspend();
                 return;

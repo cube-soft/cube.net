@@ -214,10 +214,6 @@ namespace Cube.Net.Rss
             }
         }
 
-        #region Protected
-
-        #endregion
-
         #endregion
 
         #region Implementations
@@ -340,7 +336,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async void WhenTick()
+        private async Task WhenTick()
         {
             if (Feeds == null) return;
             SetTimeout();
