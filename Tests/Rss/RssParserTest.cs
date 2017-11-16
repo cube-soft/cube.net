@@ -97,6 +97,29 @@ namespace Cube.Net.Tests
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ParseFeed_Content
+        /// 
+        /// <summary>
+        /// UnreadItems の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TestCase("SampleRss20-01.xml")]
+        public void ParseFeed_UnreadItems(string filename)
+        {
+            using (var stream = File.OpenRead(Example(filename)))
+            {
+                var feed  = RssParser.Create(stream);
+                var count = feed.Items.Count();
+
+                Assert.That(feed.UnreadItems.Count(), Is.EqualTo(count));
+                feed.Items[0].Read = true;
+                Assert.That(feed.UnreadItems.Count(), Is.EqualTo(count - 1));
+            }
+        }
+
         #endregion
 
         #region TestCases
