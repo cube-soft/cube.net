@@ -58,8 +58,8 @@ namespace Cube.Net.Rss
                     Id          = feed.Id,
                     Title       = feed.Title?.Text,
                     Description = feed.Description?.Text,
-                    Links       = feed.Links?.Select(e => e.Uri),
-                    Items       = feed.Items?.Select(e => Convert(e)),
+                    Links       = feed.Links?.Select(e => e.Uri).ToList(),
+                    Items       = feed.Items?.Select(e => Convert(e)).ToList(),
                 };
             }
         }
@@ -83,8 +83,8 @@ namespace Cube.Net.Rss
             Title       = src.Title?.Text,
             Summary     = src.Summary?.Text,
             Content     = GetContent(src),
-            Categories  = src.Categories?.Select(x => x.Name),
-            Links       = src.Links?.Select(e => e.Uri),
+            Categories  = src.Categories?.Select(x => x.Name).ToList(),
+            Links       = src.Links?.Select(e => e.Uri).ToList(),
             PublishTime = src.PublishDate.LocalDateTime,
         };
 

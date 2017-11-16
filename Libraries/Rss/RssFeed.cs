@@ -82,7 +82,7 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public IEnumerable<Uri> Links { get; set; }
+        public IList<Uri> Links { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -129,7 +129,18 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public IEnumerable<RssArticle> Items { get; set; }
+        public IList<RssArticle> Items { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UnreadItems
+        /// 
+        /// <summary>
+        /// 未読の新着記事一覧を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IEnumerable<RssArticle> UnreadItems => Items?.Where(e => !e.Read);
 
         #endregion
     }
@@ -210,7 +221,7 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public IEnumerable<Uri> Links { get; set; }
+        public IList<Uri> Links { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -245,7 +256,7 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public IEnumerable<string> Categories { get; set; }
+        public IList<string> Categories { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
