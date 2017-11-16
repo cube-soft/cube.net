@@ -24,15 +24,15 @@ namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssFeed
+    /// RssArticle
     ///
     /// <summary>
-    /// RSS 情報を保持するクラスです。
+    /// RSS の項目情報を保持するクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class RssFeed : ObservableProperty
+    public class RssArticle : ObservableProperty
     {
         #region Properties
 
@@ -41,7 +41,7 @@ namespace Cube.Net.Rss
         /// Id
         /// 
         /// <summary>
-        /// Web サイトの ID を取得または設定します。
+        /// 記事 ID を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -57,7 +57,7 @@ namespace Cube.Net.Rss
         /// Title
         /// 
         /// <summary>
-        /// Web サイトのタイトルを取得または設定します。
+        /// 記事タイトルを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -65,31 +65,67 @@ namespace Cube.Net.Rss
         public string Title
         {
             get => _title;
-            set => _title = value;
+            set => SetProperty(ref _title, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Description
+        /// Summary
         /// 
         /// <summary>
-        /// Web サイトの概要を取得または設定します。
+        /// 記事の概要を取得または設定します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// RSS では description タグ、Atom では summary タグに相当します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public string Summary
+        {
+            get => _summary;
+            set => SetProperty(ref _summary, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Content
+        /// 
+        /// <summary>
+        /// 記事の詳細内容を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public string Content
+        {
+            get => _content;
+            set => SetProperty(ref _content, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Categories
+        /// 
+        /// <summary>
+        /// 記事の属するカテゴリ一覧を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public string Description
+        public IList<string> Categories
         {
-            get => _description;
-            set => _description = value;
+            get => _categories;
+            set => SetProperty(ref _categories, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Links
+        /// Link
         /// 
         /// <summary>
-        /// Web サイトの URL 一覧を取得または設定します。
+        /// 記事の URL 一覧を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -105,7 +141,7 @@ namespace Cube.Net.Rss
         /// Link
         /// 
         /// <summary>
-        /// Web サイトの URL 一覧の先頭要素を取得または設定します。
+        /// 記事で最初に出現した URL を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -113,73 +149,47 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Icon
+        /// PublishTime
         /// 
         /// <summary>
-        /// Web サイトのアイコンを示す URL を取得または設定します。
+        /// 記事の発行日時を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public Uri Icon
+        public DateTime PublishTime
         {
-            get => _icon;
-            set => _icon = value;
+            get => _publishTime;
+            set => SetProperty(ref _publishTime, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LastChecked
+        /// Read
         /// 
         /// <summary>
-        /// RSS フィードを最後にチェックした日時を取得または設定します。
+        /// 既読かどうかを示す値を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public DateTime LastChecked
+        public bool Read
         {
-            get => _lastChecked;
-            set => _lastChecked = value;
+            get => _read;
+            set => SetProperty(ref _read, value);
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Items
-        /// 
-        /// <summary>
-        /// 新着記事一覧を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public IList<RssArticle> Items
-        {
-            get => _items;
-            set => _items = value;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// UnreadItems
-        /// 
-        /// <summary>
-        /// 未読の新着記事一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IEnumerable<RssArticle> UnreadItems => Items?.Where(e => !e.Read);
 
         #endregion
 
         #region Fields
         private string _id = string.Empty;
         private string _title = string.Empty;
-        private string _description = string.Empty;
+        private string _summary = string.Empty;
+        private string _content = string.Empty;
+        private IList<string> _categories = null;
         private IList<Uri> _links = null;
-        private Uri _icon = null;
-        private DateTime _lastChecked = DateTime.MinValue;
-        private IList<RssArticle> _items = null;
+        private DateTime _publishTime = DateTime.MinValue;
+        private bool _read = false;
         #endregion
     }
 }
