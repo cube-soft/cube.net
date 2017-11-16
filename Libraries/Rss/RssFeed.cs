@@ -247,6 +247,18 @@ namespace Cube.Net.Rss
         [DataMember]
         public IEnumerable<string> Categories { get; set; }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Read
+        /// 
+        /// <summary>
+        /// 既読かどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public bool Read { get; set; }
+
         #endregion
     }
 }
