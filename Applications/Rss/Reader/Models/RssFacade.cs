@@ -125,26 +125,35 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Format
+        /// Read
         /// 
         /// <summary>
-        /// RSS フィード中の記事内容を整形します。
+        /// RSS フィード中の記事内容を取得します。
         /// </summary>
         /// 
         /// <param name="src">対象とする記事</param>
         /// 
         /// <returns>表示する文字列</returns>
+        /// 
+        /// <remarks>
+        /// Read メソッドが実行されたタイミングで RssArticle.Read が
+        /// true に設定されます。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public string Format(RssArticle src) => string.Format(
-            Properties.Resources.Skeleton,
-            Properties.Resources.SkeletonStyle,
-            src.Link,
-            src.Link,
-            src.Title,
-            src.PublishTime,
-            !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
-        );
+        public string Read(RssArticle src)
+        {
+            src.Read = true;
+            return string.Format(
+                Properties.Resources.Skeleton,
+                Properties.Resources.SkeletonStyle,
+                src.Link,
+                src.Link,
+                src.Title,
+                src.PublishTime,
+                !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
+            );
+        }
 
         #endregion
     }

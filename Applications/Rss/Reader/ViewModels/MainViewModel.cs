@@ -156,7 +156,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand<SelectionList> SelectArticle
             => _selectArticle = _selectArticle ?? new RelayCommand<SelectionList>(
-                e => Content.Value = _model.Format(e.SelectedItem as RssArticle),
+                e => Content.Value = _model.Read(e.SelectedItem as RssArticle),
                 e => e.SelectedItem is RssArticle
             );
 
