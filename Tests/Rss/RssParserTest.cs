@@ -88,18 +88,13 @@ namespace Cube.Net.Tests
         {
             using (var stream = File.OpenRead(Example(filename)))
             {
-                var item = RssParser.Create(stream).Items.First();
-                Assert.That(item.Links.Count(), Is.GreaterThan(0));
-                Assert.That(item.PublishTime,   Is.GreaterThan(DateTime.MinValue));
-                Assert.That(item.Title,         Is.Not.Null.And.Not.Empty);
-                Assert.That(item.Read,          Is.False);
-                return item.Content.Length;
+                return RssParser.Create(stream).Items.First().Content.Length;
             }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ParseFeed_Content
+        /// ParseFeed_UnreadItems
         /// 
         /// <summary>
         /// UnreadItems の挙動を確認します。
