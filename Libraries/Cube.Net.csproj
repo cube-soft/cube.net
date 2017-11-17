@@ -69,6 +69,7 @@
     <Compile Include="Http\HttpClientFactory.cs" />
     <Compile Include="Http\HttpHandlers.cs" />
     <Compile Include="Http\HttpMonitor.cs" />
+    <Compile Include="Http\HttpMonitorBase.cs" />
     <Compile Include="Http\HttpOperations.cs" />
     <Compile Include="Http\HttpValueContent.cs" />
     <Compile Include="NativeMethods\UrlMon.cs" />
