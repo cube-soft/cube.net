@@ -16,7 +16,9 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading;
+using Cube.Net.Rss;
 using NUnit.Framework;
 
 namespace Cube.Net.Tests.Rss
@@ -43,21 +45,25 @@ namespace Cube.Net.Tests.Rss
         /// 
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Start()
+        public void Start()
         {
             var uri = new Uri("http://blog.cube-soft.jp/?feed=rss2");
+            var src = new Dictionary<Uri, RssFeed>();
 
-            using (var mon = new Cube.Net.Rss.RssMonitor())
+            using (var mon = new RssMonitor(src))
             {
-                mon.Timeout = TimeSpan.FromMilliseconds(2000);
-                mon.CacheDirectory = Results;
-                mon.Add(uri);
+                var cts = new CancellationTokenSource();
+                mon.Subscribe((u, v) => cts.Cancel());
+                mon.Register(uri);
                 mon.Start();
-                await Task.Delay(2000);
+                WaitAsync(cts.Token).Wait();
                 mon.Stop();
             }
 
-            Assert.That(IO.Exists(Result("722a6df5a86c7464e1eeaeb691ba50be")), Is.True);
+            Assert.That(src.ContainsKey(uri), Is.True);
+            Assert.That(src[uri].Title,       Is.Not.Null.And.Not.Empty);
+            Assert.That(src[uri].LastChecked, Is.Not.EqualTo(DateTime.MinValue));
+            Assert.That(src[uri].Items.Count, Is.GreaterThan(0));
         }
     }
 }

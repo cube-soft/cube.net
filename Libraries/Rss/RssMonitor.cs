@@ -18,13 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-using Cube.FileSystem;
 using Cube.Net.Http;
-using Cube.Settings;
 using Cube.Log;
 
 namespace Cube.Net.Rss
@@ -38,7 +33,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssMonitor : NetworkMonitorBase
+    public class RssMonitor : HttpMonitorBase<RssFeed>
     {
         #region Constructors
 
@@ -51,7 +46,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor() : this(new RssContentConverter()) { }
+        public RssMonitor() : this(new Dictionary<Uri, RssFeed>()) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -61,11 +56,17 @@ namespace Cube.Net.Rss
         /// オブジェクトを初期化します。
         /// </summary>
         /// 
-        /// <param name="converter">変換用オブジェクト</param>
+        /// <param name="buffer">結果を保持するためのバッファ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor(IContentConverter<RssFeed> converter)
-            : this(new ContentHandler<RssFeed>(converter) { UseEntityTag = false }) { }
+        public RssMonitor(IDictionary<Uri, RssFeed> buffer) : this(buffer,
+            new ContentHandler<RssFeed>(new RssContentConverter())
+            {
+                UseEntityTag = false,
+            })
+        {
+            Timer.Subscribe(WhenTick);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -75,15 +76,15 @@ namespace Cube.Net.Rss
         /// オブジェクトを初期化します。
         /// </summary>
         /// 
+        /// <param name="buffer">結果を保持するためのバッファ</param>
         /// <param name="handler">HTTP 通信用ハンドラ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor(ContentHandler<RssFeed> handler) : base()
+        public RssMonitor(IDictionary<Uri, RssFeed> buffer, ContentHandler<RssFeed> handler)
+            : base(handler)
         {
-            _http   = HttpClientFactory.Create(handler);
-            Handler = handler;
-            Timeout = TimeSpan.FromSeconds(2);
-            Timer.Subscribe(WhenTick);
+            System.Diagnostics.Debug.Assert(buffer != null);
+            Feeds = buffer;
         }
 
         #endregion
@@ -99,40 +100,7 @@ namespace Cube.Net.Rss
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public IDictionary<Uri, RssFeed> Feeds { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CacheDirectory
-        ///
-        /// <summary>
-        /// キャッシュの存在するディレクトリのパスを取得または設定します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public string CacheDirectory { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IO
-        ///
-        /// <summary>
-        /// 入出力用オブジェクトを取得または設定します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public Operator IO { get; set; } = new Operator();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Handler
-        ///
-        /// <summary>
-        /// HTTP ハンドラを取得します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected ContentHandler<RssFeed> Handler { get; }
+        protected IDictionary<Uri, RssFeed> Feeds { get; }
 
         #endregion
 
@@ -140,119 +108,27 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Add
+        /// Register
         ///
         /// <summary>
-        /// 監視対象となる URL を追加します。
+        /// 監視対象となる RSS フィード URL を登録します。
         /// </summary>
         /// 
-        /// <param name="uri">URL</param>
+        /// <param name="uri">RSS フィード URL</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Add(Uri uri)
+        public void Register(Uri uri)
         {
-            if (Feeds == null) Feeds = new Dictionary<Uri, RssFeed>();
-            if (!Feeds.ContainsKey(uri)) Feeds.Add(uri, new RssFeed());
-        }
+            if (Feeds.ContainsKey(uri)) return;
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Load
-        ///
-        /// <summary>
-        /// キャッシュファイルを読み込みます。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Load()
-        {
-            if (Feeds == null || string.IsNullOrEmpty(CacheDirectory)) return;
-            foreach (var uri in Feeds.Keys.ToArray())
-            {
-                Log(() =>
-                {
-                    var feed = Load(uri);
-                    if (feed != null) Feeds[uri] = feed;
-                });
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Save
-        ///
-        /// <summary>
-        /// 現在の内容をファイルに保存します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Save()
-        {
-            if (Feeds == null || string.IsNullOrEmpty(CacheDirectory)) return;
-            foreach (var kv in Feeds) Log(() => Save(kv.Key, kv.Value));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        /// 
-        /// <param name="disposing">
-        /// マネージリソースを解放するかどうかを示す値
-        /// </param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _http.Dispose();
-                Handler.Dispose();
-            }
+            var feed = new RssFeed { Title = uri.ToString() };
+            feed.Links.Add(uri);
+            Feeds.Add(uri, feed);
         }
 
         #endregion
 
         #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Save
-        ///
-        /// <summary>
-        /// RSS フィードをファイルに保存します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Save(Uri uri, RssFeed feed)
-        {
-            if (string.IsNullOrEmpty(CacheDirectory)) return;
-            if (!IO.Exists(CacheDirectory)) IO.CreateDirectory(CacheDirectory);
-
-            using (var s = IO.OpenWrite(GetPath(uri))) SettingsType.Json.Save(s, feed);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Load
-        ///
-        /// <summary>
-        /// RSS フィードをファイルから読み込みます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private RssFeed Load(Uri uri)
-        {
-            if (string.IsNullOrEmpty(CacheDirectory)) return default(RssFeed);
-
-            var path = GetPath(uri);
-            if (!IO.Exists(path)) return default(RssFeed);
-
-            using (var s = IO.OpenRead(path)) return SettingsType.Json.Load<RssFeed>(s);
-        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -263,68 +139,16 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void Update(Uri uri, RssFeed feed)
+        protected override Task Publish(Uri uri, RssFeed value)
         {
             if (Feeds.ContainsKey(uri))
             {
-                Feeds[uri].Title       = feed.Title;
-                Feeds[uri].Items       = feed.Items;
+                Feeds[uri].Title = value.Title;
+                Feeds[uri].Items = value.Items;
                 Feeds[uri].LastChecked = DateTime.Now;
+                return base.Publish(uri, value);
             }
-            Save(uri, feed);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsyncCore
-        ///
-        /// <summary>
-        /// 指定された URL から RSS フィードを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task GetAsyncCore(Uri uri)
-        {
-            using (var _ = _lock.LockAsync())
-            using (var response = await _http.GetAsync(uri, HttpCompletionOption.ResponseContentRead))
-            {
-                var status = response.StatusCode;
-                var code = (int)status;
-                var digit = code / 100;
-
-                if (response.Content is HttpValueContent<RssFeed> content) Update(uri, content.Value); // OK
-                else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
-                else if (digit == 4) LogMessage(uri, $"HTTP:{code} {status}");
-                else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
-                else LogMessage(uri, $"Content is not {nameof(RssFeed)} ({code})");
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync
-        ///
-        /// <summary>
-        /// 指定された URL から RSS フィードを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task GetAsync(Uri uri)
-        {
-            for (var i = 0; i < RetryCount; ++i)
-            {
-                try
-                {
-                    await GetAsyncCore(uri);
-                    break;
-                }
-                catch (Exception err)
-                {
-                    this.LogWarn(err.ToString(), err);
-                    await Task.Delay(RetryInterval);
-                    this.LogDebug($"Retry\tCount:{i + 1}\tUrl:{uri}");
-                }
-            }
+            else return Task.FromResult(0);
         }
 
         /* ----------------------------------------------------------------- */
@@ -334,86 +158,19 @@ namespace Cube.Net.Rss
         /// <summary>
         /// 一定間隔で実行されます。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
         private async Task WhenTick()
         {
-            if (Feeds == null) return;
-            SetTimeout();
+            if (State != TimerState.Run) return;
+
             foreach (var uri in Feeds.Keys.ToArray())
             {
-                await GetAsync(uri);
-                await Task.Delay(1000);
+                try { await PublishAsync(uri); }
+                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+                await Task.Delay(1000); // TODO
             }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SetTimeout
-        ///
-        /// <summary>
-        /// タイムアウト時間を設定します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void SetTimeout()
-        {
-            try { if (_http.Timeout != Timeout) _http.Timeout = Timeout; }
-            catch (Exception /* err */) { this.LogWarn("Timeout cannot be applied"); }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetPath
-        ///
-        /// <summary>
-        /// 保存用パスを取得します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private string GetPath(Uri uri)
-        {
-            var md5  = new MD5CryptoServiceProvider();
-            var data = Encoding.UTF8.GetBytes(uri.ToString());
-            var hash = md5.ComputeHash(data);
-            var name = BitConverter.ToString(hash).ToLower().Replace("-", "");
-            return IO.Combine(CacheDirectory, name);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LogMessage
-        ///
-        /// <summary>
-        /// エラー内容をログに出力します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void LogMessage(Uri uri, string message)
-        {
-            this.LogWarn(uri.ToString());
-            this.LogWarn(message);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Log
-        ///
-        /// <summary>
-        /// エラー内容をログに出力します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void Log(Action action)
-        {
-            try { action(); }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
-        }
-
-        #region Fields
-        private HttpClient _http;
-        private readonly AsyncLock _lock = new AsyncLock();
-        #endregion
 
         #endregion
     }
