@@ -79,6 +79,7 @@
     <Compile Include="Ntp\NtpMonitor.cs" />
     <Compile Include="Ntp\NtpPacket.cs" />
     <Compile Include="Rss\RssArticle.cs" />
+    <Compile Include="Rss\RssCacheCollection.cs" />
     <Compile Include="Rss\RssConverter.cs" />
     <Compile Include="Rss\RssFeed.cs" />
     <Compile Include="Rss\RssMonitor.cs" />

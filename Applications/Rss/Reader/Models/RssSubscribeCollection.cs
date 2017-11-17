@@ -52,8 +52,10 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssSubscribeCollection()
         {
-            _monitor.Interval = TimeSpan.FromHours(1);
-            _monitor.Feeds = _feeds;
+            _monitor = new RssMonitor(_feeds)
+            {
+                Interval = TimeSpan.FromHours(1),
+            };
             _items.CollectionChanged += WhenCollectionChanged;
         }
 
@@ -72,8 +74,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public Operator IO
         {
-            get => _monitor.IO;
-            set => _monitor.IO = value;
+            get => _feeds.IO;
+            set => _feeds.IO = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -87,8 +89,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public string CacheDirectory
         {
-            get => _monitor.CacheDirectory;
-            set => _monitor.CacheDirectory = value;
+            get => _feeds.Directory;
+            set => _feeds.Directory = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -205,7 +207,6 @@ namespace Cube.Net.App.Rss.Reader
                 }
             }
 
-            _monitor.Load();
             _monitor.Start();
         });
 
@@ -369,8 +370,7 @@ namespace Cube.Net.App.Rss.Reader
                 _feeds.Add(entry.Uri, new RssFeed
                 {
                     Title = entry.Title,
-                    Links = new[] { entry.Uri },
-                    Items = new RssArticle[0],
+                    Links = new List<Uri> { entry.Uri },
                 });
             }
 
@@ -397,8 +397,8 @@ namespace Cube.Net.App.Rss.Reader
         private bool _disposed = false;
         private SynchronizationContext _context = SynchronizationContext.Current;
         private ObservableCollection<RssCategory> _items = new ObservableCollection<RssCategory>();
-        private Dictionary<Uri, RssFeed> _feeds = new Dictionary<Uri, RssFeed>();
-        private RssMonitor _monitor = new RssMonitor();
+        private RssCacheCollection _feeds = new RssCacheCollection();
+        private RssMonitor _monitor;
         #endregion
 
         #endregion

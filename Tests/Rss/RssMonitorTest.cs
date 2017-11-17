@@ -48,7 +48,7 @@ namespace Cube.Net.Tests.Rss
         public void Start()
         {
             var uri = new Uri("http://blog.cube-soft.jp/?feed=rss2");
-            var src = new Dictionary<Uri, RssFeed>();
+            var src = new RssCacheCollection();
 
             using (var mon = new RssMonitor(src))
             {
