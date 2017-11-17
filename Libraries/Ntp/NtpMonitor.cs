@@ -209,7 +209,11 @@ namespace Cube.Net.Ntp
         /// 
         /* ----------------------------------------------------------------- */
         public IDisposable Subscribe(Action<TimeSpan> action)
-            => Subscribe(e => Task.Run(() => action(e)));
+            => Subscribe(async (e) =>
+        {
+            action(e);
+            await Task.FromResult(0);
+        });
 
         /* ----------------------------------------------------------------- */
         ///

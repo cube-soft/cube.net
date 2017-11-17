@@ -50,7 +50,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public HttpMonitor(ContentHandler<TValue> handler) : base()
         {
-            _http   = HttpClientFactory.Create(handler);
+            _http = HttpClientFactory.Create(handler);
             Handler = handler;
             Timeout = TimeSpan.FromSeconds(2);
             Timer.Subscribe(WhenTick);
@@ -174,7 +174,11 @@ namespace Cube.Net.Http
         /// 
         /* ----------------------------------------------------------------- */
         public IDisposable Subscribe(Action<Uri, TValue> action)
-            => Subscribe((u, v) => Task.Run(() => action(u, v)));
+            => Subscribe(async (u, v) =>
+        {
+            action(u, v);
+            await Task.FromResult(0);
+        });
 
         #region Protected
 
