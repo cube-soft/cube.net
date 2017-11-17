@@ -65,7 +65,7 @@ namespace Cube.Net.Rss
         public string Title
         {
             get => _title;
-            set => _title = value;
+            set => SetProperty(ref _title, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -81,7 +81,7 @@ namespace Cube.Net.Rss
         public string Description
         {
             get => _description;
-            set => _description = value;
+            set => SetProperty(ref _description, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -96,7 +96,7 @@ namespace Cube.Net.Rss
         [DataMember]
         public IList<Uri> Links
         {
-            get => _links;
+            get => _links = _links ?? new List<Uri>();
             set => SetProperty(ref _links, value);
         }
 
@@ -109,7 +109,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Uri Link => Links?.FirstOrDefault();
+        public Uri Link => Links.FirstOrDefault();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -124,7 +124,7 @@ namespace Cube.Net.Rss
         public Uri Icon
         {
             get => _icon;
-            set => _icon = value;
+            set => SetProperty(ref _icon, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -140,7 +140,7 @@ namespace Cube.Net.Rss
         public DateTime LastChecked
         {
             get => _lastChecked;
-            set => _lastChecked = value;
+            set => SetProperty(ref _lastChecked, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -155,8 +155,8 @@ namespace Cube.Net.Rss
         [DataMember]
         public IList<RssArticle> Items
         {
-            get => _items;
-            set => _items = value;
+            get => _items = _items ?? new List<RssArticle>();
+            set => SetProperty(ref _items, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -168,7 +168,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssArticle> UnreadItems => Items?.Where(e => !e.Read);
+        public IEnumerable<RssArticle> UnreadItems => Items.Where(e => !e.Read);
 
         #endregion
 

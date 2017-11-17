@@ -116,7 +116,7 @@ namespace Cube.Net.Rss
         [DataMember]
         public IList<string> Categories
         {
-            get => _categories;
+            get => _categories = _categories ?? new List<string>();
             set => SetProperty(ref _categories, value);
         }
 
@@ -132,7 +132,7 @@ namespace Cube.Net.Rss
         [DataMember]
         public IList<Uri> Links
         {
-            get => _links;
+            get => _links = _links ?? new List<Uri>();
             set => SetProperty(ref _links, value);
         }
 
@@ -145,7 +145,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Uri Link => Links?.FirstOrDefault();
+        public Uri Link => Links.FirstOrDefault();
 
         /* ----------------------------------------------------------------- */
         ///
