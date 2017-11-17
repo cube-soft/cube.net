@@ -202,12 +202,13 @@ namespace Cube.Net.Http
         /// <summary>
         /// 新しい結果を発行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected virtual async Task Publish(Uri uri, TValue value)
         {
             foreach (var action in Subscriptions)
             {
+                if (Timer.State != TimerState.Run) return;
                 try { await action(uri, value); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
@@ -279,7 +280,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private async Task WhenTick()
         {
-            if (Subscriptions.Count <= 0) return;
+            if (State != TimerState.Run || Subscriptions.Count <= 0) return;
 
             SetTimeout();
             var uri = GetRequestUri();
