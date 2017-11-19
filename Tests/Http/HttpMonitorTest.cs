@@ -119,15 +119,50 @@ namespace Cube.Net.Tests.Http
             var count = 0;
             using (var mon = Create())
             {
-                mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
                 mon.Subscribe((_, x) => count++);
 
                 mon.Start();
-                Task.Delay(200).Wait();
+                Task.Delay(300).Wait();
                 mon.Stop();
             }
             Assert.That(count, Is.EqualTo(0));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Start_PowerMode
+        /// 
+        /// <summary>
+        /// 電源状態が変更された時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Start_PowerMode()
+        {
+            var power = new PowerModeContext(Power.Mode);
+            Power.Configure(power);
+
+            var count = 0;
+            using (var mon = Create())
+            {
+                var cts = new CancellationTokenSource();
+
+                mon.Interval = TimeSpan.FromMilliseconds(100);
+                mon.Uri = new Uri("http://www.example.com/");
+                mon.Subscribe((_, x) => { count++; cts.Cancel(); });
+
+                mon.Start(mon.Interval);
+                power.Mode = Microsoft.Win32.PowerModes.Suspend;
+                Task.Delay(200).Wait();
+                Assert.That(count, Is.EqualTo(0));
+
+                power.Mode = Microsoft.Win32.PowerModes.Resume;
+                WaitAsync(cts.Token).Wait();
+                mon.Stop();
+                Assert.That(count, Is.EqualTo(1));
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -148,7 +183,7 @@ namespace Cube.Net.Tests.Http
                 mon.Interval = TimeSpan.FromMinutes(1);
                 mon.Uri = new Uri("http://www.example.com/");
                 var cts = new CancellationTokenSource();
-                mon.Subscribe((u, x) => { ++count; cts.Cancel(); });
+                mon.Subscribe((u, v) => { ++count; cts.Cancel(); });
 
                 mon.Reset();
                 mon.Start(mon.Interval);
