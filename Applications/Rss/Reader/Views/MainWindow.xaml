@@ -81,7 +81,7 @@
                     <!-- Entry -->
                 </TreeView.Resources>
                 <i:Interaction.Behaviors>
-                    <xb:SelectedItemChanged Command="{Binding SelectEntry}"/>
+                    <xb:TreeViewSelectItem Command="{Binding SelectEntry}"/>
                 </i:Interaction.Behaviors>
             </TreeView>
             <!-- Category and Entries -->
@@ -112,7 +112,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <i:Interaction.Behaviors>
-                <xb:SelectionChanged Command="{Binding SelectArticle}"/>
+                <xb:ListBoxSelectItems Command="{Binding SelectArticle}"/>
             </i:Interaction.Behaviors>
         </ListView>
         <!-- Feeds -->

@@ -22,7 +22,7 @@ namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SelectedItemChanged
+    /// TreeViewSelectItem
     ///
     /// <summary>
     /// TreeView の SelectedItemChanged イベントと Command を関連付ける
@@ -30,7 +30,7 @@ namespace Cube.Xui.Behaviors
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class SelectedItemChanged : CommandBehavior<TreeView>
+    public class TreeViewSelectItem : CommandBehavior<TreeView>
     {
         #region Implementations
 

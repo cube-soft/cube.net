@@ -23,7 +23,7 @@ namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SelectionChangedChanged
+    /// ListBoxSelectItems
     ///
     /// <summary>
     /// ListBox の SelectionChanged イベントと Command を関連付ける
@@ -31,7 +31,7 @@ namespace Cube.Xui.Behaviors
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class SelectionChanged : CommandBehavior<ListBox>
+    public class ListBoxSelectItems : CommandBehavior<ListBox>
     {
         #region Implementations
 
@@ -89,11 +89,10 @@ namespace Cube.Xui.Behaviors
 
     /* --------------------------------------------------------------------- */
     ///
-    /// SelectionChangedChanged
+    /// SelectionList
     ///
     /// <summary>
-    /// ListBox の SelectionChanged イベントと Command を関連付ける
-    /// ための Behavior です。
+    /// 選択項目の変化内容を保持するためのクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
