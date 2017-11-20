@@ -21,6 +21,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Views/MainContextMenu.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Resources/Styles/MainStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -52,7 +53,8 @@
             
             <!-- Categories and Entries -->
             <TreeView ItemsSource="{Binding Items}"
-                      Style="{StaticResource EntriesStyle}">
+                      Style="{StaticResource EntriesStyle}"
+                      ContextMenu="{StaticResource MainContextMenu}">
                 <TreeView.Resources>
                     <!-- Category -->
                     <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">

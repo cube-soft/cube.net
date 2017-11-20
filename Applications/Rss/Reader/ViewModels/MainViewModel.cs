@@ -132,6 +132,36 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Remove
+        /// 
+        /// <summary>
+        /// フィード削除時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RelayCommand Remove
+            => _remove = _remove ?? new RelayCommand(
+                () => { },
+                () => false
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Refresh
+        /// 
+        /// <summary>
+        /// RSS フィード更新時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RelayCommand Refresh
+            => _refresh = _refresh ?? new RelayCommand(
+                () => { },
+                () => false
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// SelectEntry
         /// 
         /// <summary>
@@ -165,6 +195,8 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private RssFacade _model;
         private RelayCommand _add;
+        private RelayCommand _remove;
+        private RelayCommand _refresh;
         private RelayCommand<object> _selectEntry;
         private RelayCommand<SelectionList> _selectArticle;
         #endregion
