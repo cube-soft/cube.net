@@ -11,7 +11,8 @@
         Title="新しいフィードを追加"
         Height="200"
         Width="400"
-        Background="#FFF1F1F1">
+        Background="#FFF1F1F1"
+        WindowStartupLocation="CenterOwner">
     <i:Interaction.Triggers>
         <xt:MessageBoxTrigger Messenger="{Binding Messenger}">
             <xt:MessageBoxAction/>
@@ -22,7 +23,8 @@
         </my:AddViewModelTrigger>
     </i:Interaction.Triggers>
     
-    <Grid Margin="12,0,12,0">
+    <Grid Margin="12,0,12,0"
+          FocusManager.FocusedElement="{Binding ElementName=UrlTextBox}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="25"/>
@@ -34,6 +36,7 @@
                    Margin="0,0,0,12"/>
         
         <TextBox Text="{Binding Url.Value, UpdateSourceTrigger=PropertyChanged}"
+                 x:Name="UrlTextBox"
                  Grid.Row="1"/>
         
         <Button Command="{Binding Add}"
