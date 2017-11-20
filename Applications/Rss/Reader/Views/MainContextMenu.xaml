@@ -5,6 +5,8 @@
                   Command="{Binding Refresh}"/>
         
         <MenuItem Header="削除"
-                  Command="{Binding Remove}"/>
+                  Command="{Binding Remove}"
+                  CommandParameter="{Binding Path=PlacementTarget.SelectedItem,
+                                             RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
     </ContextMenu>
 </ResourceDictionary>

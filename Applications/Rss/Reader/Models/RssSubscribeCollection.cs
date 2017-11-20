@@ -113,7 +113,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssCategory> Categories => _items;
+        public IList<RssCategory> Categories => _items;
 
         #endregion
 
@@ -160,6 +160,27 @@ namespace Cube.Net.App.Rss.Reader
 
             _feeds.Add(feed.Link, feed);
             _monitor.Start();
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Remove
+        /// 
+        /// <summary>
+        /// RSS フィードを削除します。
+        /// </summary>
+        /// 
+        /// <param name="item">削除する RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Remove(object item) => Reset(() =>
+        {
+            if (item is RssEntry entry)
+            {
+                var parent = entry.Parent;
+                if (parent != null) parent.Entries.Remove(entry);
+                else Default.Entries.Remove(entry);
+            }
         });
 
         /* ----------------------------------------------------------------- */

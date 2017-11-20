@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System.Linq;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 
@@ -107,6 +108,19 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Add(RssFeed feed) => Items.Add(feed);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Remove
+        /// 
+        /// <summary>
+        /// RSS フィードを削除します。
+        /// </summary>
+        /// 
+        /// <param name="item">削除する RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Remove(object item) => Items.Remove(item);
 
         /* ----------------------------------------------------------------- */
         ///

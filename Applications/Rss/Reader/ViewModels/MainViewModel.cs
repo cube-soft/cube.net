@@ -139,10 +139,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Remove
-            => _remove = _remove ?? new RelayCommand(
-                () => { },
-                () => false
+        public RelayCommand<object> Remove
+            => _remove = _remove ?? new RelayCommand<object>(
+                e => _model.Remove(e)
             );
 
         /* ----------------------------------------------------------------- */
@@ -195,7 +194,7 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private RssFacade _model;
         private RelayCommand _add;
-        private RelayCommand _remove;
+        private RelayCommand<object> _remove;
         private RelayCommand _refresh;
         private RelayCommand<object> _selectEntry;
         private RelayCommand<SelectionList> _selectArticle;
