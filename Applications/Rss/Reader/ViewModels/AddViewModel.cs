@@ -96,10 +96,14 @@ namespace Cube.Net.App.Rss.Reader
             => _add = _add ?? new RelayCommand(
                 async () =>
                 {
-                    var http = HttpClientFactory.Create();
-                    var rss  = await http.GetRssAsync(new Uri(Url.Value));
-                    _callback(rss);
-                    Messenger.Send(this);
+                    try
+                    {
+                        var http = HttpClientFactory.Create();
+                        var rss = await http.GetRssAsync(new Uri(Url.Value));
+                        _callback?.Invoke(rss);
+                        Messenger.Send(this);
+                    }
+                    catch (Exception err) { Messenger.Send(new MessageBox(err.Message)); }
                 },
                 () => !string.IsNullOrEmpty(Url.Value)
             );

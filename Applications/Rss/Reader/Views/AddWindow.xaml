@@ -13,6 +13,10 @@
         Width="400"
         Background="#FFF1F1F1">
     <i:Interaction.Triggers>
+        <xt:MessageBoxTrigger Messenger="{Binding Messenger}">
+            <xt:MessageBoxAction/>
+        </xt:MessageBoxTrigger>
+        
         <my:AddViewModelTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>
         </my:AddViewModelTrigger>
