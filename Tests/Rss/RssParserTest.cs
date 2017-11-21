@@ -48,6 +48,25 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// GetRssUris
+        /// 
+        /// <summary>
+        /// RSS フィードの取得用 URL を解析するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TestCase("Sample.html",      ExpectedResult = 2)]
+        [TestCase("SampleNoRss.html", ExpectedResult = 0)]
+        public int GetRssUris(string src)
+        {
+            using (var stream = IO.OpenRead(Example(src)))
+            {
+                return stream.GetRssUris().Count();
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// ParseFeed
         /// 
         /// <summary>

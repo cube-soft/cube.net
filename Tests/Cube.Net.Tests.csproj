@@ -79,6 +79,7 @@
     <Compile Include="Rss\RssParserTest.cs" />
     <Compile Include="BrowserSettingsTest.cs" />
     <Compile Include="NetworkTest.cs" />
+    <Compile Include="Rss\RssVersionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -116,6 +117,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Examples\SampleRss20-02.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Examples\Sample.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Examples\SampleNoRss.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

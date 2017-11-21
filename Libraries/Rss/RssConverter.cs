@@ -15,9 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Cube.Net.Http;
 
 namespace Cube.Net.Rss
@@ -43,34 +40,5 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         public RssContentConverter() : base(s => RssParser.Create(s)) { }
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// RssOperations
-    ///
-    /// <summary>
-    /// RSS に関する拡張用クラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public static class RssOperations
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetRssAsync
-        /// 
-        /// <summary>
-        /// RSS または Atom 形式のデータを非同期で取得します。
-        /// </summary>
-        ///
-        /// <param name="client">HTTP クライアント</param>
-        /// <param name="uri">レスポンス取得 URL</param>
-        /// 
-        /// <returns>RSS または Atom 形式データの変換結果</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static Task<RssFeed> GetRssAsync(this HttpClient client, Uri uri)
-            => client.GetAsync(uri, new RssContentConverter());
     }
 }
