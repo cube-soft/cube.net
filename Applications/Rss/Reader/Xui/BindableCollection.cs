@@ -87,7 +87,7 @@ namespace Cube.Xui
 
         #endregion
 
-        #region Fields
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///

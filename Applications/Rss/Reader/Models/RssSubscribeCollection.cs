@@ -37,7 +37,8 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public sealed class RssSubscribeCollection : IEnumerable, INotifyCollectionChanged, IDisposable
+    public sealed class RssSubscribeCollection
+        : IEnumerable<RssEntryBase>, INotifyCollectionChanged, IDisposable
     {
         #region Constructors
 
@@ -221,7 +222,7 @@ namespace Cube.Net.App.Rss.Reader
             using (var s = IO.OpenRead(json))
             {
                 var src = SettingsType.Json.Load<List<RssCategory.Json>>(s);
-                foreach (var item in src.Select(e => e.Convert()))
+                foreach (var item in src.Select(e => e.Convert(null)))
                 {
                     MakeFeed(item);
                     _items.Add(item);
@@ -285,7 +286,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerator GetEnumerator()
+        public IEnumerator<RssEntryBase> GetEnumerator()
         {
             foreach (var category in _items)
             {
@@ -296,6 +297,19 @@ namespace Cube.Net.App.Rss.Reader
                 }
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetEnumerator
+        /// 
+        /// <summary>
+        /// 反復用オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <returns>反復用オブジェクト</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
 

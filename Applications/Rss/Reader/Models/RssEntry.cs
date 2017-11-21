@@ -16,24 +16,22 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows.Data;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssEntry
+    /// RssEntryBase
     ///
     /// <summary>
-    /// RSS フィードを購読する Web サイトの情報を保持するクラスです。
+    /// RSS フィードを購読する Web サイトの情報を保持する基底クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class RssEntry
+    public class RssEntryBase
     {
         #region Properties
 
@@ -42,22 +40,11 @@ namespace Cube.Net.App.Rss.Reader
         /// Title
         /// 
         /// <summary>
-        /// Web サイトのタイトルを取得または設定します。
+        /// タイトルを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public string Title { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Uri
-        /// 
-        /// <summary>
-        /// RSS フィードを取得するための URL を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Uri Uri { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -69,6 +56,33 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public RssCategory Parent { get; set; }
+
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RssEntry
+    ///
+    /// <summary>
+    /// RSS フィードを購読する Web サイトの情報を保持するクラスです。
+    /// </summary>
+    /// 
+    /* --------------------------------------------------------------------- */
+    public class RssEntry : RssEntryBase
+    {
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Uri
+        /// 
+        /// <summary>
+        /// RSS フィードを取得するための URL を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Uri Uri { get; set; }
 
         #endregion
 
@@ -115,20 +129,9 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class RssCategory
+    public class RssCategory : RssEntryBase
     {
         #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Title
-        /// 
-        /// <summary>
-        /// カテゴリのタイトルを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Title { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -161,11 +164,8 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable Items => new CompositeCollection
-        {
-            new CollectionContainer { Collection = Categories },
-            new CollectionContainer { Collection = Entries },
-        };
+        public IEnumerable<RssEntryBase> Items
+            => Categories.Cast<RssEntryBase>().Concat(Entries);
 
         #endregion
 
@@ -194,14 +194,15 @@ namespace Cube.Net.App.Rss.Reader
                 Categories = src.Categories?.Select(e => new Json(e));
             }
 
-            public RssCategory Convert()
+            public RssCategory Convert(RssCategory src)
             {
                 var dest = new RssCategory
                 {
-                    Title      = Title,
-                    Categories = Categories?.Select(e => e.Convert()).ToList() ?? new List<RssCategory>(),
+                    Title  = Title,
+                    Parent = src,
                 };
-                dest.Entries = Entries.Select(e => e.Convert(dest)).ToList();
+                dest.Categories = Categories?.Select(e => e.Convert(dest)).ToList() ?? new List<RssCategory>();
+                dest.Entries    = Entries.Select(e => e.Convert(dest)).ToList();
                 return dest;
             }
         }

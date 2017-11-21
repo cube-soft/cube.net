@@ -106,7 +106,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Fonts\FontFamily.xaml">
+    <Page Include="Resources\Styles\FontStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -159,7 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="App.ico" />
-    <Resource Include="Resources\Fonts\FortAwesome.ttf" />
+    <Resource Include="Resources\Others\FortAwesome.ttf" />
     <None Include="App.config" />
     <None Include="App.manifest" />
     <None Include="Packages.config" />
