@@ -106,6 +106,23 @@ namespace Cube.Xui
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Synchronously
+        /// 
+        /// <summary>
+        /// UI スレッドに対して同期的にイベントを発生させるかどうかを
+        /// 示す値を取得または設定します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// true の場合は Send メソッド、false の場合は Post メソッドを
+        /// 用いてイベントを伝搬します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Synchronously { get; set; } = false;
+
         #endregion
 
         #region Events
@@ -145,7 +162,11 @@ namespace Cube.Xui
         protected void RaisePropertyChanged([CallerMemberName] string name = null)
         {
             var e = new PropertyChangedEventArgs(name);
-            if (_context != null) _context.Post(_ => OnPropertyChanged(e), null);
+            if (_context != null)
+            {
+                if (Synchronously) _context.Send(_ => OnPropertyChanged(e), null);
+                else _context.Post(_ => OnPropertyChanged(e), null);
+            }
             else OnPropertyChanged(e);
         }
 
