@@ -51,6 +51,9 @@
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="SgmlReaderDll">
+      <HintPath>..\..\packages\SgmlReader.1.8.11\lib\4.0\SgmlReaderDll.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -79,10 +82,13 @@
     <Compile Include="Ntp\NtpPacket.cs" />
     <Compile Include="Rss\RssArticle.cs" />
     <Compile Include="Rss\RssCacheCollection.cs" />
+    <Compile Include="Rss\RssClient.cs" />
     <Compile Include="Rss\RssConverter.cs" />
     <Compile Include="Rss\RssFeed.cs" />
+    <Compile Include="Rss\RssOperations.cs" />
     <Compile Include="Rss\RssMonitor.cs" />
     <Compile Include="Rss\RssParser.cs" />
+    <Compile Include="Rss\RssVersion.cs" />
     <Compile Include="BrowserSettings.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="NetworkAwareTimer.cs" />

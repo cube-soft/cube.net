@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using System.ServiceModel.Syndication;
 
 namespace Cube.Net.Rss
@@ -63,6 +64,21 @@ namespace Cube.Net.Rss
                 };
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        /// 
+        /// <summary>
+        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// </summary>
+        /// 
+        /// <param name="src">XML</param>
+        /// 
+        /// <returns>RssFeed オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static RssFeed Create(XElement src) => new RssFeed();
 
         #endregion
 

@@ -68,13 +68,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static XDocument ToXDocument(System.IO.Stream src)
         {
-            using (var reader = new System.IO.StreamReader(src))
+            using (var reader = new System.IO.StreamReader(src, System.Text.Encoding.UTF8))
             using (var sgml = new Sgml.SgmlReader
             {
-                DocType = "HTML",
                 CaseFolding = Sgml.CaseFolding.ToLower,
+                DocType     = "HTML",
+                IgnoreDtd   = true,
                 InputStream = reader,
-                IgnoreDtd = true,
             }) return XDocument.Load(sgml);
         }
 
