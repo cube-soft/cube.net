@@ -304,6 +304,7 @@ namespace Cube.Net.Http
 
             if (response.IsSuccessStatusCode)
             {
+                await response.Content.LoadIntoBufferAsync();
                 var stream = await response.Content.ReadAsStreamAsync();
                 response.Content = new HttpValueContent<TValue>(
                     response.Content,
