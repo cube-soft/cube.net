@@ -405,7 +405,7 @@ namespace Cube.Net.App.Rss.Reader
                 _feeds.Add(entry.Uri, new RssFeed
                 {
                     Title = entry.Title,
-                    Links = new List<Uri> { entry.Uri },
+                    Link  = entry.Uri,
                 });
             }
 

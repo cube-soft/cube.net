@@ -46,14 +46,14 @@ namespace Cube.Net.Rss
 
     /* --------------------------------------------------------------------- */
     ///
-    /// RssVersionConversions
+    /// RssVersionConverter
     ///
     /// <summary>
     /// RssVersion の拡張用クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public static class RssVersionConversions
+    public static class RssVersionConverter
     {
         /* ----------------------------------------------------------------- */
         ///

@@ -81,9 +81,9 @@ namespace Cube.Net.Tests
             {
                 var actual = RssParser.Parse(stream);
 
-                Assert.That(actual.Title,       Is.EqualTo(expected.Title));
-                Assert.That(actual.Description, Is.EqualTo(expected.Description));
-                Assert.That(actual.Link,        Is.EqualTo(expected.Link));
+                Assert.That(actual.Title, Is.EqualTo(expected.Title), "Title");
+                Assert.That(actual.Description, Is.EqualTo(expected.Description), "Description");
+                Assert.That(actual.Link, Is.EqualTo(expected.Link), "Link");
 
                 return actual.Items.Count();
             }

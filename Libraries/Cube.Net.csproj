@@ -81,12 +81,12 @@
     <Compile Include="Ntp\NtpMonitor.cs" />
     <Compile Include="Ntp\NtpPacket.cs" />
     <Compile Include="Rss\Details\Rss200Parser.cs" />
-    <Compile Include="Rss\Details\Operations.cs" />
-    <Compile Include="Rss\RssArticle.cs" />
+    <Compile Include="Rss\Details\RssOperations.cs" />
+    <Compile Include="Rss\RssItem.cs" />
     <Compile Include="Rss\RssCacheCollection.cs" />
     <Compile Include="Rss\RssClient.cs" />
     <Compile Include="Rss\RssFeed.cs" />
-    <Compile Include="Rss\RssOperations.cs" />
+    <Compile Include="Rss\RssUriConverter.cs" />
     <Compile Include="Rss\RssMonitor.cs" />
     <Compile Include="Rss\RssParser.cs" />
     <Compile Include="Rss\RssVersion.cs" />

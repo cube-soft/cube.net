@@ -24,14 +24,14 @@ namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssOperations
+    /// RssUriConverter
     ///
     /// <summary>
-    /// RSS に関する拡張用クラスです。
+    /// RSS のフィード用 URL に変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class RssOperations
+    public static class RssUriConverter
     {
         #region Methods
 

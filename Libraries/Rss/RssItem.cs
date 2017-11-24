@@ -23,7 +23,7 @@ namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssArticle
+    /// RssItem
     ///
     /// <summary>
     /// RSS の項目情報を保持するクラスです。
@@ -31,7 +31,7 @@ namespace Cube.Net.Rss
     /// 
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class RssArticle : ObservableProperty
+    public class RssItem : ObservableProperty
     {
         #region Properties
 

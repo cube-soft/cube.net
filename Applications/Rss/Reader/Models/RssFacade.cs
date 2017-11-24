@@ -155,7 +155,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public string Read(RssArticle src)
+        public string Read(RssItem src)
         {
             src.Read = true;
             return string.Format(

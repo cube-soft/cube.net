@@ -16,6 +16,8 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using Cube.Net.Rss.Parsing;
 
@@ -32,9 +34,42 @@ namespace Cube.Net.Rss
     /* --------------------------------------------------------------------- */
     internal static class Rss200Parser
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
         /// Parse
+        /// 
+        /// <summary>
+        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// </summary>
+        /// 
+        /// <param name="root">XML のルート要素</param>
+        /// 
+        /// <returns>RssFeed オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static RssFeed Parse(XElement root)
+        {
+            var e = root.Element("channel");
+            if (e == null) return default(RssFeed);
+            return new RssFeed
+            {
+                Title       = e.GetValue("title"),
+                Description = e.GetValue("description"),
+                Link        = e.GetUri("link"),
+                Items       = ParseItems(e),
+                LastChecked = DateTime.Now,
+            };
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ParseItems
         /// 
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
@@ -45,13 +80,21 @@ namespace Cube.Net.Rss
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(XElement src) => new RssFeed
-        {
-            Title       = src.Element("title").GetValue(),
-            Description = src.Element("description").GetValue(),
-            Link        = src.Element("link").GetUri(),
-            Items       = null,
-            LastChecked = DateTime.Now,
-        };
+        private static IList<RssItem> ParseItems(XElement src)
+            => src
+            .Descendants("item")
+            .Select(e => new RssItem
+            {
+                Id          = e.GetValue("guid"),
+                Title       = e.GetValue("title"),
+                Summary     = e.GetValue("description"),
+                Content     = e.GetContent(),
+                Link        = e.GetUri("link"),
+                PublishTime = e.GetDateTime("pubDate"),
+                Read        = false,
+            })
+            .ToList();
+
+        #endregion
     }
 }

@@ -98,8 +98,8 @@ namespace Cube.Net.App.Rss.Reader
                 {
                     try
                     {
-                        var http = HttpClientFactory.Create();
-                        var rss = await http.GetRssAsync(new Uri(Url.Value));
+                        var http = new RssClient();
+                        var rss = await http.GetAsync(new Uri(Url.Value));
                         _callback?.Invoke(rss);
                         Messenger.Send(this);
                     }

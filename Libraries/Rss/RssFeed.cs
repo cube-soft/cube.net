@@ -110,9 +110,9 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public IList<RssArticle> Items
+        public IList<RssItem> Items
         {
-            get => _items = _items ?? new List<RssArticle>();
+            get => _items = _items ?? new List<RssItem>();
             set => SetProperty(ref _items, value);
         }
 
@@ -125,7 +125,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssArticle> UnreadItems => Items.Where(e => !e.Read);
+        public IEnumerable<RssItem> UnreadItems => Items.Where(e => !e.Read);
 
         #endregion
 
@@ -135,7 +135,7 @@ namespace Cube.Net.Rss
         private string _description = string.Empty;
         private Uri _link = null;
         private DateTime _lastChecked = DateTime.MinValue;
-        private IList<RssArticle> _items = null;
+        private IList<RssItem> _items = null;
         #endregion
     }
 }

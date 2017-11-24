@@ -97,28 +97,6 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetRssAsync
-        /// 
-        /// <summary>
-        /// RSS フィードを非同期で取得するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void GetRssAsync()
-        {
-            var uri = new Uri("http://clown.hatenablog.jp/rss");
-            var rss = HttpClientFactory.Create().GetRssAsync(uri).Result;
-
-            Assert.That(rss.Id,            Is.Null);
-            Assert.That(rss.Title,         Is.EqualTo("Life like a clown"));
-            Assert.That(rss.Link,          Is.EqualTo(new Uri("http://clown.hatenablog.jp/")));
-            Assert.That(rss.Description,   Is.Empty);
-            Assert.That(rss.Items.Count(), Is.GreaterThan(5));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// GetAsync
         /// 
         /// <summary>
