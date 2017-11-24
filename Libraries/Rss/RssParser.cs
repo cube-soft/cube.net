@@ -57,13 +57,13 @@ namespace Cube.Net.Rss
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
         /// 
-        /// <param name="src">XML</param>
+        /// <param name="root">XML のルート要素</param>
         /// 
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(XElement src)
-            => Parse(src, src.GetRssVersion());
+        public static RssFeed Parse(XElement root)
+            => Parse(root, root.GetRssVersion());
 
         /* ----------------------------------------------------------------- */
         ///
@@ -73,25 +73,21 @@ namespace Cube.Net.Rss
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
         /// 
-        /// <param name="src">XML</param>
+        /// <param name="root">XML のルート要素</param>
         /// <param name="version">RSS バージョン</param>
         /// 
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(XElement src, RssVersion version)
+        public static RssFeed Parse(XElement root, RssVersion version)
         {
             switch (version)
             {
-                case RssVersion.Atom:
-                    break;
-                case RssVersion.Rss091:
-                    break;
-                case RssVersion.Rss092:
-                    break;
-                case RssVersion.Rss10:
-                    break;
-                case RssVersion.Rss20: return Rss200Parser.Parse(src);
+                case RssVersion.Atom:   return AtomParser.Parse(root);
+                case RssVersion.Rss091: return Rss091Parser.Parse(root);
+                case RssVersion.Rss092: return Rss092Parser.Parse(root);
+                case RssVersion.Rss10:  return Rss100Parser.Parse(root);
+                case RssVersion.Rss20:  return Rss200Parser.Parse(root);
             }
             return default(RssFeed);
         }

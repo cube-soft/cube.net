@@ -119,7 +119,7 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [TestCase("SampleRss20-01.xml")]
-        public void ParseFeed_UnreadItems(string filename, RssVersion version)
+        public void ParseFeed_UnreadItems(string filename)
         {
             using (var stream = File.OpenRead(Example(filename)))
             {
