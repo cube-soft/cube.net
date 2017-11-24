@@ -201,7 +201,7 @@ namespace Cube.Net.Rss
             {
                 var root = XDocument.Load(content).Root;
                 var version = root.GetRssVersion();
-                if (version != RssVersion.Unknown) return RssParser.Create(root);
+                if (version != RssVersion.Unknown) return RssParser.Parse(root, version);
             }
             catch (Exception /* err */) { /* try redirect */ }
 

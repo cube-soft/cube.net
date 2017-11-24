@@ -79,12 +79,10 @@ namespace Cube.Net.Tests
         {
             using (var stream = File.OpenRead(Example(src)))
             {
-                var actual = RssParser.Create(stream);
+                var actual = RssParser.Parse(stream);
 
-                Assert.That(actual.Id,          Is.EqualTo(expected.Id));
                 Assert.That(actual.Title,       Is.EqualTo(expected.Title));
                 Assert.That(actual.Description, Is.EqualTo(expected.Description));
-                Assert.That(actual.Icon,        Is.EqualTo(expected.Icon));
                 Assert.That(actual.Link,        Is.EqualTo(expected.Link));
 
                 return actual.Items.Count();
@@ -107,7 +105,7 @@ namespace Cube.Net.Tests
         {
             using (var stream = File.OpenRead(Example(filename)))
             {
-                return RssParser.Create(stream).Items.First().Content.Length;
+                return RssParser.Parse(stream).Items.First().Content.Length;
             }
         }
 
@@ -121,11 +119,11 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [TestCase("SampleRss20-01.xml")]
-        public void ParseFeed_UnreadItems(string filename)
+        public void ParseFeed_UnreadItems(string filename, RssVersion version)
         {
             using (var stream = File.OpenRead(Example(filename)))
             {
-                var feed  = RssParser.Create(stream);
+                var feed  = RssParser.Parse(stream);
                 var count = feed.Items.Count();
 
                 Assert.That(feed.UnreadItems.Count(), Is.EqualTo(count));
@@ -153,29 +151,23 @@ namespace Cube.Net.Tests
             {
                 yield return new TestCaseData("SampleRss20-01.xml", new RssFeed
                 {
-                    Id          = null,
                     Title       = "Scripting News",
                     Description = "A weblog about scripting and stuff like that.",
-                    Icon        = null,
-                    Links       = new[] { new Uri("http://www.scripting.com/") },
+                    Link        = new Uri("http://www.scripting.com/"),
                 }).Returns(9);
 
                 yield return new TestCaseData("SampleRss20-02.xml", new RssFeed
                 {
-                    Id          = null,
                     Title       = "SoGap",
                     Description = "SoGap is a service for searching for popular news by using social signals.",
-                    Icon        = null,
-                    Links       = new[] { new Uri("http://sogap.cielquis.net/") },
+                    Link        = new Uri("http://sogap.cielquis.net/"),
                 }).Returns(3);
 
                 yield return new TestCaseData("SampleAtom-01.xml", new RssFeed
                 {
-                    Id          = "urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6",
                     Title       = "Example Feed",
-                    Description = null,
-                    Icon        = null,
-                    Links       = new[] { new Uri("http://example.org/") },
+                    Description = "",
+                    Link        = new Uri("http://example.org/"),
                 }).Returns(1);
             }
         }

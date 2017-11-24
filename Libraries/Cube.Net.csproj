@@ -80,6 +80,8 @@
     <Compile Include="Ntp\NtpParameters.cs" />
     <Compile Include="Ntp\NtpMonitor.cs" />
     <Compile Include="Ntp\NtpPacket.cs" />
+    <Compile Include="Rss\Details\Rss200Parser.cs" />
+    <Compile Include="Rss\Details\Operations.cs" />
     <Compile Include="Rss\RssArticle.cs" />
     <Compile Include="Rss\RssCacheCollection.cs" />
     <Compile Include="Rss\RssClient.cs" />

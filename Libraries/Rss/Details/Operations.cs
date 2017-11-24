@@ -16,65 +16,47 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 
-namespace Cube.Net.Rss
+namespace Cube.Net.Rss.Parsing
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssOperations
+    /// Parsing.Conversions
     ///
     /// <summary>
-    /// RSS に関する拡張用クラスです。
+    /// RSS 解析時に使用する拡張メソッドを定義するクラスです。
     /// </summary>
-    ///
+    /// 
     /* --------------------------------------------------------------------- */
-    public static class RssOperations
+    internal static class Operations
     {
-        #region Methods
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetValue
+        /// 
+        /// <summary>
+        /// 値を取得します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// null を string.Empty に正規化します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string GetValue(this XElement src)
+            => src != null ? src.Value : string.Empty;
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetRssUris
+        /// GetUri
         /// 
         /// <summary>
-        /// RSS フィードの URL を取得します。
+        /// Uri オブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<Uri> GetRssUris(this System.IO.Stream src)
-            => ToXDocument(src)
-            .Descendants("link")
-            .Where(e => e.Attribute("rel")?.Value == "alternate")
-            .Select(e => new Uri(e.Attribute("href").Value));
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ToXDocument
-        /// 
-        /// <summary>
-        /// XDocument オブジェクトを生成します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static XDocument ToXDocument(System.IO.Stream src)
-        {
-            using (var reader = new System.IO.StreamReader(src, System.Text.Encoding.UTF8))
-            using (var sgml = new Sgml.SgmlReader
-            {
-                CaseFolding = Sgml.CaseFolding.ToLower,
-                DocType     = "HTML",
-                IgnoreDtd   = true,
-                InputStream = reader,
-            }) return XDocument.Load(sgml);
-        }
-
-        #endregion
+        public static Uri GetUri(this XElement src)
+            => src != null ? new Uri(src.Value) : null;
     }
 }

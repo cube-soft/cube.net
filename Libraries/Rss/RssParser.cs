@@ -15,10 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
-using System.ServiceModel.Syndication;
 
 namespace Cube.Net.Rss
 {
@@ -37,37 +34,24 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create
+        /// Parse
         /// 
         /// <summary>
-        /// ストリームから RSS オブジェクトを生成します。
+        /// ストリームからデータを読み込み、RssFeed オブジェクトを
+        /// 生成します。
         /// </summary>
         /// 
-        /// <param name="stream">入力ストリーム</param>
+        /// <param name="src">ストリーム</param>
         /// 
-        /// <returns>RSS オブジェクト</returns>
+        /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static RssFeed Create(System.IO.Stream stream)
-        {
-            using (var reader = XmlReader.Create(stream))
-            {
-                var feed = SyndicationFeed.Load(reader);
-
-                return new RssFeed
-                {
-                    Id          = feed.Id,
-                    Title       = feed.Title?.Text,
-                    Description = feed.Description?.Text,
-                    Links       = feed.Links?.Select(e => e.Uri).ToList(),
-                    Items       = feed.Items?.Select(e => Convert(e)).ToList(),
-                };
-            }
-        }
+        public static RssFeed Parse(System.IO.Stream src)
+            => Parse(XDocument.Load(src).Root);
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create
+        /// Parse
         /// 
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
@@ -78,69 +62,39 @@ namespace Cube.Net.Rss
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static RssFeed Create(XElement src) => new RssFeed();
-
-        #endregion
-
-        #region Implementations
+        public static RssFeed Parse(XElement src)
+            => Parse(src, src.GetRssVersion());
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Convert
+        /// Parse
         /// 
         /// <summary>
-        /// SyndicationItem を RssItem に変換します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static RssArticle Convert(SyndicationItem src) => new RssArticle
-        {
-            Id          = src.Id,
-            Title       = src.Title?.Text,
-            Summary     = src.Summary?.Text,
-            Content     = GetContent(src),
-            Categories  = src.Categories?.Select(x => x.Name).ToList(),
-            Links       = src.Links?.Select(e => e.Uri).ToList(),
-            PublishTime = src.PublishDate.LocalDateTime,
-        };
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetContent
-        /// 
-        /// <summary>
-        /// Content の内容を取得します。
+        /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
         /// 
-        /// <remarks>
-        /// content:encoded タグが存在する場合、その内容を優先します。
-        /// </remarks>
+        /// <param name="src">XML</param>
+        /// <param name="version">RSS バージョン</param>
+        /// 
+        /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        private static string GetContent(SyndicationItem src)
+        public static RssFeed Parse(XElement src, RssVersion version)
         {
-            foreach (var extension in src.ElementExtensions)
+            switch (version)
             {
-                var element = extension.GetObject<XmlElement>();
-                if (element.Name != "content:encoded") continue;
-                return element.InnerText;
+                case RssVersion.Atom:
+                    break;
+                case RssVersion.Rss091:
+                    break;
+                case RssVersion.Rss092:
+                    break;
+                case RssVersion.Rss10:
+                    break;
+                case RssVersion.Rss20: return Rss200Parser.Parse(src);
             }
-
-            if (src.Content is TextSyndicationContent tsc) return tsc.Text;
-            else return null;
+            return default(RssFeed);
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LogWarn
-        /// 
-        /// <summary>
-        /// ログに出力します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static void LogWarn(string message)
-            => Cube.Log.Operations.Warn(typeof(RssParser), message);
 
         #endregion
     }

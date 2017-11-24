@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Cube.Net.Rss
@@ -130,22 +129,11 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public IList<Uri> Links
+        public Uri Link
         {
-            get => _links = _links ?? new List<Uri>();
-            set => SetProperty(ref _links, value);
+            get => _link;
+            set => SetProperty(ref _link, value);
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Link
-        /// 
-        /// <summary>
-        /// 記事で最初に出現した URL を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Uri Link => Links.FirstOrDefault();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -187,7 +175,7 @@ namespace Cube.Net.Rss
         private string _summary = string.Empty;
         private string _content = string.Empty;
         private IList<string> _categories = null;
-        private IList<Uri> _links = null;
+        private Uri _link = null;
         private DateTime _publishTime = DateTime.MinValue;
         private bool _read = false;
         #endregion

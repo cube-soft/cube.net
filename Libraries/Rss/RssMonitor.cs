@@ -60,7 +60,7 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         public RssMonitor(IDictionary<Uri, RssFeed> buffer) : this(buffer,
-            new ContentHandler<RssFeed>(new RssContentConverter())
+            new ContentHandler<RssFeed>()
             {
                 UseEntityTag = false,
             })
@@ -122,7 +122,7 @@ namespace Cube.Net.Rss
             if (Feeds.ContainsKey(uri)) return;
 
             var feed = new RssFeed { Title = uri.ToString() };
-            feed.Links.Add(uri);
+            feed.Link = uri;
             Feeds.Add(uri, feed);
         }
 

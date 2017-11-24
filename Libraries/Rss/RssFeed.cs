@@ -38,22 +38,6 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Id
-        /// 
-        /// <summary>
-        /// Web サイトの ID を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public string Id
-        {
-            get => _id;
-            set => SetProperty(ref _id, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Title
         /// 
         /// <summary>
@@ -86,45 +70,18 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Links
-        /// 
-        /// <summary>
-        /// Web サイトの URL 一覧を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public IList<Uri> Links
-        {
-            get => _links = _links ?? new List<Uri>();
-            set => SetProperty(ref _links, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Link
         /// 
         /// <summary>
-        /// Web サイトの URL 一覧の先頭要素を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Uri Link => Links.FirstOrDefault();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Icon
-        /// 
-        /// <summary>
-        /// Web サイトのアイコンを示す URL を取得または設定します。
+        /// Web サイトの URL を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public Uri Icon
+        public Uri Link
         {
-            get => _icon;
-            set => SetProperty(ref _icon, value);
+            get => _link;
+            set => SetProperty(ref _link, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -176,8 +133,7 @@ namespace Cube.Net.Rss
         private string _id = string.Empty;
         private string _title = string.Empty;
         private string _description = string.Empty;
-        private IList<Uri> _links = null;
-        private Uri _icon = null;
+        private Uri _link = null;
         private DateTime _lastChecked = DateTime.MinValue;
         private IList<RssArticle> _items = null;
         #endregion

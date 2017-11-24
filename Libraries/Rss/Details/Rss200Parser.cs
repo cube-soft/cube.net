@@ -15,30 +15,43 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Net.Http;
+using System;
+using System.Xml.Linq;
+using Cube.Net.Rss.Parsing;
 
 namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssContentConverter
+    /// Rss200Parser
     ///
     /// <summary>
-    /// HttpContent を RssFeed に変換するためのクラスです。
+    /// RSS 2.0 を解析するクラスです。
     /// </summary>
-    ///
+    /// 
     /* --------------------------------------------------------------------- */
-    public class RssContentConverter : ContentConverter<RssFeed>
+    internal static class Rss200Parser
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// RssContentConverter
-        ///
+        /// Parse
+        /// 
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
+        /// 
+        /// <param name="src">XML</param>
+        /// 
+        /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public RssContentConverter() : base(s => RssParser.Create(s)) { }
+        public static RssFeed Parse(XElement src) => new RssFeed
+        {
+            Title       = src.Element("title").GetValue(),
+            Description = src.Element("description").GetValue(),
+            Link        = src.Element("link").GetUri(),
+            Items       = null,
+            LastChecked = DateTime.Now,
+        };
     }
 }
