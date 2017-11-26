@@ -149,6 +149,20 @@ namespace Cube.Net.Tests
         {
             get
             {
+                yield return new TestCaseData("SampleRss091.xml", new RssFeed
+                {
+                    Title       = "WriteTheWeb",
+                    Description = "News for web users that write back",
+                    Link        = new Uri("http://writetheweb.com"),
+                }).Returns(6);
+
+                yield return new TestCaseData("SampleRss092.xml", new RssFeed
+                {
+                    Title       = "Dave Winer: Grateful Dead",
+                    Description = "A high-fidelity Grateful Dead song every day. This is where we're experimenting with enclosures on RSS news items that download when you're not using your computer. If it works (it will) it will be the end of the Click-And-Wait multimedia experience on the Internet.",
+                    Link        = new Uri("http://www.scripting.com/blog/categories/gratefulDead.html"),
+                }).Returns(22);
+
                 yield return new TestCaseData("SampleRss20-01.xml", new RssFeed
                 {
                     Title       = "Scripting News",

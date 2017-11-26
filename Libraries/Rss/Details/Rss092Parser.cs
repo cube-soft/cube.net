@@ -50,7 +50,50 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root)
-            => new RssFeed();
+        {
+            var e = root.Element("channel");
+            if (e == null) return default(RssFeed);
+            return new RssFeed
+            {
+                Title       = e.GetValue("title"),
+                Description = e.GetValue("description"),
+                Link        = e.GetUri("link"),
+                Items       = ParseItems(e),
+                LastChecked = DateTime.Now,
+            };
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ParseItems
+        /// 
+        /// <summary>
+        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// </summary>
+        /// 
+        /// <param name="src">XML</param>
+        /// 
+        /// <returns>RssFeed オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IList<RssItem> ParseItems(XElement src)
+            => src
+            .Descendants("item")
+            .Select(e => new RssItem
+            {
+                Id          = e.GetValue("link"),
+                Title       = e.GetValue("title"),
+                Summary     = e.GetValue("description"),
+                Content     = e.GetContent(),
+                Link        = e.GetUri("link"),
+                PublishTime = e.GetDateTime("pubDate"),
+                Read        = false,
+            })
+            .ToList();
 
         #endregion
     }
