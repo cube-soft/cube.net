@@ -67,6 +67,25 @@ namespace Cube.Net.Rss
 
         #endregion
 
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Timeout
+        /// 
+        /// <summary>
+        /// タイムアウト時間を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public TimeSpan Timeout
+        {
+            get => _http.Timeout;
+            set => _http.Timeout = value;
+        }
+
+        #endregion
+
         #region Events
 
         /* ----------------------------------------------------------------- */
@@ -121,7 +140,8 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public async Task<RssFeed> GetAsync(Uri uri)
         {
-            using (var response = await _http.GetAsync(uri).ConfigureAwait(false))
+            var opt = HttpCompletionOption.ResponseContentRead;
+            using (var response = await _http.GetAsync(uri, opt).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode) return null;
                 await response.Content.LoadIntoBufferAsync();

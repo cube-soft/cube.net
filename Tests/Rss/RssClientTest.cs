@@ -45,9 +45,15 @@ namespace Cube.Net.Tests.Rss
         [Test]
         public void GetAsync()
         {
-            var client = new RssClient();
-            var rss = client.GetAsync(new Uri("http://blog.cube-soft.jp/?feed=rss2")).Result;
+            var http = new RssClient();
+            var now  = DateTime.Now;
+            var rss  = http.GetAsync(new Uri("http://blog.cube-soft.jp/?feed=rss2")).Result;
+
             Assert.That(rss, Is.Not.Null);
+            Assert.That(rss.Title.Contains("CubeSoft"), Is.True);
+            Assert.That(rss.Link, Is.EqualTo(new Uri("http://blog.cube-soft.jp/")));
+            Assert.That(rss.Items.Count, Is.GreaterThan(0));
+            Assert.That(rss.LastChecked, Is.GreaterThanOrEqualTo(now));
         }
 
         /* ----------------------------------------------------------------- */
@@ -62,13 +68,13 @@ namespace Cube.Net.Tests.Rss
         [Test]
         public void GetAsync_Redirect()
         {
-            var redirect = default(Uri);
-            var client = new RssClient();
-            client.Redirected += (s, e) => redirect = e.NewValue;
+            var uri = default(Uri);
+            var http = new RssClient();
+            http.Redirected += (s, e) => uri = e.NewValue;
 
-            var rss = client.GetAsync(new Uri("http://blog.cube-soft.jp/")).Result;
+            var rss = http.GetAsync(new Uri("http://blog.cube-soft.jp/")).Result;
             Assert.That(rss, Is.Not.Null);
-            Assert.That(redirect, Is.EqualTo(new Uri("http://blog.cube-soft.jp/?feed=rss2")));
+            Assert.That(uri, Is.EqualTo(new Uri("http://blog.cube-soft.jp/?feed=rss2")));
         }
 
         /* ----------------------------------------------------------------- */
