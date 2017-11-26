@@ -33,7 +33,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssMonitor : HttpMonitorBase<RssFeed>
+    public class RssMonitor : NetworkMonitorBase
     {
         #region Constructors
 
@@ -59,37 +59,36 @@ namespace Cube.Net.Rss
         /// <param name="buffer">結果を保持するためのバッファ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor(IDictionary<Uri, RssFeed> buffer) : this(buffer,
-            new ContentHandler<RssFeed>()
-            {
-                UseEntityTag = false,
-            })
-        {
-            Timer.Subscribe(WhenTick);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RssMonitor
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="buffer">結果を保持するためのバッファ</param>
-        /// <param name="handler">HTTP 通信用ハンドラ</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public RssMonitor(IDictionary<Uri, RssFeed> buffer, ContentHandler<RssFeed> handler)
-            : base(handler)
+        public RssMonitor(IDictionary<Uri, RssFeed> buffer) : base()
         {
             System.Diagnostics.Debug.Assert(buffer != null);
-            Feeds = buffer;
+
+            Feeds   = buffer;
+            Handler = new HeaderHandler { UseEntityTag = false };
+            Timeout = TimeSpan.FromSeconds(2);
+            _http   = new RssClient(Handler);
+
+            Timer.Subscribe(WhenTick);
         }
 
         #endregion
 
         #region Properties
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// UserAgent
+        /// 
+        /// <summary>
+        /// ユーザエージェントを取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public string UserAgent
+        {
+            get => Handler.UserAgent;
+            set => Handler.UserAgent = value;
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -101,6 +100,29 @@ namespace Cube.Net.Rss
         /// 
         /* ----------------------------------------------------------------- */
         protected IDictionary<Uri, RssFeed> Feeds { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Handler
+        ///
+        /// <summary>
+        /// HTTP 通信用ハンドラを取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected HeaderHandler Handler { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscriptions
+        ///
+        /// <summary>
+        /// 購読者一覧を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected IList<Func<Uri, RssFeed, Task>> Subscriptions { get; }
+            = new List<Func<Uri, RssFeed, Task>>();
 
         #endregion
 
@@ -126,29 +148,130 @@ namespace Cube.Net.Rss
             Feeds.Add(uri, feed);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscribe
+        ///
+        /// <summary>
+        /// データ受信時に非同期実行する処理を登録します。
+        /// </summary>
+        /// 
+        /// <param name="action">非同期実行する処理</param>
+        /// 
+        /// <returns>登録解除用オブジェクト</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public IDisposable Subscribe(Func<Uri, RssFeed, Task> action)
+        {
+            Subscriptions.Add(action);
+            return Disposable.Create(() => Subscriptions.Remove(action));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscribe
+        ///
+        /// <summary>
+        /// データ受信時に実行する処理を登録します。
+        /// </summary>
+        /// 
+        /// <param name="action">実行する処理</param>
+        /// 
+        /// <returns>登録解除用オブジェクト</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public IDisposable Subscribe(Action<Uri, RssFeed> action)
+            => Subscribe(async (u, v) =>
+        {
+            action(u, v);
+            await Task.FromResult(0);
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Publish
+        ///
+        /// <summary>
+        /// 新しい結果を発行します。
+        /// </summary>
+        /// 
+        /// <param name="uri">URL</param>
+        /// <param name="feed">RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual async Task Publish(Uri uri, RssFeed feed)
+        {
+            foreach (var action in Subscriptions)
+            {
+                try { await action(uri, feed); }
+                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージリソースを解放するかどうかを示す値
+        /// </param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _http.Dispose();
+                Handler.Dispose();
+            }
+        }
+
         #endregion
 
         #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Update
+        /// UpdateAsync
         ///
         /// <summary>
         /// RSS フィードの内容を更新します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override Task Publish(Uri uri, RssFeed value)
+        private async Task UpdateAsync(Uri uri)
         {
-            if (Feeds.ContainsKey(uri))
+            try
             {
-                Feeds[uri].Title = value.Title;
-                Feeds[uri].Items = value.Items;
-                Feeds[uri].LastChecked = DateTime.Now;
-                return base.Publish(uri, value);
+                if (!Feeds.ContainsKey(uri)) return;
+
+                var feed = await GetAsync(uri);
+                Feeds[uri].Title = feed.Title;
+                Feeds[uri].Items = feed.Items;
+                Feeds[uri].LastChecked = feed.LastChecked;
+                await Publish(uri, feed);
             }
-            else return Task.FromResult(0);
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SetTimeout
+        ///
+        /// <summary>
+        /// タイムアウト時間を設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private async Task<RssFeed> GetAsync(Uri uri)
+        {
+            try { if (_http.Timeout != Timeout) _http.Timeout = Timeout; }
+            catch (Exception /* err */) { this.LogWarn("Timeout cannot be applied"); }
+            return await _http.GetAsync(uri);
         }
 
         /* ----------------------------------------------------------------- */
@@ -166,11 +289,15 @@ namespace Cube.Net.Rss
 
             foreach (var uri in Feeds.Keys.ToArray())
             {
-                try { await PublishAsync(uri); }
+                try { await UpdateAsync(uri); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
                 await Task.Delay(1000); // TODO
             }
         }
+
+        #region Fields
+        private RssClient _http;
+        #endregion
 
         #endregion
     }

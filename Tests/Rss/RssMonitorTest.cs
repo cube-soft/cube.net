@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Cube.Net.Rss;
 using NUnit.Framework;
