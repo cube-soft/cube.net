@@ -66,7 +66,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root) => new RssFeed
         {
-            Title       = root.GetValue(Namespace, "title"),
+            Title       = root.GetTitle(Namespace),
             Link        = root.GetUri(Namespace, "link"),
             Items       = ParseItems(root),
             LastChecked = DateTime.Now,

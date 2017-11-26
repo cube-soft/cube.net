@@ -55,7 +55,7 @@ namespace Cube.Net.Rss
             if (e == null) return default(RssFeed);
             return new RssFeed
             {
-                Title       = e.GetValue("title"),
+                Title       = e.GetTitle(),
                 Description = e.GetValue("description"),
                 Link        = e.GetUri("link"),
                 Items       = ParseItems(e),
