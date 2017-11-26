@@ -34,6 +34,21 @@ namespace Cube.Net.Rss
     /* --------------------------------------------------------------------- */
     internal static class AtomParser
     {
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Namespace
+        /// 
+        /// <summary>
+        /// Atom フィードの名前空間を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string Namespace { get; } = "http://www.w3.org/2005/Atom";
+
+        #endregion
+
         #region Methods
 
         /* ----------------------------------------------------------------- */
@@ -49,8 +64,45 @@ namespace Cube.Net.Rss
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(XElement root)
-            => new RssFeed();
+        public static RssFeed Parse(XElement root) => new RssFeed
+        {
+            Title       = root.GetValue(Namespace, "title"),
+            Link        = root.GetUri(Namespace, "link"),
+            Items       = ParseItems(root),
+            LastChecked = DateTime.Now,
+        };
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ParseItems
+        /// 
+        /// <summary>
+        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// </summary>
+        /// 
+        /// <param name="src">XML</param>
+        /// 
+        /// <returns>RssFeed オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IList<RssItem> ParseItems(XElement src)
+            => src
+            .Descendants(XNamespace.Get(Namespace) + "entry")
+            .Select(e => new RssItem
+            {
+                Id          = e.GetValue(Namespace, "id"),
+                Title       = e.GetValue(Namespace, "title"),
+                Summary     = e.GetValue(Namespace, "summary"),
+                Content     = e.GetContent(Namespace),
+                Link        = e.GetUri(Namespace, "link"),
+                PublishTime = e.GetDateTime(Namespace, "published"),
+                Read        = false,
+            })
+            .ToList();
 
         #endregion
     }

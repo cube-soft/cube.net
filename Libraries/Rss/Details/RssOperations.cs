@@ -31,6 +31,183 @@ namespace Cube.Net.Rss.Parsing
     /* --------------------------------------------------------------------- */
     internal static class RssOperations
     {
+        #region Methods
+
+        #region GetElement
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetElement
+        /// 
+        /// <summary>
+        /// XElement オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>XElement オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static XElement GetElement(this XElement e, string name)
+            => GetElement(e, string.Empty, name);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetElement
+        /// 
+        /// <summary>
+        /// XElement オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="ns">名前空間</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>XElement オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static XElement GetElement(this XElement e, string ns, string name)
+            => !string.IsNullOrEmpty(ns) ?
+               e.Element(XNamespace.Get(ns) + name) :
+               e.Element(name);
+
+        #endregion
+
+        #region GetValue
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetValue
+        /// 
+        /// <summary>
+        /// 値を取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>文字列</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static string GetValue(this XElement e, string name)
+            => GetValue(e, string.Empty, name);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetValue
+        /// 
+        /// <summary>
+        /// 値を取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="ns">名前空間</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>文字列</returns>
+        /// 
+        /// <remarks>
+        /// null を string.Empty に正規化します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string GetValue(this XElement e, string ns, string name)
+            => GetElement(e, ns, name)?.Value ?? string.Empty;
+
+        #endregion
+
+        #region GetUri
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetUri
+        /// 
+        /// <summary>
+        /// Uri オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>Uri オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static Uri GetUri(this XElement e, string name)
+            => GetUri(e, string.Empty, name);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetUri
+        /// 
+        /// <summary>
+        /// Uri オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="ns">名前空間</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>Uri オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static Uri GetUri(this XElement e, string ns, string name) => TryFunc(() =>
+        {
+            var node = e.GetElement(ns, name);
+            if (node == null) return default(Uri);
+            if (!string.IsNullOrEmpty(node.Value)) return new Uri(node.Value);
+
+            var attr = node.Attribute("href")?.Value;
+            return !string.IsNullOrEmpty(attr) ? new Uri(attr) : default(Uri);
+        });
+
+        #endregion
+
+        #region GetDateTime
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetDateTime
+        /// 
+        /// <summary>
+        /// DateTime オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>DateTime オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static DateTime GetDateTime(this XElement e, string name)
+            => GetDateTime(e, string.Empty, name);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetDateTime
+        /// 
+        /// <summary>
+        /// DateTime オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="ns">名前空間</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>DateTime オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static DateTime GetDateTime(this XElement e, string ns, string name)
+            => TryFunc(() =>
+        {
+            var value = e.GetValue(ns, name);
+            return !string.IsNullOrEmpty(value) ? DateTime.Parse(value) : default(DateTime);
+        });
+
+        #endregion
+
+        #region GetContent
+
         /* ----------------------------------------------------------------- */
         ///
         /// GetContent
@@ -56,93 +233,31 @@ namespace Cube.Net.Rss.Parsing
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetValue
+        /// GetContent
         /// 
         /// <summary>
-        /// 値を取得します。
-        /// </summary>
-        /// 
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="name">要素名</param>
-        /// 
-        /// <returns>文字列</returns>
-        /// 
-        /// <remarks>
-        /// null を string.Empty に正規化します。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static string GetValue(this XElement e, string name)
-            => e.Element(name)?.Value ?? string.Empty;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetValue
-        /// 
-        /// <summary>
-        /// 値を取得します。
+        /// Content を取得します。
         /// </summary>
         /// 
         /// <param name="e">XML オブジェクト</param>
         /// <param name="ns">名前空間</param>
-        /// <param name="name">要素名</param>
         /// 
         /// <returns>文字列</returns>
         /// 
-        /// <remarks>
-        /// null を string.Empty に正規化します。
-        /// </remarks>
-        ///
         /* ----------------------------------------------------------------- */
-        public static string GetValue(this XElement e, string ns, string name)
+        public static string GetContent(this XElement e, string ns)
         {
-            XNamespace cvt = ns;
-            return e.Element(cvt + name)?.Value ?? string.Empty;
+            var dest = e.GetValue(ns, "content");
+            return !string.IsNullOrEmpty(dest) ?
+                   dest :
+                   GetContent(e);
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetUri
-        /// 
-        /// <summary>
-        /// Uri オブジェクトを取得します。
-        /// </summary>
-        /// 
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="name">要素名</param>
-        /// 
-        /// <returns>Uri オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static Uri GetUri(this XElement e, string name) => TryFunc(() =>
-        {
-            var node = e.Element(name);
-            if (node == null) return default(Uri);
-            if (!string.IsNullOrEmpty(node.Value)) return new Uri(node.Value);
+        #endregion
 
-            var attr = node.Attribute("href")?.Value;
-            return !string.IsNullOrEmpty(attr) ? new Uri(attr) : default(Uri);
-        });
+        #endregion
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetDateTime
-        /// 
-        /// <summary>
-        /// DateTime オブジェクトを取得します。
-        /// </summary>
-        /// 
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="name">要素名</param>
-        /// 
-        /// <returns>DateTime オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static DateTime GetDateTime(this XElement e, string name) => TryFunc(() =>
-        {
-            var value = e.GetValue(name);
-            return !string.IsNullOrEmpty(value) ? DateTime.Parse(value) : default(DateTime);
-        });
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
@@ -161,10 +276,12 @@ namespace Cube.Net.Rss.Parsing
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public static T TryFunc<T>(Func<T> func)
+        private static T TryFunc<T>(Func<T> func)
         {
             try { return func(); }
             catch (Exception /* err */) { return default(T); }
         }
+
+        #endregion
     }
 }
