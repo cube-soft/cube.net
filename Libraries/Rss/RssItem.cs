@@ -37,22 +37,6 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Id
-        /// 
-        /// <summary>
-        /// 記事 ID を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public string Id
-        {
-            get => _id;
-            set => SetProperty(ref _id, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Title
         /// 
         /// <summary>
@@ -170,7 +154,6 @@ namespace Cube.Net.Rss
         #endregion
 
         #region Fields
-        private string _id = string.Empty;
         private string _title = string.Empty;
         private string _summary = string.Empty;
         private string _content = string.Empty;

@@ -85,15 +85,40 @@ namespace Cube.Net.Rss
             .Descendants("item")
             .Select(e => new RssItem
             {
-                Id          = e.GetValue("guid"),
-                Title       = e.GetValue("title"),
+                Title       = e.GetTitle(),
                 Summary     = e.GetValue("description"),
-                Content     = e.GetContent(),
+                Content     = GetContent(e),
                 Link        = e.GetUri("link"),
                 PublishTime = e.GetDateTime("pubDate"),
                 Read        = false,
             })
             .ToList();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetContent
+        /// 
+        /// <summary>
+        /// Content を取得します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// RSS 1.0 の content:encoded タグを利用される事が多いため、
+        /// 該当タグが存在する場合はその内容を返します。
+        /// RSS 2.0 の仕様には Content に相当するものが存在しないため、
+        /// それ以外の場合は description の内容を返します。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private static string GetContent(XElement src)
+        {
+            var ns = "http://purl.org/rss/1.0/modules/content/";
+            var encoded = src.GetValue(ns, "encoded");
+
+            return !string.IsNullOrEmpty(encoded) ?
+                   encoded :
+                   src.GetValue("description");
+        }
 
         #endregion
     }

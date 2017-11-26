@@ -206,51 +206,53 @@ namespace Cube.Net.Rss.Parsing
 
         #endregion
 
-        #region GetContent
+        #region GetTitle
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetContent
+        /// GetTitle
         /// 
         /// <summary>
-        /// Content を取得します。
+        /// タイトルを取得します。
         /// </summary>
         /// 
         /// <param name="e">XML オブジェクト</param>
         /// 
-        /// <returns>文字列</returns>
+        /// <returns>タイトル</returns>
         /// 
+        /// <remarks>
+        /// title タグが存在しない場合、link タグの内容で代替します。
+        /// </remarks>
+        ///
         /* ----------------------------------------------------------------- */
-        public static string GetContent(this XElement e)
-        {
-            var ns = "http://purl.org/rss/1.0/modules/content/";
-            var encoded = e.GetValue(ns, "encoded");
-
-            return !string.IsNullOrEmpty(encoded) ?
-                   encoded :
-                   e.GetValue("content");
-        }
+        public static string GetTitle(this XElement e)
+            => GetTitle(e, string.Empty);
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetContent
+        /// GetTitle
         /// 
         /// <summary>
-        /// Content を取得します。
+        /// タイトルを取得します。
         /// </summary>
         /// 
         /// <param name="e">XML オブジェクト</param>
         /// <param name="ns">名前空間</param>
         /// 
-        /// <returns>文字列</returns>
+        /// <returns>タイトル</returns>
         /// 
+        /// <remarks>
+        /// title タグが存在しない場合、link タグの内容で代替します。
+        /// </remarks>
+        ///
         /* ----------------------------------------------------------------- */
-        public static string GetContent(this XElement e, string ns)
+        public static string GetTitle(this XElement e, string ns)
         {
-            var dest = e.GetValue(ns, "content");
-            return !string.IsNullOrEmpty(dest) ?
-                   dest :
-                   GetContent(e);
+            var title = e.GetValue(ns, "title");
+            if (!string.IsNullOrEmpty(title)) return title;
+
+            var link = e.GetUri(ns, "link");
+            return link?.ToString() ?? string.Empty;
         }
 
         #endregion

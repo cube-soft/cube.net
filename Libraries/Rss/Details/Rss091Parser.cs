@@ -85,10 +85,9 @@ namespace Cube.Net.Rss
             .Descendants("item")
             .Select(e => new RssItem
             {
-                Id          = e.GetValue("link"),
-                Title       = e.GetValue("title"),
+                Title       = e.GetTitle(),
                 Summary     = e.GetValue("description"),
-                Content     = e.GetContent(),
+                Content     = e.GetValue("description"),
                 Link        = e.GetUri("link"),
                 PublishTime = e.GetDateTime("pubDate"),
                 Read        = false,

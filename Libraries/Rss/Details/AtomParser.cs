@@ -94,10 +94,9 @@ namespace Cube.Net.Rss
             .Descendants(XNamespace.Get(Namespace) + "entry")
             .Select(e => new RssItem
             {
-                Id          = e.GetValue(Namespace, "id"),
-                Title       = e.GetValue(Namespace, "title"),
+                Title       = e.GetTitle(Namespace),
                 Summary     = e.GetValue(Namespace, "summary"),
-                Content     = e.GetContent(Namespace),
+                Content     = e.GetValue(Namespace, "content"),
                 Link        = e.GetUri(Namespace, "link"),
                 PublishTime = e.GetDateTime(Namespace, "published"),
                 Read        = false,
