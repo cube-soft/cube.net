@@ -163,6 +163,13 @@ namespace Cube.Net.Tests
                     Link        = new Uri("http://www.scripting.com/blog/categories/gratefulDead.html"),
                 }).Returns(22);
 
+                yield return new TestCaseData("SampleRss10-01.xml", new RssFeed
+                {
+                    Title       = "XML.com",
+                    Description = "XML.com features a rich mix of information and services for the XML community.",
+                    Link        = new Uri("http://xml.com/pub"),
+                }).Returns(2);
+
                 yield return new TestCaseData("SampleRss20-01.xml", new RssFeed
                 {
                     Title       = "Scripting News",

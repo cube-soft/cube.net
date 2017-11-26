@@ -34,6 +34,21 @@ namespace Cube.Net.Rss
     /* --------------------------------------------------------------------- */
     internal static class Rss100Parser
     {
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Namespace
+        /// 
+        /// <summary>
+        /// Atom フィードの名前空間を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string Namespace { get; } = "http://purl.org/rss/1.0/";
+
+        #endregion
+
         #region Methods
 
         /* ----------------------------------------------------------------- */
@@ -50,7 +65,69 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root)
-            => new RssFeed();
+        {
+            var e = root.GetElement(Namespace, "channel");
+            if (e == null) return default(RssFeed);
+            return new RssFeed
+            {
+                Title       = e.GetTitle(Namespace),
+                Description = e.GetValue(Namespace, "description"),
+                Link        = e.GetUri(Namespace, "link"),
+                Items       = ParseItems(root),
+                LastChecked = DateTime.Now,
+            };
+        }
+
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ParseItems
+        /// 
+        /// <summary>
+        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// </summary>
+        /// 
+        /// <param name="src">XML</param>
+        /// 
+        /// <returns>RssFeed オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IList<RssItem> ParseItems(XElement src)
+            => src
+            .Descendants(XNamespace.Get(Namespace) + "item")
+            .Select(e => new RssItem
+            {
+                Title       = e.GetTitle(Namespace),
+                Summary     = e.GetValue(Namespace, "description"),
+                Content     = GetContent(e),
+                Link        = e.GetUri(Namespace, "link"),
+                PublishTime = e.GetDateTime(Namespace, "pubDate"),
+                Read        = false,
+            })
+            .ToList();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetContent
+        /// 
+        /// <summary>
+        /// Content を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private static string GetContent(XElement src)
+        {
+            var ns = "http://purl.org/rss/1.0/modules/content/";
+            var encoded = src.GetValue(ns, "encoded");
+
+            return !string.IsNullOrEmpty(encoded) ?
+                   encoded :
+                   src.GetValue(Namespace, "description");
+        }
 
         #endregion
     }
