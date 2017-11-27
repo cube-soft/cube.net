@@ -248,7 +248,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Save(string json)
         {
-            using (var s = IO.OpenWrite(json))
+            using (var s = IO.Create(json))
             {
                 var root = new RssCategory
                 {

@@ -74,6 +74,7 @@
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.Expression.Interactions" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsBase" />
@@ -88,7 +89,6 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Xui\Behaviors\CommandBehavior.cs" />
     <Compile Include="Xui\Behaviors\ListBox.cs" />
-    <Compile Include="Xui\Behaviors\TreeView.cs" />
     <Compile Include="Xui\Behaviors\WebDocument.cs" />
     <Compile Include="Xui\Triggers\MessageBoxTrigger.cs" />
     <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
