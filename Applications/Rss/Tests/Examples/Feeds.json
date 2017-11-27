@@ -63,6 +63,10 @@
             {
                 "Uri": "https:\/\/github.com\/blog.atom",
                 "Title": "The GitHub Blog"
+            },
+            {
+                "Uri": "http:\/\/japanese.engadget.com\/rss.xml",
+                "Title": "Engadget Japanese RSS Feed"
             }
         ]
     }

@@ -140,6 +140,7 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine($"CollectionChanged:{e.Action}");
             if (_context != null)
             {
                 if (Synchronously) _context.Send(_ => base.OnCollectionChanged(e), null);

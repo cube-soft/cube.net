@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -142,7 +143,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IList<RssCategory> Categories { get; set; }
+        public IEnumerable<RssCategory> Categories => Items.OfType<RssCategory>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -153,7 +154,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IList<RssEntry> Entries { get; set; }
+        public IEnumerable<RssEntry> Entries => Items.OfType<RssEntry>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -164,8 +165,8 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssEntryBase> Items
-            => Categories.Cast<RssEntryBase>().Concat(Entries);
+        public BindableCollection<RssEntryBase> Items { get; set; }
+            = new BindableCollection<RssEntryBase>();
 
         #endregion
 
@@ -201,9 +202,15 @@ namespace Cube.Net.App.Rss.Reader
                     Title  = Title,
                     Parent = src,
                 };
-                dest.Categories = Categories?.Select(e => e.Convert(dest)).ToList() ?? new List<RssCategory>();
-                dest.Entries    = Entries.Select(e => e.Convert(dest)).ToList();
+                Add(dest, Categories?.Select(e => e.Convert(dest)));
+                Add(dest, Entries.Select(e => e.Convert(dest)));
                 return dest;
+            }
+
+            private void Add(RssCategory dest, IEnumerable<RssEntryBase> items)
+            {
+                if (items == null) return;
+                foreach (var item in items) dest.Items.Add(item);
             }
         }
 
