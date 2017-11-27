@@ -156,7 +156,7 @@ namespace Cube.Net.App.Rss.Reader
             Default.Entries.Add(new RssEntry
             {
                 Title = feed.Title,
-                Uri   = feed.Link,
+                Uri   = feed.Uri,
             });
 
             _feeds.Add(feed.Link, feed);

@@ -86,6 +86,22 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Uri
+        /// 
+        /// <summary>
+        /// フィードの URL を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public Uri Uri
+        {
+            get => _uri;
+            set => SetProperty(ref _uri, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// LastChecked
         /// 
         /// <summary>
@@ -134,6 +150,7 @@ namespace Cube.Net.Rss
         private string _title = string.Empty;
         private string _description = string.Empty;
         private Uri _link = null;
+        private Uri _uri = null;
         private DateTime _lastChecked = DateTime.MinValue;
         private IList<RssItem> _items = null;
         #endregion
