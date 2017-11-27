@@ -143,8 +143,12 @@ namespace Cube.Net.Rss
         {
             if (Feeds.ContainsKey(uri)) return;
 
-            var feed = new RssFeed { Title = uri.ToString() };
-            feed.Link = uri;
+            var feed = new RssFeed
+            {
+                Title = uri.ToString(),
+                Uri   = uri,
+            };
+
             Feeds.Add(uri, feed);
         }
 

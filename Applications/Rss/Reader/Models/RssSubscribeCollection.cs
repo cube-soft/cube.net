@@ -159,7 +159,7 @@ namespace Cube.Net.App.Rss.Reader
                 Uri   = feed.Uri,
             });
 
-            _feeds.Add(feed.Link, feed);
+            _feeds.Add(feed.Uri, feed);
             _monitor.Start();
         });
 
@@ -405,7 +405,7 @@ namespace Cube.Net.App.Rss.Reader
                 _feeds.Add(entry.Uri, new RssFeed
                 {
                     Title = entry.Title,
-                    Link  = entry.Uri,
+                    Uri   = entry.Uri,
                 });
             }
 
