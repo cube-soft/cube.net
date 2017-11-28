@@ -55,11 +55,7 @@ namespace Cube.Net.App.Rss.Reader
             _monitor = new RssMonitor(_feeds) { Interval = TimeSpan.FromHours(1) };
 
             _items.Synchronously = true;
-            _items.CollectionChanged += (s, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine($"CollectionChanged:{e.Action}");
-                CollectionChanged?.Invoke(this, e);
-            };
+            _items.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, e);
         }
 
         #endregion
