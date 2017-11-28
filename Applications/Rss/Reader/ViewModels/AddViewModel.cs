@@ -99,19 +99,57 @@ namespace Cube.Net.App.Rss.Reader
                     {
                         var http = new RssClient();
                         var rss = await http.GetAsync(new Uri(Url.Value));
-                        _callback?.Invoke(rss);
-                        Messenger.Send(this);
+                        if (rss == null) Error(Properties.Resources.ErrorFeedNotFound);
+                        else
+                        {
+                            _callback?.Invoke(rss);
+                            Messenger.Send(this);
+                        }
                     }
-                    catch (Exception err) { Messenger.Send(new MessageBox(err.Message)); }
+                    catch (Exception err) { Error(err); }
                 },
                 () => !string.IsNullOrEmpty(Url.Value)
             );
 
         #endregion
 
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Error
+        /// 
+        /// <summary>
+        /// エラーメッセージを表示します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Error(string message)
+            => Messenger.Send(new MessageBox(message));
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Error
+        /// 
+        /// <summary>
+        /// エラーメッセージを表示します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Error(Exception err)
+        {
+            var ss = new System.Text.StringBuilder();
+            ss.AppendLine(Properties.Resources.ErrorUnexpected);
+            ss.AppendLine();
+            ss.AppendLine($"{err.Message} ({err.GetType().Name})");
+            Error(ss.ToString());
+        }
+
         #region Fields
         private Action<RssFeed> _callback;
         private RelayCommand _add;
+        #endregion
+
         #endregion
     }
 }

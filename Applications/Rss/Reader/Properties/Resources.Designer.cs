@@ -61,6 +61,24 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   RSS または Atom フィードが見つかりません。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ErrorFeedNotFound {
+            get {
+                return ResourceManager.GetString("ErrorFeedNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   フィード取得中にエラーが発生しました。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ErrorUnexpected {
+            get {
+                return ResourceManager.GetString("ErrorUnexpected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
         internal static byte[] Feeds {
