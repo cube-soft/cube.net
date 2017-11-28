@@ -308,7 +308,13 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         public IEnumerator<KeyValuePair<Uri, RssFeed>> GetEnumerator()
-            => _src.GetEnumerator();
+        {
+            foreach (var kv in _src)
+            {
+                Recover(kv.Key, kv.Value);
+                yield return kv;
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -345,12 +351,12 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private void Recover(Uri uri, RssFeed dest)
         {
-            System.Diagnostics.Debug.Assert(dest != null);
-
             var feed = Load(uri);
             if (feed?.Items == null) return;
 
+            dest.Items.Clear();
             foreach (var a in feed.Items.Where(e => !e.Read)) dest.Items.Add(a);
+            dest.LastChecked = feed.LastChecked;
         }
 
         /* ----------------------------------------------------------------- */

@@ -254,12 +254,29 @@ namespace Cube.Net.Rss
                 if (!Feeds.ContainsKey(uri)) return;
 
                 var feed = await GetAsync(uri);
+                UpdateItems(feed.Items, Feeds[uri]);
                 Feeds[uri].Title = feed.Title;
-                Feeds[uri].Items = feed.Items;
                 Feeds[uri].LastChecked = feed.LastChecked;
                 await Publish(uri, feed);
             }
             catch (Exception err) { this.LogWarn(err.ToString(), err); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UpdateItems
+        ///
+        /// <summary>
+        /// RSS フィードの新着記事一覧を更新します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void UpdateItems(IList<RssItem> src, RssFeed dest)
+        {
+            foreach (var item in src
+                .Where(e => e.PublishTime > dest.LastChecked)
+                .OrderBy(e => e.PublishTime)
+            ) dest.Items.Insert(0, item);
         }
 
         /* ----------------------------------------------------------------- */
