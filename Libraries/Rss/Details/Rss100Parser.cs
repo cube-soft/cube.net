@@ -34,21 +34,6 @@ namespace Cube.Net.Rss
     /* --------------------------------------------------------------------- */
     internal static class Rss100Parser
     {
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Namespace
-        /// 
-        /// <summary>
-        /// Atom フィードの名前空間を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static string Namespace { get; } = "http://purl.org/rss/1.0/";
-
-        #endregion
-
         #region Methods
 
         /* ----------------------------------------------------------------- */
@@ -66,13 +51,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root)
         {
-            var e = root.GetElement(Namespace, "channel");
+            var e = root.GetElement("channel");
             if (e == null) return default(RssFeed);
             return new RssFeed
             {
-                Title       = e.GetTitle(Namespace),
-                Description = e.GetValue(Namespace, "description"),
-                Link        = e.GetUri(Namespace, "link"),
+                Title       = e.GetTitle(),
+                Description = e.GetValue("description"),
+                Link        = e.GetUri("link"),
                 Items       = ParseItems(root),
                 LastChecked = DateTime.Now,
             };
@@ -98,14 +83,14 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static IList<RssItem> ParseItems(XElement src)
             => src
-            .Descendants(XNamespace.Get(Namespace) + "item")
+            .Descendants(src.GetDefaultNamespace() + "item")
             .Select(e => new RssItem
             {
-                Title       = e.GetTitle(Namespace),
-                Summary     = e.GetValue(Namespace, "description"),
+                Title       = e.GetTitle(),
+                Summary     = e.GetValue("description"),
                 Content     = GetContent(e),
-                Link        = e.GetUri(Namespace, "link"),
-                PublishTime = e.GetDateTime(Namespace, "pubDate"),
+                Link        = e.GetUri("link"),
+                PublishTime = e.GetDateTime(NsDcElements, "date"),
                 Read        = false,
             })
             .ToList();
@@ -121,14 +106,17 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static string GetContent(XElement src)
         {
-            var ns = "http://purl.org/rss/1.0/modules/content/";
-            var encoded = src.GetValue(ns, "encoded");
-
+            var encoded = src.GetValue(NsModContent, "encoded");
             return !string.IsNullOrEmpty(encoded) ?
                    encoded :
-                   src.GetValue(Namespace, "description");
+                   src.GetValue("description");
         }
 
+        #endregion
+
+        #region Fields
+        private static string NsDcElements = "http://purl.org/dc/elements/1.1/";
+        private static string NsModContent = "http://purl.org/rss/1.0/modules/content/";
         #endregion
     }
 }

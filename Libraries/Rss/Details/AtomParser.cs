@@ -34,21 +34,6 @@ namespace Cube.Net.Rss
     /* --------------------------------------------------------------------- */
     internal static class AtomParser
     {
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Namespace
-        /// 
-        /// <summary>
-        /// Atom フィードの名前空間を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static string Namespace { get; } = "http://www.w3.org/2005/Atom";
-
-        #endregion
-
         #region Methods
 
         /* ----------------------------------------------------------------- */
@@ -66,8 +51,8 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root) => new RssFeed
         {
-            Title       = root.GetTitle(Namespace),
-            Link        = root.GetUri(Namespace, "link"),
+            Title       = root.GetTitle(),
+            Link        = root.GetUri("link"),
             Items       = ParseItems(root),
             LastChecked = DateTime.Now,
         };
@@ -91,14 +76,14 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static IList<RssItem> ParseItems(XElement src)
             => src
-            .Descendants(XNamespace.Get(Namespace) + "entry")
+            .Descendants(src.GetDefaultNamespace() + "entry")
             .Select(e => new RssItem
             {
-                Title       = e.GetTitle(Namespace),
-                Summary     = e.GetValue(Namespace, "summary"),
-                Content     = e.GetValue(Namespace, "content"),
-                Link        = e.GetUri(Namespace, "link"),
-                PublishTime = e.GetDateTime(Namespace, "published"),
+                Title       = e.GetTitle(),
+                Summary     = e.GetValue("summary"),
+                Content     = e.GetValue("content"),
+                Link        = e.GetUri("link"),
+                PublishTime = e.GetDateTime("published"),
                 Read        = false,
             })
             .ToList();

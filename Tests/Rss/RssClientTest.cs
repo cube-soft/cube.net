@@ -69,7 +69,7 @@ namespace Cube.Net.Tests.Rss
         [TestCase("https://www.asahi.com/",    ExpectedResult = "http://www3.asahi.com/rss/index.rdf")]
         public string GetAsync_Redirect(string src)
         {
-            var uri = default(Uri);
+            var uri  = default(Uri);
             var http = new RssClient();
             http.Redirected += (s, e) => uri = e.NewValue;
 

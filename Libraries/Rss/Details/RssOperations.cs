@@ -65,12 +65,16 @@ namespace Cube.Net.Rss.Parsing
         /// <param name="name">要素名</param>
         /// 
         /// <returns>XElement オブジェクト</returns>
+        /// 
+        /// <remarks>
+        /// 名前空間が空文字の場合、既定の名前空間を使用します。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         public static XElement GetElement(this XElement e, string ns, string name)
             => !string.IsNullOrEmpty(ns) ?
                e.Element(XNamespace.Get(ns) + name) :
-               e.Element(name);
+               e.Element(e.GetDefaultNamespace() + name);
 
         #endregion
 
