@@ -159,7 +159,7 @@ namespace Cube.Net.Rss
             if (feed == null) return;
 
             if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            using (var s = IO.OpenWrite(CacheName(uri))) SettingsType.Json.Save(s, feed);
+            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, feed);
 
             feed.Items.Clear();
         }
