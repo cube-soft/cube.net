@@ -112,13 +112,15 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static string GetContent(XElement src)
         {
-            var ns = "http://purl.org/rss/1.0/modules/content/";
-            var encoded = src.GetValue(ns, "encoded");
-
+            var encoded = src.GetValue(NsModContent, "encoded");
             return !string.IsNullOrEmpty(encoded) ?
                    encoded :
                    src.GetValue("description");
         }
+
+        #region Fields
+        private static string NsModContent = "http://purl.org/rss/1.0/modules/content/";
+        #endregion
 
         #endregion
     }

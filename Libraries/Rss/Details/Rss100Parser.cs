@@ -112,11 +112,11 @@ namespace Cube.Net.Rss
                    src.GetValue("description");
         }
 
-        #endregion
-
         #region Fields
         private static string NsDcElements = "http://purl.org/dc/elements/1.1/";
         private static string NsModContent = "http://purl.org/rss/1.0/modules/content/";
+        #endregion
+
         #endregion
     }
 }
