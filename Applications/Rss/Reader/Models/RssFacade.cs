@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Linq;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 
@@ -136,6 +135,22 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public RssFeed Lookup(RssEntry entry) => Items.Lookup(entry.Uri);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Cache
+        ///
+        /// <summary>
+        /// RSS フィードをキャッシュファイルに保存します。
+        /// </summary>
+        /// 
+        /// <param name="feed">RSS フィード情報</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Cache(RssFeed feed)
+        {
+            if (feed != null) Items.Cache(feed.Uri);
+        }
 
         /* ----------------------------------------------------------------- */
         ///

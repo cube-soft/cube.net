@@ -151,7 +151,7 @@ namespace Cube.Net.Rss
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        private void Cache(Uri uri)
+        public void Cache(Uri uri)
         {
             if (string.IsNullOrEmpty(Directory) || !_src.ContainsKey(uri)) return;
 
@@ -162,28 +162,6 @@ namespace Cube.Net.Rss
             using (var s = IO.OpenWrite(CacheName(uri))) SettingsType.Json.Save(s, feed);
 
             feed.Items.Clear();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CacheName
-        ///
-        /// <summary>
-        /// キャッシュが保存されるファイルのパスを取得します。
-        /// </summary>
-        /// 
-        /// <param name="uri">URL</param>
-        /// 
-        /// <returns>キャッシュファイルのパス</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string CacheName(Uri uri)
-        {
-            var md5  = new MD5CryptoServiceProvider();
-            var data = System.Text.Encoding.UTF8.GetBytes(uri.ToString());
-            var hash = md5.ComputeHash(data);
-            var name = BitConverter.ToString(hash).ToLower().Replace("-", "");
-            return IO.Combine(Directory, name);
         }
 
         #region IDictionary<Uri, RssFeed>
@@ -396,6 +374,28 @@ namespace Cube.Net.Rss
             catch (Exception err) { this.LogWarn(err.ToString(), err); }
 
             return default(RssFeed);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CacheName
+        ///
+        /// <summary>
+        /// キャッシュが保存されるファイルのパスを取得します。
+        /// </summary>
+        /// 
+        /// <param name="uri">URL</param>
+        /// 
+        /// <returns>キャッシュファイルのパス</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        private string CacheName(Uri uri)
+        {
+            var md5 = new MD5CryptoServiceProvider();
+            var data = System.Text.Encoding.UTF8.GetBytes(uri.ToString());
+            var hash = md5.ComputeHash(data);
+            var name = BitConverter.ToString(hash).ToLower().Replace("-", "");
+            return IO.Combine(Directory, name);
         }
 
         #region Fields

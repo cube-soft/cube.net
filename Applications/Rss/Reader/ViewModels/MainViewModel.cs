@@ -170,7 +170,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand<object> SelectEntry
             => _selectEntry = _selectEntry ?? new RelayCommand<object>(
-                e => Feed.Value = _model.Lookup(e as RssEntry),
+                e =>
+                {
+                    _model.Cache(Feed.Value);
+                    Feed.Value = _model.Lookup(e as RssEntry);
+                },
                 e => e is RssEntry
             );
 
