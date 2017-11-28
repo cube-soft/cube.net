@@ -301,7 +301,6 @@ namespace Cube.Net.Http
         {
             var response = await base.SendAsync(request, cancellationToken);
             if (response == null || Converter == null) return response;
-
             if (response.IsSuccessStatusCode)
             {
                 await response.Content.LoadIntoBufferAsync();

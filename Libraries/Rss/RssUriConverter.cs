@@ -45,14 +45,38 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         public static IEnumerable<Uri> GetRssUris(this System.IO.Stream src)
-            => ToXDocument(src)
-            .Descendants("link")
-            .Where(e => e.Attribute("rel")?.Value == "alternate")
-            .Select(e => new Uri(e.Attribute("href").Value));
+        {
+            var doc = ToXDocument(src);
+            var ns  = doc.Root.GetDefaultNamespace();
+
+            return doc
+                .Descendants(ns + "link")
+                .Where(e => IsRssLink(e))
+                .Select(e => new Uri(e.Attribute("href").Value));
+        }
+
 
         #endregion
 
         #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsRssLink
+        /// 
+        /// <summary>
+        /// RSS のリンクを
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static bool IsRssLink(XElement e)
+        {
+            var rel = e.Attribute("rel")?.Value;
+            if (rel != "alternate") return false;
+
+            var type = e.Attribute("type")?.Value?.ToLower() ?? "";
+            return type.Contains("rss") || type.Contains("atom");
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -69,8 +93,8 @@ namespace Cube.Net.Rss
             using (var sgml = new Sgml.SgmlReader
             {
                 CaseFolding = Sgml.CaseFolding.ToLower,
-                DocType     = "HTML",
-                IgnoreDtd   = true,
+                DocType = "HTML",
+                IgnoreDtd = true,
                 InputStream = reader,
             }) return XDocument.Load(sgml);
         }

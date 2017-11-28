@@ -65,16 +65,17 @@ namespace Cube.Net.Tests.Rss
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void GetAsync_Redirect()
+        [TestCase("http://blog.cube-soft.jp/", ExpectedResult = "http://blog.cube-soft.jp/?feed=rss2")]
+        [TestCase("https://www.asahi.com/",    ExpectedResult = "http://www3.asahi.com/rss/index.rdf")]
+        public string GetAsync_Redirect(string src)
         {
             var uri = default(Uri);
             var http = new RssClient();
             http.Redirected += (s, e) => uri = e.NewValue;
 
-            var rss = http.GetAsync(new Uri("http://blog.cube-soft.jp/")).Result;
+            var rss = http.GetAsync(new Uri(src)).Result;
             Assert.That(rss, Is.Not.Null);
-            Assert.That(uri, Is.EqualTo(new Uri("http://blog.cube-soft.jp/?feed=rss2")));
+            return uri.ToString();
         }
 
         /* ----------------------------------------------------------------- */
