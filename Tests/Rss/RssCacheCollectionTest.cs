@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Xml.Linq;
 using Cube.Net.Rss;
 using NUnit.Framework;
 
@@ -23,34 +22,34 @@ namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssMonitorTest
+    /// RssCacheCollectionTest
     ///
     /// <summary>
-    /// RssMonitor のテスト用クラスです。
+    /// RssCacheCollection のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssVersionTest : FileHelper
+    class RssCacheCollectionTest
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// GetRssVersion
-        ///
+        /// Properties_Default
+        /// 
         /// <summary>
-        /// RssVersion オブジェクトを取得するテストを実行します。
+        /// 各種プロパティの初期値を確認します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        [TestCase("SampleRss091.xml",   ExpectedResult = RssVersion.Rss091)]
-        [TestCase("SampleRss092.xml",   ExpectedResult = RssVersion.Rss092)]
-        [TestCase("SampleRss10-01.xml", ExpectedResult = RssVersion.Rss10)]
-        [TestCase("SampleRss20-01.xml", ExpectedResult = RssVersion.Rss20)]
-        [TestCase("SampleAtom-01.xml",  ExpectedResult = RssVersion.Atom)]
-        public RssVersion GetRssVersion(string filename)
+        [Test]
+        public void Properties_Default()
         {
-            var doc = XDocument.Load(Example(filename));
-            return doc.Root.GetRssVersion();
+            var collection = new RssCacheCollection();
+
+            Assert.That(collection.Count,        Is.EqualTo(0));
+            Assert.That(collection.IsReadOnly,   Is.False);
+            Assert.That(collection.Keys.Count,   Is.EqualTo(0));
+            Assert.That(collection.Values.Count, Is.EqualTo(0));
         }
     }
 }
