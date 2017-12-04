@@ -156,7 +156,7 @@ namespace Cube.Net.Rss
             if (string.IsNullOrEmpty(Directory) || !_src.ContainsKey(uri)) return;
 
             var feed = _src[uri];
-            if (feed == null) return;
+            if (feed == null || feed.LastChecked == DateTime.MinValue) return;
 
             if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
             using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, feed);

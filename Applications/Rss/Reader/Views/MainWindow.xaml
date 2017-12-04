@@ -38,118 +38,148 @@
         <!-- Header -->
         <Border Style="{StaticResource HeaderStyle}" DockPanel.Dock="Top"/>
         <!-- Header -->
-        
-        <!-- Footer -->
-        <StatusBar Style="{StaticResource FooterStyle}" DockPanel.Dock="Bottom">
-            <StatusBarItem Content="Ready"/>
-        </StatusBar>
-        <!-- Footer -->
 
-        <!-- Sidebar -->
-        <Grid DockPanel.Dock="Left">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="32"/>
-            </Grid.RowDefinitions>
-            
-            <!-- Categories and Entries -->
-            <TreeView ItemsSource="{Binding Items}"
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="200" Width="200"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="32"/>
+                </Grid.RowDefinitions>
+
+                <!-- Categories and Entries -->
+                <TreeView ItemsSource="{Binding Items}"
                       x:Name="RssTreeView"
                       Style="{StaticResource EntriesStyle}"
-                      ContextMenu="{StaticResource MainContextMenu}">
-                <TreeView.Resources>
-                    <!-- Category -->
-                    <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xf07b;"
+                      ContextMenu="{StaticResource MainContextMenu}" Width="Auto">
+                    <TreeView.Resources>
+                        <!-- Category -->
+                        <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xf07b;"
                                        FontFamily="{StaticResource FontAwesome}"
                                        FontSize="14"
                                        Margin="0,2,8,0"/>
-                            <TextBlock Text="{Binding Title}"/>
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="PreviewMouseRightButtonDown">
-                                    <ei:ChangePropertyAction
+                                <TextBlock Text="{Binding Title}"/>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseRightButtonDown">
+                                        <ei:ChangePropertyAction
                                         PropertyName="IsSelected"
                                         Value="true"
                                         TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"
                                     />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                    <!-- Category -->
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <!-- Category -->
 
-                    <!-- Entry -->
-                    <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xf0f6;"
+                        <!-- Entry -->
+                        <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xf0f6;"
                                        FontFamily="{StaticResource FontAwesome}"
                                        FontSize="14"
                                        Margin="0,2,8,0"/>
-                            <TextBlock Text="{Binding Title}" Margin="0,2,0,2"/>
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="PreviewMouseRightButtonDown">
-                                    <ei:ChangePropertyAction
+                                <TextBlock Text="{Binding Title}" Margin="0,2,0,2"/>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseRightButtonDown">
+                                        <ei:ChangePropertyAction
                                         PropertyName="IsSelected"
                                         Value="true"
                                         TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"
                                     />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                    <!-- Entry -->
-                </TreeView.Resources>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectedItemChanged">
-                        <i:InvokeCommandAction
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <!-- Entry -->
+                    </TreeView.Resources>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectedItemChanged">
+                            <i:InvokeCommandAction
                             Command="{Binding SelectEntry}"
                             CommandParameter="{Binding SelectedItem, ElementName=RssTreeView}"
                         />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </TreeView>
-            <!-- Category and Entries -->
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TreeView>
+                <!-- Category and Entries -->
 
-            <!-- NewFeed -->
-            <Button Command="{Binding Add}"
+                <!-- NewFeed -->
+                <Button Command="{Binding Add}"
                     Content="＋ 新しいフィード"
                     Style="{StaticResource NewFeedStyle}"
                     Grid.Row="1"/>
-            <!-- NewFeed -->
-        </Grid>
-        <!-- Sidebar -->
-        
-        <!-- Feeds -->
-        <ListView ItemsSource="{Binding Feed.Value.UnreadItems}"
-                  Style="{StaticResource FeedsStyle}"
-                  ItemContainerStyle="{StaticResource FeedsItemStyle}"
-                  SelectionMode="Single"
-                  DockPanel.Dock="Top">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding PublishTime, StringFormat=MM/dd hh:mm}"
+                <!-- NewFeed -->
+            </Grid>
+            <!-- Sidebar -->
+
+            <GridSplitter
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                Background="#FFD7D7D7"
+                Width="2"
+                Panel.ZIndex="1"
+            />
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition MinHeight="100" Height="200"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Feeds -->
+                <ListView
+                    ItemsSource="{Binding Feed.Value.UnreadItems}"
+                    Style="{StaticResource FeedsStyle}"
+                    ItemContainerStyle="{StaticResource FeedsItemStyle}"
+                    SelectionMode="Single"
+                    Height="Auto"
+                    Grid.Row="0">
+                    
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding PublishTime, StringFormat=MM/dd hh:mm}"
                                    Foreground="Gray"
                                    Margin="0,0,12,0"/>
-                        <TextBlock Text="{Binding Title}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <i:Interaction.Behaviors>
-                <xb:ListBoxSelectItems Command="{Binding SelectArticle}"/>
-            </i:Interaction.Behaviors>
-        </ListView>
-        <!-- Feeds -->
+                                <TextBlock Text="{Binding Title}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <i:Interaction.Behaviors>
+                        <xb:ListBoxSelectItems Command="{Binding SelectArticle}"/>
+                    </i:Interaction.Behaviors>
+                </ListView>
+                <!-- Feeds -->
 
-        <!-- WebBrowser -->
-        <Border Style="{StaticResource BrowserBorderStyle}" DockPanel.Dock="Bottom">
-            <WebBrowser>
-                <i:Interaction.Behaviors>
-                    <xb:WebDocument Text="{Binding Content.Value}"/>
-                </i:Interaction.Behaviors>
-            </WebBrowser>
-        </Border>
-        <!-- WebBrowser -->
+                <GridSplitter
+                    Grid.Row="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Background="#FFD7D7D7"
+                    Height="2"
+                />
+                
+                <!-- WebBrowser -->
+                <Border Style="{StaticResource BrowserBorderStyle}" Grid.Row="2">
+                    <WebBrowser>
+                        <i:Interaction.Behaviors>
+                            <xb:WebDocument Text="{Binding Content.Value}"/>
+                        </i:Interaction.Behaviors>
+                    </WebBrowser>
+                </Border>
+                <!-- WebBrowser -->
+            </Grid>
+        </Grid>
     </DockPanel>
 </Window>
