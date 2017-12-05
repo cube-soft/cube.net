@@ -135,7 +135,8 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="index">カテゴリ中の挿入場所</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Move(RssEntryBase src, RssEntryBase dest, int index) { }
+        public void Move(RssEntryBase src, RssEntryBase dest, int index)
+            => Items.Move(src, dest, index);
 
         /* ----------------------------------------------------------------- */
         ///

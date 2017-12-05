@@ -194,6 +194,30 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Move
+        /// 
+        /// <summary>
+        /// 項目を移動します。
+        /// </summary>
+        /// 
+        /// <param name="src">移動元の項目</param>
+        /// <param name="dest">移動先のカテゴリ</param>
+        /// <param name="index">カテゴリ中の挿入場所</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Move(RssEntryBase src, RssEntryBase dest, int index)
+        {
+            if (src.Parent is RssCategory c) c.Items.Remove(src);
+            else _items.Remove(src);
+
+            src.Parent = dest as RssCategory;
+            var items = src.Parent?.Items ?? _items;
+            if (index < 0 || index >= items.Count) items.Add(src);
+            else items.Insert(index, src);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Clear
         /// 
         /// <summary>
