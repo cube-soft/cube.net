@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\RssEntry.cs" />
+    <Compile Include="Models\RssEntryDropTarget.cs" />
     <Compile Include="Models\RssFacade.cs" />
     <Compile Include="Models\RssSubscribeCollection.cs" />
     <Compile Include="Models\Triggers.cs" />

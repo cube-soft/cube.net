@@ -62,6 +62,7 @@ namespace Cube.Net.App.Rss.Reader
             : base(GalaSoft.MvvmLight.Messaging.Messenger.Default)
         {
             _model = new RssFacade(settings);
+            DropTarget = new RssEntryDropTarget((s, d, i) => _model.Move(s, d, i));
         }
 
         #endregion
@@ -100,6 +101,17 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public Bindable<string> Content { get; } = new Bindable<string>();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DropTarget
+        /// 
+        /// <summary>
+        /// ドラッグ&amp;ドロップ時の処理用オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssEntryDropTarget DropTarget { get; }
 
         /* ----------------------------------------------------------------- */
         ///
