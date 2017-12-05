@@ -52,6 +52,7 @@ namespace Cube.Net.App.Rss.Reader
             Items.CacheDirectory = Settings.Cache;
             if (IO.Exists(settings.Feed)) Items.Load(settings.Feed);
             Items.CollectionChanged += (s, e) => Items.Save(Settings.Feed);
+            Items.SubCollectionChanged += (s, e) => Items.Save(Settings.Feed);
         }
 
         #endregion

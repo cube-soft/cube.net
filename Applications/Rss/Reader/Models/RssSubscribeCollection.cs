@@ -129,6 +129,17 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SubCollectionChanged
+        /// 
+        /// <summary>
+        /// サブコレクション変更時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler SubCollectionChanged;
+
         #endregion
 
         #region Methods
@@ -386,6 +397,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void MakeFeed(RssCategory src)
         {
+            src.Items.CollectionChanged += (s, e) => SubCollectionChanged?.Invoke(this, e);
+
             foreach (var entry in src.Entries)
             {
                 if (_feeds.ContainsKey(entry.Uri)) continue;

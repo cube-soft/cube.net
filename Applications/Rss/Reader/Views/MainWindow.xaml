@@ -1,20 +1,22 @@
-﻿<Window x:Class="Cube.Net.App.Rss.Reader.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
-        xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
-        mc:Ignorable="d"
+﻿<Window
+    x:Class="Cube.Net.App.Rss.Reader.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dd="urn:gong-wpf-dragdrop"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
+    xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
+    mc:Ignorable="d"
         
-        Title="CubeRSS Reader"
-        Icon="pack://application:,,,/App.ico"
-        FontFamily="Meiryo UI"
-        Width="800"
-        Height="600"
-        Background="#FFF1F1F1">
+    Title="CubeRSS Reader"
+    Icon="pack://application:,,,/App.ico"
+    FontFamily="Meiryo UI"
+    Width="800"
+    Height="600"
+    Background="#FFF1F1F1">
     <Window.DataContext>
         <my:MainViewModel/>
     </Window.DataContext>
@@ -54,10 +56,15 @@
                 </Grid.RowDefinitions>
 
                 <!-- Categories and Entries -->
-                <TreeView ItemsSource="{Binding Items}"
-                      x:Name="RssTreeView"
-                      Style="{StaticResource EntriesStyle}"
-                      ContextMenu="{StaticResource MainContextMenu}" Width="Auto">
+                <TreeView
+                    ItemsSource="{Binding Items}"
+                    x:Name="RssTreeView"
+                    Style="{StaticResource EntriesStyle}"
+                    ContextMenu="{StaticResource MainContextMenu}"
+                    Width="Auto"
+                    dd:DragDrop.IsDragSource="True"
+                    dd:DragDrop.IsDropTarget="True"
+                    dd:DragDrop.UseDefaultDragAdorner="True">
                     <TreeView.Resources>
                         <!-- Category -->
                         <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
