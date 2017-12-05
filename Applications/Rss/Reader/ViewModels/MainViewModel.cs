@@ -62,7 +62,7 @@ namespace Cube.Net.App.Rss.Reader
             : base(GalaSoft.MvvmLight.Messaging.Messenger.Default)
         {
             _model = new RssFacade(settings);
-            DropTarget = new RssEntryDropTarget((s, d, i) => _model.Move(s, d, i));
+            DropTarget = new RssEntryDropTarget((s, d, i) => _model.Items.Move(s, d, i));
         }
 
         #endregion
@@ -139,7 +139,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand Add
             => _add = _add ?? new RelayCommand(
-                () => Messenger.Send(new AddViewModel(e => _model.Add(e)))
+                () => Messenger.Send(new AddViewModel(e => _model.Items.Add(e)))
             );
 
         /* ----------------------------------------------------------------- */
@@ -153,7 +153,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand<object> Remove
             => _remove = _remove ?? new RelayCommand<object>(
-                e => _model.Remove(e)
+                e => _model.Items.Remove(e)
             );
 
         /* ----------------------------------------------------------------- */
@@ -182,11 +182,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand<object> SelectEntry
             => _selectEntry = _selectEntry ?? new RelayCommand<object>(
-                e =>
-                {
-                    _model.Cache(Feed.Value);
-                    Feed.Value = _model.Lookup(e as RssEntry);
-                },
+                e => Feed.Value = _model.Select(e as RssEntry, Feed.Value),
                 e => e is RssEntry
             );
 

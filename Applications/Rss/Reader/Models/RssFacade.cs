@@ -98,75 +98,22 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Add
-        /// 
-        /// <summary>
-        /// RSS フィードを追加します。
-        /// </summary>
-        /// 
-        /// <param name="feed">追加する RSS フィード</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Add(RssFeed feed) => Items.Add(feed);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Remove
-        /// 
-        /// <summary>
-        /// RSS フィードを削除します。
-        /// </summary>
-        /// 
-        /// <param name="item">削除する RSS フィード</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Remove(object item) => Items.Remove(item);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Move
-        /// 
-        /// <summary>
-        /// 項目を移動します。
-        /// </summary>
-        /// 
-        /// <param name="src">移動元の項目</param>
-        /// <param name="dest">移動先のカテゴリ</param>
-        /// <param name="index">カテゴリ中の挿入場所</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Move(RssEntryBase src, RssEntryBase dest, int index)
-            => Items.Move(src, dest, index);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Lookup
-        /// 
-        /// <summary>
-        /// RssEntry オブジェクトに対応する RSS フィードを取得します。
-        /// </summary>
-        /// 
-        /// <param name="entry">RssEntry オブジェクト</param>
-        /// 
-        /// <returns>RssFeed オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public RssFeed Lookup(RssEntry entry) => Items.Lookup(entry.Uri);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Cache
+        /// Select
         ///
         /// <summary>
-        /// RSS フィードをキャッシュファイルに保存します。
+        /// RSS フィードを選択します。
         /// </summary>
         /// 
-        /// <param name="feed">RSS フィード情報</param>
+        /// <param name="src">選択項目</param>
+        /// <param name="prev">直前の RSS フィード情報</param>
+        /// 
+        /// <returns>選択項目に対応する RSS フィード</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Cache(RssFeed feed)
+        public RssFeed Select(RssEntry src, RssFeed prev)
         {
-            if (feed != null) Items.Cache(feed.Uri);
+            if (prev != null) Items.Cache(prev.Uri);
+            return Items.Lookup(src.Uri);
         }
 
         /* ----------------------------------------------------------------- */
