@@ -45,7 +45,7 @@ namespace Cube.Net.Tests
         [Test]
         public void GetAsync()
         {
-            var http = new RssClient();
+            var http = new RssClient { Timeout = TimeSpan.FromSeconds(5) };
             var now  = DateTime.Now;
             var rss  = http.GetAsync(new Uri("http://blog.cube-soft.jp/?feed=rss2")).Result;
 
@@ -70,7 +70,7 @@ namespace Cube.Net.Tests
         public string GetAsync_Redirect(string src)
         {
             var uri  = default(Uri);
-            var http = new RssClient();
+            var http = new RssClient { Timeout = TimeSpan.FromSeconds(5) };
             http.Redirected += (s, e) => uri = e.NewValue;
 
             var rss = http.GetAsync(new Uri(src)).Result;
@@ -90,8 +90,8 @@ namespace Cube.Net.Tests
         [Test]
         public void GetAsync_NotFound()
         {
-            var client = new RssClient();
-            var rss = client.GetAsync(new Uri("http://www.cube-soft.jp/")).Result;
+            var http = new RssClient { Timeout = TimeSpan.FromSeconds(5) };
+            var rss = http.GetAsync(new Uri("http://www.cube-soft.jp/")).Result;
             Assert.That(rss, Is.Null);
         }
     }
