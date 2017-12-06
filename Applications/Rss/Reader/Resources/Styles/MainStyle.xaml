@@ -3,7 +3,6 @@
     <!--- Header -->
     <Style x:Key="HeaderStyle" TargetType="{x:Type Border}">
         <Setter Property="Background" Value="#FFF1F1F1"/>
-        <Setter Property="Height" Value="32"/>
         <Setter Property="BorderBrush" Value="#FFD7D7D7"/>
         <Setter Property="BorderThickness" Value="1"/>
     </Style>

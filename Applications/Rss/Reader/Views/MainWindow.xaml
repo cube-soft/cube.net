@@ -36,12 +36,18 @@
         </my:AddViewModelTrigger>
     </i:Interaction.Triggers>
     
-    <DockPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+        
         <!-- Header -->
-        <Border Style="{StaticResource HeaderStyle}" DockPanel.Dock="Top"/>
+        <Border Style="{StaticResource HeaderStyle}" Grid.Row="0"/>
         <!-- Header -->
 
-        <Grid DockPanel.Dock="Bottom">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="200" Width="200"/>
                 <ColumnDefinition Width="Auto"/>
@@ -188,5 +194,11 @@
                 <!-- WebBrowser -->
             </Grid>
         </Grid>
-    </DockPanel>
+
+        <!-- Footer -->
+        <StatusBar Style="{StaticResource FooterStyle}" Grid.Row="2">
+            <StatusBarItem Content="Ready"/>
+        </StatusBar>
+        <!-- Footer -->
+    </Grid>
 </Window>
