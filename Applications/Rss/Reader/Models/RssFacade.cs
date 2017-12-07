@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 
@@ -145,6 +146,32 @@ namespace Cube.Net.App.Rss.Reader
                 src.Title,
                 src.PublishTime,
                 !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
+            );
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetMessage
+        /// 
+        /// <summary>
+        /// メッセージを取得します。
+        /// </summary>
+        /// 
+        /// <param name="src">対象とする RSS フィード</param>
+        /// 
+        /// <returns>メッセージ</returns>
+        /// 
+        /// <remarks>
+        /// 最終チェック日時を表す文字列を返します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string GetMessage(RssFeed src)
+        {
+            if (src == null || src.LastChecked == DateTime.MinValue) return string.Empty;
+            return string.Format("{0} {1}",
+                Properties.Resources.MessageLastChecked,
+                src.LastChecked.ToString("g")
             );
         }
 

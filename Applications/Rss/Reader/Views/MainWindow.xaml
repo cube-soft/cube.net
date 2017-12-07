@@ -198,6 +198,7 @@
         <!-- Footer -->
         <StatusBar Style="{StaticResource FooterStyle}" Grid.Row="2">
             <StatusBarItem Content="Ready"/>
+            <StatusBarItem Content="{Binding LastChecked.Value}" HorizontalAlignment="Right"/>
         </StatusBar>
         <!-- Footer -->
     </Grid>

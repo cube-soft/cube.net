@@ -89,6 +89,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   最終チェック日時 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageLastChecked {
+            get {
+                return ResourceManager.GetString("MessageLastChecked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;
         ///&lt;html&gt;
         ///

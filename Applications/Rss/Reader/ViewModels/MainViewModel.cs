@@ -63,6 +63,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             _model = new RssFacade(settings);
             DropTarget = new RssEntryDropTarget((s, d, i) => _model.Items.Move(s, d, i));
+            Feed.PropertyChanged += (s, e) => LastChecked.Value = _model.GetMessage(Feed.Value);
         }
 
         #endregion
@@ -101,6 +102,17 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public Bindable<string> Content { get; } = new Bindable<string>();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LastChecked
+        /// 
+        /// <summary>
+        /// 最終チェック日時に関するメッセージを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<string> LastChecked { get; } = new Bindable<string>();
 
         /* ----------------------------------------------------------------- */
         ///

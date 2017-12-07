@@ -127,6 +127,9 @@
   <data name="Feeds" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Others\Feeds.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="MessageLastChecked" xml:space="preserve">
+    <value>最終チェック日時</value>
+  </data>
   <data name="Skeleton" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Others\Skeleton.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
