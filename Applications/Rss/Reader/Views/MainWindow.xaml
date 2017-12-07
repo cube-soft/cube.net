@@ -67,10 +67,15 @@
                     x:Name="RssTreeView"
                     Style="{StaticResource EntriesStyle}"
                     ContextMenu="{StaticResource MainContextMenu}"
-                    Width="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                     dd:DragDrop.IsDragSource="True"
                     dd:DragDrop.IsDropTarget="True"
                     dd:DragDrop.DropHandler="{Binding DropTarget}">
+                    <TreeView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ContentPresenter, AncestorLevel=1}}" />
+                        </ItemsPanelTemplate>
+                    </TreeView.ItemsPanel>
                     <TreeView.Resources>
                         <!-- Category -->
                         <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
