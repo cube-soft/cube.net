@@ -25,7 +25,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Views/MainContextMenu.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Resources/Styles/MainStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Styles/MainStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>

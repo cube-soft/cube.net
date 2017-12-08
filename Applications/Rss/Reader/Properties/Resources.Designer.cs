@@ -79,16 +79,6 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
-        ///   型 System.Byte[] のローカライズされたリソースを検索します。
-        /// </summary>
-        internal static byte[] Feeds {
-            get {
-                object obj = ResourceManager.GetObject("Feeds", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   最終チェック日時 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageLastChecked {
