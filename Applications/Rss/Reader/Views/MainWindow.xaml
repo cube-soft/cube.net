@@ -4,9 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     mc:Ignorable="d"
@@ -24,7 +22,6 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Views/MainContextMenu.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Styles/MainStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -61,81 +58,14 @@
                     <RowDefinition Height="32"/>
                 </Grid.RowDefinitions>
 
-                <!-- Categories and Entries -->
-                <TreeView
-                    ItemsSource="{Binding Items}"
-                    x:Name="RssTreeView"
-                    Style="{StaticResource EntriesStyle}"
-                    ContextMenu="{StaticResource MainContextMenu}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                    dd:DragDrop.IsDragSource="True"
-                    dd:DragDrop.IsDropTarget="True"
-                    dd:DragDrop.DropHandler="{Binding DropTarget}">
-                    <TreeView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ContentPresenter, AncestorLevel=1}}" />
-                        </ItemsPanelTemplate>
-                    </TreeView.ItemsPanel>
-                    <TreeView.Resources>
-                        <!-- Category -->
-                        <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xf07b;"
-                                       FontFamily="{StaticResource FontAwesome}"
-                                       FontSize="14"
-                                       Margin="0,2,8,0"/>
-                                <TextBlock Text="{Binding Title}"/>
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PreviewMouseRightButtonDown">
-                                        <ei:ChangePropertyAction
-                                        PropertyName="IsSelected"
-                                        Value="true"
-                                        TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"
-                                    />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                        <!-- Category -->
-
-                        <!-- Entry -->
-                        <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xf0f6;"
-                                       FontFamily="{StaticResource FontAwesome}"
-                                       FontSize="14"
-                                       Margin="0,2,8,0"/>
-                                <TextBlock Text="{Binding Title}" Margin="0,2,0,2"/>
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PreviewMouseRightButtonDown">
-                                        <ei:ChangePropertyAction
-                                        PropertyName="IsSelected"
-                                        Value="true"
-                                        TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"
-                                    />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                        <!-- Entry -->
-                    </TreeView.Resources>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectedItemChanged">
-                            <i:InvokeCommandAction
-                            Command="{Binding SelectEntry}"
-                            CommandParameter="{Binding SelectedItem, ElementName=RssTreeView}"
-                        />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </TreeView>
-                <!-- Category and Entries -->
-
-                <!-- NewFeed -->
-                <Button Command="{Binding Add}"
+                <my:RssEntryControl/>
+                
+                <Button
+                    Command="{Binding Add}"
                     Content="＋ 新しいフィード"
                     Style="{StaticResource NewFeedStyle}"
-                    Grid.Row="1"/>
-                <!-- NewFeed -->
+                    Grid.Row="1"
+                />
             </Grid>
             <!-- Sidebar -->
 
@@ -167,9 +97,11 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding PublishTime, StringFormat=MM/dd hh:mm}"
-                                   Foreground="Gray"
-                                   Margin="0,0,12,0"/>
+                                <TextBlock
+                                    Text="{Binding PublishTime, StringFormat=MM/dd hh:mm}"
+                                    Foreground="Gray"
+                                    Margin="0,0,12,0"
+                                />
                                 <TextBlock Text="{Binding Title}"/>
                             </StackPanel>
                         </DataTemplate>
