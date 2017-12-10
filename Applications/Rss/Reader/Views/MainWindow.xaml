@@ -16,7 +16,7 @@
     Height="600"
     Background="#FFF1F1F1">
     <Window.DataContext>
-        <my:MainViewModel/>
+        <my:RssViewModel/>
     </Window.DataContext>
 
     <Window.Resources>

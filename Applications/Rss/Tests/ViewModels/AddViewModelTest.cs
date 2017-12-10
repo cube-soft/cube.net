@@ -50,7 +50,7 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Add()
         {
-            var vm = new MainViewModel(new SettingsFolder(Results, IO));
+            var vm = new RssViewModel(new SettingsFolder(Results, IO));
             vm.Messenger.Register<AddViewModel>(this, e => AddCommand(e).Wait());
             vm.Add.Execute(null);
 

@@ -98,7 +98,7 @@
     </Compile>
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="ViewModels\AddViewModel.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\RssViewModel.cs" />
     <Compile Include="Xui\Behaviors\CommandBehavior.cs" />
     <Compile Include="Xui\Behaviors\ListBox.cs" />
     <Compile Include="Xui\Behaviors\WebDocument.cs" />
