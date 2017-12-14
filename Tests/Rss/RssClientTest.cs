@@ -47,11 +47,11 @@ namespace Cube.Net.Tests
         {
             var http = new RssClient { Timeout = TimeSpan.FromSeconds(5) };
             var now  = DateTime.Now;
-            var rss  = http.GetAsync(new Uri("http://blog.cube-soft.jp/?feed=rss2")).Result;
+            var rss  = http.GetAsync(new Uri("https://blog.cube-soft.jp/?feed=rss2")).Result;
 
             Assert.That(rss, Is.Not.Null);
             Assert.That(rss.Title.Contains("CubeSoft"), Is.True);
-            Assert.That(rss.Link, Is.EqualTo(new Uri("http://blog.cube-soft.jp/")));
+            Assert.That(rss.Link, Is.EqualTo(new Uri("https://blog.cube-soft.jp/")));
             Assert.That(rss.Items.Count, Is.GreaterThan(0));
             Assert.That(rss.LastChecked, Is.GreaterThanOrEqualTo(now));
         }
@@ -65,7 +65,7 @@ namespace Cube.Net.Tests
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        [TestCase("http://blog.cube-soft.jp/", ExpectedResult = "http://blog.cube-soft.jp/?feed=rss2")]
+        [TestCase("https://blog.cube-soft.jp/", ExpectedResult = "https://blog.cube-soft.jp/?feed=rss2")]
         [TestCase("https://www.asahi.com/",    ExpectedResult = "http://www3.asahi.com/rss/index.rdf")]
         public string GetAsync_Redirect(string src)
         {
