@@ -30,7 +30,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class RssFacade
+    public sealed class RssFacade : IDisposable
     {
         #region Constructors
 
@@ -171,6 +171,56 @@ namespace Cube.Net.App.Rss.Reader
             );
         }
 
+        #region IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~RssFacade
+        /// 
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        ~RssFacade() { Dispose(false); }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            _disposed = true;
+            Items.Dispose();
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Fields
+        private bool _disposed = false;
         #endregion
     }
 }
