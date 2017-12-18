@@ -62,7 +62,7 @@ namespace Cube.Net.Rss
         public RssClient(HttpClientHandler handler)
         {
             _dispose = new OnceAction<bool>(Dispose);
-            _http = HttpClientFactory.Create(handler);
+            _http = HttpClientFactory.Create(handler, TimeSpan.FromSeconds(10));
         }
 
         #endregion

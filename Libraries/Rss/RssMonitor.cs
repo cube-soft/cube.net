@@ -65,8 +65,8 @@ namespace Cube.Net.Rss
 
             Feeds   = buffer;
             Handler = new HeaderHandler { UseEntityTag = false };
-            Timeout = TimeSpan.FromSeconds(2);
             _http   = new RssClient(Handler);
+            Timeout = _http.Timeout;
 
             Timer.Subscribe(WhenTick);
         }
@@ -249,34 +249,20 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private async Task UpdateAsync(Uri uri)
         {
-            try
-            {
-                if (!Feeds.ContainsKey(uri)) return;
+            if (!Feeds.ContainsKey(uri)) return;
 
-                var feed = await GetAsync(uri);
-                UpdateItems(feed.Items, Feeds[uri]);
-                Feeds[uri].Title = feed.Title;
-                Feeds[uri].LastChecked = feed.LastChecked;
-                await Publish(uri, feed);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// UpdateItems
-        ///
-        /// <summary>
-        /// RSS フィードの新着記事一覧を更新します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void UpdateItems(IList<RssItem> src, RssFeed dest)
-        {
-            foreach (var item in src
+            var dest  = Feeds[uri];
+            var src   = await GetAsync(uri);
+            var items = src
+                .Items
                 .Where(e => e.PublishTime > dest.LastChecked)
-                .OrderBy(e => e.PublishTime)
-            ) dest.Items.Insert(0, item);
+                .OrderBy(e => e.PublishTime);
+
+            foreach (var item in items) dest.Items.Insert(0, item);
+            dest.Title = src.Title;
+            dest.LastChecked = src.LastChecked;
+
+            await Publish(uri, src);
         }
 
         /* ----------------------------------------------------------------- */
@@ -312,7 +298,6 @@ namespace Cube.Net.Rss
             {
                 try { await UpdateAsync(uri); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
-                await Task.Delay(1000); // TODO
             }
         }
 
