@@ -93,7 +93,7 @@ namespace Cube.Net.Tests
         /// 
         /* ----------------------------------------------------------------- */
         [TestCase("https://blog.cube-soft.jp/", ExpectedResult = "https://blog.cube-soft.jp/?feed=rss2")]
-        [TestCase("https://www.asahi.com/",    ExpectedResult = "http://www3.asahi.com/rss/index.rdf")]
+        [TestCase("https://www.asahi.com/",     ExpectedResult = "http://www3.asahi.com/rss/index.rdf")]
         public string GetAsync_Redirect(string src)
         {
             var uri = default(Uri);

@@ -40,9 +40,9 @@ namespace Cube.Net.Rss
         /// GetRssUris
         /// 
         /// <summary>
-        /// RSS フィードの URL を取得します。
+        /// RSS フィードの URL 一覧を取得します。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
         public static IEnumerable<Uri> GetRssUris(this System.IO.Stream src)
         {

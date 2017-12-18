@@ -193,6 +193,40 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Update
+        ///
+        /// <summary>
+        /// RSS フィードの内容を即座に非同期で更新します。更新が終了する
+        /// と Publish メソッドを通じて結果が通知されます。
+        /// </summary>
+        /// 
+        /// <param name="uri">対象とするフィード URL</param>
+        /// 
+        /// <remarks>
+        /// Feeds に登録されていない URL が指定された場合、無視されます。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public async Task Update(Uri uri)
+        {
+            if (!Feeds.ContainsKey(uri)) return;
+
+            var dest  = Feeds[uri];
+            var src   = await GetAsync(uri).ConfigureAwait(false);
+            var items = src
+                .Items
+                .Where(e => e.PublishTime > dest.LastChecked)
+                .OrderBy(e => e.PublishTime);
+
+            foreach (var item in items) dest.Items.Insert(0, item);
+            dest.Title       = src.Title;
+            dest.LastChecked = src.LastChecked;
+
+            await Publish(uri, src);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Publish
         ///
         /// <summary>
@@ -240,33 +274,6 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UpdateAsync
-        ///
-        /// <summary>
-        /// RSS フィードの内容を更新します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task UpdateAsync(Uri uri)
-        {
-            if (!Feeds.ContainsKey(uri)) return;
-
-            var dest  = Feeds[uri];
-            var src   = await GetAsync(uri);
-            var items = src
-                .Items
-                .Where(e => e.PublishTime > dest.LastChecked)
-                .OrderBy(e => e.PublishTime);
-
-            foreach (var item in items) dest.Items.Insert(0, item);
-            dest.Title = src.Title;
-            dest.LastChecked = src.LastChecked;
-
-            await Publish(uri, src);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// SetTimeout
         ///
         /// <summary>
@@ -296,7 +303,7 @@ namespace Cube.Net.Rss
 
             foreach (var uri in Feeds.Keys.ToArray())
             {
-                try { await UpdateAsync(uri); }
+                try { await Update(uri); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
         }
