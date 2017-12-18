@@ -111,11 +111,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>選択項目に対応する RSS フィード</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        public RssFeed Select(RssEntry src, RssFeed prev)
-        {
-            if (prev != null) Items.Cache(prev.Uri);
-            return Items.Lookup(src.Uri);
-        }
+        public RssFeed Select(RssEntry src, RssFeed prev) => Items.Lookup(src.Uri);
 
         /* ----------------------------------------------------------------- */
         ///

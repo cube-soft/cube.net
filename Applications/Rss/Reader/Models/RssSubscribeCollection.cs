@@ -298,19 +298,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Cache
-        ///
-        /// <summary>
-        /// RSS フィードをキャッシュファイルに保存します。
-        /// </summary>
-        /// 
-        /// <param name="uri">URL</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Cache(Uri uri) => _feeds.Cache(uri);
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Lookup
         /// 
         /// <summary>
@@ -401,7 +388,11 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (_disposed) return;
             _disposed = true;
-            if (disposing) _monitor.Dispose();
+            if (disposing)
+            {
+                _monitor.Dispose();
+                _feeds.Save();
+            }
         }
 
         #endregion
