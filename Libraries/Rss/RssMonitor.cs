@@ -211,12 +211,18 @@ namespace Cube.Net.Rss
         {
             if (!Feeds.ContainsKey(uri)) return;
 
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
             var dest  = Feeds[uri];
             var src   = await GetAsync(uri).ConfigureAwait(false);
             var items = src
                 .Items
                 .Where(e => e.PublishTime > dest.LastChecked)
                 .OrderBy(e => e.PublishTime);
+
+            sw.Stop();
+            this.LogDebug($"Url:{uri}\tTime:{sw.Elapsed}");
 
             foreach (var item in items) dest.Items.Insert(0, item);
             dest.Title       = src.Title;
