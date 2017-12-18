@@ -52,6 +52,7 @@ namespace Cube.Net.Rss
             return doc
                 .Descendants(ns + "link")
                 .Where(e => IsRssLink(e))
+                .OrderBy(e => e.Attribute("type").Value)
                 .Select(e => new Uri(e.Attribute("href").Value));
         }
 
@@ -65,17 +66,15 @@ namespace Cube.Net.Rss
         /// IsRssLink
         /// 
         /// <summary>
-        /// RSS のリンクを
+        /// RSS のリンクを示す要素かどうかを判別します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         private static bool IsRssLink(XElement e)
         {
-            var rel = e.Attribute("rel")?.Value;
-            if (rel != "alternate") return false;
-
-            var type = e.Attribute("type")?.Value?.ToLower() ?? "";
-            return type.Contains("rss") || type.Contains("atom");
+            if (e.Attribute("rel")?.Value != "alternate") return false;
+            var dest = e.Attribute("type")?.Value?.ToLower() ?? "";
+            return dest.Contains("rss") || dest.Contains("atom");
         }
 
         /* ----------------------------------------------------------------- */
@@ -89,13 +88,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static XDocument ToXDocument(System.IO.Stream src)
         {
-            using (var reader = new System.IO.StreamReader(src, System.Text.Encoding.UTF8))
+            using (var stream = new System.IO.StreamReader(src, System.Text.Encoding.UTF8))
             using (var sgml = new Sgml.SgmlReader
             {
                 CaseFolding = Sgml.CaseFolding.ToLower,
-                DocType = "HTML",
-                IgnoreDtd = true,
-                InputStream = reader,
+                DocType     = "HTML",
+                IgnoreDtd   = true,
+                InputStream = stream,
             }) return XDocument.Load(sgml);
         }
 

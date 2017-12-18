@@ -82,8 +82,8 @@ namespace Cube.Net.Rss
             }
 
             var ns = src.GetDefaultNamespace();
-            if (ns.NamespaceName.ToLower().Contains("purl.org")) return RssVersion.Rss10;
             if (ns.NamespaceName.ToLower().Contains("atom")) return RssVersion.Atom;
+            if (ns.NamespaceName.ToLower().Contains("purl.org")) return RssVersion.Rss10;
             return RssVersion.Unknown;
         }
     }
