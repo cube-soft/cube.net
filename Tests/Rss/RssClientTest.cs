@@ -45,7 +45,7 @@ namespace Cube.Net.Tests
         [Test]
         public void GetAsync()
         {
-            var http = new RssClient { Timeout = TimeSpan.FromSeconds(5) };
+            var http = new RssClient();
             var now  = DateTime.Now;
             var rss  = http.GetAsync(new Uri("https://blog.cube-soft.jp/?feed=rss2")).Result;
 
@@ -54,6 +54,33 @@ namespace Cube.Net.Tests
             Assert.That(rss.Link, Is.EqualTo(new Uri("https://blog.cube-soft.jp/")));
             Assert.That(rss.Items.Count, Is.GreaterThan(0));
             Assert.That(rss.LastChecked, Is.GreaterThanOrEqualTo(now));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_Continuously
+        /// 
+        /// <summary>
+        /// 複数のフィードを連続して取得するテストを実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void GetAsync_Continuously()
+        {
+            var http = new RssClient();
+            var uris = new[]
+            {
+                new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
+                new Uri("https://blogs.msdn.microsoft.com/visualstudio/feed/"),
+                new Uri("http://blogs.windows.com/buildingapps/feed"),
+            };
+
+            foreach (var uri in uris)
+            {
+                var rss = http.GetAsync(uri).Result;
+                Assert.That(rss.Items.Count, Is.GreaterThan(1));
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -69,8 +96,8 @@ namespace Cube.Net.Tests
         [TestCase("https://www.asahi.com/",    ExpectedResult = "http://www3.asahi.com/rss/index.rdf")]
         public string GetAsync_Redirect(string src)
         {
-            var uri  = default(Uri);
-            var http = new RssClient { Timeout = TimeSpan.FromSeconds(5) };
+            var uri = default(Uri);
+            var http = new RssClient();
             http.Redirected += (s, e) => uri = e.NewValue;
 
             var rss = http.GetAsync(new Uri(src)).Result;
@@ -88,11 +115,9 @@ namespace Cube.Net.Tests
         /// 
         /* ----------------------------------------------------------------- */
         [Test]
-        public void GetAsync_NotFound()
-        {
-            var http = new RssClient { Timeout = TimeSpan.FromSeconds(5) };
-            var rss = http.GetAsync(new Uri("http://www.cube-soft.jp/")).Result;
-            Assert.That(rss, Is.Null);
-        }
+        public void GetAsync_NotFound() => Assert.That(
+            new RssClient().GetAsync(new Uri("http://www.cube-soft.jp/")).Result,
+            Is.Null
+        );
     }
 }
