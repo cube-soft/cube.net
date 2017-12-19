@@ -29,7 +29,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="280"/>
             <ColumnDefinition Width="20"/>
@@ -103,7 +103,8 @@
                 BorderBrush="#FFE6E6E6"
                 BorderThickness="1"
                 CornerRadius="2,2,2,2"
-                HorizontalAlignment="Right">
+                HorizontalAlignment="Right"
+                Visibility="{Binding LastChecked.Value, Converter={StaticResource ToVisibility}}">
                 <StackPanel
                     Orientation="Horizontal"
                     Background="Transparent">

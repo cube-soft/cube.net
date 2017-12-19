@@ -99,6 +99,7 @@
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="ViewModels\AddViewModel.cs" />
     <Compile Include="ViewModels\RssViewModel.cs" />
+    <Compile Include="Xui\Converters\EmptyToVisibility.cs" />
     <Compile Include="Xui\ExpandIconEraser.cs" />
     <Compile Include="Xui\Behaviors\CommandBehavior.cs" />
     <Compile Include="Xui\Behaviors\ListBox.cs" />
