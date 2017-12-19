@@ -111,6 +111,7 @@
                     Background="Transparent">
                     <TextBlock
                         Text="{Binding LastChecked.Value}"
+                        FontFamily="Meiryo"
                         FontSize="10"
                         Margin="6,3,0,0"
                         Foreground="#FF999999"/>
@@ -131,6 +132,7 @@
                 <TextBlock
                     Text="{Binding Feed.Value.Title}"
                     Background="Transparent"
+                    FontFamily="Meiryo"
                     FontSize="16"
                     FontWeight="Bold"
                     VerticalAlignment="Center"/>
@@ -142,6 +144,10 @@
                 BorderThickness="0"
                 SelectionMode="Single"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.IsDeferredScrollingEnabled="True"
+                ScrollViewer.PanningMode="VerticalOnly"
+                VirtualizingPanel.IsVirtualizing="True"
+                VirtualizingPanel.VirtualizationMode="Recycling"
                 Grid.Row="2">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -156,6 +162,7 @@
                                 <TextBlock
                                     Text="{Binding PublishTime, StringFormat=yyyy/MM/dd hh:mm:ss}"
                                     Margin="12,8,12,0"
+                                    FontFamily="Meiryo"
                                     FontSize="8"
                                     Foreground="#FF999999"
                                     HorizontalAlignment="Right"/>
@@ -163,16 +170,19 @@
                                     Text="{Binding Title}"
                                     MaxHeight="40"
                                     Margin="12,8,12,0"
-                                    FontSize="14"
+                                    FontFamily="Meiryo"
+                                    FontSize="12"
                                     FontWeight="Bold"
                                     Foreground="#FF4D4D4D"
                                     TextWrapping="Wrap"
                                     TextTrimming="WordEllipsis"/>
                                 <TextBlock
                                     Text="{Binding Summary}"
-                                    MaxHeight="80"
+                                    MaxHeight="48"
                                     Margin="12,8,12,8"
+                                    FontFamily="Meiryo"
                                     FontSize="10"
+                                    LineHeight="10"
                                     Foreground="#FF838383"
                                     TextWrapping="Wrap"
                                     TextTrimming="WordEllipsis"/>
@@ -184,7 +194,7 @@
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         <Setter Property="Padding" Value="0"/>
-                        <Setter Property="Margin" Value="0,0,4,12"/>
+                        <Setter Property="Margin" Value="0,0,4,4"/>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <i:Interaction.Behaviors>
