@@ -215,8 +215,7 @@ namespace Cube.Net.Rss
         public void Add(Uri key, RssFeed value)
         {
             _src.Add(key, value);
-            _otm.Add(key);
-            Stash();
+            Pop(key, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -233,8 +232,7 @@ namespace Cube.Net.Rss
         public void Add(KeyValuePair<Uri, RssFeed> item)
         {
             _src.Add(item);
-            _otm.Add(item.Key);
-            Stash();
+            Pop(item.Key, item.Value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -425,23 +423,23 @@ namespace Cube.Net.Rss
         {
             try
             {
-                if (_otm.Contains(uri))
+                if (_otm.Contains(uri)) _otm.Remove(uri);
+                else
                 {
-                    _otm.Remove(uri);
-                    _otm.Add(uri);
-                    return;
-                }
-
-                var feed = Load(uri);
-                if (feed != null && feed.LastChecked != DateTime.MinValue)
-                {
-                    dest.LastChecked = feed.LastChecked;
-                    dest.Items.Clear();
-                    foreach (var a in feed.Items.Where(e => !e.Read)) dest.Items.Add(a);
-                    _otm.Add(uri);
+                    var feed = Load(uri);
+                    if (feed != null && feed.LastChecked != DateTime.MinValue)
+                    {
+                        dest.LastChecked = feed.LastChecked;
+                        dest.Items.Clear();
+                        foreach (var a in feed.Items.Where(e => !e.Read)) dest.Items.Add(a);
+                    }
                 }
             }
-            finally { Stash(); }
+            finally
+            {
+                if (dest.LastChecked != DateTime.MinValue) _otm.Add(uri);
+                Stash();
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -491,7 +489,7 @@ namespace Cube.Net.Rss
         #region Fields
         private IDictionary<Uri, RssFeed> _src = new Dictionary<Uri, RssFeed>();
         private IList<Uri> _otm = new List<Uri>();
-        private uint _capacity = 10;
+        private uint _capacity = 20;
         #endregion
 
         #endregion
