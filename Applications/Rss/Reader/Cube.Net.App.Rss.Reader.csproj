@@ -97,16 +97,16 @@
     <Compile Include="ViewModels\AddViewModel.cs" />
     <Compile Include="ViewModels\RssViewModel.cs" />
     <Compile Include="Xui\Converters\EmptyToVisibility.cs" />
-    <Compile Include="Xui\ExpandIcon.cs" />
+    <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Behaviors\CommandBehavior.cs" />
-    <Compile Include="Xui\Behaviors\ListBox.cs" />
+    <Compile Include="Xui\Behaviors\ListBoxSelection.cs" />
     <Compile Include="Xui\Behaviors\WebDocument.cs" />
     <Compile Include="Xui\Triggers\MessageBoxTrigger.cs" />
     <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
     <Compile Include="Xui\Triggers\WindowAction.cs" />
     <Compile Include="Xui\Bindable.cs" />
     <Compile Include="Xui\BindableCollection.cs" />
-    <Compile Include="Xui\MessageBox.cs" />
+    <Compile Include="Xui\Components\MessageBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

@@ -23,7 +23,7 @@ namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ListBoxSelectItems
+    /// ListBoxSelection
     ///
     /// <summary>
     /// ListBox の SelectionChanged イベントと Command を関連付ける
@@ -31,7 +31,7 @@ namespace Cube.Xui.Behaviors
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class ListBoxSelectItems : CommandBehavior<ListBox>
+    public class ListBoxSelection : CommandBehavior<ListBox>
     {
         #region Implementations
 
@@ -47,7 +47,7 @@ namespace Cube.Xui.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.SelectionChanged += WhenSelectionChanged;
+            AssociatedObject.SelectionChanged += WhenChanged;
         }
 
         /* ----------------------------------------------------------------- */
@@ -61,23 +61,20 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         protected override void OnDetaching()
         {
-            if (AssociatedObject != null)
-            {
-                AssociatedObject.SelectionChanged -= WhenSelectionChanged;
-            }
+            if (AssociatedObject != null) AssociatedObject.SelectionChanged -= WhenChanged;
             base.OnDetaching();
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WhenSelectionChanged
+        /// WhenChanged
         /// 
         /// <summary>
         /// SelectionChanged イベント発生時に実行されるハンドラです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void WhenChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Command == null) return;
             var args = new SelectionList(e.RemovedItems, e.AddedItems);
@@ -114,35 +111,13 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         public SelectionList(IList removd, IList added)
         {
-            RemovedItems = removd;
-            AddedItems   = added;
+            UnselectedItems = removd;
+            SelectedItems   = added;
         }
 
         #endregion
 
         #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RemovedItems
-        /// 
-        /// <summary>
-        /// 選択解除された項目一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IList RemovedItems { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// AddedItems
-        /// 
-        /// <summary>
-        /// 選択された項目一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IList AddedItems { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -153,11 +128,33 @@ namespace Cube.Xui.Behaviors
         /// </summary>
         /// 
         /// <remarks>
-        /// SelectedItem は AddedItems の先頭項目を表します。
+        /// SelectedItem は SelectedItems の先頭項目を表します。
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public object SelectedItem => AddedItems.Cast<object>().FirstOrDefault();
+        public object SelectedItem => SelectedItems.Cast<object>().FirstOrDefault();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SelectedItems
+        /// 
+        /// <summary>
+        /// 選択された項目一覧を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IList SelectedItems { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RemovedItems
+        /// 
+        /// <summary>
+        /// 選択解除された項目一覧を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IList UnselectedItems { get; }
 
         #endregion
     }
