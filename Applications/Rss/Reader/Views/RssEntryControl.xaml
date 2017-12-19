@@ -47,7 +47,7 @@
             <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
                 <StackPanel
                     Orientation="Horizontal"
-                    Margin="2,4,0,4">
+                    Margin="2,6,0,6">
                     <TextBlock
                         Text="&#xf101;"
                         FontFamily="{StaticResource FontAwesome}"
