@@ -7,6 +7,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     xmlns:dd="urn:gong-wpf-dragdrop"
+    xmlns:xu="clr-namespace:Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     
     mc:Ignorable="d" 
@@ -16,17 +17,16 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Views/MainContextMenu.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Styles/MainStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Themes/MainStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <TreeView
         x:Name="RssTreeView"
+        Background="Transparent"
+        BorderThickness="0"
         ItemsSource="{Binding Items}"
-        Style="{StaticResource EntriesStyle}"
-        ContextMenu="{StaticResource MainContextMenu}"
         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
         dd:DragDrop.IsDragSource="True"
         dd:DragDrop.IsDropTarget="True"
@@ -39,23 +39,32 @@
         </TreeView.ItemsPanel>
 
         <TreeView.Resources>
+            <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                <Setter Property="xu:ExpandIconEraser.IsHideExpander" Value="True" />
+            </Style>
+            
             <!-- Category -->
             <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="2,4,0,4">
                     <TextBlock
-                        Text="&#xf07b;"
+                        Text="&#xf101;"
                         FontFamily="{StaticResource FontAwesome}"
-                        FontSize="14"
-                        Margin="0,2,8,0"
-                    />
-                    <TextBlock Text="{Binding Title}"/>
+                        Foreground="#FFB3B3B3"
+                        FontSize="16"
+                        Margin="0,0,8,0"/>
+                    <TextBlock
+                        Text="{Binding Title}"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Foreground="#FF444444"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="PreviewMouseRightButtonDown">
                             <ei:ChangePropertyAction
                                 PropertyName="IsSelected"
                                 Value="true"
-                                TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"
-                            />
+                                TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </StackPanel>
@@ -64,21 +73,26 @@
 
             <!-- Entry -->
             <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="2,2,0,2">
                     <TextBlock
                         Text="&#xf0f6;"
                         FontFamily="{StaticResource FontAwesome}"
-                        FontSize="14"
-                        Margin="0,2,8,0"
-                    />
-                    <TextBlock Text="{Binding Title}" Margin="0,2,0,2"/>
+                        Foreground="#FFB3B3B3"
+                        FontSize="16"
+                        Margin="0,2,8,0"/>
+                    <TextBlock
+                        Text="{Binding Title}"
+                        FontSize="12"
+                        Foreground="#FF444444"
+                        Margin="0,2,0,2"/>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="PreviewMouseRightButtonDown">
                             <ei:ChangePropertyAction
                                 PropertyName="IsSelected"
                                 Value="true"
-                                TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"
-                            />
+                                TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </StackPanel>
@@ -90,8 +104,7 @@
             <i:EventTrigger EventName="SelectedItemChanged">
                 <i:InvokeCommandAction
                     Command="{Binding SelectEntry}"
-                    CommandParameter="{Binding SelectedItem, ElementName=RssTreeView}"
-                />
+                    CommandParameter="{Binding SelectedItem, ElementName=RssTreeView}"/>
             </i:EventTrigger>
         </i:Interaction.Triggers>
     </TreeView>

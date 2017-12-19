@@ -7,136 +7,223 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
-    mc:Ignorable="d"
-        
+    
+    mc:Ignorable="d"    
     Title="CubeRSS Reader"
     Icon="pack://application:,,,/App.ico"
     FontFamily="Meiryo UI"
-    Width="800"
-    Height="600"
-    Background="#FFF1F1F1">
-    <Window.DataContext>
-        <my:RssViewModel/>
-    </Window.DataContext>
+    Width="1060"
+    Height="630">
 
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Styles/MainStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Themes/MainStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-
-    <i:Interaction.Triggers>
-        <my:AddViewModelTrigger>
-            <my:ShowAddWindowAction/>
-        </my:AddViewModelTrigger>
-    </i:Interaction.Triggers>
     
+    <Window.DataContext>
+        <my:RssViewModel/>
+    </Window.DataContext>
+
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="25"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         
-        <!-- Header -->
-        <Border Style="{StaticResource HeaderStyle}" Grid.Row="0"/>
-        <!-- Header -->
+        <!-- Sidebar -->
+        <Grid Background="#FFEAEAEA">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="28"/>
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="200" Width="200"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <!-- Sidebar -->
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="32"/>
-                </Grid.RowDefinitions>
-
-                <my:RssEntryControl/>
-                
-                <Button
-                    Command="{Binding Add}"
-                    Content="＋ 新しいフィード"
-                    Style="{StaticResource NewFeedStyle}"
-                    Grid.Row="1"
-                />
-            </Grid>
-            <!-- Sidebar -->
-
-            <GridSplitter
-                Grid.Column="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Stretch"
-                Background="#FFD7D7D7"
-                Width="2"
-                Panel.ZIndex="1"
-            />
-
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition MinHeight="100" Height="200"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <!-- Feeds -->
-                <ListView
-                    ItemsSource="{Binding Feed.Value.UnreadItems}"
-                    Style="{StaticResource FeedsStyle}"
-                    ItemContainerStyle="{StaticResource FeedsItemStyle}"
-                    SelectionMode="Single"
-                    Height="Auto"
-                    Grid.Row="0">
-                    
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
+            <StackPanel
+                Orientation="Vertical"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,16">
+                <Button>
+                    <Button.Template>
+                        <ControlTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock
-                                    Text="{Binding PublishTime, StringFormat=MM/dd hh:mm}"
-                                    Foreground="Gray"
-                                    Margin="0,0,12,0"
-                                />
-                                <TextBlock Text="{Binding Title}"/>
+                                    Text="&#xf0c5;"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    FontSize="16"
+                                    Foreground="#FFB3B3B3"
+                                    Margin="20,0,8,0"/>
+                                <TextBlock
+                                    Text="全ての新着記事"
+                                    FontSize="12"
+                                    FontWeight="Bold"
+                                    Foreground="#FF444444"/>
                             </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <i:Interaction.Behaviors>
-                        <xb:ListBoxSelectItems Command="{Binding SelectArticle}"/>
-                    </i:Interaction.Behaviors>
-                </ListView>
-                <!-- Feeds -->
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
 
-                <GridSplitter
-                    Grid.Row="1"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    Background="#FFD7D7D7"
-                    Height="2"
-                />
-                
-                <!-- WebBrowser -->
-                <Border Style="{StaticResource BrowserBorderStyle}" Grid.Row="2">
-                    <WebBrowser>
-                        <i:Interaction.Behaviors>
-                            <xb:WebDocument Text="{Binding Content.Value}"/>
-                        </i:Interaction.Behaviors>
-                    </WebBrowser>
-                </Border>
-                <!-- WebBrowser -->
-            </Grid>
+            <my:RssEntryControl Grid.Row="1"/>
+
+            <Button
+                Content="&#xf067;"
+                Background="#ff662d91"
+                BorderThickness="0"
+                FontFamily="{StaticResource FontAwesome}"
+                Foreground="White"
+                Grid.Row="2"/>
         </Grid>
+        <!-- Sidebar -->
 
-        <!-- Footer -->
-        <StatusBar Style="{StaticResource FooterStyle}" Grid.Row="2">
-            <StatusBarItem Content="Ready"/>
-            <StatusBarItem Content="{Binding LastChecked.Value}" HorizontalAlignment="Right"/>
-        </StatusBar>
-        <!-- Footer -->
+        <GridSplitter
+            HorizontalAlignment="Center"
+            Background="#FFF6F6F6"
+            BorderThickness="0"
+            Width="20"
+            Grid.Column="1"/>
+
+        <!-- Feeds-->
+        <Grid
+            Background="#FFF6F6F6"
+            Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border
+                Margin="0,2,0,0"
+                BorderBrush="#FFE6E6E6"
+                BorderThickness="1"
+                CornerRadius="2,2,2,2"
+                HorizontalAlignment="Right">
+                <StackPanel
+                    Orientation="Horizontal"
+                    Background="Transparent">
+                    <TextBlock
+                        Text="{Binding LastChecked.Value}"
+                        FontSize="10"
+                        Margin="6,3,0,0"
+                        Foreground="#FF999999"/>
+                    <Button
+                        Content="&#xf01e;"
+                        Padding="6,0,6,0"
+                        FontSize="14"
+                        BorderThickness="0"
+                        Background="Transparent"
+                        FontFamily="{StaticResource FontAwesome}"
+                        Foreground="#FFB3B3B3"/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel
+                Orientation="Horizontal"
+                Grid.Row="1">
+                <TextBlock
+                    Text="{Binding Feed.Value.Title}"
+                    Background="Transparent"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <ListView
+                ItemsSource="{Binding Feed.Value.UnreadItems}"
+                Background="Transparent"
+                BorderThickness="0"
+                SelectionMode="Single"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                Grid.Row="2">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            BorderThickness="0,0,1,1"
+                            BorderBrush="#FFE6E6E6">
+                            <StackPanel
+                                Background="White"
+                                Margin="0"
+                                Orientation="Vertical"
+                                HorizontalAlignment="Stretch">
+                                <TextBlock
+                                    Text="{Binding PublishTime, StringFormat=yyyy/MM/dd hh:mm:ss}"
+                                    Margin="12,8,12,0"
+                                    FontSize="8"
+                                    Foreground="#FF999999"
+                                    HorizontalAlignment="Right"/>
+                                <TextBlock
+                                    Text="{Binding Title}"
+                                    MaxHeight="40"
+                                    Margin="12,8,12,0"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="#FF4D4D4D"
+                                    TextWrapping="Wrap"
+                                    TextTrimming="WordEllipsis"/>
+                                <TextBlock
+                                    Text="{Binding Summary}"
+                                    MaxHeight="80"
+                                    Margin="12,8,12,8"
+                                    FontSize="10"
+                                    Foreground="#FF838383"
+                                    TextWrapping="Wrap"
+                                    TextTrimming="WordEllipsis"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="0,0,4,12"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <i:Interaction.Behaviors>
+                    <xb:ListBoxSelectItems Command="{Binding SelectArticle}"/>
+                </i:Interaction.Behaviors>
+            </ListView>
+        </Grid>
+        <!-- Feeds -->
+
+        <GridSplitter
+            HorizontalAlignment="Center"
+            Background="#FFF6F6F6"
+            BorderThickness="0"
+            Width="20"
+            Grid.Column="3"/>
+        
+        <!-- Preview -->
+        <Grid
+            Background="White"
+            Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button
+                Content="&#xf0c9;"
+                Padding="16,0,16,0"
+                FontSize="18"
+                BorderThickness="0"
+                Background="Transparent"
+                FontFamily="{StaticResource FontAwesome}"
+                Foreground="#FF666666"
+                HorizontalAlignment="Right"/>
+
+            <WebBrowser Grid.Row="1">
+                <i:Interaction.Behaviors>
+                    <xb:WebDocument Text="{Binding Content.Value}"/>
+                </i:Interaction.Behaviors>
+            </WebBrowser>
+        </Grid>
+        <!-- Preview -->
     </Grid>
 </Window>

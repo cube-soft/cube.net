@@ -99,6 +99,7 @@
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="ViewModels\AddViewModel.cs" />
     <Compile Include="ViewModels\RssViewModel.cs" />
+    <Compile Include="Xui\ExpandIconEraser.cs" />
     <Compile Include="Xui\Behaviors\CommandBehavior.cs" />
     <Compile Include="Xui\Behaviors\ListBox.cs" />
     <Compile Include="Xui\Behaviors\WebDocument.cs" />
@@ -122,11 +123,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\FontStyle.xaml">
+    <Page Include="Themes\FontStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\MainStyle.xaml">
+    <Page Include="Themes\MainStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

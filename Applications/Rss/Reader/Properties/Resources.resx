@@ -123,10 +123,10 @@
   <data name="ErrorUnexpected" xml:space="preserve">
     <value>フィード取得中にエラーが発生しました。</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="MessageLastChecked" xml:space="preserve">
-    <value>最終チェック日時</value>
+    <value>最終チェック</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Skeleton" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Skeleton.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

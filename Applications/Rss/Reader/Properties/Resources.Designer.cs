@@ -79,7 +79,7 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
-        ///   最終チェック日時 に類似しているローカライズされた文字列を検索します。
+        ///   最終チェック に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageLastChecked {
             get {
