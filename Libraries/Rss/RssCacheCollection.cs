@@ -18,7 +18,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using Cube.FileSystem;
 using Cube.Settings;
@@ -427,12 +426,11 @@ namespace Cube.Net.Rss
                 else
                 {
                     var feed = Load(uri);
-                    if (feed != null && feed.LastChecked != DateTime.MinValue)
-                    {
-                        dest.LastChecked = feed.LastChecked;
-                        dest.Items.Clear();
-                        foreach (var a in feed.Items.Where(e => !e.Read)) dest.Items.Add(a);
-                    }
+                    if (feed == null) return;
+
+                    dest.LastChecked = feed.LastChecked;
+                    dest.Items.Clear();
+                    foreach (var a in feed.UnreadItems) dest.Items.Add(a);
                 }
             }
             finally
