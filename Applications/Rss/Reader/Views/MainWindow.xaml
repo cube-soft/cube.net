@@ -91,7 +91,7 @@
 
                 <TreeView.Resources>
                     <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                        <Setter Property="xu:ExpandIconEraser.IsHideExpander" Value="True" />
+                        <Setter Property="xu:ExpandIcon.Visibility" Value="Collapsed"/>
                     </Style>
 
                     <!-- Category -->
@@ -321,8 +321,7 @@
                 ContextMenuService.IsEnabled="False">
                 <Button.ContextMenu>
                     <ContextMenu
-                        Background="White"
-                        HorizontalOffset="-140">
+                        Background="White">
                         <MenuItem Header="インポート"/>
                         <MenuItem Header="エクスポート"/>
                         <Separator/>
