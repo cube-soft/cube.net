@@ -93,7 +93,7 @@ namespace Cube.Net.Rss
             get
             {
                 var dest = _src[key];
-                Recover(key, dest);
+                Pop(key, dest);
                 return dest;
             }
             set => _src[key] = value;
@@ -162,7 +162,7 @@ namespace Cube.Net.Rss
         {
             foreach (var uri in _otm)
             {
-                try { Cache(uri); }
+                try { Stash(uri); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
             _otm.Clear();
@@ -216,7 +216,7 @@ namespace Cube.Net.Rss
         {
             _src.Add(key, value);
             _otm.Add(key);
-            Cache();
+            Stash();
         }
 
         /* ----------------------------------------------------------------- */
@@ -234,7 +234,7 @@ namespace Cube.Net.Rss
         {
             _src.Add(item);
             _otm.Add(item.Key);
-            Cache();
+            Stash();
         }
 
         /* ----------------------------------------------------------------- */
@@ -309,7 +309,7 @@ namespace Cube.Net.Rss
         public bool TryGetValue(Uri key, out RssFeed value)
         {
             var result = _src.TryGetValue(key, out value);
-            if (result) Recover(key, value);
+            if (result) Pop(key, value);
             return result;
         }
 
@@ -344,7 +344,7 @@ namespace Cube.Net.Rss
         {
             foreach (var kv in _src)
             {
-                Recover(kv.Key, kv.Value);
+                Pop(kv.Key, kv.Value);
                 yield return kv;
             }
         }
@@ -370,29 +370,46 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Load
+        /// Stash
         ///
         /// <summary>
-        /// RSS フィードをキャッシュファイルから読み込みます。
+        /// 最も古い要素をファイルに保存します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFeed Load(Uri uri)
+        private void Stash()
         {
-            try
-            {
-                if (string.IsNullOrEmpty(Directory)) return default(RssFeed);
-                var cache = CacheName(uri);
-                if (!IO.Exists(cache)) return default(RssFeed);
-                using (var s = IO.OpenRead(cache)) return SettingsType.Json.Load<RssFeed>(s);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
-            return default(RssFeed);
+            if (_otm.Count <= Capacity) return;
+            var uri = _otm[0];
+            Stash(uri);
+            _otm.Remove(uri);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Recover
+        /// Stash
+        ///
+        /// <summary>
+        /// RSS フィードをキャッシュファイルに保存します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Stash(Uri uri)
+        {
+            if (string.IsNullOrEmpty(Directory) || !_src.ContainsKey(uri)) return;
+
+            var feed = _src[uri];
+            if (feed == null || feed.LastChecked == DateTime.MinValue) return;
+
+            if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
+            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, feed);
+
+            feed.Items.Clear();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Pop
         ///
         /// <summary>
         /// RSS フィードをキャッシュファイルから復帰させます。
@@ -404,7 +421,7 @@ namespace Cube.Net.Rss
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        private void Recover(Uri uri, RssFeed dest)
+        private void Pop(Uri uri, RssFeed dest)
         {
             try
             {
@@ -424,54 +441,29 @@ namespace Cube.Net.Rss
                     _otm.Add(uri);
                 }
             }
-            finally { Cache(); }
+            finally { Stash(); }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Cache
+        /// Load
         ///
         /// <summary>
-        /// 最も古い要素をキャッシュ化します。
+        /// RSS フィードをキャッシュファイルから読み込みます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void Cache()
+        private RssFeed Load(Uri uri)
         {
-            if (_otm.Count <= Capacity) return;
-            var uri = _otm[0];
-            Cache(uri);
-            _otm.Remove(uri);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Cache
-        ///
-        /// <summary>
-        /// RSS フィードをキャッシュファイルに保存します。
-        /// </summary>
-        /// 
-        /// <param name="uri">URL</param>
-        /// 
-        /// <remarks>
-        /// Cache を実行すると RssFeed.Items の内容は消去されます。
-        /// Items の内容を復帰させるには、[] 演算子経由でオブジェクトを
-        /// 取得して下さい。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Cache(Uri uri)
-        {
-            if (string.IsNullOrEmpty(Directory) || !_src.ContainsKey(uri)) return;
-
-            var feed = _src[uri];
-            if (feed == null || feed.LastChecked == DateTime.MinValue) return;
-
-            if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, feed);
-
-            feed.Items.Clear();
+            try
+            {
+                if (string.IsNullOrEmpty(Directory)) return default(RssFeed);
+                var cache = CacheName(uri);
+                if (!IO.Exists(cache)) return default(RssFeed);
+                using (var s = IO.OpenRead(cache)) return SettingsType.Json.Load<RssFeed>(s);
+            }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            return default(RssFeed);
         }
 
         /* ----------------------------------------------------------------- */
