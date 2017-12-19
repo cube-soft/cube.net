@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
@@ -210,6 +211,7 @@
             </Grid.RowDefinitions>
 
             <Button
+                x:Name="SettingsButton"
                 Content="&#xf0c9;"
                 Padding="16,0,16,0"
                 FontSize="18"
@@ -217,7 +219,34 @@
                 Background="Transparent"
                 FontFamily="{StaticResource FontAwesome}"
                 Foreground="#FF666666"
-                HorizontalAlignment="Right"/>
+                HorizontalAlignment="Right"
+                ContextMenuService.IsEnabled="False">
+                <Button.ContextMenu>
+                    <ContextMenu
+                        Background="White"
+                        HorizontalOffset="-140">
+                        <MenuItem Header="インポート"/>
+                        <MenuItem Header="エクスポート"/>
+                        <Separator/>
+                        <MenuItem Header="設定"/>
+                        <MenuItem Header="バージョン情報"/>
+                        <Separator/>
+                        <MenuItem Header="終了"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:ChangePropertyAction
+                            TargetObject="{Binding ContextMenu, ElementName=SettingsButton}" 
+                            PropertyName="IsOpen"
+                            Value="True"/>
+                        <ei:ChangePropertyAction
+                            TargetObject="{Binding ContextMenu, ElementName=SettingsButton}" 
+                            PropertyName="PlacementTarget" 
+                            Value="{Binding ElementName=SettingsButton, Mode=OneWay}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
 
             <WebBrowser Grid.Row="1">
                 <i:Interaction.Behaviors>
