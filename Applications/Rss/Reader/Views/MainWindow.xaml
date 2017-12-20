@@ -30,6 +30,12 @@
         <my:RssViewModel/>
     </Window.DataContext>
 
+    <i:Interaction.Triggers>
+        <my:AddViewModelTrigger>
+            <my:ShowAddWindowAction/>
+        </my:AddViewModelTrigger>
+    </i:Interaction.Triggers>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
@@ -161,6 +167,7 @@
             </TreeView>
 
             <Button
+                Command="{Binding Add}"
                 Content="&#xf067;"
                 Background="#ff662d91"
                 BorderThickness="0"

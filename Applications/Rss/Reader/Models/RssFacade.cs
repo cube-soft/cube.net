@@ -138,7 +138,6 @@ namespace Cube.Net.App.Rss.Reader
                 Properties.Resources.Skeleton,
                 Properties.Resources.SkeletonStyle,
                 src.Link,
-                src.Link,
                 src.Title,
                 src.PublishTime,
                 !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
