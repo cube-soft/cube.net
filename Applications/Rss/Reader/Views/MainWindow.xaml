@@ -196,33 +196,35 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Border
+            <Button
                 Margin="0,2,0,0"
-                BorderBrush="#FFE6E6E6"
-                BorderThickness="1"
-                CornerRadius="2,2,2,2"
                 HorizontalAlignment="Right"
                 Visibility="{Binding LastChecked.Value, Converter={StaticResource ToVisibility}}">
-                <StackPanel
-                    Orientation="Horizontal"
-                    Background="Transparent">
-                    <TextBlock
-                        Text="{Binding LastChecked.Value}"
-                        FontFamily="Meiryo"
-                        FontSize="10"
-                        Margin="6,3,0,0"
-                        Foreground="#FF999999"/>
-                    <Button
-                        Content="&#xf01e;"
-                        Padding="6,0,6,0"
-                        FontSize="14"
-                        BorderThickness="0"
-                        Background="Transparent"
-                        FontFamily="{StaticResource FontAwesome}"
-                        Foreground="#FFB3B3B3"/>
-                </StackPanel>
-            </Border>
-
+                <Button.Template>
+                    <ControlTemplate>
+                        <Border
+                            BorderBrush="#FFE6E6E6"
+                            BorderThickness="1"
+                            CornerRadius="2">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock
+                                    Text="{Binding LastChecked.Value}"
+                                    Margin="6,3,0,0"
+                                    FontFamily="Meiryo"
+                                    FontSize="10"
+                                    Foreground="#FF999999"/>
+                                <TextBlock
+                                    Text="&#xf01e;"
+                                    Margin="6,0,6,0"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    FontSize="14"
+                                    Foreground="#FFB3B3B3"/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            
             <StackPanel
                 Orientation="Horizontal"
                 Grid.Row="1">
