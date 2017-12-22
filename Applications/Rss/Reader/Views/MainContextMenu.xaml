@@ -1,12 +1,21 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ContextMenu x:Key="MainContextMenu">
-        <MenuItem Header="最新の情報に更新"
-                  Command="{Binding Refresh}"/>
+        <MenuItem
+            Header="最新の情報に更新"
+            Command="{Binding Refresh}"/>
+
+        <Separator/>
+
+        <MenuItem Header="キャッシュをクリア"/>
+
+        <MenuItem
+            Header="削除"
+            Command="{Binding Remove}"
+            CommandParameter="{Binding Path=PlacementTarget.SelectedItem,
+                                       RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+        <Separator/>
         
-        <MenuItem Header="削除"
-                  Command="{Binding Remove}"
-                  CommandParameter="{Binding Path=PlacementTarget.SelectedItem,
-                                             RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+        <MenuItem Header="プロパティ"/>
     </ContextMenu>
 </ResourceDictionary>
