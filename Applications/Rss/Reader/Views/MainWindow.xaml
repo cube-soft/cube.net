@@ -48,7 +48,7 @@
         </Grid.ColumnDefinitions>
         
         <!-- Sidebar -->
-        <Grid Background="{StaticResource MainBackgroundBrush}">
+        <Grid Background="{StaticResource DarkBackgroundBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="70"/>
                 <RowDefinition Height="*"/>
@@ -67,13 +67,13 @@
                                     Text="&#xf0c5;"
                                     FontFamily="{StaticResource FontAwesome}"
                                     FontSize="16"
-                                    Foreground="#FFB3B3B3"
+                                    Foreground="{StaticResource IconTextBrush}"
                                     Margin="20,0,8,0"/>
                                 <TextBlock
                                     Text="全ての新着記事"
                                     FontSize="12"
                                     FontWeight="Bold"
-                                    Foreground="#FF444444"/>
+                                    Foreground="{StaticResource MainTextBrush}"/>
                             </StackPanel>
                         </ControlTemplate>
                     </Button.Template>
@@ -111,14 +111,14 @@
                             <TextBlock
                                 Text="&#xf101;"
                                 FontFamily="{StaticResource FontAwesome}"
-                                Foreground="#FFB3B3B3"
+                                Foreground="{StaticResource IconTextBrush}"
                                 FontSize="16"
                                 Margin="0,0,8,0"/>
                             <TextBlock
                                 Text="{Binding Title}"
                                 FontSize="12"
                                 FontWeight="Bold"
-                                Foreground="#FF444444"/>
+                                Foreground="{StaticResource MainTextBrush}"/>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PreviewMouseRightButtonDown">
                                     <ei:ChangePropertyAction
@@ -139,13 +139,13 @@
                             <TextBlock
                                 Text="&#xf0f6;"
                                 FontFamily="{StaticResource FontAwesome}"
-                                Foreground="#FFB3B3B3"
+                                Foreground="{StaticResource IconTextBrush}"
                                 FontSize="16"
                                 Margin="0,2,8,0"/>
                             <TextBlock
                                 Text="{Binding Title}"
                                 FontSize="12"
-                                Foreground="#FF444444"
+                                Foreground="{StaticResource MainTextBrush}"
                                 Margin="0,2,0,2"/>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PreviewMouseRightButtonDown">
@@ -172,7 +172,7 @@
             <Button
                 Command="{Binding Add}"
                 Content="&#xf067;"
-                Background="#FF662D91"
+                Background="{StaticResource AccentBackgroundBrush}"
                 BorderThickness="0"
                 FontFamily="{StaticResource FontAwesome}"
                 Foreground="White"
@@ -182,14 +182,14 @@
 
         <GridSplitter
             HorizontalAlignment="Center"
-            Background="#FFF6F6F6"
+            Background="{StaticResource MainBackgroundBrush}"
             BorderThickness="0"
             Width="20"
             Grid.Column="1"/>
 
         <!-- Feeds-->
         <Grid
-            Background="#FFF6F6F6"
+            Background="{StaticResource MainBackgroundBrush}"
             Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="24"/>
@@ -204,7 +204,7 @@
                 <Button.Template>
                     <ControlTemplate>
                         <Border
-                            BorderBrush="#FFE6E6E6"
+                            BorderBrush="{StaticResource MainBorderBrush}"
                             BorderThickness="1"
                             CornerRadius="2">
                             <StackPanel Orientation="Horizontal">
@@ -213,13 +213,13 @@
                                     Margin="6,3,0,0"
                                     FontFamily="Meiryo"
                                     FontSize="10"
-                                    Foreground="#FF999999"/>
+                                    Foreground="{StaticResource TimeTextBrush}"/>
                                 <TextBlock
                                     Text="&#xf01e;"
                                     Margin="6,0,6,0"
                                     FontFamily="{StaticResource FontAwesome}"
                                     FontSize="14"
-                                    Foreground="#FFB3B3B3"/>
+                                    Foreground="{StaticResource IconTextBrush}"/>
                             </StackPanel>
                         </Border>
                     </ControlTemplate>
@@ -232,6 +232,7 @@
                 <TextBlock
                     Text="{Binding Feed.Value.Title}"
                     Background="Transparent"
+                    Foreground="{StaticResource MainTextBrush}"
                     FontFamily="Meiryo"
                     FontSize="16"
                     FontWeight="Bold"
@@ -264,7 +265,7 @@
                                     Margin="12,8,12,0"
                                     FontFamily="Meiryo"
                                     FontSize="8"
-                                    Foreground="#FF999999"
+                                    Foreground="{StaticResource TimeTextBrush}"
                                     HorizontalAlignment="Right"/>
                                 <TextBlock
                                     Text="{Binding Title}"
@@ -273,7 +274,7 @@
                                     FontFamily="Meiryo"
                                     FontSize="12"
                                     FontWeight="Bold"
-                                    Foreground="#FF4D4D4D"
+                                    Foreground="{StaticResource MainTextBrush}"
                                     TextWrapping="Wrap"
                                     TextTrimming="WordEllipsis"/>
                                 <TextBlock
@@ -283,7 +284,7 @@
                                     FontFamily="Meiryo"
                                     FontSize="10"
                                     LineHeight="10"
-                                    Foreground="#FF838383"
+                                    Foreground="{StaticResource FeedTextBrush}"
                                     TextWrapping="Wrap"
                                     TextTrimming="WordEllipsis"/>
                             </StackPanel>
@@ -306,7 +307,7 @@
 
         <GridSplitter
             HorizontalAlignment="Center"
-            Background="#FFF6F6F6"
+            Background="{StaticResource MainBackgroundBrush}"
             BorderThickness="0"
             Width="20"
             Grid.Column="3"/>
@@ -328,12 +329,12 @@
                 BorderThickness="0"
                 Background="Transparent"
                 FontFamily="{StaticResource FontAwesome}"
-                Foreground="#FF666666"
+                Foreground="{StaticResource MainTextBrush}"
                 HorizontalAlignment="Right"
                 ContextMenuService.IsEnabled="False">
                 <Button.ContextMenu>
                     <ContextMenu
-                        Background="White">
+                        Background="{StaticResource ContextBackgroundBrush}">
                         <MenuItem Header="インポート"/>
                         <MenuItem Header="エクスポート"/>
                         <Separator/>
