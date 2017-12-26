@@ -103,10 +103,18 @@
                         <Setter Property="xu:ExpandIcon.Visibility" Value="Collapsed"/>
                     </Style>
 
+                    <ToolTip x:Key="EntryToolTip">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Title}"/>
+                            <TextBlock Text="{Binding Count, StringFormat=' ({0})'}"/>
+                        </StackPanel>
+                    </ToolTip>
+
                     <!-- Category -->
                     <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
                         <StackPanel
                             Orientation="Horizontal"
+                            ToolTip="{StaticResource EntryToolTip}"
                             Margin="2,6,0,6">
                             <TextBlock
                                 Text="&#xf101;"
@@ -141,6 +149,7 @@
                     <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
                         <StackPanel
                             Orientation="Horizontal"
+                            ToolTip="{StaticResource EntryToolTip}"
                             Margin="2,2,0,2">
                             <TextBlock
                                 Text="&#xf0f6;"

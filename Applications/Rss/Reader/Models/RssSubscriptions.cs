@@ -162,7 +162,7 @@ namespace Cube.Net.App.Rss.Reader
             {
                 Title       = feed.Title,
                 Uri         = feed.Uri,
-                Count = feed.UnreadItems.Count(),
+                Count       = feed.UnreadItems.Count(),
             });
 
             _feeds.Add(feed.Uri, feed);
