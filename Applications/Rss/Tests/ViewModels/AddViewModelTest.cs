@@ -51,7 +51,7 @@ namespace Cube.Net.App.Rss.Tests
         public void Add()
         {
             var vm = new RssViewModel(new SettingsFolder(Results, IO));
-            vm.Messenger.Register<AddViewModel>(this, e => AddCommand(e).Wait());
+            vm.Messenger.Register<RegisterViewModel>(this, e => AddCommand(e).Wait());
             vm.Add.Execute(null);
 
             var entry = vm.Items.OfType<RssEntry>().FirstOrDefault(e => e.Uri == _uri);
@@ -67,17 +67,17 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task AddCommand(AddViewModel vm)
+        private async Task AddCommand(RegisterViewModel vm)
         {
-            Assert.That(vm.Add.CanExecute(null), Is.False);
+            Assert.That(vm.Register.CanExecute(null), Is.False);
             vm.Url.Value = _uri.ToString();
-            Assert.That(vm.Add.CanExecute(null), Is.True);
+            Assert.That(vm.Register.CanExecute(null), Is.True);
 
             try
             {
                 var cts = new CancellationTokenSource();
-                vm.Messenger.Register<AddViewModel>(this, _ => cts.Cancel());
-                vm.Add.Execute(null);
+                vm.Messenger.Register<RegisterViewModel>(this, _ => cts.Cancel());
+                vm.Register.Execute(null);
                 await Task.Delay(5000, cts.Token).ConfigureAwait(false);
             }
             catch (TaskCanceledException /* err */) { /* OK */ }

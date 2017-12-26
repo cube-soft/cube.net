@@ -21,23 +21,23 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// AddViewModelTrigger
+    /// RegisterViewModelTrigger
     ///
     /// <summary>
-    /// AddViewModel を介した MesengerTrigger です。
+    /// RegisterViewModel を介した MesengerTrigger です。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class AddViewModelTrigger : MessengerTrigger<AddViewModel> { }
+    public class RegisterViewModelTrigger : MessengerTrigger<RegisterViewModel> { }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// ShowAddWindowAction
+    /// ShowRegisterWindowAction
     ///
     /// <summary>
-    /// AddWindow を表示するための Action クラスです。
+    /// RegisterWindow を表示するための Action クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class ShowAddWindowAction : ShowDialogAction<AddWindow> { }
+    public class ShowRegisterWindowAction : ShowDialogAction<AddWindow> { }
 }

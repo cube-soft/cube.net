@@ -22,9 +22,9 @@
             <xt:MessageBoxAction/>
         </xt:MessageBoxTrigger>
         
-        <my:AddViewModelTrigger Messenger="{Binding Messenger}">
+        <my:RegisterViewModelTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>
-        </my:AddViewModelTrigger>
+        </my:RegisterViewModelTrigger>
     </i:Interaction.Triggers>
     
     <Grid

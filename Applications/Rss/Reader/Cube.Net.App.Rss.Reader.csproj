@@ -86,7 +86,7 @@
     <Compile Include="Models\RssEntry.cs" />
     <Compile Include="Models\RssEntryDropTarget.cs" />
     <Compile Include="Models\RssFacade.cs" />
-    <Compile Include="Models\RssSubscribeCollection.cs" />
+    <Compile Include="Models\RssSubscriptions.cs" />
     <Compile Include="Models\Triggers.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -94,7 +94,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings\Settings.cs" />
-    <Compile Include="ViewModels\AddViewModel.cs" />
+    <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\RssViewModel.cs" />
     <Compile Include="Xui\Converters\EmptyToVisibility.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
@@ -117,7 +117,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AddWindow.xaml">
+    <Page Include="Views\RegisterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -141,8 +141,8 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AddWindow.xaml.cs">
-      <DependentUpon>AddWindow.xaml</DependentUpon>
+    <Compile Include="Views\RegisterWindow.xaml.cs">
+      <DependentUpon>RegisterWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <SubType>Code</SubType>

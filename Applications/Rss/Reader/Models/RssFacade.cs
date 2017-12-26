@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Linq;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 
@@ -91,7 +92,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscribeCollection Items { get; } = new RssSubscribeCollection();
+        public RssSubscriptions Items { get; } = new RssSubscriptions();
 
         #endregion
 
@@ -110,8 +111,18 @@ namespace Cube.Net.App.Rss.Reader
         /// 
         /// <returns>選択項目に対応する RSS フィード</returns>
         /// 
+        /// <remarks>
+        /// 未読アイテムがゼロの場合、選択項目から外れたタイミングで
+        /// 全記事を削除しています。これは主にメモリ使用量の抑制を目的と
+        /// しています。
+        /// </remarks>
+        /// 
         /* ----------------------------------------------------------------- */
-        public RssFeed Select(RssEntry src, RssFeed prev) => Items.Lookup(src.Uri);
+        public RssFeed Select(RssEntry src, RssFeed prev)
+        {
+            if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
+            return Items.Lookup(src.Uri);
+        }
 
         /* ----------------------------------------------------------------- */
         ///

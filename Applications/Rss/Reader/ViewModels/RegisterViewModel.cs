@@ -26,30 +26,30 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// AddViewModel
+    /// RegisterViewModel
     ///
     /// <summary>
-    /// フィードの追加画面とモデルを関連付けるための ViewModel です。
+    /// 新規 URL の登録画面とモデルを関連付けるための ViewModel です。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class AddViewModel : ViewModelBase
+    public class RegisterViewModel : ViewModelBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// AddViewModel
+        /// RegisterViewModel
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public AddViewModel(Action<RssFeed> callback) : base(new Messenger())
+        public RegisterViewModel(Action<RssFeed> callback) : base(new Messenger())
         {
             _callback = callback;
-            Url.PropertyChanged += (s, e) => Add.RaiseCanExecuteChanged();
+            Url.PropertyChanged += (s, e) => Register.RaiseCanExecuteChanged();
         }
 
         #endregion
@@ -84,15 +84,15 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Add
+        /// Register
         /// 
         /// <summary>
-        /// 新しい RSS フィードを追加するコマンドを取得します。
+        /// 新しい RSS フィードを登録するコマンドを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Add
-            => _add = _add ?? new RelayCommand(
+        public RelayCommand Register
+            => _register = _register ?? new RelayCommand(
                 async () =>
                 {
                     try
@@ -147,7 +147,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private Action<RssFeed> _callback;
-        private RelayCommand _add;
+        private RelayCommand _register;
         #endregion
 
         #endregion

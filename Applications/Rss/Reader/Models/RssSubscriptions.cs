@@ -29,14 +29,14 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssSubscribeCollection
+    /// RssSubscriptions
     ///
     /// <summary>
     /// 購読フィード一覧を管理するクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public sealed class RssSubscribeCollection
+    public sealed class RssSubscriptions
         : IEnumerable<RssEntryBase>, INotifyCollectionChanged, IDisposable
     {
         #region Constructors
@@ -50,7 +50,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscribeCollection()
+        public RssSubscriptions()
         {
             _monitor = new RssMonitor(_feeds) { Interval = TimeSpan.FromHours(1) };
 
@@ -358,7 +358,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        ~RssSubscribeCollection() { Dispose(false); }
+        ~RssSubscriptions() { Dispose(false); }
 
         /* ----------------------------------------------------------------- */
         ///

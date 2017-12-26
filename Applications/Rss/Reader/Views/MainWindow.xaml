@@ -33,9 +33,9 @@
     </Window.DataContext>
 
     <i:Interaction.Triggers>
-        <my:AddViewModelTrigger>
-            <my:ShowAddWindowAction/>
-        </my:AddViewModelTrigger>
+        <my:RegisterViewModelTrigger>
+            <my:ShowRegisterWindowAction/>
+        </my:RegisterViewModelTrigger>
     </i:Interaction.Triggers>
     
     <Grid>
