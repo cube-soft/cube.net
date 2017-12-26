@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace Cube.Net.Rss.Parsing
@@ -257,6 +258,34 @@ namespace Cube.Net.Rss.Parsing
 
             var link = e.GetUri(ns, "link");
             return link?.ToString() ?? string.Empty;
+        }
+
+        #endregion
+
+        #region Strip
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Strip
+        /// 
+        /// <summary>
+        /// HTML タグを除去する等して文字列を正規化します。
+        /// </summary>
+        /// 
+        /// <param name="src">オリジナルの文字列</param>
+        /// <param name="n">最大文字長</param>
+        /// 
+        /// <returns>正規化後の文字列</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string Strip(this string src, int n)
+        {
+            var dest = string.IsNullOrEmpty(src) ? 
+                       string.Empty :
+                       Regex.Replace(src, "<.*?>", string.Empty).Trim();
+            return dest.Length <= n ?
+                   dest :
+                   dest.Substring(0, n);
         }
 
         #endregion

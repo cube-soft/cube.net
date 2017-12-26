@@ -86,7 +86,7 @@ namespace Cube.Net.Rss
             .Select(e => new RssItem
             {
                 Title       = e.GetTitle(),
-                Summary     = e.GetValue("description"),
+                Summary     = e.GetValue("description").Strip(300),
                 Content     = e.GetValue("description"),
                 Link        = e.GetUri("link"),
                 PublishTime = e.GetDateTime("pubDate"),
