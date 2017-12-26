@@ -32,7 +32,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class RssEntryBase
+    public class RssEntryBase : ObservableProperty
     {
         #region Properties
 
@@ -45,7 +45,26 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Title { get; set; }
+        public string Title
+        {
+            get => _title;
+            set => SetProperty(ref _title, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UnreadCount
+        /// 
+        /// <summary>
+        /// 未読記事数を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public int UnreadCount
+        {
+            get => _count;
+            set => SetProperty(ref _count, value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -56,8 +75,18 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssCategory Parent { get; set; }
+        public RssCategory Parent
+        {
+            get => _parent;
+            set => SetProperty(ref _parent, value);
+        }
 
+        #endregion
+
+        #region Fields
+        private string _title;
+        private int _count;
+        private RssCategory _parent;
         #endregion
     }
 
@@ -83,7 +112,11 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Uri Uri { get; set; }
+        public Uri Uri
+        {
+            get => _uri;
+            set => SetProperty(ref _uri, value);
+        }
 
         #endregion
 
@@ -118,6 +151,10 @@ namespace Cube.Net.App.Rss.Reader
             };
         }
 
+        #endregion
+
+        #region Fields
+        private Uri _uri;
         #endregion
     }
 
