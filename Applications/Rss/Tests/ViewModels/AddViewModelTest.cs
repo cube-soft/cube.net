@@ -52,7 +52,7 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new RssViewModel(new SettingsFolder(Results, IO));
             vm.Messenger.Register<RegisterViewModel>(this, e => AddCommand(e).Wait());
-            vm.Add.Execute(null);
+            vm.Register.Execute(null);
 
             var entry = vm.Items.OfType<RssEntry>().FirstOrDefault(e => e.Uri == _uri);
             Assert.That(entry, Is.Not.Null);

@@ -120,7 +120,7 @@
                                 FontWeight="Bold"
                                 Foreground="{StaticResource MainTextBrush}"/>
                             <TextBlock
-                                Text="{Binding UnreadCount, StringFormat=({0})}"
+                                Text="{Binding Count, StringFormat=({0})}"
                                 FontSize="12"
                                 FontWeight="Bold"
                                 Foreground="{StaticResource MainTextBrush}"
@@ -154,7 +154,7 @@
                                 Foreground="{StaticResource MainTextBrush}"
                                 Margin="0,2,0,2"/>
                             <TextBlock
-                                Text="{Binding UnreadCount, StringFormat=({0})}"
+                                Text="{Binding Count, StringFormat=({0})}"
                                 FontSize="12"
                                 Foreground="{StaticResource MainTextBrush}"
                                 Margin="4,2,0,2"/>
@@ -181,7 +181,7 @@
             </TreeView>
 
             <Button
-                Command="{Binding Add}"
+                Command="{Binding Register}"
                 Content="&#xf067;"
                 Background="{StaticResource AccentBackgroundBrush}"
                 BorderThickness="0"

@@ -142,15 +142,15 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Add
+        /// Register
         /// 
         /// <summary>
-        /// フィード追加時に実行されるコマンドです。
+        /// 新規 URL 登録時に実行されるコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Add
-            => _add = _add ?? new RelayCommand(
+        public RelayCommand Register
+            => _register = _register ?? new RelayCommand(
                 () => Messenger.Send(new RegisterViewModel(e => _model.Items.Add(e)))
             );
 
@@ -217,7 +217,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private RssFacade _model;
-        private RelayCommand _add;
+        private RelayCommand _register;
         private RelayCommand<object> _remove;
         private RelayCommand _refresh;
         private RelayCommand<object> _selectEntry;

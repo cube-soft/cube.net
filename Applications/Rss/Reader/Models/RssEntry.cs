@@ -53,14 +53,14 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UnreadCount
+        /// Count
         /// 
         /// <summary>
         /// 未読記事数を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public int UnreadCount
+        public int Count
         {
             get => _count;
             set => SetProperty(ref _count, value);

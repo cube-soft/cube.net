@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using Cube.FileSystem;
 using Cube.Net.Rss;
@@ -159,8 +160,9 @@ namespace Cube.Net.App.Rss.Reader
         {
             _items.Add(new RssEntry
             {
-                Title = feed.Title,
-                Uri   = feed.Uri,
+                Title       = feed.Title,
+                Uri         = feed.Uri,
+                Count = feed.UnreadItems.Count(),
             });
 
             _feeds.Add(feed.Uri, feed);
@@ -409,21 +411,66 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void MakeFeed(RssCategory src)
         {
-            src.Items.CollectionChanged += (s, e) => SubCollectionChanged?.Invoke(this, e);
+            src.PropertyChanged -= WhenPropertyChanged;
+            src.PropertyChanged += WhenPropertyChanged;
+            src.Items.CollectionChanged += (s, e) =>
+            {
+                src.Count = src.Items.Aggregate(0, (x, i) => x + i.Count);
+                SubCollectionChanged?.Invoke(this, e);
+            };
 
             foreach (var entry in src.Entries)
             {
                 if (_feeds.ContainsKey(entry.Uri)) continue;
 
+                var items = new BindableCollection<RssItem>();
+                items.CollectionChanged += (s, e) => entry.Count = _feeds[entry.Uri].UnreadItems.Count();
+
                 _feeds.Add(entry.Uri, new RssFeed
                 {
                     Title = entry.Title,
                     Uri   = entry.Uri,
+                    Items = items,
                 });
+
+                entry.PropertyChanged -= WhenPropertyChanged;
+                entry.PropertyChanged += WhenPropertyChanged;
+                entry.Count = _feeds[entry.Uri].UnreadItems.Count();
             }
 
             if (src.Categories == null) return;
             foreach (var category in src.Categories) MakeFeed(category);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenPropertyChanged
+        /// 
+        /// <summary>
+        /// RssEntryBase のプロパティ変更時に実行されるハンドラです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void WhenPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(RssEntryBase.Count)) return;
+            UpdateCount(sender as RssEntryBase);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UpdateCount
+        /// 
+        /// <summary>
+        /// 未読記事数を更新します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void UpdateCount(RssEntryBase src)
+        {
+            if (src == null || src.Parent == null) return;
+            var parent = src.Parent;
+            parent.Count = parent.Items.Aggregate(0, (x, e) => x + e.Count);
         }
 
         #region Fields
