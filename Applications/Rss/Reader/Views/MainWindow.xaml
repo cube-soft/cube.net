@@ -46,13 +46,17 @@
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="28"/>
+        </Grid.RowDefinitions>
         
         <!-- Sidebar -->
         <Grid Background="{StaticResource DarkBackgroundBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="70"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="28"/>
             </Grid.RowDefinitions>
 
             <StackPanel
@@ -188,17 +192,19 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </TreeView>
-
-            <Button
-                Command="{Binding Register}"
-                Content="&#xf067;"
-                Background="{StaticResource AccentBackgroundBrush}"
-                BorderThickness="0"
-                FontFamily="{StaticResource FontAwesome}"
-                Foreground="White"
-                Grid.Row="2"/>
         </Grid>
         <!-- Sidebar -->
+        
+        <!-- Register button -->
+        <Button
+            Command="{Binding Register}"
+            Content="&#xf067;"
+            Background="{StaticResource AccentBackgroundBrush}"
+            BorderThickness="0"
+            FontFamily="{StaticResource FontAwesome}"
+            Foreground="White"
+            Grid.Row="1"/>
+        <!-- Register button -->
 
         <GridSplitter
             HorizontalAlignment="Center"
@@ -236,7 +242,7 @@
                                     Foreground="{StaticResource TimeTextBrush}"/>
                                 <TextBlock
                                     Text="&#xf01e;"
-                                    Margin="6,0,6,0"
+                                    Margin="6,3,6,0"
                                     FontFamily="{StaticResource FontAwesome}"
                                     FontSize="14"
                                     Foreground="{StaticResource IconTextBrush}"/>
@@ -385,5 +391,20 @@
             </WebBrowser>
         </Grid>
         <!-- Preview -->
+        
+        <!-- Footer -->
+        <StatusBar
+            Background="{StaticResource DarkBackgroundBrush}"
+            Foreground="{StaticResource MainTextBrush}"
+            Grid.Row="1" 
+            Grid.Column="1"
+            Grid.ColumnSpan="4">
+            <StatusBarItem>
+                <TextBlock
+                    Text="{Binding Message.Value}"
+                    Margin="8,0,0,0"/>
+            </StatusBarItem>
+        </StatusBar>
+        <!-- Footer -->
     </Grid>
 </Window>

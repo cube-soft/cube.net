@@ -62,6 +62,7 @@ namespace Cube.Net.App.Rss.Reader
             : base(GalaSoft.MvvmLight.Messaging.Messenger.Default)
         {
             _model = new RssFacade(settings);
+            Message.Value = "Ready";
             DropTarget = new RssEntryDropTarget((s, d, i) => _model.Items.Move(s, d, i));
             Feed.PropertyChanged += (s, e) => LastChecked.Value = _model.GetMessage(Feed.Value);
         }
@@ -113,6 +114,17 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public Bindable<string> LastChecked { get; } = new Bindable<string>();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Message
+        /// 
+        /// <summary>
+        /// ステータスバーに表示するメッセージを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<string> Message => _model.Message;
 
         /* ----------------------------------------------------------------- */
         ///

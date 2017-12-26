@@ -19,6 +19,7 @@ using System;
 using System.Linq;
 using Cube.FileSystem;
 using Cube.Net.Rss;
+using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -93,6 +94,17 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public RssSubscriptions Items { get; } = new RssSubscriptions();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Message
+        /// 
+        /// <summary>
+        /// メッセージを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<string> Message { get; } = new Bindable<string>();
 
         #endregion
 
