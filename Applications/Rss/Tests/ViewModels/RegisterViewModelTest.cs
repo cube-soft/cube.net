@@ -26,32 +26,32 @@ namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// AddViewModelTest
+    /// RegisterViewModelTest
     ///
     /// <summary>
-    /// AddViewModel のテスト用クラスです。
+    /// RegisterViewModel のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class AddViewModelTest : FileHelper
+    class RegisterViewModelTest : FileHelper
     {
         #region Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Add
+        /// Register
         /// 
         /// <summary>
-        /// 新しい RSS フィードを追加するテストを実行します。
+        /// 新規 URL を登録するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Add()
+        public void Register()
         {
-            var vm = new RssViewModel(new SettingsFolder(Results, IO));
-            vm.Messenger.Register<RegisterViewModel>(this, e => AddCommand(e).Wait());
+            var vm = new MainViewModel(new SettingsFolder(Results, IO));
+            vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e).Wait());
             vm.Register.Execute(null);
 
             var entry = vm.Items.OfType<RssEntry>().FirstOrDefault(e => e.Uri == _uri);
@@ -60,14 +60,14 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// AddCommand
+        /// RegisterCommand
         /// 
         /// <summary>
         /// Add コマンドを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task AddCommand(RegisterViewModel vm)
+        private async Task RegisterCommand(RegisterViewModel vm)
         {
             Assert.That(vm.Register.CanExecute(null), Is.False);
             vm.Url.Value = _uri.ToString();
@@ -85,7 +85,7 @@ namespace Cube.Net.App.Rss.Tests
 
         #endregion
 
-        #region Helpers
+        #region Helper methods
 
         /* ----------------------------------------------------------------- */
         ///

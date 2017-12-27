@@ -29,7 +29,7 @@
     </Window.Resources>
     
     <Window.DataContext>
-        <my:RssViewModel/>
+        <my:MainViewModel/>
     </Window.DataContext>
 
     <i:Interaction.Triggers>

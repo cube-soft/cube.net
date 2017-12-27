@@ -27,14 +27,14 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssViewModel
+    /// MainViewModel
     ///
     /// <summary>
     /// メイン画面とモデルを関連付けるための ViewModel です。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class RssViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
         #region Constructors
 
@@ -47,7 +47,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssViewModel() : this(new SettingsFolder()) { }
+        public MainViewModel() : this(new SettingsFolder()) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -58,7 +58,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssViewModel(SettingsFolder settings)
+        public MainViewModel(SettingsFolder settings)
             : base(GalaSoft.MvvmLight.Messaging.Messenger.Default)
         {
             _model = new RssFacade(settings);

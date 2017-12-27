@@ -49,7 +49,7 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public async Task Select()
         {
-            var vm = new RssViewModel(new SettingsFolder(Results, IO));
+            var vm = new MainViewModel(new SettingsFolder(Results, IO));
 
             var entry = vm.Items.OfType<RssCategory>().First().Entries.First();
             Assert.That(entry.Uri, Is.EqualTo(new Uri("http://blog.cube-soft.jp/?feed=rss2")));
