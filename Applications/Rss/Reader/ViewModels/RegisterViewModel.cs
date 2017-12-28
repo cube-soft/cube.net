@@ -49,7 +49,7 @@ namespace Cube.Net.App.Rss.Reader
         public RegisterViewModel(Action<RssFeed> callback) : base(new Messenger())
         {
             _callback = callback;
-            Url.PropertyChanged += (s, e) => Register.RaiseCanExecuteChanged();
+            Url.PropertyChanged += (s, e) => Execute.RaiseCanExecuteChanged();
         }
 
         #endregion
@@ -84,15 +84,15 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Register
+        /// Execute
         /// 
         /// <summary>
         /// 新しい RSS フィードを登録するコマンドを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Register
-            => _register = _register ?? new RelayCommand(
+        public RelayCommand Execute
+            => _execute = _execute ?? new RelayCommand(
                 async () =>
                 {
                     try
@@ -110,6 +110,18 @@ namespace Cube.Net.App.Rss.Reader
                 },
                 () => !string.IsNullOrEmpty(Url.Value)
             );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Cancel
+        /// 
+        /// <summary>
+        /// キャンセルコマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RelayCommand Cancel =>
+            _cancel = _cancel ?? new RelayCommand(() => Messenger.Send(this));
 
         #endregion
 
@@ -147,7 +159,8 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private Action<RssFeed> _callback;
-        private RelayCommand _register;
+        private RelayCommand _execute;
+        private RelayCommand _cancel;
         #endregion
 
         #endregion

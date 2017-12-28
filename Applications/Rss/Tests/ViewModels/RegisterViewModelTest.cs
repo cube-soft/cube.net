@@ -69,15 +69,15 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         private async Task RegisterCommand(RegisterViewModel vm)
         {
-            Assert.That(vm.Register.CanExecute(null), Is.False);
+            Assert.That(vm.Execute.CanExecute(null), Is.False);
             vm.Url.Value = _uri.ToString();
-            Assert.That(vm.Register.CanExecute(null), Is.True);
+            Assert.That(vm.Execute.CanExecute(null), Is.True);
 
             try
             {
                 var cts = new CancellationTokenSource();
                 vm.Messenger.Register<RegisterViewModel>(this, _ => cts.Cancel());
-                vm.Register.Execute(null);
+                vm.Execute.Execute(null);
                 await Task.Delay(5000, cts.Token).ConfigureAwait(false);
             }
             catch (TaskCanceledException /* err */) { /* OK */ }
