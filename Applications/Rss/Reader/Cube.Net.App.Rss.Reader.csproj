@@ -98,9 +98,8 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Xui\Converters\EmptyToVisibility.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
-    <Compile Include="Xui\Behaviors\CommandBehavior.cs" />
     <Compile Include="Xui\Behaviors\ListBoxSelection.cs" />
-    <Compile Include="Xui\Behaviors\WebDocument.cs" />
+    <Compile Include="Xui\Components\WebDocument.cs" />
     <Compile Include="Xui\Triggers\MessageBoxTrigger.cs" />
     <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
     <Compile Include="Xui\Triggers\WindowAction.cs" />

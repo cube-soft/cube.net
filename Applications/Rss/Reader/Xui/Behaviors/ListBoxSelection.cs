@@ -17,7 +17,10 @@
 /* ------------------------------------------------------------------------- */
 using System.Collections;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Interactivity;
 
 namespace Cube.Xui.Behaviors
 {
@@ -31,8 +34,45 @@ namespace Cube.Xui.Behaviors
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class ListBoxSelection : CommandBehavior<ListBox>
+    public class ListBoxSelection : Behavior<ListBox>
     {
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Command
+        /// 
+        /// <summary>
+        /// SelectedItemChanged イベント発生時に実行されるコマンドを
+        /// 取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Command
+        {
+            get => GetValue(CommandProperty) as ICommand;
+            set => SetValue(CommandProperty, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CommandProperty
+        /// 
+        /// <summary>
+        /// Command を保持するための DependencyProperty です。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static readonly DependencyProperty CommandProperty
+            = DependencyProperty.RegisterAttached(
+                nameof(Command),
+                typeof(ICommand),
+                typeof(ListBoxSelection),
+                new UIPropertyMetadata(null)
+            );
+
+        #endregion
+
         #region Implementations
 
         /* ----------------------------------------------------------------- */

@@ -384,11 +384,9 @@
                 </i:Interaction.Triggers>
             </Button>
 
-            <WebBrowser Grid.Row="1">
-                <i:Interaction.Behaviors>
-                    <xb:WebDocument Text="{Binding Content.Value}"/>
-                </i:Interaction.Behaviors>
-            </WebBrowser>
+            <WebBrowser
+                xu:WebDocument.Text="{Binding Content.Value}"
+                Grid.Row="1"/>
         </Grid>
         <!-- Preview -->
         

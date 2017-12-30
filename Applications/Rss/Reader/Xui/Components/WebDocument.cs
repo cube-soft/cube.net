@@ -17,42 +17,21 @@
 /* ------------------------------------------------------------------------- */
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
 
-namespace Cube.Xui.Behaviors
+namespace Cube.Xui
 {
     /* --------------------------------------------------------------------- */
     ///
     /// WebDocument
     ///
     /// <summary>
-    /// WebBrowser のドキュメント内容と関連付けるための Behavior です。
+    /// WebBrowser のドキュメント内容と関連付けるためのクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class WebDocument : Behavior<WebBrowser>
+    public class WebDocument
     {
         #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Text
-        /// 
-        /// <summary>
-        /// ドキュメント内容を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Text
-        {
-            get => _text;
-            set
-            {
-                if (_text == value) return;
-                _text = value;
-                AssociatedObject.NavigateToString(value);
-            }
-        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -65,11 +44,35 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         public static readonly DependencyProperty TextProperty
             = DependencyProperty.RegisterAttached(
-                nameof(Text),
+                "Text",
                 typeof(string),
                 typeof(WebDocument),
                 new UIPropertyMetadata(null, OnTextChanged)
             );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetText
+        /// 
+        /// <summary>
+        /// Text の内容を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string GetText(DependencyObject sender)
+            => sender.GetValue(TextProperty) as string;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SetText
+        /// 
+        /// <summary>
+        /// Text の内容を更新します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static void SetText(DependencyObject sender, string value)
+            => sender.SetValue(TextProperty, value);
 
         #endregion
 
@@ -86,12 +89,8 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         private static void OnTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            if (sender is WebDocument doc) doc.Text = e.NewValue as string;
+            if (sender is WebBrowser wb) wb.NavigateToString(e.NewValue as string);
         }
-
-        #region Fields
-        private string _text;
-        #endregion
 
         #endregion
     }
