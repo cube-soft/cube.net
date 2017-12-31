@@ -46,7 +46,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RegisterViewModel(Action<RssFeed> callback) : base(new Messenger())
+        public RegisterViewModel(Action<Uri> callback) : base(new Messenger())
         {
             _callback = callback;
             Url.PropertyChanged += (s, e) => Execute.RaiseCanExecuteChanged();
@@ -91,20 +91,13 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Execute
-            => _execute = _execute ?? new RelayCommand(
-                async () =>
+        public RelayCommand Execute =>
+            _execute = _execute ?? new RelayCommand(() =>
                 {
                     try
                     {
-                        var http = new RssClient();
-                        var rss = await http.GetAsync(new Uri(Url.Value));
-                        if (rss == null) Error(Properties.Resources.ErrorFeedNotFound);
-                        else
-                        {
-                            _callback?.Invoke(rss);
-                            Messenger.Send(this);
-                        }
+                        _callback?.Invoke(new Uri(Url.Value));
+                        Messenger.Send(this);
                     }
                     catch (Exception err) { Error(err); }
                 },
@@ -158,7 +151,7 @@ namespace Cube.Net.App.Rss.Reader
         }
 
         #region Fields
-        private Action<RssFeed> _callback;
+        private Action<Uri> _callback;
         private RelayCommand _execute;
         private RelayCommand _cancel;
         #endregion

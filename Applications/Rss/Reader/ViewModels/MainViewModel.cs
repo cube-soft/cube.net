@@ -163,7 +163,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RelayCommand Register
             => _register = _register ?? new RelayCommand(
-                () => Messenger.Send(new RegisterViewModel(e => _model.Items.Add(e)))
+                () => Messenger.Send(new RegisterViewModel(e => { }))
             );
 
         /* ----------------------------------------------------------------- */
