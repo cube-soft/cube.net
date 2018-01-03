@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 using Cube.Settings;
@@ -167,6 +168,22 @@ namespace Cube.Net.App.Rss.Reader
 
             _feeds.Add(feed.Uri, feed);
             _monitor.Start();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register
+        /// 
+        /// <summary>
+        /// 新規 URL を登録します。
+        /// </summary>
+        /// 
+        /// <param name="uri">URL オブジェクト</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public Task Register(Uri uri)
+        {
+            return Task.FromResult(0);
         }
 
         /* ----------------------------------------------------------------- */
