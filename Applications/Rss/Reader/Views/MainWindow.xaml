@@ -21,7 +21,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Views/MainContextMenu.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/EntryMenu.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Themes/Colors.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Themes/MainStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -49,7 +49,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         
         <!-- Sidebar -->
@@ -59,37 +59,34 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel
-                Orientation="Vertical"
+            <Button
                 VerticalAlignment="Bottom"
                 Margin="0,0,0,16">
-                <Button>
-                    <Button.Template>
-                        <ControlTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock
+                <Button.Template>
+                    <ControlTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
                                     Text="&#xf0c5;"
                                     FontFamily="{StaticResource FontAwesome}"
                                     FontSize="16"
                                     Foreground="{StaticResource IconTextBrush}"
                                     Margin="20,0,8,0"/>
-                                <TextBlock
+                            <TextBlock
                                     Text="全ての新着記事"
                                     FontSize="12"
                                     FontWeight="Bold"
                                     Foreground="{StaticResource MainTextBrush}"/>
-                            </StackPanel>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </StackPanel>
-
+                        </StackPanel>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            
             <TreeView
                 x:Name="RssTreeView"
                 Background="Transparent"
                 BorderThickness="0"
                 ItemsSource="{Binding Items}"
-                ContextMenu="{StaticResource MainContextMenu}"
+                ContextMenu="{StaticResource EntryMenu}"
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                 dd:DragDrop.IsDragSource="True"
                 dd:DragDrop.IsDropTarget="True"

@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="Cube.Net.App.Rss.Reader.AddWindow"
+    x:Class="Cube.Net.App.Rss.Reader.RegisterWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -31,9 +31,9 @@
             <xt:MessageBoxAction/>
         </xt:MessageBoxTrigger>
         
-        <my:RegisterViewModelTrigger Messenger="{Binding Messenger}">
+        <xt:CloseTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>
-        </my:RegisterViewModelTrigger>
+        </xt:CloseTrigger>
     </i:Interaction.Triggers>
     
     <Grid FocusManager.FocusedElement="{Binding ElementName=UrlTextBox}">

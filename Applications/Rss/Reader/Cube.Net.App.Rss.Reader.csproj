@@ -100,9 +100,10 @@
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Behaviors\ListBoxSelection.cs" />
     <Compile Include="Xui\Components\WebDocument.cs" />
+    <Compile Include="Xui\Triggers\CloseTrigger.cs" />
     <Compile Include="Xui\Triggers\MessageBoxTrigger.cs" />
     <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
-    <Compile Include="Xui\Triggers\WindowAction.cs" />
+    <Compile Include="Xui\Triggers\ShowAction.cs" />
     <Compile Include="Xui\Bindable.cs" />
     <Compile Include="Xui\BindableCollection.cs" />
     <Compile Include="Xui\Components\MessageBox.cs" />
@@ -128,7 +129,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainContextMenu.xaml">
+    <Page Include="Views\Components\EntryMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

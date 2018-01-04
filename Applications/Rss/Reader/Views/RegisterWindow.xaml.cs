@@ -24,14 +24,14 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// AddWindow
+    /// RegisterWindow
     ///
     /// <summary>
     /// 新しいフィードを追加するための画面を表すクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public partial class AddWindow : Window
+    public partial class RegisterWindow : Window
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -42,7 +42,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public AddWindow()
+        public RegisterWindow()
         {
             InitializeComponent();
         }
