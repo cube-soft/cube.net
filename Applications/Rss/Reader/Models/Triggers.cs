@@ -39,5 +39,5 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class ShowRegisterWindowAction : ShowDialogAction<AddWindow> { }
+    public class ShowRegisterWindowAction : ShowDialogAction<RegisterWindow> { }
 }

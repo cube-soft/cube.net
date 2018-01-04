@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 using Cube.Xui;
@@ -118,11 +119,14 @@ namespace Cube.Net.App.Rss.Reader
         /// 新規 URL を登録します。
         /// </summary>
         /// 
+        /// <param name="src">URL</param>
+        /// 
         /* ----------------------------------------------------------------- */
-        public void Register(Uri uri)
-        {
-
-        }
+        public Task Register(string src) => Items.Register(
+            src.Contains("://") ?
+            new Uri(src) :
+            new Uri("http://" + src)
+        );
 
         /* ----------------------------------------------------------------- */
         ///
