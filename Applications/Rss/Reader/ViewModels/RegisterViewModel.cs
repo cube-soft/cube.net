@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -130,8 +131,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Cancel =>
-            _cancel = _cancel ?? new RelayCommand(() => Close());
+        public ICommand Cancel => _cancel = _cancel ?? new RelayCommand(() => Close());
 
         #endregion
 

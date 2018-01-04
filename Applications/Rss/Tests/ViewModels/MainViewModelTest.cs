@@ -63,7 +63,7 @@ namespace Cube.Net.App.Rss.Tests
             }
             Assert.That(vm.Feed.Value.Items.Count(), Is.GreaterThan(1), "Timeout");
 
-            vm.SelectArticle.Execute(new Cube.Xui.Behaviors.SelectionList(
+            vm.SelectItem.Execute(new Cube.Xui.Behaviors.SelectionList(
                 new object[0],
                 new[] { vm.Feed.Value.Items.First() }
             ));

@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Collections.Generic;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -161,7 +162,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Register =>
+        public ICommand Register =>
             _register = _register ?? new RelayCommand(
                 () => Messenger.Send(new RegisterViewModel(e => _model.Register(e)))
             );
@@ -175,7 +176,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand<object> Remove =>
+        public ICommand Remove =>
             _remove = _remove ?? new RelayCommand<object>(
                 e => _model.Items.Remove(e)
             );
@@ -189,7 +190,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Refresh =>
+        public ICommand Refresh =>
             _refresh = _refresh ?? new RelayCommand(
                 () => { },
                 () => false
@@ -204,7 +205,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand<object> SelectEntry =>
+        public ICommand SelectEntry =>
             _selectEntry = _selectEntry ?? new RelayCommand<object>(
                 e => Feed.Value = _model.Select(e as RssEntry, Feed.Value),
                 e => e is RssEntry
@@ -212,15 +213,15 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SelectArticle
+        /// SelectItem
         /// 
         /// <summary>
-        /// RssArticle 選択時に実行されるコマンドです。
+        /// RssItem 選択時に実行されるコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand<SelectionList> SelectArticle =>
-            _selectArticle = _selectArticle ?? new RelayCommand<SelectionList>(
+        public ICommand SelectItem =>
+            _selectItem = _selectItem ?? new RelayCommand<SelectionList>(
                 e => Content.Value = _model.Read(e.SelectedItem as RssItem),
                 e => e.SelectedItem is RssItem
             );
@@ -233,7 +234,7 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand<object> _remove;
         private RelayCommand _refresh;
         private RelayCommand<object> _selectEntry;
-        private RelayCommand<SelectionList> _selectArticle;
+        private RelayCommand<SelectionList> _selectItem;
         #endregion
     }
 }
