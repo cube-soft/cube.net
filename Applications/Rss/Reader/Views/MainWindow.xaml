@@ -33,9 +33,13 @@
     </Window.DataContext>
 
     <i:Interaction.Triggers>
-        <my:RegisterViewModelTrigger>
-            <my:ShowRegisterWindowAction/>
-        </my:RegisterViewModelTrigger>
+        <my:RegisterTrigger>
+            <my:RegisterWindowAction/>
+        </my:RegisterTrigger>
+
+        <my:PropertyTrigger>
+            <my:PropertyWindowAction/>
+        </my:PropertyTrigger>
     </i:Interaction.Triggers>
     
     <Grid>
@@ -394,10 +398,8 @@
             Grid.Row="1" 
             Grid.Column="1"
             Grid.ColumnSpan="4">
-            <StatusBarItem>
-                <TextBlock
-                    Text="{Binding Message.Value}"
-                    Margin="8,0,0,0"/>
+            <StatusBarItem Margin="8,0,0,0">
+                <TextBlock Text="{Binding Message.Value}"/>
             </StatusBarItem>
         </StatusBar>
         <!-- Footer -->

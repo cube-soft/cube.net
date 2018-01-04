@@ -16,6 +16,8 @@
                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
         <Separator/>
         
-        <MenuItem Header="プロパティ"/>
+        <MenuItem
+            Header="プロパティ"
+            Command="{Binding Property}"/>
     </ContextMenu>
 </ResourceDictionary>

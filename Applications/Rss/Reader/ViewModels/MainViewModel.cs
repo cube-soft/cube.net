@@ -155,6 +155,20 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Property
+        /// 
+        /// <summary>
+        /// RSS フィードのプロパティ画面表示時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Property =>
+            _property = _property ?? new RelayCommand(
+                () => Messenger.Send(new PropertyViewModel())
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Register
         /// 
         /// <summary>
@@ -230,6 +244,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private RssFacade _model;
+        private RelayCommand _property;
         private RelayCommand _register;
         private RelayCommand<object> _remove;
         private RelayCommand _refresh;

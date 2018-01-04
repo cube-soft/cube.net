@@ -21,25 +21,25 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RegisterWindow
+    /// PropertyWindow
     ///
     /// <summary>
-    /// 新しいフィードを追加するための画面を表すクラスです。
+    /// RSS フィードのプロパティを表示するクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public partial class RegisterWindow : Window
+    public partial class PropertyWindow : Window
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// AddWindow
+        /// PropertyWindow
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RegisterWindow()
+        public PropertyWindow()
         {
             InitializeComponent();
         }
