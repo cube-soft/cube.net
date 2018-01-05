@@ -15,33 +15,20 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Windows;
+using GalaSoft.MvvmLight;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RegisterWindow
+    /// SettingsViewModel
     ///
     /// <summary>
-    /// 新しいフィードを追加するための画面を表すクラスです。
+    /// 設定画面とモデルを関連付けるためのクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public partial class RegisterWindow : Window
+    public class SettingsViewModel : ViewModelBase
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RegisterWindow
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public RegisterWindow()
-        {
-            InitializeComponent();
-        }
     }
 }

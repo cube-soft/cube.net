@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xu="clr-namespace:Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
+    xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     
     mc:Ignorable="d"    
@@ -33,6 +34,10 @@
     </Window.DataContext>
 
     <i:Interaction.Triggers>
+        <xt:CloseTrigger Messenger="{Binding Messenger}">
+            <xt:CloseAction/>
+        </xt:CloseTrigger>
+        
         <my:RegisterTrigger>
             <my:RegisterWindowAction/>
         </my:RegisterTrigger>
@@ -40,6 +45,10 @@
         <my:PropertyTrigger>
             <my:PropertyWindowAction/>
         </my:PropertyTrigger>
+
+        <my:SettingsTrigger>
+            <my:SettingsWindowAction/>
+        </my:SettingsTrigger>
     </i:Interaction.Triggers>
     
     <Grid>
@@ -365,10 +374,10 @@
                         <MenuItem Header="インポート"/>
                         <MenuItem Header="エクスポート"/>
                         <Separator/>
-                        <MenuItem Header="設定"/>
-                        <MenuItem Header="バージョン情報"/>
+                        <MenuItem Header="設定" Command="{Binding Settings}"/>
+                        <MenuItem Header="バージョン情報" Command="{Binding Settings}"/>
                         <Separator/>
-                        <MenuItem Header="終了"/>
+                        <MenuItem Header="終了" Command="{Binding Close}"/>
                     </ContextMenu>
                 </Button.ContextMenu>
                 <i:Interaction.Triggers>

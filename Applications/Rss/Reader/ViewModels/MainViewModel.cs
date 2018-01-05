@@ -23,6 +23,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Cube.Net.Rss;
 using Cube.Xui;
 using Cube.Xui.Behaviors;
+using Cube.Xui.Triggers;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -155,6 +156,34 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Close
+        /// 
+        /// <summary>
+        /// 画面を閉じるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Close =>
+            _close = _close ?? new RelayCommand(
+                () => Messenger.Send(new CloseMessage())
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Settings
+        /// 
+        /// <summary>
+        /// 設定画面表示時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Settings =>
+            _settings = _settings ?? new RelayCommand(
+                () => Messenger.Send(new SettingsViewModel())
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Property
         /// 
         /// <summary>
@@ -244,6 +273,8 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private RssFacade _model;
+        private RelayCommand _close;
+        private RelayCommand _settings;
         private RelayCommand _property;
         private RelayCommand _register;
         private RelayCommand<object> _remove;

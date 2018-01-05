@@ -70,4 +70,30 @@ namespace Cube.Net.App.Rss.Reader
     public class PropertyWindowAction : ShowDialogAction<PropertyWindow> { }
 
     #endregion
+
+    #region SettingsWindow
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// SettingsTrigger
+    ///
+    /// <summary>
+    /// SettingsViewModel を介した MesengerTrigger です。
+    /// </summary>
+    /// 
+    /* --------------------------------------------------------------------- */
+    public class SettingsTrigger : MessengerTrigger<SettingsViewModel> { }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// SettingsWindowAction
+    ///
+    /// <summary>
+    /// SettingsWindow を表示するための Action クラスです。
+    /// </summary>
+    /// 
+    /* --------------------------------------------------------------------- */
+    public class SettingsWindowAction : ShowDialogAction<SettingsWindow> { }
+
+    #endregion
 }
