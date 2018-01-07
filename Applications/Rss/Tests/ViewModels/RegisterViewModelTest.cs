@@ -109,7 +109,7 @@ namespace Cube.Net.App.Rss.Tests
         #endregion
 
         #region Fields
-        private Uri _uri = new Uri("https://blogs.microsoft.com/ai/feed");
+        private Uri _uri = new Uri("http://clown.hatenablog.jp/feed");
         #endregion
     }
 }

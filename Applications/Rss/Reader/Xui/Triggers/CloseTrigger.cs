@@ -22,61 +22,26 @@ namespace Cube.Xui.Triggers
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ShowAction(TView)
+    /// CloseMessage
     ///
     /// <summary>
-    /// Window を表示する TriggerAction です。
+    /// ウィンドウを閉じることを示すメッセージクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class ShowAction<TView> : TriggerAction<DependencyObject>
-        where TView : Window, new()
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Invoke
-        /// 
-        /// <summary>
-        /// 処理を実行します。
-        /// </summary>
-        /// 
-        /// <param name="parameter">DataContext オブジェクト</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected override void Invoke(object parameter)
-            => new TView { DataContext = parameter }.Show();
-    }
+    public class CloseMessage { }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// ShowDialogAction(TView)
+    /// CloseTrigger
     ///
     /// <summary>
-    /// Window を表示する TriggerAction です。
+    /// Messenger オブジェクト経由でウィンドウを閉じるための
+    /// Trigger クラスです。
     /// </summary>
     /// 
-    /// <remarks>
-    /// Window.Show() の代わりに Window.ShowDialog() を実行します。
-    /// </remarks>
-    /// 
     /* --------------------------------------------------------------------- */
-    public class ShowDialogAction<TView> : TriggerAction<DependencyObject>
-        where TView : Window, new()
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Invoke
-        /// 
-        /// <summary>
-        /// 処理を実行します。
-        /// </summary>
-        /// 
-        /// <param name="parameter">DataContext オブジェクト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void Invoke(object parameter)
-            => new TView { DataContext = parameter }.ShowDialog();
-    }
+    public class CloseTrigger : MessengerTrigger<CloseMessage> { }
 
     /* --------------------------------------------------------------------- */
     ///

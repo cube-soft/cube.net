@@ -16,10 +16,13 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Cube.Xui;
+using Cube.Xui.Triggers;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -45,15 +48,28 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RegisterViewModel(Action<Uri> callback) : base(new Messenger())
+        public RegisterViewModel(Func<string, Task> callback) : base(new Messenger())
         {
             _callback = callback;
-            Url.PropertyChanged += (s, e) => Execute.RaiseCanExecuteChanged();
+
+            Url.PropertyChanged  += (s, e) => Execute.RaiseCanExecuteChanged();
+            Busy.PropertyChanged += (s, e) => Execute.RaiseCanExecuteChanged();
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Busy
+        /// 
+        /// <summary>
+        /// 処理中かどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<bool> Busy { get; } = new Bindable<bool>(false);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -91,16 +107,19 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public RelayCommand Execute =>
-            _execute = _execute ?? new RelayCommand(() =>
+            _execute = _execute ?? new RelayCommand(
+                async () =>
                 {
                     try
                     {
-                        _callback?.Invoke(new Uri(Url.Value));
-                        Messenger.Send(this);
+                        Busy.Value = true;
+                        await _callback?.Invoke(Url.Value);
+                        Close();
                     }
                     catch (Exception err) { Error(err); }
+                    finally { Busy.Value = false; }
                 },
-                () => !string.IsNullOrEmpty(Url.Value)
+                () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value
             );
 
         /* ----------------------------------------------------------------- */
@@ -112,12 +131,22 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Cancel =>
-            _cancel = _cancel ?? new RelayCommand(() => Messenger.Send(this));
+        public ICommand Cancel => _cancel = _cancel ?? new RelayCommand(() => Close());
 
         #endregion
 
         #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Close
+        /// 
+        /// <summary>
+        /// ウィンドウを閉じます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Close() => Messenger.Send(new CloseMessage());
 
         /* ----------------------------------------------------------------- */
         ///
@@ -142,19 +171,23 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Error(Exception err)
         {
-            var ss = new System.Text.StringBuilder();
+            var user = err.GetType() == typeof(ArgumentException);
+            var msg  = user ? err.Message : $"{err.Message} ({err.GetType().Name})";
+            var ss   = new System.Text.StringBuilder();
+
             ss.AppendLine(Properties.Resources.ErrorUnexpected);
             ss.AppendLine();
-            ss.AppendLine($"{err.Message} ({err.GetType().Name})");
+            ss.AppendLine(msg);
+
             Error(ss.ToString());
         }
 
-        #region Fields
-        private Action<Uri> _callback;
-        private RelayCommand _execute;
-        private RelayCommand _cancel;
         #endregion
 
+        #region Fields
+        private Func<string, Task> _callback;
+        private RelayCommand _execute;
+        private RelayCommand _cancel;
         #endregion
     }
 }

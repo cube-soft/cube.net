@@ -151,15 +151,29 @@ namespace Cube.Net.App.Rss.Reader
         /// Register
         /// 
         /// <summary>
-        /// 新規 URL を登録します。
+        /// 新規 URL を非同期で登録します。
         /// </summary>
         /// 
         /// <param name="uri">URL オブジェクト</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public Task Register(Uri uri)
+        public async Task Register(Uri uri)
         {
-            return Task.FromResult(0);
+            using (var http = new RssClient())
+            {
+                var rss = await http.GetAsync(uri).ConfigureAwait(false);
+                if (rss == null) throw Error(Properties.Resources.ErrorFeedNotFound);
+                if (_feeds.ContainsKey(rss.Uri)) throw Error(Properties.Resources.ErrorFeedNotFound);
+
+                _items.Add(new RssEntry
+                {
+                    Title = rss.Title,
+                    Uri = rss.Uri,
+                    Count = rss.UnreadItems.Count(),
+                });
+
+                _feeds.Add(rss.Uri, rss);
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -466,13 +480,25 @@ namespace Cube.Net.App.Rss.Reader
             parent.Count = parent.Items.Aggregate(0, (x, e) => x + e.Count);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Error
+        /// 
+        /// <summary>
+        /// 例外オブジェクトを生成します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private ArgumentException Error(string message)
+            => new ArgumentException(message);
+
+        #endregion
+
         #region Fields
         private bool _disposed = false;
         private BindableCollection<RssEntryBase> _items = new BindableCollection<RssEntryBase>();
         private RssCacheCollection _feeds = new RssCacheCollection();
         private RssMonitor _monitor;
-        #endregion
-
         #endregion
     }
 }

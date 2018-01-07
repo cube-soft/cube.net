@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xu="clr-namespace:Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
+    xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     
     mc:Ignorable="d"    
@@ -21,7 +22,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Views/MainContextMenu.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/EntryMenu.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Themes/Colors.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Themes/MainStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -33,9 +34,21 @@
     </Window.DataContext>
 
     <i:Interaction.Triggers>
-        <my:RegisterViewModelTrigger>
-            <my:ShowRegisterWindowAction/>
-        </my:RegisterViewModelTrigger>
+        <xt:CloseTrigger Messenger="{Binding Messenger}">
+            <xt:CloseAction/>
+        </xt:CloseTrigger>
+        
+        <my:RegisterTrigger>
+            <my:RegisterWindowAction/>
+        </my:RegisterTrigger>
+
+        <my:PropertyTrigger>
+            <my:PropertyWindowAction/>
+        </my:PropertyTrigger>
+
+        <my:SettingsTrigger>
+            <my:SettingsWindowAction/>
+        </my:SettingsTrigger>
     </i:Interaction.Triggers>
     
     <Grid>
@@ -49,7 +62,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         
         <!-- Sidebar -->
@@ -59,37 +72,34 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel
-                Orientation="Vertical"
+            <Button
                 VerticalAlignment="Bottom"
                 Margin="0,0,0,16">
-                <Button>
-                    <Button.Template>
-                        <ControlTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock
+                <Button.Template>
+                    <ControlTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
                                     Text="&#xf0c5;"
                                     FontFamily="{StaticResource FontAwesome}"
                                     FontSize="16"
                                     Foreground="{StaticResource IconTextBrush}"
                                     Margin="20,0,8,0"/>
-                                <TextBlock
+                            <TextBlock
                                     Text="全ての新着記事"
                                     FontSize="12"
                                     FontWeight="Bold"
                                     Foreground="{StaticResource MainTextBrush}"/>
-                            </StackPanel>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </StackPanel>
-
+                        </StackPanel>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            
             <TreeView
                 x:Name="RssTreeView"
                 Background="Transparent"
                 BorderThickness="0"
                 ItemsSource="{Binding Items}"
-                ContextMenu="{StaticResource MainContextMenu}"
+                ContextMenu="{StaticResource EntryMenu}"
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                 dd:DragDrop.IsDragSource="True"
                 dd:DragDrop.IsDropTarget="True"
@@ -364,10 +374,10 @@
                         <MenuItem Header="インポート"/>
                         <MenuItem Header="エクスポート"/>
                         <Separator/>
-                        <MenuItem Header="設定"/>
-                        <MenuItem Header="バージョン情報"/>
+                        <MenuItem Header="設定" Command="{Binding Settings}"/>
+                        <MenuItem Header="バージョン情報" Command="{Binding Settings}"/>
                         <Separator/>
-                        <MenuItem Header="終了"/>
+                        <MenuItem Header="終了" Command="{Binding Close}"/>
                     </ContextMenu>
                 </Button.ContextMenu>
                 <i:Interaction.Triggers>
@@ -397,10 +407,8 @@
             Grid.Row="1" 
             Grid.Column="1"
             Grid.ColumnSpan="4">
-            <StatusBarItem>
-                <TextBlock
-                    Text="{Binding Message.Value}"
-                    Margin="8,0,0,0"/>
+            <StatusBarItem Margin="8,0,0,0">
+                <TextBlock Text="{Binding Message.Value}"/>
             </StatusBarItem>
         </StatusBar>
         <!-- Footer -->

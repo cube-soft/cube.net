@@ -61,6 +61,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   URL は既に登録されています。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ErrorFeedAlreadyExists {
+            get {
+                return ResourceManager.GetString("ErrorFeedAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   RSS または Atom フィードが見つかりません。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ErrorFeedNotFound {
@@ -105,7 +114,7 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         ///
         ///&lt;body&gt;
         ///&lt;div class=&quot;cuberss-container&quot;&gt;
-        ///&lt;div class=&quot;cuberss-title&quot;&gt;&lt;a href=&quot;{2}&quot; target=&quot;_blank&quot;&gt;{3}&lt;/a&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;cuberss-title&quot;&gt;&lt;a href=&quot;{1}&quot; target=&quot;_blank&quot;&gt;{2}&lt;/a&gt;&lt;/div&gt;
         ///&lt;div cla [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Skeleton {
@@ -119,27 +128,30 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         ///    margin          : 0;
         ///    padding         : 0;
         ///    border          : 0;
-        ///    color           : #222;
+        ///    color           : #000;
+        ///    font-size: 14px;
         ///    font-family     : &quot;メイリオ&quot;, &quot;Meiryo&quot;,
         ///    &quot;游ゴシック&quot;, &quot;Yu Gothic&quot;, &quot;游ゴシック体&quot;, &quot;YuGothic&quot;,
         ///    &quot;ＭＳ Ｐゴシック&quot;, &quot;MS PGothic&quot;,
         ///    sans-serif;
         ///}
         ///
+        ///img {
+        ///    max-width       : 100%;
+        ///}
+        ///
         ///a, a:visited {
         ///    color           : #00007f;
-        ///    text-decoration : none;
         ///}
         ///
         ///.cuberss-container {
-        ///    margin          : 1em;
+        ///    margin          : 0 48px;
         ///}
         ///
         ///.cuberss-title {
         ///    margin          : 0;
         ///    padding         : 0;
-        ///    font-size       : 20px;
-        ///    font-weight    [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///    font-s [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string SkeletonStyle {
             get {

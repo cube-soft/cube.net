@@ -36,7 +36,7 @@ namespace Cube.Xui
     /// </remarks>
     /// 
     /* --------------------------------------------------------------------- */
-    public class Bindable<T> : INotifyPropertyChanged where T : class
+    public class Bindable<T> : INotifyPropertyChanged
     {
         #region Constructors
 
@@ -100,7 +100,7 @@ namespace Cube.Xui
             get => _value;
             set
             {
-                if (_value == value) return;
+                if (_value != null && _value.Equals(value)) return;
                 _value = value;
                 RaisePropertyChanged();
             }
