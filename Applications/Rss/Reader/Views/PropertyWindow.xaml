@@ -58,7 +58,7 @@
 
             <TextBlock
                 Text="https://blog.cube-soft.jp/?feed=rss2"
-                Foreground="{StaticResource TimeTextBrush}"
+                Foreground="{StaticResource GrayTextBrush}"
                 VerticalAlignment="Center"
                 Grid.Row="1"
                 Grid.Column="0"
@@ -66,7 +66,7 @@
 
             <TextBlock
                 Text="最終チェック日時 2018/01/04 18:13:22"
-                Foreground="{StaticResource TimeTextBrush}"
+                Foreground="{StaticResource GrayTextBrush}"
                 VerticalAlignment="Center"
                 Grid.Row="2"
                 Grid.Column="0"

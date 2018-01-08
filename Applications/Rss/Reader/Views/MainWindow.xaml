@@ -249,7 +249,7 @@
                                     Margin="6,3,0,0"
                                     FontFamily="Meiryo"
                                     FontSize="10"
-                                    Foreground="{StaticResource TimeTextBrush}"/>
+                                    Foreground="{StaticResource GrayTextBrush}"/>
                                 <TextBlock
                                     Text="&#xf01e;"
                                     Margin="6,3,6,0"
@@ -301,7 +301,7 @@
                                     Margin="12,8,12,0"
                                     FontFamily="Meiryo"
                                     FontSize="8"
-                                    Foreground="{StaticResource TimeTextBrush}"
+                                    Foreground="{StaticResource GrayTextBrush}"
                                     HorizontalAlignment="Right"/>
                                 <TextBlock
                                     Text="{Binding Title}"

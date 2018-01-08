@@ -16,7 +16,7 @@
     <SolidColorBrush x:Key="MainTextBrush"          Color="#FF444444"/>
     <SolidColorBrush x:Key="AccentTextBrush"        Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="IconTextBrush"          Color="#FFB3B3B3"/>
-    <SolidColorBrush x:Key="TimeTextBrush"          Color="#FF999999"/>
+    <SolidColorBrush x:Key="GrayTextBrush"          Color="#FF999999"/>
     <SolidColorBrush x:Key="FeedTextBrush"          Color="#FF838383"/>
     
     <!--
