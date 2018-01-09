@@ -83,6 +83,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonViewModel.cs" />
     <Compile Include="Models\RssEntry.cs" />
     <Compile Include="Models\RssEntryDropTarget.cs" />
     <Compile Include="Models\RssFacade.cs" />

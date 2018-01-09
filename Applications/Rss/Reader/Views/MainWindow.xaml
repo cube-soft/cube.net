@@ -187,30 +187,10 @@
         <Button
             Command="{Binding Register}"
             Content="&#xf067;"
-            BorderThickness="0"
-            FocusVisualStyle="{x:Null}"
             FontFamily="{StaticResource FontAwesome}"
-            Foreground="White"
+            Style="{StaticResource AccentButton}"
+            ToolTip="新しい Web サイトを登録"
             Grid.Row="1">
-            <Button.Style>
-                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                    <Setter Property="Background" Value="{StaticResource AccentBackgroundBrush}"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border Background="{TemplateBinding Background}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#FFB3B3B3"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
         </Button>
         <!-- Register button -->
 
@@ -236,6 +216,7 @@
             <Button
                 Margin="0,2,0,0"
                 HorizontalAlignment="Right"
+                ToolTip="最新の状態に更新する"
                 Visibility="{Binding LastChecked.Value, Converter={StaticResource ToVisibility}}">
                 <Button.Template>
                     <ControlTemplate>

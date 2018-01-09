@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -28,7 +28,17 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class PropertyViewModel : ViewModelBase
+    public class PropertyViewModel : CommonViewModel
     {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PropertyViewModel
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public PropertyViewModel() : base(new Messenger()) { }
     }
 }

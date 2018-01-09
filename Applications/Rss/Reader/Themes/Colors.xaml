@@ -26,4 +26,16 @@
     <SolidColorBrush x:Key="MainBorderBrush" Color="#FFE6E6E6"/>
 
     <xc:EmptyToVisibility x:Key="ToVisibility"/>
+
+    <Style x:Key="AccentButton" TargetType="Button">
+        <Setter Property="BorderBrush" Value="{StaticResource AccentBackgroundBrush}"/>
+        <Setter Property="Background" Value="{StaticResource AccentBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource AccentTextBrush}"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

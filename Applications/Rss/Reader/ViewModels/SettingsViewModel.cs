@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -28,7 +28,21 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class SettingsViewModel : ViewModelBase
+    public class SettingsViewModel : CommonViewModel
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SettingsViewModel
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SettingsViewModel() : base(new Messenger()) { }
+
+        #endregion
     }
 }

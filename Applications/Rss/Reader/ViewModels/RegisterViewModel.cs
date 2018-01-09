@@ -17,12 +17,9 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Cube.Xui;
-using Cube.Xui.Triggers;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -35,7 +32,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class RegisterViewModel : ViewModelBase
+    public class RegisterViewModel : CommonViewModel
     {
         #region Constructors
 
@@ -82,17 +79,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public Bindable<string> Url { get; } = new Bindable<string>();
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Messenger
-        /// 
-        /// <summary>
-        /// Messenger オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IMessenger Messenger => MessengerInstance;
-
         #endregion
 
         #region Commands
@@ -114,80 +100,19 @@ namespace Cube.Net.App.Rss.Reader
                     {
                         Busy.Value = true;
                         await _callback?.Invoke(Url.Value);
-                        Close();
+                        Close.Execute(null);
                     }
-                    catch (Exception err) { Error(err); }
+                    catch (Exception err) { Send(err); }
                     finally { Busy.Value = false; }
                 },
                 () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value
             );
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Cancel
-        /// 
-        /// <summary>
-        /// キャンセルコマンドを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ICommand Cancel => _cancel = _cancel ?? new RelayCommand(() => Close());
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Close
-        /// 
-        /// <summary>
-        /// ウィンドウを閉じます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Close() => Messenger.Send(new CloseMessage());
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Error
-        /// 
-        /// <summary>
-        /// エラーメッセージを表示します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Error(string message)
-            => Messenger.Send(new MessageBox(message));
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Error
-        /// 
-        /// <summary>
-        /// エラーメッセージを表示します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Error(Exception err)
-        {
-            var user = err.GetType() == typeof(ArgumentException);
-            var msg  = user ? err.Message : $"{err.Message} ({err.GetType().Name})";
-            var ss   = new System.Text.StringBuilder();
-
-            ss.AppendLine(Properties.Resources.ErrorUnexpected);
-            ss.AppendLine();
-            ss.AppendLine(msg);
-
-            Error(ss.ToString());
-        }
 
         #endregion
 
         #region Fields
         private Func<string, Task> _callback;
         private RelayCommand _execute;
-        private RelayCommand _cancel;
         #endregion
     }
 }

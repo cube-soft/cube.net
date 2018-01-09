@@ -17,13 +17,10 @@
 /* ------------------------------------------------------------------------- */
 using System.Collections.Generic;
 using System.Windows.Input;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using Cube.Net.Rss;
 using Cube.Xui;
 using Cube.Xui.Behaviors;
-using Cube.Xui.Triggers;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -36,7 +33,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : CommonViewModel
     {
         #region Constructors
 
@@ -60,8 +57,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainViewModel(SettingsFolder settings)
-            : base(GalaSoft.MvvmLight.Messaging.Messenger.Default)
+        public MainViewModel(SettingsFolder settings) : base()
         {
             _model = new RssFacade(settings);
             Message.Value = "Ready";
@@ -139,34 +135,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssEntryDropTarget DropTarget { get; }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Messenger
-        /// 
-        /// <summary>
-        /// Messenger オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IMessenger Messenger => MessengerInstance;
-
         #endregion
 
         #region Commands
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Close
-        /// 
-        /// <summary>
-        /// 画面を閉じるコマンドです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ICommand Close =>
-            _close = _close ?? new RelayCommand(
-                () => Messenger.Send(new CloseMessage())
-            );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -273,7 +244,6 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private RssFacade _model;
-        private RelayCommand _close;
         private RelayCommand _settings;
         private RelayCommand _property;
         private RelayCommand _register;
