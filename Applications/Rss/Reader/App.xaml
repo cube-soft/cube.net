@@ -6,7 +6,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PresentationFramework.AeroLite;component/themes/aerolite.normalcolor.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Themes/FontStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Themes/Generic.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

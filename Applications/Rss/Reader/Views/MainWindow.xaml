@@ -24,7 +24,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/EntryMenu.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Themes/Colors.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Themes/MainStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -68,36 +67,15 @@
         <!-- Sidebar -->
         <Grid Background="{StaticResource DarkBackgroundBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="70"/>
+                <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button
-                VerticalAlignment="Bottom"
-                Margin="0,0,0,16">
-                <Button.Template>
-                    <ControlTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                    Text="&#xf0c5;"
-                                    FontFamily="{StaticResource FontAwesome}"
-                                    FontSize="16"
-                                    Foreground="{StaticResource IconTextBrush}"
-                                    Margin="20,0,8,0"/>
-                            <TextBlock
-                                    Text="全ての新着記事"
-                                    FontSize="12"
-                                    FontWeight="Bold"
-                                    Foreground="{StaticResource MainTextBrush}"/>
-                        </StackPanel>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-            
             <TreeView
                 x:Name="RssTreeView"
                 Background="Transparent"
                 BorderThickness="0"
+                FocusVisualStyle="{x:Null}"
                 ItemsSource="{Binding Items}"
                 ContextMenu="{StaticResource EntryMenu}"
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
@@ -209,16 +187,38 @@
         <Button
             Command="{Binding Register}"
             Content="&#xf067;"
-            Background="{StaticResource AccentBackgroundBrush}"
             BorderThickness="0"
+            FocusVisualStyle="{x:Null}"
             FontFamily="{StaticResource FontAwesome}"
             Foreground="White"
-            Grid.Row="1"/>
+            Grid.Row="1">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Background" Value="{StaticResource AccentBackgroundBrush}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FFB3B3B3"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
         <!-- Register button -->
 
         <GridSplitter
             HorizontalAlignment="Center"
             Background="{StaticResource MainBackgroundBrush}"
+            Focusable="False"
+            FocusVisualStyle="{x:Null}"
             BorderThickness="0"
             Width="20"
             Grid.Column="1"/>
@@ -240,7 +240,6 @@
                 <Button.Template>
                     <ControlTemplate>
                         <Border
-                            BorderBrush="{StaticResource MainBorderBrush}"
                             BorderThickness="1"
                             CornerRadius="2">
                             <StackPanel Orientation="Horizontal">
@@ -257,6 +256,17 @@
                                     FontSize="14"
                                     Foreground="{StaticResource IconTextBrush}"/>
                             </StackPanel>
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="BorderBrush" Value="{StaticResource MainBorderBrush}"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#FFF2F7FD"/>
+                                            <Setter Property="BorderBrush" Value="#FFB8D6FB"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
@@ -345,6 +355,8 @@
             HorizontalAlignment="Center"
             Background="{StaticResource MainBackgroundBrush}"
             BorderThickness="0"
+            Focusable="False"
+            FocusVisualStyle="{x:Null}"
             Width="20"
             Grid.Column="3"/>
         
@@ -361,6 +373,7 @@
                 x:Name="SettingsButton"
                 Content="&#xf0c9;"
                 Padding="16,0,16,0"
+                FocusVisualStyle="{x:Null}"
                 FontSize="18"
                 BorderThickness="0"
                 Background="Transparent"
