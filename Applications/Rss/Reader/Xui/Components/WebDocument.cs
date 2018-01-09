@@ -29,7 +29,7 @@ namespace Cube.Xui
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class WebDocument
+    public static class WebDocument
     {
         #region Properties
 
@@ -47,7 +47,7 @@ namespace Cube.Xui
                 "Text",
                 typeof(string),
                 typeof(WebDocument),
-                new UIPropertyMetadata(null, OnTextChanged)
+                new PropertyMetadata(OnTextChanged)
             );
 
         /* ----------------------------------------------------------------- */

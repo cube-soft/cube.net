@@ -335,7 +335,7 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <i:Interaction.Behaviors>
-                    <xb:ListBoxSelection Command="{Binding SelectArticle}"/>
+                    <xb:ListBoxSelection Command="{Binding SelectItem}"/>
                 </i:Interaction.Behaviors>
             </ListView>
         </Grid>
