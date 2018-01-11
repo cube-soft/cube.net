@@ -12,8 +12,17 @@
         <MenuItem
             Header="削除"
             Command="{Binding Remove}"
-            CommandParameter="{Binding Path=PlacementTarget.SelectedItem,
-                                       RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+            CommandParameter="{Binding
+                Path=PlacementTarget.SelectedItem,
+                RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+        
+        <MenuItem
+            Header="名前の変更"
+            Command="{Binding Rename}"
+            CommandParameter="{Binding
+                Path=PlacementTarget.SelectedItem,
+                RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+
         <Separator/>
         
         <MenuItem

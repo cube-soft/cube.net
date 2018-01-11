@@ -197,6 +197,20 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Rename
+        /// 
+        /// <summary>
+        /// 名前の変更時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Rename =>
+            _rename = _rename ?? new RelayCommand<object>(
+                e => { }
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Refresh
         /// 
         /// <summary>
@@ -248,6 +262,7 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand _property;
         private RelayCommand _register;
         private RelayCommand<object> _remove;
+        private RelayCommand<object> _rename;
         private RelayCommand _refresh;
         private RelayCommand<object> _selectEntry;
         private RelayCommand<SelectionList> _selectItem;
