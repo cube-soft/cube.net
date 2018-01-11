@@ -114,11 +114,16 @@
                                 Foreground="{StaticResource IconTextBrush}"
                                 FontSize="16"
                                 Margin="0,0,8,0"/>
-                            <TextBlock
+                            <TextBox
                                 Text="{Binding Title}"
+                                IsReadOnly="True"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Focusable="False"
+                                Cursor="Arrow"
                                 FontSize="12"
-                                FontWeight="Bold"
-                                Foreground="{StaticResource MainTextBrush}"/>
+                                Foreground="{StaticResource MainTextBrush}"
+                                FontWeight="Bold"/>
                             <TextBlock
                                 Text="{Binding Count, StringFormat=({0})}"
                                 FontSize="12"
@@ -149,8 +154,13 @@
                                 Foreground="{StaticResource IconTextBrush}"
                                 FontSize="16"
                                 Margin="0,2,8,0"/>
-                            <TextBlock
+                            <TextBox
                                 Text="{Binding Title}"
+                                IsReadOnly="True"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Focusable="False"
+                                Cursor="Arrow"
                                 FontSize="12"
                                 Foreground="{StaticResource MainTextBrush}"
                                 Margin="0,2,0,2"/>
