@@ -54,7 +54,6 @@
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="12"/>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -84,25 +83,14 @@
                 Grid.ColumnSpan="2"/>
 
             <TextBlock
-                Text="カテゴリ"
-                VerticalAlignment="Center"
-                Grid.Row="4"
-                Grid.Column="0"/>
-
-            <ComboBox
-                VerticalAlignment="Center"
-                Grid.Row="4"
-                Grid.Column="1"/>
-
-            <TextBlock
                 VerticalAlignment="Center"
                 Text="チェック頻度"
-                Grid.Row="5"
+                Grid.Row="4"
                 Grid.Column="0"/>
 
             <ComboBox
                 VerticalAlignment="Center"
-                Grid.Row="5"
+                Grid.Row="4"
                 Grid.Column="1"/>
         </Grid>
 
