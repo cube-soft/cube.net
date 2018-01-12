@@ -65,7 +65,11 @@ namespace Cube.Xui.Triggers
         /* ----------------------------------------------------------------- */
         protected override void Invoke(object notused)
         {
-            if (AssociatedObject is Window w) w.Close();
+            if (AssociatedObject is Window w)
+            {
+                w.DataContext = null;
+                w.Close();
+            }
         }
     }
 }
