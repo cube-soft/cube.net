@@ -51,24 +51,24 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new MainViewModel(new SettingsFolder(Results, IO));
 
-            var entry = vm.Items.OfType<RssCategory>().First().Entries.First();
+            var entry = vm.Model.Items.OfType<RssCategory>().First().Entries.First();
             Assert.That(entry.Uri, Is.EqualTo(new Uri("http://blog.cube-soft.jp/?feed=rss2")));
             vm.SelectEntry.Execute(entry);
 
-            Assert.That(vm.Feed.Value.Items.Count(), Is.EqualTo(0));
+            Assert.That(vm.Model.Feed.Value.Items.Count(), Is.EqualTo(0));
             for (var i = 0; i < 100; i++)
             {
-                if (vm.Feed.Value.Items.Count() > 0) break;
+                if (vm.Model.Feed.Value.Items.Count() > 0) break;
                 await Task.Delay(50);
             }
-            Assert.That(vm.Feed.Value.Items.Count(), Is.GreaterThan(1), "Timeout");
+            Assert.That(vm.Model.Feed.Value.Items.Count(), Is.GreaterThan(1), "Timeout");
 
             vm.SelectItem.Execute(new Cube.Xui.Behaviors.SelectionList(
                 new object[0],
-                new[] { vm.Feed.Value.Items.First() }
+                new[] { vm.Model.Feed.Value.Items.First() }
             ));
 
-            Assert.That(vm.Content.Value, Is.Not.Null.And.Not.Empty);
+            Assert.That(vm.Model.Content.Value, Is.Not.Null.And.Not.Empty);
         }
 
         #endregion

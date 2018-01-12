@@ -94,7 +94,29 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscriptions Items { get; } = new RssSubscriptions();
+        public RssSubscription Items { get; } = new RssSubscription();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Feed
+        /// 
+        /// <summary>
+        /// 対象となる Web サイトの RSS フィードを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<RssFeed> Feed { get; } = new Bindable<RssFeed>();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Content
+        /// 
+        /// <summary>
+        /// 対象とする記事の内容を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<string> Content { get; } = new Bindable<string>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -137,9 +159,6 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /// <param name="src">選択項目</param>
-        /// <param name="prev">直前の RSS フィード情報</param>
-        /// 
-        /// <returns>選択項目に対応する RSS フィード</returns>
         /// 
         /// <remarks>
         /// 未読アイテムがゼロの場合、選択項目から外れたタイミングで
@@ -148,10 +167,11 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         /// 
         /* ----------------------------------------------------------------- */
-        public RssFeed Select(RssEntry src, RssFeed prev)
+        public void Select(RssEntry src)
         {
+            var prev = Feed.Value;
             if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
-            return Items.Lookup(src.Uri);
+            Feed.Value = Items.Lookup(src.Uri);
         }
 
         /* ----------------------------------------------------------------- */
@@ -164,50 +184,22 @@ namespace Cube.Net.App.Rss.Reader
         /// 
         /// <param name="src">対象とする記事</param>
         /// 
-        /// <returns>表示する文字列</returns>
-        /// 
         /// <remarks>
         /// Read メソッドが実行されたタイミングで RssArticle.Read が
         /// true に設定されます。
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public string Read(RssItem src)
+        public void Read(RssItem src)
         {
             src.Read = true;
-            return string.Format(
+            Content.Value = string.Format(
                 Properties.Resources.Skeleton,
                 Properties.Resources.SkeletonStyle,
                 src.Link,
                 src.Title,
                 src.PublishTime,
                 !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
-            );
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetMessage
-        /// 
-        /// <summary>
-        /// メッセージを取得します。
-        /// </summary>
-        /// 
-        /// <param name="src">対象とする RSS フィード</param>
-        /// 
-        /// <returns>メッセージ</returns>
-        /// 
-        /// <remarks>
-        /// 最終チェック日時を表す文字列を返します。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string GetMessage(RssFeed src)
-        {
-            if (src == null || src.LastChecked == DateTime.MinValue) return string.Empty;
-            return string.Format("{0} {1}",
-                Properties.Resources.MessageLastChecked,
-                src.LastChecked.ToString("g")
             );
         }
 

@@ -76,7 +76,7 @@
                 Background="Transparent"
                 BorderThickness="0"
                 FocusVisualStyle="{x:Null}"
-                ItemsSource="{Binding Items}"
+                ItemsSource="{Binding Model.Items}"
                 ContextMenu="{StaticResource EntryMenu}"
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                 dd:DragDrop.IsDragSource="True"
@@ -227,7 +227,7 @@
                 Margin="0,2,0,0"
                 HorizontalAlignment="Right"
                 ToolTip="最新の状態に更新する"
-                Visibility="{Binding LastChecked.Value, Converter={StaticResource ToVisibility}}">
+                Visibility="{Binding Model.Feed.Value, Converter={my:LastCheckedToVisibility}}">
                 <Button.Template>
                     <ControlTemplate>
                         <Border
@@ -235,7 +235,7 @@
                             CornerRadius="2">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock
-                                    Text="{Binding LastChecked.Value}"
+                                    Text="{Binding Model.Feed.Value, Converter={my:LastCheckedToString}}"
                                     Margin="6,3,0,0"
                                     FontFamily="Meiryo"
                                     FontSize="10"
@@ -267,7 +267,7 @@
                 Orientation="Horizontal"
                 Grid.Row="1">
                 <TextBlock
-                    Text="{Binding Feed.Value.Title}"
+                    Text="{Binding Model.Feed.Value.Title}"
                     Background="Transparent"
                     Foreground="{StaticResource MainTextBrush}"
                     FontFamily="Meiryo"
@@ -277,7 +277,7 @@
             </StackPanel>
 
             <ListView
-                ItemsSource="{Binding Feed.Value.UnreadItems}"
+                ItemsSource="{Binding Model.Feed.Value.UnreadItems}"
                 Background="Transparent"
                 BorderThickness="0"
                 SelectionMode="Single"
@@ -399,7 +399,7 @@
             </Button>
 
             <WebBrowser
-                xu:WebDocument.Text="{Binding Content.Value}"
+                xu:WebDocument.Text="{Binding Model.Content.Value}"
                 Grid.Row="1"/>
         </Grid>
         <!-- Preview -->
@@ -412,7 +412,7 @@
             Grid.Column="1"
             Grid.ColumnSpan="4">
             <StatusBarItem Margin="8,0,0,0">
-                <TextBlock Text="{Binding Message.Value}"/>
+                <TextBlock Text="{Binding Model.Message.Value}"/>
             </StatusBarItem>
         </StatusBar>
         <!-- Footer -->

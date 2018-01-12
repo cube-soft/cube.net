@@ -16,47 +16,66 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Globalization;
 using System.Windows;
-using System.Windows.Data;
+using Cube.Net.Rss;
+using Cube.Xui.Converters;
 
-namespace Cube.Xui.Converters
+namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// EmptyToVisibility
+    /// LastCheckedToString
     ///
     /// <summary>
-    /// 文字列から Visibility へ変換するためのクラスです。
+    /// RssFeed.LastChecked を文字列に変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class EmptyToVisibility : IValueConverter
+    public class LastCheckedToString : OneWayValueConverter
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Convert
+        /// LastCheckedToString
         ///
         /// <summary>
-        /// 文字列から Visibility へ変換します。
+        /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public object Convert(object value, Type target, object parameter, CultureInfo culture)
-            => !string.IsNullOrEmpty(value as string) ?
-            Visibility.Visible :
-            Visibility.Collapsed;
+        public LastCheckedToString() : base(e =>
+            e is RssFeed src && src.LastChecked != DateTime.MinValue ?
+            string.Format("{0} {1}",
+                Properties.Resources.MessageLastChecked,
+                src.LastChecked.ToString("yyyy/MM/dd HH:mm:ss")
+            ) :
+            string.Empty
+        ) { }
+    }
 
+    /* --------------------------------------------------------------------- */
+    ///
+    /// LastCheckedToVisibility
+    ///
+    /// <summary>
+    /// RssFeed.LastChecked の値を基に Visibility を決定するクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class LastCheckedToVisibility : OneWayValueConverter
+    {
         /* ----------------------------------------------------------------- */
         ///
-        /// ConvertBack
+        /// LastCheckedToVisibility
         ///
         /// <summary>
-        /// このメソッドはサポートされません。
+        /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public object ConvertBack(object value, Type target, object parameter, CultureInfo culture)
-            => throw new NotSupportedException();
+        public LastCheckedToVisibility() : base(e =>
+            e is RssFeed src && src.LastChecked != DateTime.MinValue ?
+            Visibility.Visible :
+            Visibility.Collapsed
+        ) { }
     }
 }

@@ -15,11 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Collections.Generic;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using Cube.Net.Rss;
-using Cube.Xui;
 using Cube.Xui.Behaviors;
 
 namespace Cube.Net.App.Rss.Reader
@@ -59,10 +57,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public MainViewModel(SettingsFolder settings) : base()
         {
-            _model = new RssFacade(settings);
-            Message.Value = "Ready";
-            DropTarget = new RssEntryDropTarget((s, d, i) => _model.Items.Move(s, d, i));
-            Feed.PropertyChanged += (s, e) => LastChecked.Value = _model.GetMessage(Feed.Value);
+            Model = new RssFacade(settings);
+            Model.Message.Value = "Ready";
+            DropTarget = new RssEntryDropTarget((s, d, i) => Model.Items.Move(s, d, i));
         }
 
         #endregion
@@ -71,58 +68,14 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Items
+        /// Model
         /// 
         /// <summary>
-        /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
+        /// Model オブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssEntryBase> Items => _model.Items;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Feed
-        /// 
-        /// <summary>
-        /// 対象となる Web サイトの RSS フィードを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Bindable<RssFeed> Feed { get; } = new Bindable<RssFeed>();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Content
-        /// 
-        /// <summary>
-        /// 対象とする記事の内容を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Bindable<string> Content { get; } = new Bindable<string>();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LastChecked
-        /// 
-        /// <summary>
-        /// 最終チェック日時に関するメッセージを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Bindable<string> LastChecked { get; } = new Bindable<string>();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Message
-        /// 
-        /// <summary>
-        /// ステータスバーに表示するメッセージを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Bindable<string> Message => _model.Message;
+        public RssFacade Model { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -178,7 +131,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Register =>
             _register = _register ?? new RelayCommand(
-                () => Messenger.Send(new RegisterViewModel(e => _model.Register(e)))
+                () => Messenger.Send(new RegisterViewModel(e => Model.Register(e)))
             );
 
         /* ----------------------------------------------------------------- */
@@ -192,7 +145,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Remove =>
             _remove = _remove ?? new RelayCommand<object>(
-                e => _model.Items.Remove(e)
+                e => Model.Items.Remove(e)
             );
 
         /* ----------------------------------------------------------------- */
@@ -235,7 +188,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand SelectEntry =>
             _selectEntry = _selectEntry ?? new RelayCommand<object>(
-                e => Feed.Value = _model.Select(e as RssEntry, Feed.Value),
+                e => Model.Select(e as RssEntry),
                 e => e is RssEntry
             );
 
@@ -250,20 +203,19 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand SelectItem =>
             _selectItem = _selectItem ?? new RelayCommand<SelectionList>(
-                e => Content.Value = _model.Read(e.SelectedItem as RssItem),
+                e => Model.Read(e.SelectedItem as RssItem),
                 e => e.SelectedItem is RssItem
             );
 
         #endregion
 
         #region Fields
-        private RssFacade _model;
         private RelayCommand _settings;
         private RelayCommand _property;
         private RelayCommand _register;
+        private RelayCommand _refresh;
         private RelayCommand<object> _remove;
         private RelayCommand<object> _rename;
-        private RelayCommand _refresh;
         private RelayCommand<object> _selectEntry;
         private RelayCommand<SelectionList> _selectItem;
         #endregion

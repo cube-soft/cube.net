@@ -84,10 +84,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonViewModel.cs" />
+    <Compile Include="Models\Converters.cs" />
     <Compile Include="Models\RssEntry.cs" />
     <Compile Include="Models\RssEntryDropTarget.cs" />
     <Compile Include="Models\RssFacade.cs" />
-    <Compile Include="Models\RssSubscriptions.cs" />
+    <Compile Include="Models\RssSubscription.cs" />
     <Compile Include="Models\Triggers.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -105,10 +106,10 @@
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="Xui\Converters\EmptyToVisibility.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Behaviors\ListBoxSelection.cs" />
     <Compile Include="Xui\Components\WebDocument.cs" />
+    <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
     <Compile Include="Xui\Triggers\CloseTrigger.cs" />
     <Compile Include="Xui\Triggers\MessageBoxTrigger.cs" />
     <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
