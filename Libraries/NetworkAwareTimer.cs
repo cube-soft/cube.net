@@ -88,7 +88,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
-            if (Network.Available && State == TimerState.Suspend) Resume();
+            if (Network.Available && State == TimerState.Suspend) Resume(TimeSpan.FromMilliseconds(100));
             else if (!Network.Available && State == TimerState.Run) Suspend();
             NetworkChanged?.Invoke(this, e);
         }
