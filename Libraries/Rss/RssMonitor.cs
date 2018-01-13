@@ -213,19 +213,16 @@ namespace Cube.Net.Rss
 
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
-
-            var dest  = Feeds[uri];
-            var src   = await GetAsync(uri).ConfigureAwait(false);
-            var items = src
-                .Items
-                .Where(e => e.PublishTime > dest.LastChecked)
-                .OrderBy(e => e.PublishTime);
-
+            var dest = Feeds[uri];
+            var src  = await GetAsync(uri).ConfigureAwait(false);
+            Shrink(src, dest.LastChecked);
             sw.Stop();
             this.LogDebug($"Url:{uri}\tTime:{sw.Elapsed}");
 
-            foreach (var item in items) dest.Items.Insert(0, item);
+            foreach (var item in src.Items) dest.Items.Insert(0, item);
             dest.Title       = src.Title;
+            dest.Description = src.Description;
+            dest.Link        = src.Link;
             dest.LastChecked = src.LastChecked;
 
             await Publish(uri, src);
@@ -280,10 +277,10 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SetTimeout
+        ///  GetAsync
         ///
         /// <summary>
-        /// タイムアウト時間を設定します。
+        /// 指定された URL から RSS フィードを非同期で取得します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
@@ -293,6 +290,22 @@ namespace Cube.Net.Rss
             catch (Exception /* err */) { this.LogWarn("Timeout cannot be applied"); }
             return await _http.GetAsync(uri);
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Shrink
+        ///
+        /// <summary>
+        /// 更新日時を基準として不要な項目を削除します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Shrink(RssFeed src, DateTime threshold) =>
+            src.Items = src
+                .Items
+                .Where(e => e.PublishTime > threshold)
+                .OrderBy(e => e.PublishTime)
+                .ToList();
 
         /* ----------------------------------------------------------------- */
         ///
