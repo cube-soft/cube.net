@@ -184,8 +184,8 @@ namespace Cube.Net.Rss
         /// <returns>登録解除用オブジェクト</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<Uri, RssFeed> action)
-            => Subscribe(async (u, v) =>
+        public IDisposable Subscribe(Action<Uri, RssFeed> action) =>
+            Subscribe(async (u, v) =>
         {
             action(u, v);
             await Task.FromResult(0);
