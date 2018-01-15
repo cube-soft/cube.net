@@ -225,7 +225,7 @@ namespace Cube.Net.Rss
             dest.Link        = src.Link;
             dest.LastChecked = src.LastChecked;
 
-            await Publish(uri, src);
+            if (src.Items.Count > 0) await Publish(uri, src);
         }
 
         /* ----------------------------------------------------------------- */

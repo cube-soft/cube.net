@@ -57,6 +57,7 @@ namespace Cube.Net.App.Rss.Reader
             if (IO.Exists(settings.Feed)) Items.Load(settings.Feed);
             Items.CollectionChanged += (s, e) => Items.Save(Settings.Feed);
             Items.SubCollectionChanged += (s, e) => Items.Save(Settings.Feed);
+            Items.Received += WhenReceived;
         }
 
         #endregion
@@ -248,6 +249,25 @@ namespace Cube.Net.App.Rss.Reader
         }
 
         #endregion
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenReceived
+        /// 
+        /// <summary>
+        /// 新着記事を受信した時に実行されるハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WhenReceived(object sender, KeyValueEventArgs<Uri, RssFeed> e) =>
+            Message.Value = string.Format(Properties.Resources.MessageReceived,
+                e.Value.Items.Count,
+                e.Value.Title
+            );
 
         #endregion
 

@@ -97,6 +97,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   {0} 件の新着記事 ({1}) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageReceived {
+            get {
+                return ResourceManager.GetString("MessageReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;
         ///&lt;html&gt;
         ///

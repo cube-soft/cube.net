@@ -55,6 +55,7 @@ namespace Cube.Net.App.Rss.Reader
         public RssSubscription()
         {
             _monitor = new RssMonitor(_feeds) { Interval = TimeSpan.FromHours(1) };
+            _monitor.Subscribe((k, v) => Received?.Invoke(this, KeyValueEventArgs.Create(k, v)));
 
             _items.Synchronously = true;
             _items.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, e);
@@ -141,6 +142,17 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public event EventHandler SubCollectionChanged;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Received
+        /// 
+        /// <summary>
+        /// 新着記事を受信した時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event KeyValueEventHandler<Uri, RssFeed> Received;
 
         #endregion
 
@@ -431,14 +443,15 @@ namespace Cube.Net.App.Rss.Reader
                 if (_feeds.ContainsKey(entry.Uri)) continue;
 
                 var items = new BindableCollection<RssItem>();
-                items.CollectionChanged += (s, e) => entry.Count = _feeds[entry.Uri].UnreadItems.Count();
-
-                _feeds.Add(entry.Uri, new RssFeed
+                var feed  = new RssFeed
                 {
                     Title = entry.Title,
                     Uri   = entry.Uri,
                     Items = items,
-                });
+                };
+                items.CollectionChanged += (s, e) => entry.Count = feed.UnreadItems.Count();
+
+                _feeds.Add(entry.Uri, feed);
 
                 entry.PropertyChanged -= WhenPropertyChanged;
                 entry.PropertyChanged += WhenPropertyChanged;
