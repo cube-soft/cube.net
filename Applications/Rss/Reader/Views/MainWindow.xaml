@@ -5,8 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-    xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" 
+    xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:xu="clr-namespace:Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
@@ -398,11 +399,14 @@
                 </i:Interaction.Triggers>
             </Button>
 
-            <WebBrowser Grid.Row="1">
+            <WindowsFormsHost Grid.Row="1">
+                <wf:WebBrowser/>
                 <i:Interaction.Behaviors>
-                    <xb:WebDocument Text="{Binding Model.Content.Value}"/>
+                    <my:WebDocument
+                        Text="{Binding Model.Content.Value}"
+                        Hover="{Binding Hover}"/>
                 </i:Interaction.Behaviors>
-            </WebBrowser>
+            </WindowsFormsHost>
         </Grid>
         <!-- Preview -->
         

@@ -58,7 +58,6 @@ namespace Cube.Net.App.Rss.Reader
         public MainViewModel(SettingsFolder settings) : base()
         {
             Model = new RssFacade(settings);
-            Model.Message.Value = "Ready";
             DropTarget = new RssEntryDropTarget((s, d, i) => Model.Items.Move(s, d, i));
         }
 
@@ -207,6 +206,20 @@ namespace Cube.Net.App.Rss.Reader
                 e => e.SelectedItem is RssItem
             );
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Hover
+        /// 
+        /// <summary>
+        /// RssItem 選択時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Hover =>
+            _hover = _hover ?? new RelayCommand<string>(
+                e => Model.Message.Value = e
+            );
+
         #endregion
 
         #region Fields
@@ -218,6 +231,7 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand<object> _rename;
         private RelayCommand<object> _selectEntry;
         private RelayCommand<SelectionList> _selectItem;
+        private RelayCommand<string> _hover;
         #endregion
     }
 }
