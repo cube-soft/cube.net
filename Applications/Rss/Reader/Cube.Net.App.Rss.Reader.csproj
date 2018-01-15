@@ -106,9 +106,9 @@
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="Xui\Behaviors\WebDocument.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Behaviors\ListBoxSelection.cs" />
-    <Compile Include="Xui\Components\WebDocument.cs" />
     <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
     <Compile Include="Xui\Triggers\CloseTrigger.cs" />
     <Compile Include="Xui\Triggers\MessageBoxTrigger.cs" />
