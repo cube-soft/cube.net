@@ -413,7 +413,7 @@
         
         <!-- Footer -->
         <StatusBar
-            Background="{StaticResource DarkBackgroundBrush}"
+            Background="{StaticResource MainBackgroundBrush}"
             Foreground="{StaticResource MainTextBrush}"
             Grid.Row="1" 
             Grid.Column="1"
