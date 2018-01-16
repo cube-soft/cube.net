@@ -101,7 +101,9 @@ namespace Cube.Xui
             set
             {
                 if (_value != null && _value.Equals(value)) return;
+                if (_value is INotifyPropertyChanged p0) p0.PropertyChanged -= WhenMemberChanged;
                 _value = value;
+                if (_value is INotifyPropertyChanged p1) p1.PropertyChanged += WhenMemberChanged;
                 RaisePropertyChanged();
             }
         }
@@ -169,6 +171,23 @@ namespace Cube.Xui
             }
             else OnPropertyChanged(e);
         }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenMemberChanged
+        /// 
+        /// <summary>
+        /// Value の PropertyChanged イベント発生時に実行される
+        /// ハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WhenMemberChanged(object sender, PropertyChangedEventArgs e)
+            => RaisePropertyChanged(nameof(Value));
 
         #endregion
 
