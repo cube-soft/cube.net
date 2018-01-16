@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -142,11 +143,93 @@ namespace Cube.Xui
         {
             if (_context != null)
             {
-                if (Synchronously) _context.Send(_ => base.OnCollectionChanged(e), null);
-                else _context.Post(_ => base.OnCollectionChanged(e), null);
+                if (Synchronously) _context.Send(_ => OnCollectionChangedCore(e), null);
+                else _context.Post(_ => OnCollectionChangedCore(e), null);
             }
-            else base.OnCollectionChanged(e);
+            else OnCollectionChangedCore(e);
         }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnCollectionChangedCore
+        /// 
+        /// <summary>
+        /// CollectionChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void OnCollectionChangedCore(NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    SetHandler(e.NewItems);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    UnsetHandler(e.OldItems);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    UnsetHandler(e.OldItems);
+                    SetHandler(e.NewItems);
+                    break;
+            }
+            base.OnCollectionChanged(e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SetHandler
+        /// 
+        /// <summary>
+        /// 各項目に対してハンドラを設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void SetHandler(IList items)
+        {
+            foreach (var item in items)
+            {
+                if (item is INotifyPropertyChanged e) e.PropertyChanged += WhenMemberChanged;
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UnsetHandler
+        /// 
+        /// <summary>
+        /// 各項目からハンドラの設定を解除します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void UnsetHandler(IList items)
+        {
+            foreach (var item in items)
+            {
+                if (item is INotifyPropertyChanged e) e.PropertyChanged -= WhenMemberChanged;
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenMemberChanged
+        /// 
+        /// <summary>
+        /// 要素のプロパティが変更された時に実行されるハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WhenMemberChanged(object sender, PropertyChangedEventArgs e) =>
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(
+                NotifyCollectionChangedAction.Replace,
+                sender,
+                sender,
+                IndexOf((T)sender)
+            ));
 
         #endregion
 
