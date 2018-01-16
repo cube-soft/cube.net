@@ -259,6 +259,21 @@ namespace Cube.Net.App.Rss.Reader
             );
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ReadAll
+        /// 
+        /// <summary>
+        /// 現在選択中の RSS エントリ下の全ての記事を既読に設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void ReadAll()
+        {
+            if (Entry.Value is RssEntry entry) ReadAll(entry);
+            else if (Entry.Value is RssCategory category) ReadAll(category);
+        }
+
         #region IDisposable
 
         /* ----------------------------------------------------------------- */
@@ -308,6 +323,40 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ReadAll
+        /// 
+        /// <summary>
+        /// 指定された RssCategory 下の全ての記事を既読に設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void ReadAll(RssCategory root)
+        {
+            foreach (var item in root.Items)
+            {
+                if (item is RssCategory category) ReadAll(category);
+                else if (item is RssEntry entry) ReadAll(entry);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ReadAll
+        /// 
+        /// <summary>
+        /// 指定された RssEntry 下の全ての記事を既読に設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void ReadAll(RssEntry entry)
+        {
+            var feed = Subscription.Lookup(entry.Uri);
+            if (feed == null) return;
+            foreach (var article in feed.UnreadItems) article.Read = true;
+        }
 
         /* ----------------------------------------------------------------- */
         ///

@@ -170,8 +170,8 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand RefreshEntry =>
-            _refreshEntry = _refreshEntry ?? new RelayCommand(
+        public RelayCommand Refresh =>
+            _refresh = _refresh ?? new RelayCommand(
                 () => Model.Refresh(Model.Entry.Value)
             );
 
@@ -187,6 +187,20 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand RefreshFeed =>
             _refreshFeed = _refreshFeed ?? new RelayCommand(
                 () => Model.Refresh(Model.Feed.Value)
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ReadAll
+        /// 
+        /// <summary>
+        /// 全ての記事を既読に設定するコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand ReadAll =>
+            _readAll = _readAll ?? new RelayCommand(
+                () => Model.ReadAll()
             );
 
         /* ----------------------------------------------------------------- */
@@ -237,8 +251,9 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand _settings;
         private RelayCommand _property;
         private RelayCommand _register;
-        private RelayCommand _refreshEntry;
+        private RelayCommand _refresh;
         private RelayCommand _refreshFeed;
+        private RelayCommand _readAll;
         private RelayCommand<object> _remove;
         private RelayCommand<object> _rename;
         private RelayCommand<object> _selectEntry;
