@@ -225,7 +225,7 @@
             </Grid.RowDefinitions>
 
             <Button
-                Command="{Binding Refresh}"
+                Command="{Binding RefreshFeed}"
                 Margin="0,2,0,0"
                 HorizontalAlignment="Right"
                 ToolTip="最新の情報に更新する"

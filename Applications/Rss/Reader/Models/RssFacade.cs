@@ -106,7 +106,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssEntry> Entry { get; } = new Bindable<RssEntry>();
+        public Bindable<RssEntryBase> Entry { get; } = new Bindable<RssEntryBase>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -170,10 +170,32 @@ namespace Cube.Net.App.Rss.Reader
         /// 選択中の RSS フィードの内容を更新します。
         /// </summary>
         /// 
+        /// <param name="src">選択中の RSS エントリ</param>
+        /// 
         /* ----------------------------------------------------------------- */
-        public void Refresh()
+        public void Refresh(RssEntryBase src)
         {
-            if (Entry.Value != null) Subscription.Update(Entry.Value.Uri);
+            if (src is RssEntry entry) Subscription.Update(entry.Uri);
+            else if (src is RssCategory category)
+            {
+                Subscription.Update(category.Entries.Select(e => e.Uri));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Refresh
+        ///
+        /// <summary>
+        /// 選択中の RSS フィードの内容を更新します。
+        /// </summary>
+        /// 
+        /// <param name="src">選択中の RSS フィード</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Refresh(RssFeed src)
+        {
+            if (src != null) Subscription.Update(src.Uri);
         }
 
         /* ----------------------------------------------------------------- */
@@ -193,12 +215,17 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Select(RssEntry src)
+        public void Select(RssEntryBase src)
         {
+            if (src == null) return;
+
             Entry.Value = src;
-            var prev = Feed.Value;
-            if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
-            Feed.Value = Subscription.Lookup(src.Uri);
+            if (src is RssEntry entry)
+            {
+                var prev = Feed.Value;
+                if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
+                Feed.Value = Subscription.Lookup(entry.Uri);
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -219,6 +246,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Read(RssItem src)
         {
+            if (src == null) return;
+
             src.Read = true;
             Content.Value = string.Format(
                 Properties.Resources.Skeleton,

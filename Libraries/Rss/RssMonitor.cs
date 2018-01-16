@@ -203,19 +203,34 @@ namespace Cube.Net.Rss
         /// 
         /// <param name="uri">対象とするフィード URL</param>
         /// 
+        /* ----------------------------------------------------------------- */
+        public void Update(Uri uri) => Update(new[] { uri });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// RSS フィードの内容を更新します。更新が終了すると Publish
+        /// メソッドを通じて結果が通知されます。
+        /// </summary>
+        /// 
+        /// <param name="uris">対象とするフィード URL 一覧</param>
+        /// 
         /// <remarks>
         /// Feeds に登録されていない URL が指定された場合、無視されます。
         /// </remarks>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Update(Uri uri) => Task.Run(async () =>
+        public void Update(IEnumerable<Uri> uris) => Task.Run(async () =>
         {
-            try
+            Suspend();
+            foreach (var uri in uris)
             {
-                Suspend();
-                await UpdateAsync(uri);
+                try { await UpdateAsync(uri); }
+                catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
-            finally { if (State == TimerState.Suspend) Start(); }
+            if (State == TimerState.Suspend) Start();
         }).Forget();
 
         /* ----------------------------------------------------------------- */

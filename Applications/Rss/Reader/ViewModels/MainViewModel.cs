@@ -58,7 +58,6 @@ namespace Cube.Net.App.Rss.Reader
         public MainViewModel(SettingsFolder settings) : base()
         {
             Model = new RssFacade(settings);
-            Model.Entry.PropertyChanged += (s, e) => Refresh.RaiseCanExecuteChanged();
             DropTarget = new RssEntryDropTarget((s, d, i) => Model.Subscription.Move(s, d, i));
         }
 
@@ -164,17 +163,30 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Refresh
+        /// RefreshEntry
         /// 
         /// <summary>
         /// RSS フィード更新時に実行されるコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Refresh =>
-            _refresh = _refresh ?? new RelayCommand(
-                () => Model.Refresh(),
-                () => Model.Entry.Value != null
+        public RelayCommand RefreshEntry =>
+            _refreshEntry = _refreshEntry ?? new RelayCommand(
+                () => Model.Refresh(Model.Entry.Value)
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RefreshFeed
+        /// 
+        /// <summary>
+        /// RSS フィード更新時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand RefreshFeed =>
+            _refreshFeed = _refreshFeed ?? new RelayCommand(
+                () => Model.Refresh(Model.Feed.Value)
             );
 
         /* ----------------------------------------------------------------- */
@@ -188,8 +200,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand SelectEntry =>
             _selectEntry = _selectEntry ?? new RelayCommand<object>(
-                e => Model.Select(e as RssEntry),
-                e => e is RssEntry
+                e => Model.Select(e as RssEntryBase)
             );
 
         /* ----------------------------------------------------------------- */
@@ -203,8 +214,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand SelectItem =>
             _selectItem = _selectItem ?? new RelayCommand<SelectionList>(
-                e => Model.Read(e.SelectedItem as RssItem),
-                e => e.SelectedItem is RssItem
+                e => Model.Read(e.SelectedItem as RssItem)
             );
 
         /* ----------------------------------------------------------------- */
@@ -227,7 +237,8 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand _settings;
         private RelayCommand _property;
         private RelayCommand _register;
-        private RelayCommand _refresh;
+        private RelayCommand _refreshEntry;
+        private RelayCommand _refreshFeed;
         private RelayCommand<object> _remove;
         private RelayCommand<object> _rename;
         private RelayCommand<object> _selectEntry;
