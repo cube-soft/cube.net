@@ -21,6 +21,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Collections.Specialized;
+using Cube.Generics;
 
 namespace Cube.Xui
 {
@@ -223,13 +224,18 @@ namespace Cube.Xui
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenMemberChanged(object sender, PropertyChangedEventArgs e) =>
+        private void WhenMemberChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var index = IndexOf(sender.TryCast<T>());
+            if (index < 0) return;
+
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(
                 NotifyCollectionChangedAction.Replace,
                 sender,
                 sender,
-                IndexOf((T)sender)
+                index
             ));
+        }
 
         #endregion
 
