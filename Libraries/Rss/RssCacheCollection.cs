@@ -167,6 +167,23 @@ namespace Cube.Net.Rss
             _otm.Clear();
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DeleteCache
+        /// 
+        /// <summary>
+        /// キャッシュファイルを削除します。
+        /// </summary>
+        /// 
+        /// <param name="uri">削除する RSS フィードの URL</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void DeleteCache(Uri uri)
+        {
+            var path = CacheName(uri);
+            IO.Delete(path);
+        }
+
         #region IDictionary<Uri, RssFeed>
 
         /* ----------------------------------------------------------------- */

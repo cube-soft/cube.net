@@ -261,6 +261,21 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Remove
+        /// 
+        /// <summary>
+        /// 現在選択中の RSS エントリを削除します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Remove()
+        {
+            if (Entry.Value == null) return;
+            Subscription.Remove(Entry.Value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// ReadAll
         /// 
         /// <summary>
@@ -272,6 +287,20 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (Entry.Value is RssEntry entry) ReadAll(entry);
             else if (Entry.Value is RssCategory category) ReadAll(category);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        /// 
+        /// <summary>
+        /// RSS フィードの内容をクリアし、再取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Reset()
+        {
+            if (Entry.Value is RssEntry entry) Subscription.Reset(entry.Uri);
         }
 
         #region IDisposable

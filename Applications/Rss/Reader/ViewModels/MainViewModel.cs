@@ -143,8 +143,8 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Remove =>
-            _remove = _remove ?? new RelayCommand<object>(
-                e => Model.Subscription.Remove(e)
+            _remove = _remove ?? new RelayCommand(
+                () => Model.Remove()
             );
 
         /* ----------------------------------------------------------------- */
@@ -157,8 +157,8 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Rename =>
-            _rename = _rename ?? new RelayCommand<object>(
-                e => { }
+            _rename = _rename ?? new RelayCommand(
+                () => { }
             );
 
         /* ----------------------------------------------------------------- */
@@ -201,6 +201,20 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand ReadAll =>
             _readAll = _readAll ?? new RelayCommand(
                 () => Model.ReadAll()
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        /// 
+        /// <summary>
+        /// RSS フィードの内容をクリアし、再取得するコマンドです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public ICommand Reset =>
+            _reset = _reset ?? new RelayCommand(
+                () => Model.Reset()
             );
 
         /* ----------------------------------------------------------------- */
@@ -254,8 +268,9 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand _refresh;
         private RelayCommand _refreshFeed;
         private RelayCommand _readAll;
-        private RelayCommand<object> _remove;
-        private RelayCommand<object> _rename;
+        private RelayCommand _reset;
+        private RelayCommand _remove;
+        private RelayCommand _rename;
         private RelayCommand<object> _selectEntry;
         private RelayCommand<SelectionList> _selectItem;
         private RelayCommand<string> _hover;

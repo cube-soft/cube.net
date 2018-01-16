@@ -222,21 +222,18 @@ namespace Cube.Net.App.Rss.Reader
         /// RSS フィードを削除します。
         /// </summary>
         /// 
-        /// <param name="item">削除する RSS フィード</param>
+        /// <param name="src">削除する RSS フィード</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Remove(object item)
+        public void Remove(RssEntryBase src)
         {
-            if (item is RssEntry entry)
+            var parent = src.Parent;
+            if (parent != null)
             {
-                var parent = entry.Parent;
-                if (parent != null)
-                {
-                    var prev = parent.Items.Count;
-                    parent.Items.Remove(entry);
-                }
-                else _items.Remove(entry);
+                var prev = parent.Items.Count;
+                parent.Items.Remove(src);
             }
+            else _items.Remove(src);
         }
 
         /* ----------------------------------------------------------------- */
@@ -277,6 +274,24 @@ namespace Cube.Net.App.Rss.Reader
             _monitor.Stop();
             if (_items.Count > 0) _items.Clear();
             _feeds.Clear();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        /// 
+        /// <summary>
+        /// RSS フィードの内容をクリアし、再取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Reset(Uri uri)
+        {
+            _feeds.DeleteCache(uri);
+            var feed = Lookup(uri);
+            feed.Items.Clear();
+            feed.LastChecked = DateTime.MinValue;
+            Update(uri);
         }
 
         /* ----------------------------------------------------------------- */
