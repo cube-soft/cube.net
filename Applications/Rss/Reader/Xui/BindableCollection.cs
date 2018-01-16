@@ -148,10 +148,10 @@ namespace Cube.Xui
             else base.OnCollectionChanged(e);
         }
 
-        #region Fields
-        private SynchronizationContext _context = SynchronizationContext.Current;
         #endregion
 
+        #region Fields
+        private SynchronizationContext _context = SynchronizationContext.Current;
         #endregion
     }
 }

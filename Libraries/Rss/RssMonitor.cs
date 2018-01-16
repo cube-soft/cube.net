@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cube.Net.Http;
+using Cube.Tasks;
 using Cube.Log;
 
 namespace Cube.Net.Rss
@@ -196,8 +197,8 @@ namespace Cube.Net.Rss
         /// Update
         ///
         /// <summary>
-        /// RSS フィードの内容を即座に非同期で更新します。更新が終了する
-        /// と Publish メソッドを通じて結果が通知されます。
+        /// RSS フィードの内容を更新します。更新が終了すると Publish
+        /// メソッドを通じて結果が通知されます。
         /// </summary>
         /// 
         /// <param name="uri">対象とするフィード URL</param>
@@ -207,26 +208,15 @@ namespace Cube.Net.Rss
         /// </remarks>
         /// 
         /* ----------------------------------------------------------------- */
-        public async Task Update(Uri uri)
+        public void Update(Uri uri) => Task.Run(async () =>
         {
-            if (!Feeds.ContainsKey(uri)) return;
-
-            var sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-            var dest = Feeds[uri];
-            var src  = await GetAsync(uri).ConfigureAwait(false);
-            Shrink(src, dest.LastChecked);
-            sw.Stop();
-            this.LogDebug($"Url:{uri}\tTime:{sw.Elapsed}");
-
-            foreach (var item in src.Items) dest.Items.Insert(0, item);
-            dest.Title       = src.Title;
-            dest.Description = src.Description;
-            dest.Link        = src.Link;
-            dest.LastChecked = src.LastChecked;
-
-            if (src.Items.Count > 0) await Publish(uri, src);
-        }
+            try
+            {
+                Suspend();
+                await UpdateAsync(uri);
+            }
+            finally { if (State == TimerState.Suspend) Start(); }
+        }).Forget();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -277,6 +267,36 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
+        /// UpdateAsync
+        ///
+        /// <summary>
+        /// 指定された URL に対応する RSS フィードを非同期で更新します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private async Task UpdateAsync(Uri uri)
+        {
+            if (!Feeds.ContainsKey(uri)) return;
+
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            var dest = Feeds[uri];
+            var src = await GetAsync(uri).ConfigureAwait(false);
+            Shrink(src, dest.LastChecked);
+            sw.Stop();
+            this.LogDebug($"Url:{uri}\tTime:{sw.Elapsed}");
+
+            foreach (var item in src.Items) dest.Items.Insert(0, item);
+            dest.Title       = src.Title;
+            dest.Description = src.Description;
+            dest.Link        = src.Link;
+            dest.LastChecked = src.LastChecked;
+
+            if (src.Items.Count > 0) await Publish(uri, src);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         ///  GetAsync
         ///
         /// <summary>
@@ -322,7 +342,7 @@ namespace Cube.Net.Rss
 
             foreach (var uri in Feeds.Keys.ToArray())
             {
-                try { await Update(uri); }
+                try { await UpdateAsync(uri); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
         }

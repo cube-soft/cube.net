@@ -58,7 +58,8 @@ namespace Cube.Net.App.Rss.Reader
         public MainViewModel(SettingsFolder settings) : base()
         {
             Model = new RssFacade(settings);
-            DropTarget = new RssEntryDropTarget((s, d, i) => Model.Items.Move(s, d, i));
+            Model.Entry.PropertyChanged += (s, e) => Refresh.RaiseCanExecuteChanged();
+            DropTarget = new RssEntryDropTarget((s, d, i) => Model.Subscription.Move(s, d, i));
         }
 
         #endregion
@@ -144,7 +145,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Remove =>
             _remove = _remove ?? new RelayCommand<object>(
-                e => Model.Items.Remove(e)
+                e => Model.Subscription.Remove(e)
             );
 
         /* ----------------------------------------------------------------- */
@@ -170,10 +171,10 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Refresh =>
+        public RelayCommand Refresh =>
             _refresh = _refresh ?? new RelayCommand(
-                () => { },
-                () => false
+                () => Model.Refresh(),
+                () => Model.Entry.Value != null
             );
 
         /* ----------------------------------------------------------------- */

@@ -77,7 +77,7 @@
                 Background="Transparent"
                 BorderThickness="0"
                 FocusVisualStyle="{x:Null}"
-                ItemsSource="{Binding Model.Items}"
+                ItemsSource="{Binding Model.Subscription}"
                 ContextMenu="{StaticResource EntryMenu}"
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                 dd:DragDrop.IsDragSource="True"
@@ -225,9 +225,10 @@
             </Grid.RowDefinitions>
 
             <Button
+                Command="{Binding Refresh}"
                 Margin="0,2,0,0"
                 HorizontalAlignment="Right"
-                ToolTip="最新の状態に更新する"
+                ToolTip="最新の情報に更新する"
                 Visibility="{Binding Model.Feed.Value, Converter={my:LastCheckedToVisibility}}">
                 <Button.Template>
                     <ControlTemplate>

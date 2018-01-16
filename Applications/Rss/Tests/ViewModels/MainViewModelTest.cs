@@ -51,7 +51,7 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new MainViewModel(new SettingsFolder(Results, IO));
 
-            var entry = vm.Model.Items.OfType<RssCategory>().First().Entries.First();
+            var entry = vm.Model.Subscription.OfType<RssCategory>().First().Entries.First();
             Assert.That(entry.Uri, Is.EqualTo(new Uri("http://blog.cube-soft.jp/?feed=rss2")));
             vm.SelectEntry.Execute(entry);
 

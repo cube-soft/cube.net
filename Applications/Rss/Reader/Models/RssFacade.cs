@@ -52,12 +52,12 @@ namespace Cube.Net.App.Rss.Reader
         {
             Settings = settings;
 
-            Items.IO = Settings.IO;
-            Items.CacheDirectory = Settings.Cache;
-            if (IO.Exists(settings.Feed)) Items.Load(settings.Feed);
-            Items.CollectionChanged += (s, e) => Items.Save(Settings.Feed);
-            Items.SubCollectionChanged += (s, e) => Items.Save(Settings.Feed);
-            Items.Received += WhenReceived;
+            Subscription.IO = Settings.IO;
+            Subscription.CacheDirectory = Settings.Cache;
+            if (IO.Exists(settings.Feed)) Subscription.Load(settings.Feed);
+            Subscription.CollectionChanged += (s, e) => Subscription.Save(Settings.Feed);
+            Subscription.SubCollectionChanged += (s, e) => Subscription.Save(Settings.Feed);
+            Subscription.Received += WhenReceived;
         }
 
         #endregion
@@ -88,21 +88,32 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Items
+        /// Subscription
         /// 
         /// <summary>
         /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscription Items { get; } = new RssSubscription();
+        public RssSubscription Subscription { get; } = new RssSubscription();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Entry
+        /// 
+        /// <summary>
+        /// 選択中の Web サイトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<RssEntry> Entry { get; } = new Bindable<RssEntry>();
 
         /* ----------------------------------------------------------------- */
         ///
         /// Feed
         /// 
         /// <summary>
-        /// 対象となる Web サイトの RSS フィードを取得します。
+        /// 選択中の Web サイトの RSS フィードを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -145,11 +156,25 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">URL</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public Task Register(string src) => Items.Register(
+        public Task Register(string src) => Subscription.Register(
             src.Contains("://") ?
             new Uri(src) :
             new Uri("http://" + src)
         );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Refresh
+        ///
+        /// <summary>
+        /// 選択中の RSS フィードの内容を更新します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Refresh()
+        {
+            if (Entry.Value != null) Subscription.Update(Entry.Value.Uri);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -170,9 +195,10 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Select(RssEntry src)
         {
+            Entry.Value = src;
             var prev = Feed.Value;
             if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
-            Feed.Value = Items.Lookup(src.Uri);
+            Feed.Value = Subscription.Lookup(src.Uri);
         }
 
         /* ----------------------------------------------------------------- */
@@ -245,7 +271,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (_disposed) return;
             _disposed = true;
-            Items.Dispose();
+            Subscription.Dispose();
         }
 
         #endregion

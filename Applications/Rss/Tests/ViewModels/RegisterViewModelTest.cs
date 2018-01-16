@@ -54,7 +54,7 @@ namespace Cube.Net.App.Rss.Tests
             vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e).Wait());
             vm.Register.Execute(null);
 
-            var entry = vm.Model.Items.OfType<RssEntry>().FirstOrDefault(e => e.Uri == _uri);
+            var entry = vm.Model.Subscription.OfType<RssEntry>().FirstOrDefault(e => e.Uri == _uri);
             Assert.That(entry, Is.Not.Null);
         }
 
