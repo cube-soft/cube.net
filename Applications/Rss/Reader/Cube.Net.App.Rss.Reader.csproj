@@ -112,6 +112,7 @@
     <Compile Include="Models\Interactions\WebDocument.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Behaviors\ListBoxSelection.cs" />
+    <Compile Include="Xui\Converters\Boolean.cs" />
     <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
     <Compile Include="Xui\Triggers\CloseTrigger.cs" />
     <Compile Include="Xui\Triggers\MessageBoxTrigger.cs" />

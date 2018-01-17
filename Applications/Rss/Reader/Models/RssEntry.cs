@@ -81,12 +81,28 @@ namespace Cube.Net.App.Rss.Reader
             set => SetProperty(ref _parent, value);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Renaming
+        /// 
+        /// <summary>
+        /// リネーム処理中かどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Renaming
+        {
+            get => _renaming;
+            set => SetProperty(ref _renaming, value);
+        }
+
         #endregion
 
         #region Fields
         private string _title;
         private int _count;
         private RssCategory _parent;
+        private bool _renaming = false;
         #endregion
     }
 
