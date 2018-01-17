@@ -10,6 +10,7 @@
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:xu="clr-namespace:Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
+    xmlns:xc="clr-namespace:Cube.Xui.Converters"
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     
@@ -118,15 +119,21 @@
                             <TextBox
                                 Text="{Binding Title}"
                                 Padding="2"
-                                IsReadOnly="True"
-                                Background="Transparent"
-                                BorderThickness="0"
                                 BorderBrush="{StaticResource DarkBorderBrush}"
-                                Focusable="False"
+                                Focusable="{Binding Renaming}"
+                                IsReadOnly="{Binding Renaming, Converter={xc:Inverse}, Mode=OneWay}"
+                                BorderThickness="{Binding Renaming, Converter={xc:BooleanToInteger}, Mode=OneWay}"
+                                Background="{Binding Renaming, Converter={my:BooleanToBrush}, Mode=OneWay}"
                                 Cursor="Arrow"
                                 FontSize="12"
                                 Foreground="{StaticResource MainTextBrush}"
-                                FontWeight="Bold"/>
+                                FontWeight="Bold">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="LostFocus">
+                                        <ei:ChangePropertyAction PropertyName="Focusable" Value="False"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBox>
                             <TextBlock
                                 Text="{Binding Count, StringFormat=({0})}"
                                 FontSize="12"
@@ -159,16 +166,22 @@
                                 Margin="0,4,6,0"/>
                             <TextBox
                                 Text="{Binding Title}"
-                                IsReadOnly="True"
-                                Background="Transparent"
-                                BorderThickness="0"
                                 BorderBrush="{StaticResource DarkBorderBrush}"
-                                Focusable="False"
+                                Focusable="{Binding Renaming}"
+                                IsReadOnly="{Binding Renaming, Converter={xc:Inverse}, Mode=OneWay}"
+                                BorderThickness="{Binding Renaming, Converter={xc:BooleanToInteger}, Mode=OneWay}"
+                                Background="{Binding Renaming, Converter={my:BooleanToBrush}, Mode=OneWay}"
                                 Cursor="Arrow"
                                 FontSize="12"
                                 Foreground="{StaticResource MainTextBrush}"
                                 Padding="2"
-                                Margin="0,2,0,2"/>
+                                Margin="0,2,0,2">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="LostFocus">
+                                        <ei:ChangePropertyAction PropertyName="Focusable" Value="False"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBox>
                             <TextBlock
                                 Text="{Binding Count, StringFormat=({0})}"
                                 FontSize="12"
