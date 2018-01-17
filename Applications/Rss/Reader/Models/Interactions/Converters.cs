@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Windows;
 using Cube.Net.Rss;
 using Cube.Xui.Converters;
 
@@ -61,7 +60,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class LastCheckedToVisibility : OneWayValueConverter
+    public class LastCheckedToVisibility : BooleanToVisibility
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -72,10 +71,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public LastCheckedToVisibility() : base(e =>
-            e is RssFeed src && src.LastChecked != DateTime.MinValue ?
-            Visibility.Visible :
-            Visibility.Collapsed
-        ) { }
+        public LastCheckedToVisibility() :
+            base(e => e is RssFeed src && src.LastChecked != DateTime.MinValue) { }
     }
 }
