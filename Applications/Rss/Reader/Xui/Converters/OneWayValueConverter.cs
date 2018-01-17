@@ -27,7 +27,7 @@ namespace Cube.Xui.Converters
     /// OneWayValueConverter
     ///
     /// <summary>
-    /// 一方向の変換のみをサポートしている Converter クラスです。
+    /// 単方向の変換のみをサポートしている Converter クラスです。
     /// ConvertBack は常に NotSupportedException が送出されます。
     /// </summary>
     ///
@@ -48,7 +48,7 @@ namespace Cube.Xui.Converters
         /// 
         /* ----------------------------------------------------------------- */
         public OneWayValueConverter(Func<object, object> func) :
-            this((x, _) => func(x)) { }
+            this((x, _, __, ___) => func(x)) { }
 
         /* ----------------------------------------------------------------- */
         ///
