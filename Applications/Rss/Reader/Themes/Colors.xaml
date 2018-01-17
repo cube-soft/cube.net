@@ -24,6 +24,7 @@
         Border color themes
     -->
     <SolidColorBrush x:Key="MainBorderBrush" Color="#FFE6E6E6"/>
+    <SolidColorBrush x:Key="DarkBorderBrush" Color="#FF7F7F7F"/>
 
     <Style x:Key="AccentButton" TargetType="Button">
         <Setter Property="BorderBrush" Value="{StaticResource AccentBackgroundBrush}"/>
