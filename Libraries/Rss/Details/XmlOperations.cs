@@ -254,10 +254,10 @@ namespace Cube.Net.Rss.Parsing
         public static string GetTitle(this XElement e, string ns)
         {
             var title = e.GetValue(ns, "title");
-            if (!string.IsNullOrEmpty(title)) return title;
+            if (!string.IsNullOrEmpty(title)) return title.Trim();
 
             var link = e.GetUri(ns, "link");
-            return link?.ToString() ?? string.Empty;
+            return link?.ToString()?.Trim() ?? string.Empty;
         }
 
         #endregion

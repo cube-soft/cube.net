@@ -81,19 +81,30 @@ namespace Cube.Net.Rss
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        private static IList<RssItem> ParseItems(XElement src)
-            => src
+        private static IList<RssItem> ParseItems(XElement src) => src
             .Descendants(src.GetDefaultNamespace() + "item")
             .Select(e => new RssItem
             {
                 Title       = e.GetTitle(),
-                Summary     = e.GetValue("description").Strip(300),
+                Summary     = GetSummary(e),
                 Content     = GetContent(e),
                 Link        = e.GetUri("link"),
-                PublishTime = e.GetDateTime(NsDcElements, "date"),
+                PublishTime = e.GetDateTime(RssParseOptions.NsDcElements, "date"),
                 Read        = false,
             })
             .ToList();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetSummary
+        /// 
+        /// <summary>
+        /// Summary を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private static string GetSummary(XElement src) =>
+            src.GetValue("description").Strip(RssParseOptions.MaxSummaryLength);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -106,16 +117,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static string GetContent(XElement src)
         {
-            var encoded = src.GetValue(NsModContent, "encoded");
-            return !string.IsNullOrEmpty(encoded) ?
-                   encoded :
-                   src.GetValue("description");
+            var end  = src.GetValue(RssParseOptions.NsModContent, "encoded");
+            var dest = !string.IsNullOrEmpty(end) ?
+                       end :
+                       src.GetValue("description") ??
+                       string.Empty;
+            return dest.Trim();
         }
-
-        #region Fields
-        private static string NsDcElements = "http://purl.org/dc/elements/1.1/";
-        private static string NsModContent = "http://purl.org/rss/1.0/modules/content/";
-        #endregion
 
         #endregion
     }

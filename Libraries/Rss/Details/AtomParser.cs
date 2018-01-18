@@ -80,13 +80,46 @@ namespace Cube.Net.Rss
             .Select(e => new RssItem
             {
                 Title       = e.GetTitle(),
-                Summary     = e.GetValue("summary").Strip(300),
-                Content     = e.GetValue("content"),
+                Summary     = GetSummary(e),
+                Content     = GetContent(e),
                 Link        = e.GetUri("link"),
                 PublishTime = e.GetDateTime("published"),
                 Read        = false,
             })
             .ToList();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetSummary
+        /// 
+        /// <summary>
+        /// Summary を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private static string GetSummary(XElement src)
+        {
+            var dest = src.GetValue("summary");
+            if (string.IsNullOrEmpty(dest)) dest = src.GetValue("content");
+            return dest.Strip(RssParseOptions.MaxSummaryLength);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetContent
+        /// 
+        /// <summary>
+        /// Content を取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private static string GetContent(XElement src)
+        {
+            var dest = src.GetValue("content");
+            if (string.IsNullOrEmpty(dest)) dest = src.GetValue("summary");
+            if (string.IsNullOrEmpty(dest)) dest = string.Empty;
+            return dest.Trim();
+        }
 
         #endregion
     }
