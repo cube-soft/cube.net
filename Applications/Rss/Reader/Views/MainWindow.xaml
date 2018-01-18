@@ -311,13 +311,13 @@
                                     HorizontalAlignment="Right"/>
                                 <TextBlock
                                     Text="{Binding Title}"
-                                    MaxHeight="40"
+                                    ToolTip="{Binding Title}"
                                     Margin="12,8,12,0"
                                     FontFamily="Meiryo"
                                     FontSize="12"
                                     FontWeight="Bold"
                                     Foreground="{StaticResource MainTextBrush}"
-                                    TextWrapping="Wrap"
+                                    TextWrapping="NoWrap"
                                     TextTrimming="WordEllipsis"/>
                                 <TextBlock
                                     Text="{Binding Summary}"
@@ -327,8 +327,8 @@
                                     FontSize="10"
                                     LineHeight="10"
                                     Foreground="{StaticResource FeedTextBrush}"
-                                    TextWrapping="Wrap"
-                                    TextTrimming="WordEllipsis"/>
+                                    TextWrapping="WrapWithOverflow"
+                                    TextTrimming="None"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>
