@@ -66,31 +66,17 @@ namespace Cube.Xui.Triggers
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static readonly DependencyProperty MessengerProperty
-            = DependencyProperty.RegisterAttached(
+        public static readonly DependencyProperty MessengerProperty =
+            DependencyProperty.RegisterAttached(
                 nameof(Messenger),
                 typeof(IMessenger),
                 typeof(MessengerTrigger<T>),
-                new PropertyMetadata(OnChanged)
+                new PropertyMetadata(WhenChanged)
             );
 
         #endregion
 
         #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnChanged
-        /// 
-        /// <summary>
-        /// MessengerProperty 変更時に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static void OnChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (sender is MessengerTrigger<T> mt) mt.Messenger = e.NewValue as IMessenger;
-        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -120,6 +106,20 @@ namespace Cube.Xui.Triggers
         {
             Messenger.Unregister<T>(AssociatedObject);
             base.OnDetaching();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenChanged
+        /// 
+        /// <summary>
+        /// MessengerProperty 変更時に実行されるハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static void WhenChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is MessengerTrigger<T> mt) mt.Messenger = e.NewValue as IMessenger;
         }
 
         #region Fields
