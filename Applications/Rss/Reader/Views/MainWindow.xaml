@@ -53,11 +53,11 @@
     
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="0.4*" MinWidth="50"/>
             <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="0.5*" MinWidth="50"/>
             <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"    MinWidth="50"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -212,6 +212,8 @@
             Focusable="False"
             FocusVisualStyle="{x:Null}"
             BorderThickness="0"
+            ResizeBehavior="BasedOnAlignment"
+            ResizeDirection="Columns"
             Width="20"
             Grid.Column="1"/>
 
@@ -351,6 +353,8 @@
             BorderThickness="0"
             Focusable="False"
             FocusVisualStyle="{x:Null}"
+            ResizeBehavior="BasedOnAlignment"
+            ResizeDirection="Columns"
             Width="20"
             Grid.Column="3"/>
         
