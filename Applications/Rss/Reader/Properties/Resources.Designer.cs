@@ -97,6 +97,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   新着記事はありません ({0}) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageNoReceived {
+            get {
+                return ResourceManager.GetString("MessageNoReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   {0} 件の新着記事 ({1}) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageReceived {

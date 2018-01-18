@@ -55,7 +55,7 @@ namespace Cube.Net.App.Rss.Reader
         public RssSubscription()
         {
             _monitor = new RssMonitor(_feeds) { Interval = TimeSpan.FromHours(1) };
-            _monitor.Subscribe((k, v) => Received?.Invoke(this, KeyValueEventArgs.Create(k, v)));
+            _monitor.Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
 
             _items.Synchronously = true;
             _items.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, e);
@@ -152,7 +152,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event KeyValueEventHandler<Uri, RssFeed> Received;
+        public event ValueEventHandler<RssFeed> Received;
 
         #endregion
 

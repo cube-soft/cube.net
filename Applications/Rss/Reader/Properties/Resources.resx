@@ -129,6 +129,9 @@
   <data name="MessageLastChecked" xml:space="preserve">
     <value>最終チェック</value>
   </data>
+  <data name="MessageNoReceived" xml:space="preserve">
+    <value>新着記事はありません ({0})</value>
+  </data>
   <data name="MessageReceived" xml:space="preserve">
     <value>{0} 件の新着記事 ({1})</value>
   </data>
