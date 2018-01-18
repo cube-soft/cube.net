@@ -52,7 +52,7 @@ namespace Cube.Net.Tests
             using (var mon = new RssMonitor(src))
             {
                 var cts = new CancellationTokenSource();
-                mon.Subscribe((u, v) => cts.Cancel());
+                mon.Subscribe(e => cts.Cancel());
                 mon.Register(uri);
                 mon.Start();
                 WaitAsync(cts.Token).Wait();

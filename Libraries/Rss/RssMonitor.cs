@@ -122,8 +122,8 @@ namespace Cube.Net.Rss
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected IList<Func<Uri, RssFeed, Task>> Subscriptions { get; }
-            = new List<Func<Uri, RssFeed, Task>>();
+        protected IList<Func<RssFeed, Task>> Subscriptions { get; }
+            = new List<Func<RssFeed, Task>>();
 
         #endregion
 
@@ -166,7 +166,7 @@ namespace Cube.Net.Rss
         /// <returns>登録解除用オブジェクト</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Func<Uri, RssFeed, Task> action)
+        public IDisposable Subscribe(Func<RssFeed, Task> action)
         {
             Subscriptions.Add(action);
             return Disposable.Create(() => Subscriptions.Remove(action));
@@ -185,10 +185,10 @@ namespace Cube.Net.Rss
         /// <returns>登録解除用オブジェクト</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<Uri, RssFeed> action) =>
-            Subscribe(async (u, v) =>
+        public IDisposable Subscribe(Action<RssFeed> action) =>
+            Subscribe(async e =>
         {
-            action(u, v);
+            action(e);
             await Task.FromResult(0);
         });
 
@@ -241,15 +241,14 @@ namespace Cube.Net.Rss
         /// 新しい結果を発行します。
         /// </summary>
         /// 
-        /// <param name="uri">URL</param>
         /// <param name="feed">RSS フィード</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual async Task Publish(Uri uri, RssFeed feed)
+        protected virtual async Task Publish(RssFeed feed)
         {
             foreach (var action in Subscriptions)
             {
-                try { await action(uri, feed); }
+                try { await action(feed); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
         }
@@ -307,7 +306,7 @@ namespace Cube.Net.Rss
             dest.Link        = src.Link;
             dest.LastChecked = src.LastChecked;
 
-            if (src.Items.Count > 0) await Publish(uri, src);
+            await Publish(src);
         }
 
         /* ----------------------------------------------------------------- */
