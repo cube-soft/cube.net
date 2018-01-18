@@ -17,9 +17,8 @@
 /* ------------------------------------------------------------------------- */
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interactivity;
 using System.Windows.Forms;
-using System.Windows.Forms.Integration;
+using Cube.Xui.Behaviors;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -32,20 +31,9 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class WebDocument : Behavior<WindowsFormsHost>
+    public class WebDocument : WindowsFormsBehavior<WebBrowser>
     {
         #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Source
-        /// 
-        /// <summary>
-        /// 対象となるオブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public WebBrowser Source => AssociatedObject?.Child as WebBrowser;
 
         #region Text
 
