@@ -121,6 +121,17 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Article
+        /// 
+        /// <summary>
+        /// 選択中の記事を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<RssItem> Article { get; } = new Bindable<RssItem>();
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Content
         /// 
         /// <summary>
@@ -225,6 +236,10 @@ namespace Cube.Net.App.Rss.Reader
                 var prev = Feed.Value;
                 if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
                 Feed.Value = Subscription.Lookup(entry.Uri);
+
+                var items = Feed.Value?.UnreadItems;
+                var first = items?.Count() > 0 ? items.First() : null;
+                Read(first);
             }
         }
 
@@ -238,25 +253,19 @@ namespace Cube.Net.App.Rss.Reader
         /// 
         /// <param name="src">対象とする記事</param>
         /// 
-        /// <remarks>
-        /// Read メソッドが実行されたタイミングで RssArticle.Read が
-        /// true に設定されます。
-        /// </remarks>
-        ///
         /* ----------------------------------------------------------------- */
         public void Read(RssItem src)
         {
-            if (src == null) return;
-
-            src.Read = true;
-            Content.Value = string.Format(
+            if (Article.Value != null) Article.Value.Read = true;
+            Article.Value = src;
+            Content.Value = (src != null) ? string.Format(
                 Properties.Resources.Skeleton,
                 Properties.Resources.SkeletonStyle,
                 src.Link,
                 src.Title,
                 src.PublishTime,
                 !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
-            );
+            ) : string.Empty;
         }
 
         /* ----------------------------------------------------------------- */
