@@ -16,36 +16,11 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Windows.Media;
 using Cube.Net.Rss;
 using Cube.Xui.Converters;
 
 namespace Cube.Net.App.Rss.Reader
 {
-    /* --------------------------------------------------------------------- */
-    ///
-    /// BooleanToBrush
-    ///
-    /// <summary>
-    /// 真偽値を SolidColorBrush オブジェクトに変換するためのクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public class BooleanToBrush : BooleanToGeneric<SolidColorBrush>
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// BooleanToBrush
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public BooleanToBrush() :
-            base(Brushes.White, Brushes.Transparent) { }
-    }
-
     /* --------------------------------------------------------------------- */
     ///
     /// LastCheckedToString
