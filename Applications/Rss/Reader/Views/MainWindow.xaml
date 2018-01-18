@@ -409,7 +409,7 @@
                 <wf:WebBrowser/>
                 <i:Interaction.Behaviors>
                     <my:WebDocument
-                        Text="{Binding Model.Content.Value}"
+                        Text="{Binding Model.Article.Value, Converter={my:ContentToHtml}}"
                         Hover="{Binding Hover}"/>
                 </i:Interaction.Behaviors>
             </WindowsFormsHost>

@@ -239,33 +239,25 @@ namespace Cube.Net.App.Rss.Reader
 
                 var items = Feed.Value?.UnreadItems;
                 var first = items?.Count() > 0 ? items.First() : null;
-                Read(first);
+                Select(first);
             }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Read
+        /// Select
         /// 
         /// <summary>
-        /// RSS フィード中の記事内容を取得します。
+        /// RSS フィード中の記事を選択します。
         /// </summary>
         /// 
-        /// <param name="src">対象とする記事</param>
+        /// <param name="src">選択項目</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Read(RssItem src)
+        public void Select(RssItem src)
         {
             if (Article.Value != null) Article.Value.Read = true;
             Article.Value = src;
-            Content.Value = (src != null) ? string.Format(
-                Properties.Resources.Skeleton,
-                Properties.Resources.SkeletonStyle,
-                src.Link,
-                src.Title,
-                src.PublishTime,
-                !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
-            ) : string.Empty;
         }
 
         /* ----------------------------------------------------------------- */
