@@ -27,9 +27,9 @@
     </Window.Resources>
 
     <i:Interaction.Triggers>
-        <xt:MessageBoxTrigger Messenger="{Binding Messenger}">
-            <xt:MessageBoxAction/>
-        </xt:MessageBoxTrigger>
+        <xt:DialogTrigger Messenger="{Binding Messenger}">
+            <xt:DialogAction/>
+        </xt:DialogTrigger>
 
         <xt:CloseTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>

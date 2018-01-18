@@ -16,86 +16,51 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Windows;
+using System.Windows.Input;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using Cube.Xui;
+using Cube.Xui.Triggers;
 
-namespace Cube.Xui
+namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MessageBox
+    /// CommonViewModel
     ///
     /// <summary>
-    /// メッセージボックスに表示する情報を保持するためのクラスです。
+    /// ViewModel の既定となるクラスです。一般的なコマンドを実装します。
     /// </summary>
-    ///
+    /// 
     /* --------------------------------------------------------------------- */
-    public class MessageBox
+    public abstract class CommonViewModel : ViewModelBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// MessageBox
+        /// MainViewModel
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageBox(string text)
-            : this(text, AssemblyReader.Default.Title) { }
+        public CommonViewModel() : this(GalaSoft.MvvmLight.Messaging.Messenger.Default) { }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// MessageBox
+        /// MainViewModel
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         /// 
-        /// <param name="text">メッセージ内容</param>
-        /// <param name="caption">タイトルキャプション</param>
+        /// <param name="messenger">メッセージ伝搬用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageBox(string text, string caption)
-            : this(text, caption, null) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// MessageBox
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
-        /// <param name="callback">コールバック用オブジェクト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public MessageBox(string text, Action<MessageBoxResult> callback)
-            : this(text, AssemblyReader.Default.Title, callback) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// MessageBox
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
-        /// <param name="caption">タイトルキャプション</param>
-        /// <param name="callback">コールバック用オブジェクト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public MessageBox(string text, string caption, Action<MessageBoxResult> callback)
-        {
-            Text     = text;
-            Caption  = caption;
-            Callback = callback;
-        }
+        public CommonViewModel(IMessenger messenger) : base(messenger) { }
 
         #endregion
 
@@ -103,59 +68,91 @@ namespace Cube.Xui
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Text
+        /// Messenger
         /// 
         /// <summary>
-        /// メッセージ内容を取得または設定します。
+        /// Messenger オブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Text { get; set; }
+        public IMessenger Messenger => MessengerInstance;
+
+        #endregion
+
+        #region Commands
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Caption
+        /// Close
         /// 
         /// <summary>
-        /// タイトルキャプションを取得または設定します。
+        /// 画面を閉じるコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Caption { get; set; }
+        public ICommand Close =>
+            _close = _close ?? new RelayCommand(
+                () => Messenger.Send(new CloseMessage())
+            );
+
+        #endregion
+
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Button
+        /// Send
         /// 
         /// <summary>
-        /// 表示ボタンを示す値を取得または設定します。
+        /// メッセージを表示します。
         /// </summary>
+        /// 
+        /// <param name="message">メッセージ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageBoxButton Button { get; set; } = MessageBoxButton.OK;
+        protected void Send(DialogMessage message) => Messenger.Send(message);
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Image
+        /// Send
         /// 
         /// <summary>
-        /// 表示イメージを示す値を取得または設定します。
+        /// メッセージを表示します。
         /// </summary>
+        /// 
+        /// <param name="message">メッセージ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageBoxImage Image { get; set; } = MessageBoxImage.Error;
+        protected void Send(string message) => Send(new DialogMessage(message));
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Callback
+        /// Send
         /// 
         /// <summary>
-        /// コールバック用オブジェクトを取得します。
+        /// エラーメッセージを表示します。
         /// </summary>
+        /// 
+        /// <param name="err">例外オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public Action<MessageBoxResult> Callback { get; }
+        protected void Send(Exception err)
+        {
+            var user = err.GetType() == typeof(ArgumentException);
+            var msg = user ? err.Message : $"{err.Message} ({err.GetType().Name})";
+            var ss = new System.Text.StringBuilder();
 
+            ss.AppendLine(Properties.Resources.ErrorUnexpected);
+            ss.AppendLine();
+            ss.AppendLine(msg);
+
+            Send(ss.ToString());
+        }
+
+        #endregion
+
+        #region Fields
+        private RelayCommand _close;
         #endregion
     }
 }

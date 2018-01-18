@@ -25,14 +25,14 @@ namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// EditableMode
+    /// EditMode
     ///
     /// <summary>
     /// TextBox の編集可能状態を切り替えるためのクラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class EditableMode : Behavior<TextBox>
+    public class EditMode : Behavior<TextBox>
     {
         #region Properties
 
@@ -69,10 +69,10 @@ namespace Cube.Xui.Behaviors
             DependencyProperty.RegisterAttached(
                 nameof(Value),
                 typeof(bool),
-                typeof(EditableMode),
+                typeof(EditMode),
                 new PropertyMetadata(false, (s, e) =>
                 {
-                    if (s is EditableMode em) em.Value = (bool)e.NewValue;
+                    if (s is EditMode em) em.Value = (bool)e.NewValue;
                 })
             );
 

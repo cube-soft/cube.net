@@ -1,4 +1,4 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <FontFamily x:Key="FontAwesome">pack://application:,,,/Resources/#FontAwesome</FontFamily>
+    <FontFamily x:Key="FontAwesome">pack://application:,,,/Assets/#FontAwesome</FontFamily>
 </ResourceDictionary>

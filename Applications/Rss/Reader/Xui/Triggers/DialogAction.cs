@@ -22,25 +22,25 @@ namespace Cube.Xui.Triggers
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MessageBoxTrigger
+    /// DialogTrigger
     ///
     /// <summary>
     /// メッセージボックスを表示するための Trigger クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class MessageBoxTrigger : MessengerTrigger<MessageBox> { }
+    public class DialogTrigger : MessengerTrigger<DialogMessage> { }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// MessageBoxAction
+    /// DialogAction
     ///
     /// <summary>
     /// メッセージボックスを表示するための Action クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class MessageBoxAction : TriggerAction<DependencyObject>
+    public class DialogAction : TriggerAction<DependencyObject>
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -53,9 +53,9 @@ namespace Cube.Xui.Triggers
         /* ----------------------------------------------------------------- */
         protected override void Invoke(object parameter)
         {
-            if (parameter is MessageBox msg)
+            if (parameter is DialogMessage msg)
             {
-                var result = System.Windows.MessageBox.Show(
+                var result = MessageBox.Show(
                     msg.Text,
                     msg.Caption,
                     msg.Button,

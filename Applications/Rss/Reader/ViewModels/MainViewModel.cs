@@ -158,7 +158,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Rename =>
             _rename = _rename ?? new RelayCommand(
-                () => Model.Entry.Value.Renaming = true
+                () => Model.Entry.Value.Editing = true
             );
 
         /* ----------------------------------------------------------------- */

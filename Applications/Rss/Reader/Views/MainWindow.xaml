@@ -122,7 +122,7 @@
                                 Foreground="{StaticResource MainTextBrush}"
                                 FontWeight="Bold">
                                 <i:Interaction.Behaviors>
-                                    <xb:EditableMode Value="{Binding Renaming, Mode=TwoWay}"/>
+                                    <xb:EditMode Value="{Binding Editing, Mode=TwoWay}"/>
                                 </i:Interaction.Behaviors>
                             </TextBox>
                             <TextBlock
@@ -162,7 +162,7 @@
                                 Padding="2"
                                 Margin="0,2,0,2">
                                 <i:Interaction.Behaviors>
-                                    <xb:EditableMode Value="{Binding Renaming, Mode=TwoWay}"/>
+                                    <xb:EditMode Value="{Binding Editing, Mode=TwoWay}"/>
                                 </i:Interaction.Behaviors>
                             </TextBox>
                             <TextBlock

@@ -86,7 +86,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonViewModel.cs" />
+    <Compile Include="ViewModels\CommonViewModel.cs" />
     <Compile Include="Models\Interactions\Converters.cs" />
     <Compile Include="Models\RssEntry.cs" />
     <Compile Include="Models\RssEntryDropTarget.cs" />
@@ -110,19 +110,19 @@
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Models\Interactions\WebDocument.cs" />
-    <Compile Include="Xui\Behaviors\EditableMode.cs" />
+    <Compile Include="Xui\Behaviors\EditMode.cs" />
     <Compile Include="Xui\Behaviors\WindowsFormsBehavior.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Behaviors\ListBoxSelection.cs" />
-    <Compile Include="Xui\Converters\Boolean.cs" />
+    <Compile Include="Xui\Converters\BooleanValueConverter.cs" />
     <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
     <Compile Include="Xui\Triggers\CloseAction.cs" />
-    <Compile Include="Xui\Triggers\MessageBoxTrigger.cs" />
+    <Compile Include="Xui\Triggers\DialogAction.cs" />
     <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
     <Compile Include="Xui\Triggers\ShowAction.cs" />
     <Compile Include="Xui\Bindable.cs" />
     <Compile Include="Xui\BindableCollection.cs" />
-    <Compile Include="Xui\Components\MessageBox.cs" />
+    <Compile Include="Xui\Components\DialogMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -190,12 +190,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="App.ico" />
-    <Resource Include="Resources\FortAwesome.ttf" />
+    <Resource Include="Assets\FortAwesome.ttf" />
     <None Include="App.config" />
     <None Include="App.manifest" />
     <None Include="Packages.config" />
-    <None Include="Resources\Skeleton.html" />
-    <None Include="Resources\SkeletonStyle.css" />
+    <None Include="Assets\Skeleton.html" />
+    <None Include="Assets\SkeletonStyle.css" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Cube.Net.csproj">
