@@ -114,7 +114,7 @@
     <Compile Include="Xui\Behaviors\ListBoxSelection.cs" />
     <Compile Include="Xui\Converters\Boolean.cs" />
     <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
-    <Compile Include="Xui\Triggers\CloseTrigger.cs" />
+    <Compile Include="Xui\Triggers\CloseAction.cs" />
     <Compile Include="Xui\Triggers\MessageBoxTrigger.cs" />
     <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
     <Compile Include="Xui\Triggers\ShowAction.cs" />

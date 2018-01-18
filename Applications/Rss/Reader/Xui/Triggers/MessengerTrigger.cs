@@ -71,7 +71,7 @@ namespace Cube.Xui.Triggers
                 nameof(Messenger),
                 typeof(IMessenger),
                 typeof(MessengerTrigger<T>),
-                new UIPropertyMetadata(null, OnChanged)
+                new PropertyMetadata(OnChanged)
             );
 
         #endregion
