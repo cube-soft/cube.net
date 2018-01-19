@@ -14,7 +14,7 @@
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     
     mc:Ignorable="d"    
-    Title="CubeRSS Reader"
+    Title="{Binding Data.Article.Value, Converter={my:TitleConverter}}"
     Icon="pack://application:,,,/App.ico"
     FontFamily="Meiryo UI"
     Width="1060"

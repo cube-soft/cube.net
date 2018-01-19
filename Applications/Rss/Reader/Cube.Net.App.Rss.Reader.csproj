@@ -107,7 +107,7 @@
     <Compile Include="Views\PropertyWindow.xaml.cs">
       <DependentUpon>PropertyWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Models\Settings\Settings.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Models\Interactions\WebDocument.cs" />
