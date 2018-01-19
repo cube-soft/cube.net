@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Collections.Generic;
 using Cube.Net.Rss;
 using Cube.Xui;
@@ -98,6 +99,22 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public Bindable<RssItem> Article { get; } = new Bindable<RssItem>();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Uri
+        /// 
+        /// <summary>
+        /// Web ブラウザに表示する URL を取得します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// このプロパティは通常時には使用されません。RSS フィードとは
+        /// 関係のない Web ページを表示する際に設定されます。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<Uri> Uri { get; } = new Bindable<Uri>();
 
         /* ----------------------------------------------------------------- */
         ///

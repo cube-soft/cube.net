@@ -98,7 +98,11 @@ namespace Cube.Net.App.Rss.Reader
             {
                 if (_uri == value) return;
                 _uri = value;
-                if (value != null && Source != null) Source.Navigate(value);
+                if (value != null && Source != null)
+                {
+                    if (Source.IsBusy) Source.Stop();
+                    Source.Navigate(value);
+                }
             }
         }
 

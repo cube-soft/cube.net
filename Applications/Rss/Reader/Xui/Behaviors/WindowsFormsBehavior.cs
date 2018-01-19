@@ -43,5 +43,16 @@ namespace Cube.Xui.Behaviors
         ///
         /* ----------------------------------------------------------------- */
         public TControl Source => AssociatedObject?.Child as TControl;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Source
+        /// 
+        /// <summary>
+        /// 対象となるコントロールの親オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public WindowsFormsHost Parent => AssociatedObject;
     }
 }

@@ -14,10 +14,21 @@
         <Setter Property="Icon" Value="pack://application:,,,/App.ico"/>
     </Style>
 
+    <Style TargetType="ToolTip">
+        <Setter Property="Background" Value="{StaticResource AlphaBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+    </Style>
+
     <Style x:Key="CommonDialogStyle" TargetType="Window">
         <Setter Property="ResizeMode" Value="NoResize"/>
         <Setter Property="ShowInTaskbar" Value="False"/>
         <Setter Property="Topmost" Value="True"/>
+    </Style>
+
+    <Style x:Key="ShadowStyle" TargetType="Border">
+        <Setter Property="BorderBrush" Value="#FFE6E6E6"/>
+        <Setter Property="BorderThickness" Value="0,0,1,1"/>
     </Style>
     
     <Style x:Key="FooterStyle" TargetType="StatusBar">
@@ -44,6 +55,7 @@
         <Setter Property="FontFamily" Value="Meiryo"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="TextTrimming" Value="WordEllipsis"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>

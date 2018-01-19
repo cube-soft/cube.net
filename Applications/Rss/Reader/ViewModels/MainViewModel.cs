@@ -15,10 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using Cube.Net.Rss;
-using Cube.Xui.Behaviors;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -273,6 +273,19 @@ namespace Cube.Net.App.Rss.Reader
             )
         );
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Navigate
+        /// 
+        /// <summary>
+        /// URL 先の Web ページを表示するコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Navigate => _navigate ?? (
+            _navigate = new RelayCommand<Uri>(e => Data.Uri.Value = e)
+        );
+
         #endregion
 
         #region Fields
@@ -288,6 +301,7 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand<object> _selectEntry;
         private RelayCommand<object> _selectArticle;
         private RelayCommand<object> _hover;
+        private RelayCommand<Uri> _navigate;
         #endregion
     }
 }

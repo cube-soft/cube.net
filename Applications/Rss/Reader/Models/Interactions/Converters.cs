@@ -50,6 +50,41 @@ namespace Cube.Net.App.Rss.Reader
 
     /* --------------------------------------------------------------------- */
     ///
+    /// ArticleConverter
+    ///
+    /// <summary>
+    /// RSS の内容を HTML 形式に変換するクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class ArticleConverter : OneWayValueConverter
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ArticleConverter
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ArticleConverter() : base(
+            e => e is RssItem src ?
+            string.Format(
+                Properties.Resources.Skeleton,
+                Properties.Resources.SkeletonStyle,
+                src.Link,
+                src.Title,
+                src.PublishTime,
+                !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
+            ) :
+            string.Empty
+        )
+        { }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
     /// LastCheckedToString
     ///
     /// <summary>
@@ -100,39 +135,5 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public LastCheckedToVisibility() :
             base(e => e is RssFeed src && src.LastChecked != DateTime.MinValue) { }
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// ContentToHtml
-    ///
-    /// <summary>
-    /// RSS の内容を HTML 形式に変換するクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public class ContentToHtml : OneWayValueConverter
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ContentToHtml
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ContentToHtml() : base(
-            e => e is RssItem src ?
-            string.Format(
-                Properties.Resources.Skeleton,
-                Properties.Resources.SkeletonStyle,
-                src.Link,
-                src.Title,
-                src.PublishTime,
-                !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
-            ) :
-            string.Empty
-        ) { }
     }
 }
