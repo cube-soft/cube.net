@@ -134,17 +134,30 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Register
+        /// NewEntry
         /// 
         /// <summary>
-        /// 新規 URL 登録時に実行されるコマンドです。
+        /// 新規 URL を登録するコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Register => _register ?? (
-            _register = new RelayCommand(
+        public ICommand NewEntry => _newEntry ?? (
+            _newEntry = new RelayCommand(
                 () => Messenger.Send(new RegisterViewModel(e => Model.Register(e)))
             )
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// NewCategory
+        /// 
+        /// <summary>
+        /// 新しいカテゴリを追加するコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand NewCategory => _newCategory ?? (
+            _newCategory = new RelayCommand(() => { })
         );
 
         /* ----------------------------------------------------------------- */
@@ -291,7 +304,8 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private RelayCommand _settings;
         private RelayCommand _property;
-        private RelayCommand _register;
+        private RelayCommand _newEntry;
+        private RelayCommand _newCategory;
         private RelayCommand _update;
         private RelayCommand _updateOne;
         private RelayCommand _readAll;

@@ -188,16 +188,16 @@
         </Grid>
         <!-- LeftSide (RssEntries) -->
 
-        <!-- Register button -->
+        <!-- NewEntry (Register) -->
         <Button
-            Command="{Binding Register}"
+            Command="{Binding NewEntry}"
             Content="&#xf067;"
             FontFamily="{StaticResource FontAwesome}"
             Style="{StaticResource AccentButtonStyle}"
             ToolTip="新しい Web サイトを登録"
             Grid.Row="1">
         </Button>
-        <!-- Register button -->
+        <!-- NewEntry (Register) -->
 
         <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="1"/>
 

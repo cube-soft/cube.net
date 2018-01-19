@@ -7,6 +7,8 @@
         <MenuItem Header="最新の情報に更新"       Command="{Binding Update}"/>
         <MenuItem Header="全ての記事を既読に設定" Command="{Binding ReadAll}"/>
         <Separator/>
+        <MenuItem Header="新しいフォルダーを追加" Command="{Binding NewCategory}"/>
+        <Separator/>
         <MenuItem Header="キャッシュをクリア"     Command="{Binding Reset}"/>
         <MenuItem Header="削除"                   Command="{Binding Remove}"/>
         <MenuItem Header="名前の変更"             Command="{Binding Rename}"/>
