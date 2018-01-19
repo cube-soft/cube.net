@@ -58,7 +58,7 @@ namespace Cube.Net.App.Rss.Reader
         public MainViewModel(SettingsFolder settings) : base()
         {
             Model = new RssFacade(settings);
-            DropTarget = new RssEntryDropTarget((s, d, i) => Model.Subscription.Move(s, d, i));
+            DropTarget = new RssEntryDropTarget((s, d, i) => Model.Move(s, d, i));
         }
 
         #endregion
@@ -100,10 +100,11 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Settings =>
-            _settings = _settings ?? new RelayCommand(
+        public ICommand Settings => _settings ?? (
+            _settings = new RelayCommand(
                 () => Messenger.Send(new SettingsViewModel())
-            );
+            )
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -114,10 +115,11 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Property =>
-            _property = _property ?? new RelayCommand(
+        public ICommand Property => _property ?? (
+            _property = new RelayCommand(
                 () => Messenger.Send(new PropertyViewModel())
-            );
+            )
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -128,10 +130,11 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Register =>
-            _register = _register ?? new RelayCommand(
+        public ICommand Register => _register ?? (
+            _register = new RelayCommand(
                 () => Messenger.Send(new RegisterViewModel(e => Model.Register(e)))
-            );
+            )
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -142,10 +145,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Remove =>
-            _remove = _remove ?? new RelayCommand(
-                () => Model.Remove()
-            );
+        public ICommand Remove => _remove ?? (
+            _remove = new RelayCommand(() => Model.Remove())
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -156,10 +158,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Rename =>
-            _rename = _rename ?? new RelayCommand(
-                () => Model.Entry.Value.Editing = true
-            );
+        public ICommand Rename => _rename ?? (
+            _rename = new RelayCommand(() => Model.Entry.Value.Editing = true)
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -170,10 +171,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Refresh =>
-            _refresh = _refresh ?? new RelayCommand(
-                () => Model.Refresh(Model.Entry.Value)
-            );
+        public RelayCommand Refresh => _refresh ?? (
+            _refresh = new RelayCommand(() => Model.Refresh(Model.Entry.Value))
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -184,10 +184,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand RefreshFeed =>
-            _refreshFeed = _refreshFeed ?? new RelayCommand(
-                () => Model.Refresh(Model.Feed.Value)
-            );
+        public ICommand RefreshFeed => _refreshFeed ?? (
+            _refreshFeed = new RelayCommand(() => Model.Refresh(Model.Feed.Value))
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -198,10 +197,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand ReadAll =>
-            _readAll = _readAll ?? new RelayCommand(
-                () => Model.ReadAll()
-            );
+        public ICommand ReadAll => _readAll ?? (
+            _readAll = new RelayCommand(() => Model.ReadAll())
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -212,10 +210,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public ICommand Reset =>
-            _reset = _reset ?? new RelayCommand(
-                () => Model.Reset()
-            );
+        public ICommand Reset => _reset ?? (
+            _reset = new RelayCommand(() => Model.Reset())
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -226,10 +223,12 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand SelectEntry =>
-            _selectEntry = _selectEntry ?? new RelayCommand<object>(
-                e => Model.Select(e as RssEntryBase)
-            );
+        public ICommand SelectEntry => _selectEntry ?? (
+            _selectEntry = new RelayCommand<object>(
+                e => Model.Select(e as RssEntryBase),
+                e => e is RssEntryBase
+            )
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -240,25 +239,28 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand SelectItem =>
-            _selectItem = _selectItem ?? new RelayCommand<SelectionList>(
+        public ICommand SelectItem => _selectItem ?? (
+            _selectItem = new RelayCommand<SelectionList>(
                 e => Model.Select(e.SelectedItem as RssItem),
                 e => e.SelectedItem is RssItem
-            );
+            )
+        );
 
         /* ----------------------------------------------------------------- */
         ///
         /// Hover
         /// 
         /// <summary>
-        /// RssItem 選択時に実行されるコマンドです。
+        /// マウスオーバ時に実行されるコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Hover =>
-            _hover = _hover ?? new RelayCommand<string>(
-                e => Model.Message.Value = e
-            );
+        public ICommand Hover => _hover ?? (
+            _hover = new RelayCommand<object>(
+                e => Model.Message.Value = e.ToString(),
+                e => e != null
+            )
+        );
 
         #endregion
 
@@ -274,7 +276,7 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand _rename;
         private RelayCommand<object> _selectEntry;
         private RelayCommand<SelectionList> _selectItem;
-        private RelayCommand<string> _hover;
+        private RelayCommand<object> _hover;
         #endregion
     }
 }

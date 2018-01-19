@@ -335,7 +335,7 @@
                                 <i:EventTrigger EventName="MouseEnter">
                                     <i:InvokeCommandAction
                                         Command="{Binding DataContext.Hover, ElementName=Root}"
-                                        CommandParameter="{Binding Link, Converter={xc:ValueToString}}"/>
+                                        CommandParameter="{Binding Link}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </Border>
