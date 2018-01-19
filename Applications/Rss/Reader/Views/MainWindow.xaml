@@ -298,6 +298,7 @@
                             BorderThickness="0,0,1,1"
                             BorderBrush="#FFE6E6E6">
                             <StackPanel
+                                ToolTip="{Binding Title}"
                                 Background="White"
                                 Margin="0"
                                 Orientation="Vertical"
@@ -311,7 +312,6 @@
                                     HorizontalAlignment="Right"/>
                                 <TextBlock
                                     Text="{Binding Title}"
-                                    ToolTip="{Binding Title}"
                                     Margin="12,8,12,0"
                                     FontFamily="Meiryo"
                                     FontSize="12"
