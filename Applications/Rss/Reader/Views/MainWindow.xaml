@@ -10,6 +10,7 @@
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:xu="clr-namespace:Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
+    xmlns:xc="clr-namespace:Cube.Xui.Converters"
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     
@@ -51,7 +52,7 @@
         </my:SettingsTrigger>
     </i:Interaction.Triggers>
     
-    <Grid>
+    <Grid x:Name="Root">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.4*" MinWidth="50"/>
             <ColumnDefinition Width="20"/>
@@ -330,6 +331,13 @@
                                     TextWrapping="WrapWithOverflow"
                                     TextTrimming="None"/>
                             </StackPanel>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseEnter">
+                                    <i:InvokeCommandAction
+                                        Command="{Binding DataContext.Hover, ElementName=Root}"
+                                        CommandParameter="{Binding Link, Converter={xc:ValueToString}}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                         </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>

@@ -125,4 +125,28 @@ namespace Cube.Xui.Converters
         private Func<object, Type, object, CultureInfo, object> _func;
         #endregion
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ValueToString
+    ///
+    /// <summary>
+    /// 指定されたオブジェクトを文字列に変換するためのクラスです。
+    /// 変換には object.ToString() メソッドを利用します。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class ValueToString : OneWayValueConverter
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ValueToString
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public ValueToString() : base (e => e?.ToString() ?? string.Empty) { }
+    }
 }
