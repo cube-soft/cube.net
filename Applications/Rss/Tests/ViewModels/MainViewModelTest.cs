@@ -63,7 +63,7 @@ namespace Cube.Net.App.Rss.Tests
             }
             Assert.That(vm.Data.Feed.Value.UnreadItems.Count(), Is.GreaterThan(1), "Timeout");
 
-            vm.SelectItem.Execute(vm.Data.Feed.Value.UnreadItems.First());
+            vm.SelectArticle.Execute(vm.Data.Feed.Value.UnreadItems.First());
 
             Assert.That(vm.Data.Article.Value, Is.Not.Null);
         }

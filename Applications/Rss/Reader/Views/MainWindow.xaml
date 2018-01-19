@@ -73,7 +73,7 @@
             </Grid.RowDefinitions>
 
             <TreeView
-                x:Name="RssTreeView"
+                x:Name="Entries"
                 Background="Transparent"
                 BorderThickness="0"
                 FocusVisualStyle="{x:Null}"
@@ -188,7 +188,7 @@
                     <i:EventTrigger EventName="SelectedItemChanged">
                         <i:InvokeCommandAction
                             Command="{Binding SelectEntry}"
-                            CommandParameter="{Binding SelectedItem, ElementName=RssTreeView}"/>
+                            CommandParameter="{Binding SelectedItem, ElementName=Entries}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </TreeView>
@@ -351,7 +351,7 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction
-                            Command="{Binding SelectItem}"
+                            Command="{Binding SelectArticle}"
                             CommandParameter="{Binding SelectedItem, ElementName=Feeds}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
