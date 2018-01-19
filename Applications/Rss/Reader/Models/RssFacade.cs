@@ -239,7 +239,7 @@ namespace Cube.Net.App.Rss.Reader
 
                 var items = Feed.Value?.UnreadItems;
                 var first = items?.Count() > 0 ? items.First() : null;
-                Select(first, true);
+                Select(first);
             }
         }
 
@@ -252,21 +252,15 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /// <param name="src">選択項目</param>
-        /// <param name="delay">既読設定を遅延させるかどうか</param>
-        /// 
-        /// <remarks>
-        /// Select 直後に既読フラグを設定していますが、ListView の
-        /// ロード直後の場合、不整合が生じるようです。そのため、
-        /// ロード直後の実行では既読フラグを設定せずに遅延させる
-        /// オプションを用意しています。
-        /// </remarks>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Select(RssItem src, bool delay = false)
+        public void Select(RssItem src)
         {
-            if (Article.Value != null) Article.Value.Read = true;
+            if (Article.Value == src) return;
+
+            var tmp = Article.Value;
             Article.Value = src;
-            if (Article.Value != null && !delay) Article.Value.Read = true;
+            if (tmp != null) tmp.Read = true;
         }
 
         /* ----------------------------------------------------------------- */
@@ -354,6 +348,8 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (_disposed) return;
             _disposed = true;
+
+            if (Article.Value != null) Article.Value.Read = true;
             Subscription.Dispose();
         }
 
