@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Forms;
@@ -74,6 +75,50 @@ namespace Cube.Net.App.Rss.Reader
                 new PropertyMetadata((s, e) =>
                 {
                     if (s is WebDocument d) d.Text = e.NewValue as string;
+                })
+            );
+
+        #endregion
+
+        #region Uri
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Uri
+        /// 
+        /// <summary>
+        /// Web ページの URL を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Uri Uri
+        {
+            get => _uri;
+            set
+            {
+                if (_uri == value) return;
+                _uri = value;
+                if (value != null && Source != null) Source.Navigate(value);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UriProperty
+        /// 
+        /// <summary>
+        /// Uri を保持するための DependencyProperty です。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static readonly DependencyProperty UriProperty =
+            DependencyProperty.RegisterAttached(
+                nameof(Uri),
+                typeof(Uri),
+                typeof(WebDocument),
+                new PropertyMetadata((s, e) =>
+                {
+                    if (s is WebDocument d) d.Uri = e.NewValue as Uri;
                 })
             );
 
@@ -187,6 +232,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private string _text;
+        private Uri _uri;
         #endregion
     }
 }
