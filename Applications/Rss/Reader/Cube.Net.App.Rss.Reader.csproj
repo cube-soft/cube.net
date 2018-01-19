@@ -114,7 +114,6 @@
     <Compile Include="Xui\Behaviors\EditMode.cs" />
     <Compile Include="Xui\Behaviors\WindowsFormsBehavior.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
-    <Compile Include="Xui\Behaviors\ListBoxSelection.cs" />
     <Compile Include="Xui\Converters\BooleanValueConverter.cs" />
     <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
     <Compile Include="Xui\Triggers\CloseAction.cs" />

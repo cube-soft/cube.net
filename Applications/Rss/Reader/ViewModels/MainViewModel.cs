@@ -251,9 +251,9 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand SelectItem => _selectItem ?? (
-            _selectItem = new RelayCommand<SelectionList>(
-                e => Model.Select(e.SelectedItem as RssItem),
-                e => e.SelectedItem is RssItem
+            _selectItem = new RelayCommand<object>(
+                e => Model.Select(e as RssItem),
+                e => e is RssItem
             )
         );
 
@@ -286,7 +286,7 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand _remove;
         private RelayCommand _rename;
         private RelayCommand<object> _selectEntry;
-        private RelayCommand<SelectionList> _selectItem;
+        private RelayCommand<object> _selectItem;
         private RelayCommand<object> _hover;
         #endregion
     }

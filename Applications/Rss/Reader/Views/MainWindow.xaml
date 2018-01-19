@@ -282,6 +282,7 @@
             </StackPanel>
 
             <ListView
+                x:Name="Feeds"
                 ItemsSource="{Binding Data.Feed.Value.UnreadItems}"
                 Background="Transparent"
                 BorderThickness="0"
@@ -347,9 +348,13 @@
                         <Setter Property="Margin" Value="0,0,4,4"/>
                     </Style>
                 </ListView.ItemContainerStyle>
-                <i:Interaction.Behaviors>
-                    <xb:ListBoxSelection Command="{Binding SelectItem}"/>
-                </i:Interaction.Behaviors>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction
+                            Command="{Binding SelectItem}"
+                            CommandParameter="{Binding SelectedItem, ElementName=Feeds}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </ListView>
         </Grid>
         <!-- Feeds -->

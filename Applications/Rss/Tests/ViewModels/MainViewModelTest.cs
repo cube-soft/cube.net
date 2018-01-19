@@ -58,17 +58,14 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(vm.Data.Feed.Value.Items.Count(), Is.EqualTo(0));
             for (var i = 0; i < 100; i++)
             {
-                if (vm.Data.Feed.Value.Items.Count() > 0) break;
+                if (vm.Data.Feed.Value.UnreadItems.Count() > 0) break;
                 await Task.Delay(50);
             }
-            Assert.That(vm.Data.Feed.Value.Items.Count(), Is.GreaterThan(1), "Timeout");
+            Assert.That(vm.Data.Feed.Value.UnreadItems.Count(), Is.GreaterThan(1), "Timeout");
 
-            vm.SelectItem.Execute(new Cube.Xui.Behaviors.SelectionList(
-                new object[0],
-                new[] { vm.Data.Feed.Value.Items.First() }
-            ));
+            vm.SelectItem.Execute(vm.Data.Feed.Value.UnreadItems.First());
 
-            Assert.That(vm.Data.Content.Value, Is.Not.Null.And.Not.Empty);
+            Assert.That(vm.Data.Article.Value, Is.Not.Null);
         }
 
         #endregion
