@@ -341,6 +341,11 @@
                                         Command="{Binding DataContext.Hover, ElementName=Root}"
                                         CommandParameter="{Binding Link}"/>
                                 </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseLeave">
+                                    <i:InvokeCommandAction
+                                        Command="{Binding DataContext.Hover, ElementName=Root}"
+                                        CommandParameter=""/>
+                                </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </Border>
                     </DataTemplate>
