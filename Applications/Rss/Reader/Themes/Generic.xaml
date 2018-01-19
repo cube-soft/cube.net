@@ -10,7 +10,6 @@
 
     <Style TargetType="Window">
         <Setter Property="Background" Value="White"/>
-        <Setter Property="FontFamily" Value="Meiryo UI"/>
         <Setter Property="Icon" Value="pack://application:,,,/App.ico"/>
     </Style>
 

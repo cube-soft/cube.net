@@ -8,12 +8,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" 
     xmlns:dd="urn:gong-wpf-dragdrop"
-    xmlns:xu="clr-namespace:Cube.Xui"
-    xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     
-    mc:Ignorable="d"    
+    mc:Ignorable="d"
+    FontFamily="Meiryo UI"
     Title="{Binding Data.Article.Value, Converter={my:TitleConverter}}"
     Width="1060"
     Height="630">
@@ -23,11 +22,12 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Themes/Generic.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/ContextMenu.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/ToolTip.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/ListViewItem.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/TreeViewItem.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Window.DataContext>
         <my:MainViewModel/>
     </Window.DataContext>
@@ -36,7 +36,7 @@
         <i:EventTrigger EventName="Closed">
             <xt:DialogAction/>
         </i:EventTrigger>
-        
+
         <xt:CloseTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>
         </xt:CloseTrigger>
@@ -53,7 +53,7 @@
             <my:SettingsWindowAction/>
         </my:SettingsTrigger>
     </i:Interaction.Triggers>
-    
+
     <Grid x:Name="Root">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.4*" MinWidth="50"/>
@@ -67,7 +67,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
-        
+
         <!-- LeftSide (RssEntries) -->
         <Grid Style="{StaticResource LeftSideStyle}">
             <Grid.RowDefinitions>
@@ -87,95 +87,11 @@
 
                 <TreeView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ContentPresenter, AncestorLevel=1}}" />
+                        <StackPanel
+                            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource
+                            AncestorType=ContentPresenter, AncestorLevel=1}}"/>
                     </ItemsPanelTemplate>
                 </TreeView.ItemsPanel>
-
-                <TreeView.Resources>
-                    <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                        <Setter Property="xu:ExpandIcon.Visibility" Value="Collapsed"/>
-                    </Style>
-
-                    <!-- Category -->
-                    <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
-                        <StackPanel
-                            Orientation="Horizontal"
-                            ToolTip="{StaticResource RssEntryToolTip}"
-                            Margin="2,4,0,4">
-                            <TextBlock
-                                Text="&#xf101;"
-                                FontFamily="{StaticResource FontAwesome}"
-                                Foreground="{StaticResource IconTextBrush}"
-                                FontSize="16"
-                                Margin="0,2,6,0"/>
-                            <TextBox
-                                Text="{Binding Title}"
-                                Padding="2"
-                                FontSize="12"
-                                Foreground="{StaticResource MainTextBrush}"
-                                FontWeight="Bold">
-                                <i:Interaction.Behaviors>
-                                    <xb:EditMode Value="{Binding Editing, Mode=TwoWay}"/>
-                                </i:Interaction.Behaviors>
-                            </TextBox>
-                            <TextBlock
-                                Text="{Binding Count, StringFormat=({0})}"
-                                FontSize="12"
-                                FontWeight="Bold"
-                                Foreground="{StaticResource MainTextBrush}"
-                                Padding="2"/>
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="PreviewMouseRightButtonDown">
-                                    <ei:ChangePropertyAction
-                                        PropertyName="IsSelected"
-                                        Value="true"
-                                        TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                    <!-- Category -->
-
-                    <!-- Entry -->
-                    <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
-                        <StackPanel
-                            Orientation="Horizontal"
-                            ToolTip="{StaticResource RssEntryToolTip}"
-                            Margin="2,0,0,0">
-                            <TextBlock
-                                Text="&#xf0f6;"
-                                FontFamily="{StaticResource FontAwesome}"
-                                Foreground="{StaticResource IconTextBrush}"
-                                FontSize="16"
-                                Margin="0,4,6,0"/>
-                            <TextBox
-                                Text="{Binding Title}"
-                                FontSize="12"
-                                Foreground="{StaticResource MainTextBrush}"
-                                Padding="2"
-                                Margin="0,2,0,2">
-                                <i:Interaction.Behaviors>
-                                    <xb:EditMode Value="{Binding Editing, Mode=TwoWay}"/>
-                                </i:Interaction.Behaviors>
-                            </TextBox>
-                            <TextBlock
-                                Text="{Binding Count, StringFormat=({0})}"
-                                FontSize="12"
-                                Foreground="{StaticResource MainTextBrush}"
-                                Padding="2"
-                                Margin="0,2,0,2"/>
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="PreviewMouseRightButtonDown">
-                                    <ei:ChangePropertyAction
-                                        PropertyName="IsSelected"
-                                        Value="true"
-                                        TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem}}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                    <!-- Entry -->
-                </TreeView.Resources>
 
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectedItemChanged">
@@ -280,6 +196,7 @@
                 x:Name="RssFeeds"
                 ItemsSource="{Binding Data.Feed.Value.UnreadItems}"
                 ItemContainerStyle="{StaticResource RssItemStyle}"
+                ItemTemplate="{StaticResource RssItemTemplate}"
                 Background="Transparent"
                 BorderThickness="0"
                 SelectionMode="Single"
@@ -289,58 +206,6 @@
                 VirtualizingPanel.IsVirtualizing="True"
                 VirtualizingPanel.VirtualizationMode="Recycling"
                 Grid.Row="2">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Style="{StaticResource ShadowStyle}">
-                            <StackPanel
-                                ToolTip="{Binding Title}"
-                                Background="White"
-                                Cursor="Hand"
-                                Margin="0"
-                                Orientation="Vertical"
-                                HorizontalAlignment="Stretch">
-                                <TextBlock
-                                    Text="{Binding PublishTime, StringFormat=yyyy/MM/dd hh:mm:ss}"
-                                    Margin="12,8,12,0"
-                                    FontFamily="Meiryo"
-                                    FontSize="8"
-                                    Foreground="{StaticResource GrayTextBrush}"
-                                    HorizontalAlignment="Right"/>
-                                <TextBlock
-                                    Text="{Binding Title}"
-                                    Margin="12,8,12,0"
-                                    FontFamily="Meiryo"
-                                    FontSize="12"
-                                    FontWeight="Bold"
-                                    Foreground="{StaticResource MainTextBrush}"
-                                    TextWrapping="NoWrap"
-                                    TextTrimming="WordEllipsis"/>
-                                <TextBlock
-                                    Text="{Binding Summary}"
-                                    MaxHeight="48"
-                                    Margin="12,8,12,8"
-                                    FontFamily="Meiryo"
-                                    FontSize="10"
-                                    LineHeight="10"
-                                    Foreground="{StaticResource FeedTextBrush}"
-                                    TextWrapping="WrapWithOverflow"
-                                    TextTrimming="None"/>
-                            </StackPanel>
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseEnter">
-                                    <i:InvokeCommandAction
-                                        Command="{Binding DataContext.Hover, ElementName=Root}"
-                                        CommandParameter="{Binding Link}"/>
-                                </i:EventTrigger>
-                                <i:EventTrigger EventName="MouseLeave">
-                                    <i:InvokeCommandAction
-                                        Command="{Binding DataContext.Hover, ElementName=Root}"
-                                        CommandParameter=""/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction
@@ -353,7 +218,7 @@
         <!-- MiddleSide (RssFeeds) -->
 
         <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="3"/>
-        
+
         <!-- RightSide (Preview) -->
         <Grid Style="{StaticResource RightSideStyle}" Grid.Column="4">
             <Grid.RowDefinitions>

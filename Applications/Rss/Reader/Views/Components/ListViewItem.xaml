@@ -1,0 +1,61 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Themes/Generic.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <DataTemplate x:Key="RssItemTemplate" DataType="{x:Type rss:RssItem}">
+        <Border Style="{StaticResource ShadowStyle}">
+            <StackPanel
+                    ToolTip="{Binding Title}"
+                    Background="White"
+                    Cursor="Hand"
+                    Margin="0"
+                    Orientation="Vertical"
+                    HorizontalAlignment="Stretch">
+                <TextBlock
+                    Text="{Binding PublishTime, StringFormat=yyyy/MM/dd hh:mm:ss}"
+                    Margin="12,8,12,0"
+                    FontFamily="Meiryo"
+                    FontSize="8"
+                    Foreground="{StaticResource GrayTextBrush}"
+                    HorizontalAlignment="Right"/>
+                <TextBlock
+                    Text="{Binding Title}"
+                    Margin="12,8,12,0"
+                    FontFamily="Meiryo"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Foreground="{StaticResource MainTextBrush}"
+                    TextWrapping="NoWrap"
+                    TextTrimming="WordEllipsis"/>
+                <TextBlock
+                    Text="{Binding Summary}"
+                    MaxHeight="48"
+                    Margin="12,8,12,8"
+                    FontFamily="Meiryo"
+                    FontSize="10"
+                    LineHeight="10"
+                    Foreground="{StaticResource FeedTextBrush}"
+                    TextWrapping="WrapWithOverflow"
+                    TextTrimming="None"/>
+            </StackPanel>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseEnter">
+                    <i:InvokeCommandAction
+                        Command="{Binding DataContext.Hover, ElementName=Root}"
+                        CommandParameter="{Binding Link}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseLeave">
+                    <i:InvokeCommandAction
+                        Command="{Binding DataContext.Hover, ElementName=Root}"
+                        CommandParameter=""/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>
