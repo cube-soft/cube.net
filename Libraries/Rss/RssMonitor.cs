@@ -122,8 +122,8 @@ namespace Cube.Net.Rss
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected IList<Func<RssFeed, Task>> Subscriptions { get; }
-            = new List<Func<RssFeed, Task>>();
+        protected IList<Func<RssFeed, Task>> Subscriptions { get; } =
+            new List<Func<RssFeed, Task>>();
 
         #endregion
 
@@ -295,7 +295,7 @@ namespace Cube.Net.Rss
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             var dest = Feeds[uri];
-            var src = await GetAsync(uri).ConfigureAwait(false);
+            var src  = await GetAsync(uri).ConfigureAwait(false);
             Shrink(src, dest.LastChecked);
             sw.Stop();
             this.LogDebug($"Url:{uri}\tTime:{sw.Elapsed}");
@@ -335,11 +335,10 @@ namespace Cube.Net.Rss
         /// 
         /* ----------------------------------------------------------------- */
         private void Shrink(RssFeed src, DateTime threshold) =>
-            src.Items = src
-                .Items
-                .Where(e => e.PublishTime > threshold)
-                .OrderBy(e => e.PublishTime)
-                .ToList();
+            src.Items = src.Items
+                           .Where(e => e.PublishTime > threshold)
+                           .OrderBy(e => e.PublishTime)
+                           .ToList();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -354,17 +353,25 @@ namespace Cube.Net.Rss
         {
             if (State != TimerState.Run) return;
 
-            foreach (var uri in Feeds.Keys.ToArray())
+            var v = Feeds.Values
+                         .OrderBy(e => e.LastChecked)
+                         .Select(e => e.Uri);
+
+            foreach (var uri in v.ToArray())
             {
-                try { await UpdateAsync(uri); }
+                try
+                {
+                    if (State != TimerState.Run) return;
+                    await UpdateAsync(uri);
+                }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
         }
 
-        #region Fields
-        private RssClient _http;
         #endregion
 
+        #region Fields
+        private RssClient _http;
         #endregion
     }
 }
