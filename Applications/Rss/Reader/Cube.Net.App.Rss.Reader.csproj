@@ -118,6 +118,7 @@
     <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
     <Compile Include="Xui\Triggers\CloseAction.cs" />
     <Compile Include="Xui\Triggers\DialogAction.cs" />
+    <Compile Include="Xui\Triggers\DisposeAction.cs" />
     <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
     <Compile Include="Xui\Triggers\ShowAction.cs" />
     <Compile Include="Xui\Bindable.cs" />

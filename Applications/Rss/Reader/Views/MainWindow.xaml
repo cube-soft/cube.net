@@ -34,10 +34,14 @@
     </Window.DataContext>
 
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closed">
+            <xt:DialogAction/>
+        </i:EventTrigger>
+        
         <xt:CloseTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>
         </xt:CloseTrigger>
-        
+
         <my:RegisterTrigger>
             <my:RegisterWindowAction/>
         </my:RegisterTrigger>

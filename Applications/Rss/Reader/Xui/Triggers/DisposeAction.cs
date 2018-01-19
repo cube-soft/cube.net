@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Windows;
 using System.Windows.Interactivity;
 
@@ -22,37 +23,14 @@ namespace Cube.Xui.Triggers
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// CloseMessage
+    /// DisposeAction
     ///
     /// <summary>
-    /// ウィンドウを閉じることを示すメッセージクラスです。
+    /// DataContext の開放処理を実行する TriggerAction です。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class CloseMessage { }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// CloseTrigger
-    ///
-    /// <summary>
-    /// Messenger オブジェクト経由でウィンドウを閉じるための
-    /// Trigger クラスです。
-    /// </summary>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public class CloseTrigger : MessengerTrigger<CloseMessage> { }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// CloseAction
-    ///
-    /// <summary>
-    /// Window を閉じる TriggerAction です。
-    /// </summary>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public class CloseAction : TriggerAction<DependencyObject>
+    public class DisposeAction : TriggerAction<DependencyObject>
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -65,7 +43,11 @@ namespace Cube.Xui.Triggers
         /* ----------------------------------------------------------------- */
         protected override void Invoke(object notused)
         {
-            if (AssociatedObject is Window w) w.Close();
+            if (AssociatedObject is FrameworkElement e)
+            {
+                if (e.DataContext is IDisposable dc) dc.Dispose();
+                e.DataContext = null;
+            }
         }
     }
 }
