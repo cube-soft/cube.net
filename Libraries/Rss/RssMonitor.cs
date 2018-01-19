@@ -64,10 +64,11 @@ namespace Cube.Net.Rss
         {
             System.Diagnostics.Debug.Assert(buffer != null);
 
-            Feeds   = buffer;
-            Handler = new HeaderHandler { UseEntityTag = false };
-            _http   = new RssClient(Handler);
-            Timeout = _http.Timeout;
+            Feeds      = buffer;
+            Handler    = new HeaderHandler { UseEntityTag = false };
+            _http      = new RssClient(Handler);
+            Timeout    = _http.Timeout;
+            RetryCount = 2;
 
             Timer.Subscribe(WhenTick);
         }
@@ -342,6 +343,32 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
+        /// RunAsync
+        ///
+        /// <summary>
+        /// RSS の取得処理を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private async Task RunAsync(IList<Uri> src, IList<Uri> failed)
+        {
+            foreach (var uri in src.ToArray())
+            {
+                try
+                {
+                    if (State != TimerState.Run) return;
+                    await UpdateAsync(uri);
+                }
+                catch (Exception err)
+                {
+                    this.LogWarn(err.ToString(), err);
+                    failed.Add(uri);
+                }
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// WhenTick
         ///
         /// <summary>
@@ -353,18 +380,25 @@ namespace Cube.Net.Rss
         {
             if (State != TimerState.Run) return;
 
-            var v = Feeds.Values
-                         .OrderBy(e => e.LastChecked)
-                         .Select(e => e.Uri);
+            var failed = new List<Uri>();
 
-            foreach (var uri in v.ToArray())
+            await RunAsync(
+                Feeds.Values
+                     .OrderBy(e => e.LastChecked)
+                     .Select(e => e.Uri)
+                     .ToList(),
+                failed
+            );
+
+            for (var i = 0; i < RetryCount && failed.Count > 0; ++i)
             {
-                try
-                {
-                    if (State != TimerState.Run) return;
-                    await UpdateAsync(uri);
-                }
-                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+                if (State != TimerState.Run) return;
+                await Task.Delay(RetryInterval);
+                if (State != TimerState.Run) return;
+
+                var src = failed.ToList();
+                failed.Clear();
+                await RunAsync(src, failed);
             }
         }
 
