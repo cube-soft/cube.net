@@ -67,14 +67,14 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Model
+        /// Data
         /// 
         /// <summary>
-        /// Model オブジェクトを取得します。
+        /// バインド用データを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFacade Model { get; }
+        public RssBindableData Data => Model.Data;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -86,6 +86,17 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public RssEntryDropTarget DropTarget { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Model
+        /// 
+        /// <summary>
+        /// Model オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected RssFacade Model { get; }
 
         #endregion
 
@@ -159,33 +170,33 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Rename => _rename ?? (
-            _rename = new RelayCommand(() => Model.Entry.Value.Editing = true)
+            _rename = new RelayCommand(() => Data.Entry.Value.Editing = true)
         );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RefreshEntry
+        /// Update
         /// 
         /// <summary>
         /// RSS フィード更新時に実行されるコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Refresh => _refresh ?? (
-            _refresh = new RelayCommand(() => Model.Refresh(Model.Entry.Value))
+        public RelayCommand Update => _update ?? (
+            _update = new RelayCommand(() => Model.Update(Data.Entry.Value))
         );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RefreshFeed
+        /// UpdateOne
         /// 
         /// <summary>
         /// RSS フィード更新時に実行されるコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand RefreshFeed => _refreshFeed ?? (
-            _refreshFeed = new RelayCommand(() => Model.Refresh(Model.Feed.Value))
+        public ICommand UpdateOne => _updateOne ?? (
+            _updateOne = new RelayCommand(() => Model.Update(Data.Feed.Value))
         );
 
         /* ----------------------------------------------------------------- */
@@ -257,7 +268,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Hover => _hover ?? (
             _hover = new RelayCommand<object>(
-                e => Model.Message.Value = e.ToString(),
+                e => Data.Message.Value = e.ToString(),
                 e => e != null
             )
         );
@@ -268,8 +279,8 @@ namespace Cube.Net.App.Rss.Reader
         private RelayCommand _settings;
         private RelayCommand _property;
         private RelayCommand _register;
-        private RelayCommand _refresh;
-        private RelayCommand _refreshFeed;
+        private RelayCommand _update;
+        private RelayCommand _updateOne;
         private RelayCommand _readAll;
         private RelayCommand _reset;
         private RelayCommand _remove;

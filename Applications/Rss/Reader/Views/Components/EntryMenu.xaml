@@ -3,7 +3,7 @@
     <ContextMenu x:Key="EntryMenu">
         <MenuItem
             Header="最新の情報に更新"
-            Command="{Binding Refresh}"/>
+            Command="{Binding Update}"/>
 
         <MenuItem
             Header="全ての記事を既読に設定"
