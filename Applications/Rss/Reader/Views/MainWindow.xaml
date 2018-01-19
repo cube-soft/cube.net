@@ -15,16 +15,15 @@
     
     mc:Ignorable="d"    
     Title="{Binding Data.Article.Value, Converter={my:TitleConverter}}"
-    Icon="pack://application:,,,/App.ico"
-    FontFamily="Meiryo UI"
     Width="1060"
     Height="630">
 
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/EntryMenu.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Themes/Colors.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Themes/Generic.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/ContextMenu.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/ToolTip.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -69,21 +68,18 @@
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         
-        <!-- Sidebar -->
-        <Grid Background="{StaticResource DarkBackgroundBrush}">
+        <!-- LeftSide (RssEntries) -->
+        <Grid Style="{StaticResource LeftSideStyle}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <TreeView
-                x:Name="Entries"
-                Background="Transparent"
-                BorderThickness="0"
-                FocusVisualStyle="{x:Null}"
+                x:Name="RssEntries"
+                Style="{StaticResource RssEntriesStyle}"
                 ItemsSource="{Binding Data.Root}"
-                ContextMenu="{StaticResource EntryMenu}"
-                ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                ContextMenu="{StaticResource RssEntryMenu}"
                 dd:DragDrop.IsDragSource="True"
                 dd:DragDrop.IsDropTarget="True"
                 dd:DragDrop.DropHandler="{Binding DropTarget}"
@@ -100,18 +96,11 @@
                         <Setter Property="xu:ExpandIcon.Visibility" Value="Collapsed"/>
                     </Style>
 
-                    <ToolTip x:Key="EntryToolTip">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Title}"/>
-                            <TextBlock Text="{Binding Count, StringFormat=' ({0})'}"/>
-                        </StackPanel>
-                    </ToolTip>
-
                     <!-- Category -->
                     <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
                         <StackPanel
                             Orientation="Horizontal"
-                            ToolTip="{StaticResource EntryToolTip}"
+                            ToolTip="{StaticResource RssEntryToolTip}"
                             Margin="2,4,0,4">
                             <TextBlock
                                 Text="&#xf101;"
@@ -151,7 +140,7 @@
                     <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
                         <StackPanel
                             Orientation="Horizontal"
-                            ToolTip="{StaticResource EntryToolTip}"
+                            ToolTip="{StaticResource RssEntryToolTip}"
                             Margin="2,0,0,0">
                             <TextBlock
                                 Text="&#xf0f6;"
@@ -192,39 +181,28 @@
                     <i:EventTrigger EventName="SelectedItemChanged">
                         <i:InvokeCommandAction
                             Command="{Binding SelectEntry}"
-                            CommandParameter="{Binding SelectedItem, ElementName=Entries}"/>
+                            CommandParameter="{Binding SelectedItem, ElementName=RssEntries}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </TreeView>
         </Grid>
-        <!-- Sidebar -->
-        
+        <!-- LeftSide (RssEntries) -->
+
         <!-- Register button -->
         <Button
             Command="{Binding Register}"
             Content="&#xf067;"
             FontFamily="{StaticResource FontAwesome}"
-            Style="{StaticResource AccentButton}"
+            Style="{StaticResource AccentButtonStyle}"
             ToolTip="新しい Web サイトを登録"
             Grid.Row="1">
         </Button>
         <!-- Register button -->
 
-        <GridSplitter
-            HorizontalAlignment="Center"
-            Background="{StaticResource MainBackgroundBrush}"
-            Focusable="False"
-            FocusVisualStyle="{x:Null}"
-            BorderThickness="0"
-            ResizeBehavior="BasedOnAlignment"
-            ResizeDirection="Columns"
-            Width="20"
-            Grid.Column="1"/>
+        <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="1"/>
 
-        <!-- Feeds-->
-        <Grid
-            Background="{StaticResource MainBackgroundBrush}"
-            Grid.Column="2">
+        <!-- MiddleSide (RssFeeds) -->
+        <Grid Style="{StaticResource MiddleSideStyle}" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="24"/>
                 <RowDefinition Height="50"/>
@@ -235,7 +213,7 @@
                 Command="{Binding UpdateOne}"
                 Margin="0,2,0,0"
                 HorizontalAlignment="Right"
-                ToolTip="最新の情報に更新する"
+                ToolTip="最新の情報に更新"
                 Visibility="{Binding Data.Feed.Value, Converter={my:LastCheckedToVisibility}}">
                 <Button.Template>
                     <ControlTemplate>
@@ -272,22 +250,16 @@
                 </Button.Template>
             </Button>
             
-            <StackPanel
-                Orientation="Horizontal"
-                Grid.Row="1">
+            <StackPanel Orientation="Horizontal" Grid.Row="1">
                 <TextBlock
                     Text="{Binding Data.Feed.Value.Title}"
-                    Background="Transparent"
-                    Foreground="{StaticResource MainTextBrush}"
-                    FontFamily="Meiryo"
-                    FontSize="16"
-                    FontWeight="Bold"
-                    VerticalAlignment="Center"/>
+                    Style="{StaticResource RssTitleStyle}"/>
             </StackPanel>
 
             <ListView
-                x:Name="Feeds"
+                x:Name="RssFeeds"
                 ItemsSource="{Binding Data.Feed.Value.UnreadItems}"
+                ItemContainerStyle="{StaticResource RssItemStyle}"
                 Background="Transparent"
                 BorderThickness="0"
                 SelectionMode="Single"
@@ -350,78 +322,40 @@
                         </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="Margin" Value="0,0,4,4"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction
                             Command="{Binding SelectArticle}"
-                            CommandParameter="{Binding SelectedItem, ElementName=Feeds}"/>
+                            CommandParameter="{Binding SelectedItem, ElementName=RssFeeds}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ListView>
         </Grid>
-        <!-- Feeds -->
+        <!-- MiddleSide (RssFeeds) -->
 
-        <GridSplitter
-            HorizontalAlignment="Center"
-            Background="{StaticResource MainBackgroundBrush}"
-            BorderThickness="0"
-            Focusable="False"
-            FocusVisualStyle="{x:Null}"
-            ResizeBehavior="BasedOnAlignment"
-            ResizeDirection="Columns"
-            Width="20"
-            Grid.Column="3"/>
+        <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="3"/>
         
-        <!-- Preview -->
-        <Grid
-            Background="White"
-            Grid.Column="4">
+        <!-- RightSide (Preview) -->
+        <Grid Style="{StaticResource RightSideStyle}" Grid.Column="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button
-                x:Name="SettingsButton"
-                Content="&#xf0c9;"
-                Padding="16,0,16,0"
-                FocusVisualStyle="{x:Null}"
-                FontSize="18"
-                BorderThickness="0"
-                Background="Transparent"
-                FontFamily="{StaticResource FontAwesome}"
-                Foreground="{StaticResource MainTextBrush}"
-                HorizontalAlignment="Right"
-                ContextMenuService.IsEnabled="False">
-                <Button.ContextMenu>
-                    <ContextMenu
-                        Background="{StaticResource ContextBackgroundBrush}">
-                        <MenuItem Header="インポート"/>
-                        <MenuItem Header="エクスポート"/>
-                        <Separator/>
-                        <MenuItem Header="設定" Command="{Binding Settings}"/>
-                        <MenuItem Header="バージョン情報" Command="{Binding Settings}"/>
-                        <Separator/>
-                        <MenuItem Header="終了" Command="{Binding Close}"/>
-                    </ContextMenu>
-                </Button.ContextMenu>
+            <Button 
+                x:Name="Settings"
+                Style="{StaticResource SettingsButtonStyle}"
+                ContextMenu="{StaticResource SettingsMenu}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <ei:ChangePropertyAction
-                            TargetObject="{Binding ContextMenu, ElementName=SettingsButton}" 
+                            TargetObject="{Binding ContextMenu, ElementName=Settings}" 
                             PropertyName="IsOpen"
                             Value="True"/>
                         <ei:ChangePropertyAction
-                            TargetObject="{Binding ContextMenu, ElementName=SettingsButton}" 
+                            TargetObject="{Binding ContextMenu, ElementName=Settings}" 
                             PropertyName="PlacementTarget" 
-                            Value="{Binding ElementName=SettingsButton, Mode=OneWay}"/>
+                            Value="{Binding ElementName=Settings, Mode=OneWay}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
@@ -435,16 +369,15 @@
                 </i:Interaction.Behaviors>
             </WindowsFormsHost>
         </Grid>
-        <!-- Preview -->
-        
+        <!-- RightSide (Preview) -->
+
         <!-- Footer -->
         <StatusBar
-            Background="{StaticResource MainBackgroundBrush}"
-            Foreground="{StaticResource MainTextBrush}"
+            Style="{StaticResource FooterStyle}"
             Grid.Row="1" 
             Grid.Column="1"
             Grid.ColumnSpan="4">
-            <StatusBarItem Margin="8,0,0,0">
+            <StatusBarItem>
                 <TextBlock Text="{Binding Data.Message.Value}"/>
             </StatusBarItem>
         </StatusBar>

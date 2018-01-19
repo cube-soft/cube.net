@@ -1,0 +1,10 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ToolTip x:Key="RssEntryToolTip">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Title}"/>
+            <TextBlock Text="{Binding Count, StringFormat=' ({0})'}"/>
+        </StackPanel>
+    </ToolTip>
+</ResourceDictionary>
