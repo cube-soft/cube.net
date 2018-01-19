@@ -178,7 +178,7 @@ namespace Cube.Net.App.Rss.Reader
             if (sender is HtmlDocument doc)
             {
                 var node = doc.GetElementFromPoint(e.ClientMousePosition);
-                var link = node.GetAttribute("href");
+                var link = node?.GetAttribute("href") ?? string.Empty;
                 if (Hover.CanExecute(link)) Hover.Execute(link);
             }
         }
