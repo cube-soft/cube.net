@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CubeSoft")]
 [assembly: AssemblyProduct("CubeRssReader")]
-[assembly: AssemblyCopyright("Copyright © 2010 CubeSoft, Inc.")]
+[assembly: AssemblyCopyright("Copyright © 2017 CubeSoft, Inc.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
