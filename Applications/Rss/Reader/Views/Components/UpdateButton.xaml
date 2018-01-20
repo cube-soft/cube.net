@@ -30,8 +30,8 @@
                     <Setter Property="BorderBrush" Value="{StaticResource MainBorderBrush}"/>
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#FFF2F7FD"/>
-                            <Setter Property="BorderBrush" Value="#FFB8D6FB"/>
+                            <Setter Property="Background" Value="{StaticResource HoverBackgroundBrush}"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource HoverBorderBrush}"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>
