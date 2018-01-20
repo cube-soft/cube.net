@@ -20,10 +20,11 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Themes/Generic.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Themes/RssComponents.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/ContextMenu.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/ListViewItem.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/TreeViewItem.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/UpdateButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -107,10 +108,7 @@
         <!-- NewEntry (Register) -->
         <Button
             Command="{Binding NewEntry}"
-            Content="&#xf067;"
-            FontFamily="{StaticResource FontAwesome}"
-            Style="{StaticResource AccentButtonStyle}"
-            ToolTip="新しい Web サイトを登録"
+            Style="{StaticResource NewEntryButtonStyle}"
             Grid.Row="1">
         </Button>
         <!-- NewEntry (Register) -->
@@ -127,43 +125,9 @@
 
             <Button
                 Command="{Binding UpdateOne}"
-                Margin="0,2,0,0"
-                HorizontalAlignment="Right"
-                ToolTip="最新の情報に更新"
+                Style="{StaticResource UpdateButtonStyle}"
+                Template="{StaticResource UpdateButtonTemplate}"
                 Visibility="{Binding Data.Feed.Value, Converter={my:LastCheckedToVisibility}}">
-                <Button.Template>
-                    <ControlTemplate>
-                        <Border
-                            BorderThickness="1"
-                            CornerRadius="2">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock
-                                    Text="{Binding Data.Feed.Value, Converter={my:LastCheckedToString}}"
-                                    Margin="6,3,0,0"
-                                    FontFamily="Meiryo"
-                                    FontSize="10"
-                                    Foreground="{StaticResource GrayTextBrush}"/>
-                                <TextBlock
-                                    Text="&#xf01e;"
-                                    Margin="6,3,6,0"
-                                    FontFamily="{StaticResource FontAwesome}"
-                                    FontSize="14"
-                                    Foreground="{StaticResource IconTextBrush}"/>
-                            </StackPanel>
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="BorderBrush" Value="{StaticResource MainBorderBrush}"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#FFF2F7FD"/>
-                                            <Setter Property="BorderBrush" Value="#FFB8D6FB"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
             </Button>
 
             <Button 
@@ -197,14 +161,7 @@
                 ItemsSource="{Binding Data.Feed.Value.UnreadItems}"
                 ItemContainerStyle="{StaticResource RssItemStyle}"
                 ItemTemplate="{StaticResource RssItemTemplate}"
-                Background="Transparent"
-                BorderThickness="0"
-                SelectionMode="Single"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.IsDeferredScrollingEnabled="False"
-                ScrollViewer.PanningMode="VerticalOnly"
-                VirtualizingPanel.IsVirtualizing="True"
-                VirtualizingPanel.VirtualizationMode="Recycling"
+                Style="{StaticResource RssFeedsStyle}"
                 Grid.Row="2">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">

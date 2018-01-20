@@ -8,20 +8,16 @@
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     mc:Ignorable="d"
         
-    Style="{StaticResource CommonDialogStyle}"
+    Style="{StaticResource Dialog}"
     Title="新しい Web サイトを登録"
     Height="210"
     Width="400"
     WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Themes/Generic.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
     </Window.Resources>
-    
+
     <i:Interaction.Triggers>
         <xt:DialogTrigger Messenger="{Binding Messenger}">
             <xt:DialogAction/>

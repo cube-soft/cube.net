@@ -5,7 +5,7 @@
     xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/Themes/Generic.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <DataTemplate x:Key="RssItemTemplate" DataType="{x:Type rss:RssItem}">
@@ -19,30 +19,30 @@
                     HorizontalAlignment="Stretch">
                 <TextBlock
                     Text="{Binding PublishTime, StringFormat=yyyy/MM/dd hh:mm:ss}"
-                    Margin="12,8,12,0"
+                    Foreground="{StaticResource GrayTextBrush}"
                     FontFamily="Meiryo"
                     FontSize="8"
-                    Foreground="{StaticResource GrayTextBrush}"
-                    HorizontalAlignment="Right"/>
+                    HorizontalAlignment="Right"
+                    Margin="12,8,12,0"/>
                 <TextBlock
                     Text="{Binding Title}"
-                    Margin="12,8,12,0"
+                    Foreground="{StaticResource MainTextBrush}"
                     FontFamily="Meiryo"
                     FontSize="12"
                     FontWeight="Bold"
-                    Foreground="{StaticResource MainTextBrush}"
-                    TextWrapping="NoWrap"
-                    TextTrimming="WordEllipsis"/>
+                    Margin="12,8,12,0"
+                    TextTrimming="WordEllipsis"
+                    TextWrapping="NoWrap"/>
                 <TextBlock
                     Text="{Binding Summary}"
-                    MaxHeight="48"
-                    Margin="12,8,12,8"
+                    Foreground="{StaticResource FeedTextBrush}"
                     FontFamily="Meiryo"
                     FontSize="10"
                     LineHeight="10"
-                    Foreground="{StaticResource FeedTextBrush}"
-                    TextWrapping="WrapWithOverflow"
-                    TextTrimming="None"/>
+                    MaxHeight="48"
+                    Margin="12,8,12,8"
+                    TextTrimming="None"
+                    TextWrapping="Wrap"/>
             </StackPanel>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseEnter">

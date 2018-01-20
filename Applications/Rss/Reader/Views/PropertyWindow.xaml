@@ -8,18 +8,14 @@
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     mc:Ignorable="d"
     
-    Style="{StaticResource CommonDialogStyle}"
+    Style="{StaticResource Dialog}"
     Title="CubeRSS Reader"
     Height="300"
     Width="500"
     WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Themes/Generic.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
     </Window.Resources>
 
     <i:Interaction.Triggers>
