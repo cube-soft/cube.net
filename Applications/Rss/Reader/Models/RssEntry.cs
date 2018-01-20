@@ -83,6 +83,21 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Expanded
+        /// 
+        /// <summary>
+        /// 子要素が表示されているかどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Expanded
+        {
+            get => _expanded;
+            set => SetProperty(ref _expanded, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Editing
         /// 
         /// <summary>
@@ -102,6 +117,7 @@ namespace Cube.Net.App.Rss.Reader
         private string _title;
         private int _count;
         private RssCategory _parent;
+        private bool _expanded = false;
         private bool _editing = false;
         #endregion
     }

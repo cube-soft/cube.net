@@ -12,6 +12,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+        <Setter Property="IsExpanded" Value="{Binding Expanded, Mode=TwoWay}"/>
         <Setter Property="xu:ExpandIcon.Visibility" Value="Collapsed"/>
     </Style>
 
