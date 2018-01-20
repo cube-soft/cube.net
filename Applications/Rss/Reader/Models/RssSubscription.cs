@@ -319,7 +319,7 @@ namespace Cube.Net.App.Rss.Reader
         public void Reset(Uri uri)
         {
             _feeds.DeleteCache(uri);
-            var feed = Lookup(uri);
+            var feed = FindFeed(uri);
             feed.Items.Clear();
             feed.LastChecked = DateTime.MinValue;
             Update(uri);
@@ -391,10 +391,33 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Lookup
+        /// FindFeed
         /// 
         /// <summary>
-        /// URL に対応する RSS フィードを取得します。
+        /// URL に対応する RssEntry オブジェクトを取得します。
+        /// </summary>
+        /// 
+        /// <param name="uri">URL</param>
+        /// 
+        /// <returns>RssEntry オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssEntry FindEntry(Uri uri)
+        {
+            var cvt = _items.Flatten(e => (e is RssCategory c) ? c.Items : null)
+                            .OfType<RssEntry>();
+
+            return uri != null ?
+                   cvt.FirstOrDefault(e => e.Uri == uri) :
+                   cvt.FirstOrDefault();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FindFeed
+        /// 
+        /// <summary>
+        /// URL に対応する RssFeed オブジェクトを取得します。
         /// </summary>
         /// 
         /// <param name="uri">URL</param>
@@ -402,7 +425,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFeed Lookup(Uri uri) => _feeds.ContainsKey(uri) ? _feeds[uri] : null;
+        public RssFeed FindFeed(Uri uri) => _feeds.ContainsKey(uri) ? _feeds[uri] : null;
 
         #region IEnumerable
 

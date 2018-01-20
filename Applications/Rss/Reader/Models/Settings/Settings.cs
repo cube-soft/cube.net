@@ -32,7 +32,67 @@ namespace Cube.Net.App.Rss.Reader
     /// 
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class Settings : ObservableProperty { }
+    public class Settings : ObservableProperty
+    {
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Start
+        /// 
+        /// <summary>
+        /// 起動時に表示する RssEntry オブジェクトの URL を取得または
+        /// 設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public Uri Start
+        {
+            get => _feedUri;
+            set => SetProperty(ref _feedUri, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Width
+        /// 
+        /// <summary>
+        /// メイン画面の幅を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public int Width
+        {
+            get => _width;
+            set => SetProperty(ref _width, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Height
+        /// 
+        /// <summary>
+        /// メイン画面の高さを取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public int Height
+        {
+            get => _height;
+            set => SetProperty(ref _height, value);
+        }
+
+        #endregion
+
+        #region Fields
+        private Uri _feedUri;
+        private int _width = 1060;
+        private int _height = 630;
+        #endregion
+    }
 
     /* --------------------------------------------------------------------- */
     ///

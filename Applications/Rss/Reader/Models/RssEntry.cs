@@ -285,4 +285,51 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RssEntryOperations
+    ///
+    /// <summary>
+    /// RssEntry に関する拡張用クラスです。
+    /// </summary>
+    /// 
+    /* --------------------------------------------------------------------- */
+    public static class RssEntryOperations
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Flatten
+        /// 
+        /// <summary>
+        /// 木構造を一次元配列に変換します。
+        /// </summary>
+        /// 
+        /// <param name="src">木構造オブジェクト</param>
+        /// <param name="children">
+        /// 子要素を選択するための関数オブジェクト
+        /// </param>
+        /// 
+        /// <returns>変換後のオブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> src,
+            Func<T, IEnumerable<T>> children) =>
+            src.Flatten((e, s) => children(e));
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Flatten
+        /// 
+        /// <summary>
+        /// 木構造を一次元配列に変換します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IEnumerable<T> Flatten<T>(this IEnumerable<T> src,
+            Func<T, IEnumerable<T>, IEnumerable<T>> func) => src.Concat(
+                src.Where(e => func(e, src) != null)
+                   .SelectMany(e => func(e, src).Flatten(func))
+            );
+    }
 }

@@ -104,6 +104,19 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Setup
+        /// 
+        /// <summary>
+        /// 初期処理を実行するコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Setup => _setup ?? (
+            _setup = new RelayCommand(() => Model.Setup())
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Settings
         /// 
         /// <summary>
@@ -302,6 +315,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
+        private RelayCommand _setup;
         private RelayCommand _settings;
         private RelayCommand _property;
         private RelayCommand _newEntry;

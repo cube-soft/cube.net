@@ -14,8 +14,8 @@
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
     Title="{Binding Data.Article.Value, Converter={my:TitleConverter}}"
-    Width="1060"
-    Height="630">
+    Width="{Binding Data.User.Value.Width, Mode=TwoWay}"
+    Height="{Binding Data.User.Value.Height, Mode=TwoWay}">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -34,6 +34,10 @@
     </Window.DataContext>
 
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Setup}"/>
+        </i:EventTrigger>
+        
         <i:EventTrigger EventName="Closed">
             <xt:DialogAction/>
         </i:EventTrigger>

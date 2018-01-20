@@ -58,7 +58,7 @@ namespace Cube.Net.App.Rss.Reader
             Subscription.SubCollectionChanged += (s, e) => Subscription.Save(Settings.Feed);
             Subscription.Received += WhenReceived;
 
-            Data = new RssBindableData(Subscription);
+            Data = new RssBindableData(Subscription, Settings.Value);
         }
 
         #endregion
@@ -112,6 +112,20 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Setup
+        ///
+        /// <summary>
+        /// 初期処理を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Setup()
+        {
+            Select(Subscription.FindEntry(Settings.Value.Start));
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -272,11 +286,12 @@ namespace Cube.Net.App.Rss.Reader
             {
                 var prev = Data.Feed.Value;
                 if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
-                Data.Feed.Value = Subscription.Lookup(entry.Uri);
+                Data.Feed.Value = Subscription.FindFeed(entry.Uri);
 
                 var items = Data.Feed.Value?.UnreadItems;
                 var first = items?.Count() > 0 ? items.First() : null;
                 Select(first);
+                Settings.Value.Start = entry.Uri;
             }
         }
 
@@ -381,7 +396,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void ReadAll(RssEntry entry)
         {
-            var feed = Subscription.Lookup(entry.Uri);
+            var feed = Subscription.FindFeed(entry.Uri);
             if (feed == null) return;
             foreach (var article in feed.UnreadItems) article.Read = true;
         }

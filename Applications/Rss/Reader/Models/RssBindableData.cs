@@ -44,11 +44,13 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /// <param name="root">ルートオブジェクト</param>
+        /// <param name="settings">設定用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssBindableData(IEnumerable<RssEntryBase> root)
+        public RssBindableData(IEnumerable<RssEntryBase> root, Settings settings)
         {
             Root = root;
+            User = new Bindable<Settings>(settings);
         }
 
         #endregion
@@ -66,6 +68,17 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public IEnumerable<RssEntryBase> Root { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Settings
+        /// 
+        /// <summary>
+        /// ユーザ設定を保持するオブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<Settings> User { get; }
 
         /* ----------------------------------------------------------------- */
         ///
