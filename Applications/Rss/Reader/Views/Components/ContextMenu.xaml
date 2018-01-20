@@ -26,9 +26,9 @@
         <MenuItem Header="インポート"/>
         <MenuItem Header="エクスポート"/>
         <Separator/>
-        <MenuItem Header="設定"                   Command="{Binding Settings}"/>
-        <MenuItem Header="バージョン情報"         Command="{Binding Settings}"/>
+        <MenuItem Header="設定"            Command="{Binding Settings}"/>
+        <MenuItem Header="バージョン情報"  Command="{Binding Settings}"/>
         <Separator/>
-        <MenuItem Header="終了"                   Command="{Binding Close}"/>
+        <MenuItem Header="終了"            Command="{Binding Close}"/>
     </ContextMenu>
 </ResourceDictionary>

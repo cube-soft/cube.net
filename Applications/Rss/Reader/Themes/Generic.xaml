@@ -14,9 +14,10 @@
     
     <SolidColorBrush x:Key="MainBackgroundBrush"   Color="#FFF6F6F6"/>
     <SolidColorBrush x:Key="DarkBackgroundBrush"   Color="#FFEAEAEA"/>
+    <SolidColorBrush x:Key="HoverBackgroundBrush"  Color="#FFF2F7FD"/>
     <SolidColorBrush x:Key="AccentBackgroundBrush" Color="#FF662D91"/>
     <SolidColorBrush x:Key="AlphaBackgroundBrush"  Color="#E0F6F6F6"/>
-    <SolidColorBrush x:Key="MeuBackgroundBrush"    Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="MenuBackgroundBrush"   Color="#FFF6F6F6"/>
 
     <!--
         Border colors
@@ -24,6 +25,8 @@
     
     <SolidColorBrush x:Key="MainBorderBrush"       Color="#FFE6E6E6"/>
     <SolidColorBrush x:Key="DarkBorderBrush"       Color="#FF7F7F7F"/>
+    <SolidColorBrush x:Key="HoverBorderBrush"      Color="#FFB8D6FB"/>
+    <SolidColorBrush x:Key="MenuBorderBrush"       Color="#FF7F7F7F"/>
 
     <!--
         Text colors
@@ -39,25 +42,54 @@
         Styles for components
     -->
     
-    <Style TargetType="Window">
+    <Style TargetType="{x:Type Window}">
         <Setter Property="Background" Value="White"/>
         <Setter Property="Icon" Value="pack://application:,,,/App.ico"/>
     </Style>
 
-    <Style x:Key="Dialog" TargetType="Window">
+    <Style x:Key="Dialog" TargetType="{x:Type Window}" BasedOn="{StaticResource {x:Type Window}}">
         <Setter Property="ResizeMode" Value="NoResize"/>
         <Setter Property="ShowInTaskbar" Value="False"/>
         <Setter Property="Topmost" Value="True"/>
     </Style>
 
-    <Style TargetType="ListView">
+    <Style TargetType="{x:Type ListView}">
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
         <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling"/>
     </Style>
-    
-    <Style TargetType="ToolTip">
+
+    <Style TargetType="{x:Type ToolTip}">
         <Setter Property="Background" Value="{StaticResource AlphaBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+    </Style>
+
+    <Style TargetType="{x:Type ContextMenu}">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                    <Border
+                        x:Name="Border"
+                        Padding="4,2,4,2"
+                        Background="{StaticResource MenuBackgroundBrush}"
+                        BorderThickness="1"
+                        BorderBrush="{StaticResource MenuBorderBrush}">
+                        <StackPanel Orientation="Vertical" IsItemsHost="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource MenuBackgroundBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type MenuItem}">
+        <Setter Property="FontFamily" Value="Meiyor UI"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="0,1,0,1"/>
     </Style>
 </ResourceDictionary>
