@@ -20,7 +20,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cube.FileSystem;
 using Cube.Net.Rss;
-using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -116,7 +115,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Register
+        /// NewEntry
         ///
         /// <summary>
         /// 新規 URL を登録します。
@@ -125,11 +124,23 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">URL</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public Task Register(string src) => Subscription.Register(
+        public Task NewEntry(string src) => Subscription.Register(
             src.Contains("://") ?
             new Uri(src) :
             new Uri("http://" + src)
         );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// NewCategory
+        ///
+        /// <summary>
+        /// 新しいカテゴリを生成します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void NewCategory() =>
+            Select(Subscription.CreateCategory(Data.Entry.Value));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -162,65 +173,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">選択中の RSS フィード</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Update(RssFeed src)
-        {
-            if (src == null) return;
-            Subscription.Update(src.Uri);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Select
-        ///
-        /// <summary>
-        /// RSS フィードを選択します。
-        /// </summary>
-        /// 
-        /// <param name="src">選択項目</param>
-        /// 
-        /// <remarks>
-        /// 未読アイテムがゼロの場合、選択項目から外れたタイミングで
-        /// 全記事を削除しています。これは主にメモリ使用量の抑制を目的と
-        /// しています。
-        /// </remarks>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Select(RssEntryBase src)
-        {
-            if (src == null) return;
-
-            Data.Entry.Value = src;
-            if (src is RssEntry entry)
-            {
-                var prev = Data.Feed.Value;
-                if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
-                Data.Feed.Value = Subscription.Lookup(entry.Uri);
-
-                var items = Data.Feed.Value?.UnreadItems;
-                var first = items?.Count() > 0 ? items.First() : null;
-                Select(first);
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Select
-        /// 
-        /// <summary>
-        /// RSS フィード中の記事を選択します。
-        /// </summary>
-        /// 
-        /// <param name="src">選択項目</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Select(RssItem src)
-        {
-            if (src == Data.Article.Value) return;
-
-            var tmp = Data.Article.Value;
-            Data.Article.Value = src;
-            if (tmp != null) tmp.Read = true;
-        }
+        public void Update(RssFeed src) => Subscription.Update(src?.Uri);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -255,6 +208,17 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Rename
+        /// 
+        /// <summary>
+        /// 現在選択中の RSS エントリの名前を変更可能な状態に設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Rename() => Data.Entry.Value.Editing = true;
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// ReadAll
         /// 
         /// <summary>
@@ -280,6 +244,60 @@ namespace Cube.Net.App.Rss.Reader
         public void Reset()
         {
             if (Data.Entry.Value is RssEntry entry) Subscription.Reset(entry.Uri);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Select
+        ///
+        /// <summary>
+        /// RSS フィードを選択します。
+        /// </summary>
+        /// 
+        /// <param name="src">選択項目</param>
+        /// 
+        /// <remarks>
+        /// 未読アイテムがゼロの場合、選択項目から外れたタイミングで
+        /// 全記事を削除しています。これは主にメモリ使用量の抑制を目的と
+        /// しています。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Select(RssEntryBase src)
+        {
+            if (src == null) return;
+            Data.Entry.Value = src;
+
+            if (src is RssEntry entry)
+            {
+                var prev = Data.Feed.Value;
+                if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
+                Data.Feed.Value = Subscription.Lookup(entry.Uri);
+
+                var items = Data.Feed.Value?.UnreadItems;
+                var first = items?.Count() > 0 ? items.First() : null;
+                Select(first);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Select
+        /// 
+        /// <summary>
+        /// RSS フィード中の記事を選択します。
+        /// </summary>
+        /// 
+        /// <param name="src">選択項目</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Select(RssItem src)
+        {
+            if (src == Data.Article.Value) return;
+
+            var tmp = Data.Article.Value;
+            Data.Article.Value = src;
+            if (tmp != null) tmp.Read = true;
         }
 
         #region IDisposable

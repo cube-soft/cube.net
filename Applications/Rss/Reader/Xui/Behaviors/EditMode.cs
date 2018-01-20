@@ -51,8 +51,11 @@ namespace Cube.Xui.Behaviors
             set
             {
                 SetValue(ValueProperty, value);
-                if (value) Enable(AssociatedObject as TextBox);
-                else Disable(AssociatedObject as TextBox);
+
+                var control = AssociatedObject as TextBox;
+                if (control == null) return;
+                if (value) Enable(control);
+                else Disable(control);
             }
         }
 

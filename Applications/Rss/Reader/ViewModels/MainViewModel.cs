@@ -143,7 +143,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand NewEntry => _newEntry ?? (
             _newEntry = new RelayCommand(
-                () => Messenger.Send(new RegisterViewModel(e => Model.Register(e)))
+                () => Messenger.Send(new RegisterViewModel(e => Model.NewEntry(e)))
             )
         );
 
@@ -157,7 +157,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand NewCategory => _newCategory ?? (
-            _newCategory = new RelayCommand(() => { })
+            _newCategory = new RelayCommand(() => Model.NewCategory())
         );
 
         /* ----------------------------------------------------------------- */
@@ -183,7 +183,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Rename => _rename ?? (
-            _rename = new RelayCommand(() => Data.Entry.Value.Editing = true)
+            _rename = new RelayCommand(() => Model.Rename())
         );
 
         /* ----------------------------------------------------------------- */

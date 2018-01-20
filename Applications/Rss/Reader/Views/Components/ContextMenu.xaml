@@ -7,16 +7,15 @@
     -->
     
     <ContextMenu x:Key="RssEntryMenu">
-        <MenuItem Header="最新の情報に更新"       Command="{Binding Update}"/>
-        <MenuItem Header="全ての記事を既読に設定" Command="{Binding ReadAll}"/>
+        <MenuItem Header="最新の情報に更新"           Command="{Binding Update}"/>
+        <MenuItem Header="全ての記事を既読に設定"     Command="{Binding ReadAll}"/>
+        <MenuItem Header="キャッシュをクリアして更新" Command="{Binding Reset}"/>
         <Separator/>
-        <MenuItem Header="新しいフォルダーを追加" Command="{Binding NewCategory}"/>
+        <MenuItem Header="新しいフォルダーを追加"     Command="{Binding NewCategory}"/>
+        <MenuItem Header="削除"                       Command="{Binding Remove}"/>
+        <MenuItem Header="名前の変更"                 Command="{Binding Rename}"/>
         <Separator/>
-        <MenuItem Header="キャッシュをクリア"     Command="{Binding Reset}"/>
-        <MenuItem Header="削除"                   Command="{Binding Remove}"/>
-        <MenuItem Header="名前の変更"             Command="{Binding Rename}"/>
-        <Separator/>
-        <MenuItem Header="プロパティ"             Command="{Binding Property}"/>
+        <MenuItem Header="プロパティ"                 Command="{Binding Property}"/>
     </ContextMenu>
 
     <!--

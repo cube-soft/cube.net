@@ -190,6 +190,37 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// CreateCategory
+        ///
+        /// <summary>
+        /// 新しい RssCategory オブジェクトを生成して挿入します。
+        /// </summary>
+        /// 
+        /// <param name="src">挿入位置</param>
+        /// 
+        /// <returns>生成オブジェクト</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public RssCategory CreateCategory(RssEntryBase src)
+        {
+            var parent = src is RssCategory c ? c : src?.Parent;
+            var dest = new RssCategory
+            {
+                Title  = "新しいフォルダー",
+                Parent = parent,
+                Editing = true,
+            };
+
+            var items = parent != null ? parent.Items : _items;
+            var count = parent != null ? parent.Entries.Count() : Entries.Count();
+            items.Insert(items.Count - count, dest);
+            Expand(parent);
+
+            return dest;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Update
         ///
         /// <summary>
@@ -505,17 +536,20 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WhenPropertyChanged
+        /// Expand
         /// 
         /// <summary>
-        /// RssEntryBase のプロパティ変更時に実行されるハンドラです。
+        /// RSS カテゴリの子要素が表示された状態に設定します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void WhenPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Expand(RssCategory src)
         {
-            if (e.PropertyName != nameof(RssEntryBase.Count)) return;
-            UpdateCount(sender as RssEntryBase);
+            while (src != null)
+            {
+                src.Expanded = true;
+                src = src.Parent;
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -545,6 +579,21 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private ArgumentException Error(string message)
             => new ArgumentException(message);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenPropertyChanged
+        /// 
+        /// <summary>
+        /// RssEntryBase のプロパティ変更時に実行されるハンドラです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void WhenPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(RssEntryBase.Count)) return;
+            UpdateCount(sender as RssEntryBase);
+        }
 
         #endregion
 
