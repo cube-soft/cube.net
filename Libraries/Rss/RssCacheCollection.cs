@@ -34,8 +34,40 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssCacheCollection : IDictionary<Uri, RssFeed>
+    public class RssCacheCollection : IDictionary<Uri, RssFeed>, IDisposable
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssCacheCollection
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssCacheCollection() : this(new Dictionary<Uri, RssFeed>()) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssCacheCollection
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="inner">内部バッファ</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssCacheCollection(IDictionary<Uri, RssFeed> inner)
+        {
+            _once = new OnceAction<bool>(Dispose);
+            _inner = inner;
+        }
+
+        #endregion
+
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -91,11 +123,11 @@ namespace Cube.Net.Rss
         {
             get
             {
-                var dest = _src[key];
+                var dest = _inner[key];
                 Pop(key, dest);
                 return dest;
             }
-            set => _src[key] = value;
+            set => _inner[key] = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -107,7 +139,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICollection<Uri> Keys => _src.Keys;
+        public ICollection<Uri> Keys => _inner.Keys;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -118,7 +150,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICollection<RssFeed> Values => _src.Values;
+        public ICollection<RssFeed> Values => _inner.Values;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -129,7 +161,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public int Count => _src.Count;
+        public int Count => _inner.Count;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -140,7 +172,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsReadOnly => _src.IsReadOnly;
+        public bool IsReadOnly => _inner.IsReadOnly;
 
         #endregion
 
@@ -161,7 +193,7 @@ namespace Cube.Net.Rss
         {
             foreach (var uri in _otm)
             {
-                try { Stash(uri); }
+                try { Save(uri); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
             _otm.Clear();
@@ -199,7 +231,7 @@ namespace Cube.Net.Rss
         /// <returns>含まれているかどうか</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Contains(KeyValuePair<Uri, RssFeed> item) => _src.Contains(item);
+        public bool Contains(KeyValuePair<Uri, RssFeed> item) => _inner.Contains(item);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -214,7 +246,7 @@ namespace Cube.Net.Rss
         /// <returns>含まれているかどうか</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public bool ContainsKey(Uri key) => _src.ContainsKey(key);
+        public bool ContainsKey(Uri key) => _inner.ContainsKey(key);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -228,11 +260,8 @@ namespace Cube.Net.Rss
         /// <param name="value">値</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Add(Uri key, RssFeed value)
-        {
-            _src.Add(key, value);
-            Pop(key, value);
-        }
+        public void Add(Uri key, RssFeed value) =>
+            Add(new KeyValuePair<Uri, RssFeed>(key, value));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -247,8 +276,8 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Add(KeyValuePair<Uri, RssFeed> item)
         {
-            _src.Add(item);
-            Pop(item.Key, item.Value);
+            _inner.Add(item);
+            Pop(item);
         }
 
         /* ----------------------------------------------------------------- */
@@ -266,8 +295,12 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public bool Remove(Uri key)
         {
-            var result =  _src.Remove(key);
-            if (result) _otm.Remove(key);
+            var result =  _inner.Remove(key);
+            if (result)
+            {
+                _otm.Remove(key);
+                DeleteCache(key);
+            }
             return result;
         }
 
@@ -284,12 +317,7 @@ namespace Cube.Net.Rss
         /// <returns>削除が成功したかどうか</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Remove(KeyValuePair<Uri, RssFeed> item)
-        {
-            var result = _src.Remove(item);
-            if (result) _otm.Remove(item.Key);
-            return result;
-        }
+        public bool Remove(KeyValuePair<Uri, RssFeed> item) => Remove(item.Key);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -302,7 +330,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Clear()
         {
-            _src.Clear();
+            _inner.Clear();
             _otm.Clear();
         }
 
@@ -322,7 +350,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public bool TryGetValue(Uri key, out RssFeed value)
         {
-            var result = _src.TryGetValue(key, out value);
+            var result = _inner.TryGetValue(key, out value);
             if (result) Pop(key, value);
             return result;
         }
@@ -356,9 +384,9 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public IEnumerator<KeyValuePair<Uri, RssFeed>> GetEnumerator()
         {
-            foreach (var kv in _src)
+            foreach (var kv in _inner)
             {
-                Pop(kv.Key, kv.Value);
+                Pop(kv);
                 yield return kv;
             }
         }
@@ -375,6 +403,51 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #endregion
+
+        #region IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~RssCacheCollection
+        ///
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        ~RssCacheCollection() { _once.Invoke(false); }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            _once.Invoke(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージオブジェクトを開放するかどうか
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing) => Save();
 
         #endregion
 
@@ -395,31 +468,21 @@ namespace Cube.Net.Rss
         {
             if (_otm.Count <= Capacity) return;
             var uri = _otm[0];
-            Stash(uri);
+            Save(uri);
             _otm.Remove(uri);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Stash
+        /// Pop
         ///
         /// <summary>
-        /// RSS フィードをキャッシュファイルに保存します。
+        /// RSS フィードをキャッシュファイルから復帰させます。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void Stash(Uri uri)
-        {
-            if (string.IsNullOrEmpty(Directory) || !_src.ContainsKey(uri)) return;
-
-            var feed = _src[uri];
-            if (feed == null || feed.LastChecked == DateTime.MinValue) return;
-
-            if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, feed);
-
-            feed.Items.Clear();
-        }
+        private void Pop(KeyValuePair<Uri, RssFeed> item) =>
+            Pop(item.Key, item.Value);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -452,7 +515,7 @@ namespace Cube.Net.Rss
             }
             finally
             {
-                if (dest.LastChecked != DateTime.MinValue) _otm.Add(uri);
+                _otm.Add(uri);
                 Stash();
             }
         }
@@ -481,6 +544,28 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Save
+        ///
+        /// <summary>
+        /// RSS フィードをキャッシュファイルに保存します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Save(Uri uri)
+        {
+            if (string.IsNullOrEmpty(Directory) || !_inner.ContainsKey(uri)) return;
+
+            var feed = _inner[uri];
+            if (feed == null || feed.LastChecked == DateTime.MinValue) return;
+
+            if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
+            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, feed);
+
+            feed.Items.Clear();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// CacheName
         ///
         /// <summary>
@@ -501,12 +586,13 @@ namespace Cube.Net.Rss
             return IO.Combine(Directory, name);
         }
 
-        #region Fields
-        private IDictionary<Uri, RssFeed> _src = new Dictionary<Uri, RssFeed>();
-        private IList<Uri> _otm = new List<Uri>();
-        private uint _capacity = 20;
         #endregion
 
+        #region Fields
+        private OnceAction<bool> _once;
+        private IDictionary<Uri, RssFeed> _inner;
+        private IList<Uri> _otm = new List<Uri>();
+        private uint _capacity = 20;
         #endregion
     }
 }

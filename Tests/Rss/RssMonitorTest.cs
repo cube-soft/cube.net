@@ -46,23 +46,34 @@ namespace Cube.Net.Tests
         [Test]
         public void Start()
         {
-            var uri = new Uri("http://blog.cube-soft.jp/?feed=rss2");
-            var src = new RssCacheCollection();
+            var start = DateTime.Now;
+            var u0  = new Uri("http://blog.cube-soft.jp/?feed=rss2");
+            var f0 = "722a6df5a86c7464e1eeaeb691ba50be";
+            var u1  = new Uri("https://blogs.msdn.microsoft.com/dotnet/feed");
+            var f1  = "3a9c5f4a720884dddb53fb356680ef82";
 
-            using (var mon = new RssMonitor(src))
+            using (var src = new RssCacheCollection() { Directory = Results })
             {
-                var cts = new CancellationTokenSource();
-                mon.Subscribe(e => cts.Cancel());
-                mon.Register(uri);
-                mon.Start();
-                WaitAsync(cts.Token).Wait();
-                mon.Stop();
+                using (var mon = new RssMonitor(src))
+                {
+                    var count = 0;
+                    var cts   = new CancellationTokenSource();
+
+                    mon.Register(u0);
+                    mon.Register(u1);
+                    mon.Subscribe(e => { if (++count >= 2) cts.Cancel(); });
+                    mon.Start();
+                    WaitAsync(cts.Token).Wait();
+                    mon.Stop();
+                }
+
+                Assert.That(src[u0].Title,       Is.EqualTo("CubeSoft Blog"));
+                Assert.That(src[u0].LastChecked, Is.GreaterThan(start));
+                Assert.That(src[u0].Items.Count, Is.GreaterThan(0));
             }
 
-            Assert.That(src.ContainsKey(uri), Is.True);
-            Assert.That(src[uri].Title,       Is.Not.Null.And.Not.Empty);
-            Assert.That(src[uri].LastChecked, Is.Not.EqualTo(DateTime.MinValue));
-            Assert.That(src[uri].Items.Count, Is.GreaterThan(0));
+            Assert.That(IO.Exists(Result(f0)), Is.True, f0);
+            Assert.That(IO.Exists(Result(f1)), Is.True, f1);
         }
     }
 }

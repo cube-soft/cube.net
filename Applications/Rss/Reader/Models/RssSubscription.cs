@@ -504,8 +504,12 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (_disposed) return;
             _disposed = true;
-            if (disposing) _monitor.Dispose();
-            _feeds.Save();
+
+            if (disposing)
+            {
+                _monitor.Dispose();
+                _feeds.Dispose();
+            }
         }
 
         #endregion

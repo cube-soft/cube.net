@@ -359,9 +359,12 @@ namespace Cube.Net.App.Rss.Reader
             if (_disposed) return;
             _disposed = true;
 
-            if (Data.Article.Value != null) Data.Article.Value.Read = true;
-            Subscription.Dispose();
-            Settings.Dispose();
+            if (disposing)
+            {
+                if (Data.Article.Value != null) Data.Article.Value.Read = true;
+                Subscription.Dispose();
+                Settings.Dispose();
+            }
         }
 
         #endregion
