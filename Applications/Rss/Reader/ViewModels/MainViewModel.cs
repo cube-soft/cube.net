@@ -314,6 +314,25 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) Model.Dispose();
+            base.Dispose(disposing);
+        }
+
+        #endregion
+
         #region Fields
         private RelayCommand _setup;
         private RelayCommand _settings;

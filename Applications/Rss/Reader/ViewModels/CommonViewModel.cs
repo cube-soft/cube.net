@@ -34,7 +34,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public abstract class CommonViewModel : ViewModelBase
+    public abstract class CommonViewModel : ViewModelBase, IDisposable
     {
         #region Constructors
 
@@ -60,7 +60,10 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="messenger">メッセージ伝搬用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public CommonViewModel(IMessenger messenger) : base(messenger) { }
+        public CommonViewModel(IMessenger messenger) : base(messenger)
+        {
+            _once = new OnceAction<bool>(Dispose);
+        }
 
         #endregion
 
@@ -149,9 +152,55 @@ namespace Cube.Net.App.Rss.Reader
             Send(ss.ToString());
         }
 
+        #region IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~CommonViewModel
+        /// 
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        ~CommonViewModel() { _once.Invoke(false); }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            _once.Invoke(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージオブジェクトを開放するかどうか
+        /// </param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing) { }
+
+        #endregion
+
         #endregion
 
         #region Fields
+        private OnceAction<bool> _once;
         private RelayCommand _close;
         #endregion
     }

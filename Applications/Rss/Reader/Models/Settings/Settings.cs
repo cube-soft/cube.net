@@ -136,10 +136,10 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public SettingsFolder(string root, Operator io) : base(SettingsType.Json)
         {
-            AutoSave = false;
-            Path = io.Combine(root, "Settings.json");
-            IO = io;
-            Root = root;
+            AutoSave = true;
+            Path     = io.Combine(root, "Settings.json");
+            IO       = io;
+            Root     = root;
         }
 
         #endregion

@@ -50,6 +50,8 @@ namespace Cube.Net.App.Rss.Reader
         public RssFacade(SettingsFolder settings)
         {
             Settings = settings;
+            if (IO.Exists(Settings.Path)) Settings.Load();
+            Settings.AutoSave = true;
 
             Subscription.IO = Settings.IO;
             Subscription.CacheDirectory = Settings.Cache;
@@ -359,6 +361,7 @@ namespace Cube.Net.App.Rss.Reader
 
             if (Data.Article.Value != null) Data.Article.Value.Read = true;
             Subscription.Dispose();
+            Settings.Dispose();
         }
 
         #endregion
