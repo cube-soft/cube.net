@@ -19,6 +19,7 @@ using System;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using Cube.Net.Rss;
+using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -140,8 +141,13 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Property => _property ?? (
-            _property = new RelayCommand(
-                () => Messenger.Send(new PropertyViewModel())
+            _property = new BindableCommand(
+                () => Messenger.Send(new PropertyViewModel(
+                    Data.Entry.Value as RssEntry,
+                    Data.Feed.Value
+                )),
+                () => Data.Entry.Value is RssEntry && Data.Feed.Value != null,
+                Data.Entry
             )
         );
 
@@ -208,7 +214,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Update => _update ?? (
+        public ICommand Update => _update ?? (
             _update = new RelayCommand(() => Model.Update(Data.Entry.Value))
         );
 
@@ -334,21 +340,21 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private RelayCommand _setup;
-        private RelayCommand _settings;
-        private RelayCommand _property;
-        private RelayCommand _newEntry;
-        private RelayCommand _newCategory;
-        private RelayCommand _update;
-        private RelayCommand _updateOne;
-        private RelayCommand _readAll;
-        private RelayCommand _reset;
-        private RelayCommand _remove;
-        private RelayCommand _rename;
-        private RelayCommand<object> _selectEntry;
-        private RelayCommand<object> _selectArticle;
-        private RelayCommand<object> _hover;
-        private RelayCommand<Uri> _navigate;
+        private ICommand _setup;
+        private ICommand _settings;
+        private ICommand _property;
+        private ICommand _newEntry;
+        private ICommand _newCategory;
+        private ICommand _update;
+        private ICommand _updateOne;
+        private ICommand _readAll;
+        private ICommand _reset;
+        private ICommand _remove;
+        private ICommand _rename;
+        private ICommand _selectEntry;
+        private ICommand _selectArticle;
+        private ICommand _hover;
+        private ICommand _navigate;
         #endregion
     }
 }

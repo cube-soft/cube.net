@@ -62,7 +62,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public CommonViewModel(IMessenger messenger) : base(messenger)
         {
-            _once = new OnceAction<bool>(Dispose);
+            _dispose = new OnceAction<bool>(Dispose);
         }
 
         #endregion
@@ -163,7 +163,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        ~CommonViewModel() { _once.Invoke(false); }
+        ~CommonViewModel() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -176,7 +176,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            _once.Invoke(true);
+            _dispose.Invoke(true);
             GC.SuppressFinalize(this);
         }
 
@@ -200,7 +200,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _once;
+        private OnceAction<bool> _dispose;
         private RelayCommand _close;
         #endregion
     }

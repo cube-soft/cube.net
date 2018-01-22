@@ -5,6 +5,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xc="clr-namespace:Cube.Xui.Converters"
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     mc:Ignorable="d"
     
@@ -19,10 +20,6 @@
     </Window.Resources>
 
     <i:Interaction.Triggers>
-        <xt:DialogTrigger Messenger="{Binding Messenger}">
-            <xt:DialogAction/>
-        </xt:DialogTrigger>
-
         <xt:CloseTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>
         </xt:CloseTrigger>
@@ -36,53 +33,79 @@
 
         <Grid Margin="20,20,20,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="95"/>
+                <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
                 <RowDefinition Height="12"/>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
+            <TextBlock
+                Text="タイトル"
+                VerticalAlignment="Center"/>
+            
             <TextBox
-                Text="CubeSoft Blog"
+                Text="{Binding Entry.Value.Title}"
                 FontSize="14"
                 Padding="2"
                 VerticalAlignment="Center"
                 Grid.Row="0"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"/>
+                Grid.Column="1"/>
 
             <TextBlock
-                Text="https://blog.cube-soft.jp/?feed=rss2"
-                Foreground="{StaticResource GrayTextBrush}"
-                VerticalAlignment="Center"
-                Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"/>
-
-            <TextBlock
-                Text="最終チェック日時 2018/01/04 18:13:22"
-                Foreground="{StaticResource GrayTextBrush}"
-                VerticalAlignment="Center"
+                Text="フィード URL"
+                Style="{StaticResource SummaryStyle}"
                 Grid.Row="2"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"/>
+                Grid.Column="0"/>
+            
+            <TextBlock
+                Text="{Binding Entry.Value.Uri, Converter={xc:ValueToString}}"
+                Style="{StaticResource SummaryStyle}"
+                Grid.Row="2"
+                Grid.Column="1"/>
+
+            <TextBlock
+                Text="最新記事の更新日時"
+                Style="{StaticResource SummaryStyle}"
+                Grid.Row="3"
+                Grid.Column="0"/>
+            
+            <TextBlock
+                Text="{Binding Feed.Value.LastPublished, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                Style="{StaticResource SummaryStyle}"
+                Grid.Row="3"
+                Grid.Column="1"/>
+
+            <TextBlock
+                Text="最終チェック日時"
+                Style="{StaticResource SummaryStyle}"
+                Grid.Row="4"
+                Grid.Column="0"/>
+
+            <TextBlock
+                Text="{Binding Feed.Value.LastChecked, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                Style="{StaticResource SummaryStyle}"
+                Grid.Row="4"
+                Grid.Column="1"/>
 
             <TextBlock
                 VerticalAlignment="Center"
                 Text="チェック頻度"
-                Grid.Row="4"
+                Grid.Row="6"
                 Grid.Column="0"/>
 
             <ComboBox
+                ItemsSource="{Binding Frequencies}"
                 VerticalAlignment="Center"
-                Grid.Row="4"
+                Grid.Row="6"
                 Grid.Column="1"/>
         </Grid>
 
@@ -92,19 +115,15 @@
             Background="{StaticResource MainBackgroundBrush}"
             Grid.Row="1">
             <Button
-                Content="キャンセル"
                 Command="{Binding Close}"
-                Margin="20,0,0,0"
-                Width="125"
-                Height="30"/>
+                Style="{StaticResource CancelButtonStyle}"
+                IsCancel="True"
+                Margin="20,0,0,0"/>
             <Button
-                Content="OK"
                 Command="{Binding Close}"
+                Style="{StaticResource OkButtonStyle}"
                 IsDefault="True"
-                Margin="8,0,0,0"
-                Width="125"
-                Height="30"
-                Style="{StaticResource AccentButtonStyle}"/>
+                Margin="8,0,0,0"/>
         </StackPanel>
     </Grid>
 </Window>

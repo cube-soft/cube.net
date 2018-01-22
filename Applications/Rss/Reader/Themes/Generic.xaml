@@ -58,6 +58,10 @@
         <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling"/>
     </Style>
 
+    <Style TargetType="{x:Type ComboBox}">
+        <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
+    </Style>
+
     <Style TargetType="{x:Type ToolTip}">
         <Setter Property="Background" Value="{StaticResource AlphaBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>

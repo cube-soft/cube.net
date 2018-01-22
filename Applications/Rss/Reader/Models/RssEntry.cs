@@ -25,6 +25,25 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
+    /// Frequency
+    ///
+    /// <summary>
+    /// RSS フィードをの確認頻度を表した列挙型です。
+    /// </summary>
+    /// 
+    /* --------------------------------------------------------------------- */
+    public enum Frequency
+    {
+        /// <summary>自動</summary>
+        Auto,
+        /// <summary>高頻度</summary>
+        High,
+        /// <summary>低頻度</summary>
+        Low,
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
     /// RssEntryBase
     ///
     /// <summary>
@@ -150,6 +169,21 @@ namespace Cube.Net.App.Rss.Reader
             set => SetProperty(ref _uri, value);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Frequency
+        /// 
+        /// <summary>
+        /// RSS フィードの確認頻度を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Frequency Frequency
+        {
+            get => _frequency;
+            set => SetProperty(ref _frequency, value);
+        }
+
         #endregion
 
         #region Implementations
@@ -168,18 +202,21 @@ namespace Cube.Net.App.Rss.Reader
         {
             [DataMember] public string Title { get; set; }
             [DataMember] public Uri Uri { get; set; }
+            [DataMember] public Frequency Frequency { get; set; }
 
             public Json(RssEntry src)
             {
-                Title = src.Title;
-                Uri   = src.Uri;
+                Title     = src.Title;
+                Uri       = src.Uri;
+                Frequency = src.Frequency;
             }
 
             public RssEntry Convert(RssCategory src) => new RssEntry
             {
-                Title  = Title,
-                Uri    = Uri,
-                Parent = src,
+                Title     = Title,
+                Uri       = Uri,
+                Frequency = Frequency,
+                Parent    = src,
             };
         }
 
@@ -187,6 +224,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private Uri _uri;
+        private Frequency _frequency = Frequency.Auto;
         #endregion
     }
 

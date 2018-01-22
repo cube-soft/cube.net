@@ -6,7 +6,7 @@
         Buttons
     -->
 
-    <Style x:Key="AccentButtonStyle" TargetType="Button">
+    <Style x:Key="AccentButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="BorderBrush" Value="{StaticResource AccentBackgroundBrush}"/>
         <Setter Property="Background" Value="{StaticResource AccentBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource AccentTextBrush}"/>
@@ -18,7 +18,19 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="SettingsButtonStyle" TargetType="Button">
+    <Style x:Key="OkButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource AccentButtonStyle}">
+        <Setter Property="Content" Value="OK"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Width" Value="125"/>
+    </Style>
+
+    <Style x:Key="CancelButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Content" Value="キャンセル"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Width" Value="100"/>
+    </Style>
+
+    <Style x:Key="SettingsButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Content" Value="&#xf0c9;"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -34,25 +46,30 @@
     <!--
         Others
     -->
-    
-    <Style x:Key="FooterStyle" TargetType="StatusBar">
+
+    <Style x:Key="FooterStyle" TargetType="{x:Type StatusBar}">
         <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
         <Setter Property="Padding" Value="8,0,0,0"/>
     </Style>
 
-    <Style x:Key="IconStyle" TargetType="TextBlock">
+    <Style x:Key="IconStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{StaticResource IconTextBrush}"/>
         <Setter Property="FontFamily" Value="{StaticResource FontAwesome}"/>
         <Setter Property="FontSize" Value="16"/>
     </Style>
 
-    <Style x:Key="ShadowStyle" TargetType="Border">
+    <Style x:Key="ShadowStyle" TargetType="{x:Type Border}">
         <Setter Property="BorderBrush" Value="#FFE6E6E6"/>
         <Setter Property="BorderThickness" Value="0,0,1,1"/>
     </Style>
 
-    <Style x:Key="SplitterStyle" TargetType="GridSplitter">
+    <Style x:Key="SummaryStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource GrayTextBrush}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="SplitterStyle" TargetType="{x:Type GridSplitter}">
         <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Focusable" Value="False"/>

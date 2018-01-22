@@ -15,7 +15,12 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using GalaSoft.MvvmLight.Messaging;
+using Cube.Net.Rss;
+using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -30,6 +35,8 @@ namespace Cube.Net.App.Rss.Reader
     /* --------------------------------------------------------------------- */
     public class PropertyViewModel : CommonViewModel
     {
+        #region Constructors
+
         /* ----------------------------------------------------------------- */
         ///
         /// PropertyViewModel
@@ -37,8 +44,57 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <param name="entry">RssEntry オブジェクト</param>
+        /// <param name="feed">RssFeed オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public PropertyViewModel() : base(new Messenger()) { }
+        public PropertyViewModel(RssEntry entry, RssFeed feed) :
+            base(new Messenger())
+        {
+            System.Diagnostics.Debug.Assert(entry != null && feed != null);
+            Entry = new Bindable<RssEntry>(entry);
+            Feed  = new Bindable<RssFeed>(feed);
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Entry
+        /// 
+        /// <summary>
+        /// 対象となる RssEntry オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<RssEntry> Entry { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Feed
+        /// 
+        /// <summary>
+        /// 対象となる RssFeed オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<RssFeed> Feed { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Frequencies
+        /// 
+        /// <summary>
+        /// 更新頻度を表すオブジェクト一覧を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IEnumerable<Frequency> Frequencies { get; } =
+            Enum.GetValues(typeof(Frequency)).Cast<Frequency>();
+
+        #endregion
     }
 }
