@@ -337,6 +337,30 @@ namespace Cube.Net.App.Rss.Reader
     {
         /* ----------------------------------------------------------------- */
         ///
+        /// ToMessage
+        /// 
+        /// <summary>
+        /// Frequency オブジェクトを表すメッセージを取得します。
+        /// </summary>
+        /// 
+        /// <param name="src">Frequency オブジェクト</param>
+        /// 
+        /// <returns>メッセージ</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string ToMessage(this Frequency src)
+        {
+            switch (src)
+            {
+                case Frequency.Auto: return Properties.Resources.MessageAutoFrequency;
+                case Frequency.High: return Properties.Resources.MessageHighFrequency;
+                case Frequency.Low:  return Properties.Resources.MessageLowFrequency;
+            }
+            return string.Empty;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Flatten
         /// 
         /// <summary>

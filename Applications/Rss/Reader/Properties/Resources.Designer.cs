@@ -88,11 +88,38 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   自動 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageAutoFrequency {
+            get {
+                return ResourceManager.GetString("MessageAutoFrequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   高頻度 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageHighFrequency {
+            get {
+                return ResourceManager.GetString("MessageHighFrequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   最終チェック に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageLastChecked {
             get {
                 return ResourceManager.GetString("MessageLastChecked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   低頻度 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageLowFrequency {
+            get {
+                return ResourceManager.GetString("MessageLowFrequency", resourceCulture);
             }
         }
         

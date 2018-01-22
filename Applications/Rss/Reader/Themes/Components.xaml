@@ -53,19 +53,25 @@
         <Setter Property="Padding" Value="8,0,0,0"/>
     </Style>
 
+    <Style x:Key="ShadowStyle" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="#FFE6E6E6"/>
+        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+    </Style>
+
     <Style x:Key="IconStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{StaticResource IconTextBrush}"/>
         <Setter Property="FontFamily" Value="{StaticResource FontAwesome}"/>
         <Setter Property="FontSize" Value="16"/>
     </Style>
 
-    <Style x:Key="ShadowStyle" TargetType="{x:Type Border}">
-        <Setter Property="BorderBrush" Value="#FFE6E6E6"/>
-        <Setter Property="BorderThickness" Value="0,0,1,1"/>
-    </Style>
-
     <Style x:Key="SummaryStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{StaticResource GrayTextBrush}"/>
+        <Setter Property="TextTrimming" Value="WordEllipsis"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="InputStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Padding" Value="2"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 

@@ -85,6 +85,30 @@ namespace Cube.Net.App.Rss.Reader
 
     /* --------------------------------------------------------------------- */
     ///
+    /// FrequencyConverter
+    ///
+    /// <summary>
+    /// Frequency オブジェクトを文字列に変換するクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class FrequencyConverter : OneWayValueConverter
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FrequencyConverter
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public FrequencyConverter() :
+            base(e => e is Frequency f ? f.ToMessage() : string.Empty) { }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
     /// LastCheckedToString
     ///
     /// <summary>
