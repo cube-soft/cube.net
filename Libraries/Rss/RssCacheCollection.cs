@@ -564,7 +564,10 @@ namespace Cube.Net.Rss
                     var feed = Load(uri);
                     if (feed == null) return;
 
-                    dest.LastChecked = feed.LastChecked;
+                    dest.Title         = feed.Title;
+                    dest.Link          = feed.Link;
+                    dest.LastChecked   = feed.LastChecked;
+                    dest.LastPublished = feed.LastPublished;
                     dest.Items.Clear();
                     foreach (var a in feed.UnreadItems) dest.Items.Add(a);
                 }
