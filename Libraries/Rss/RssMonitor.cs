@@ -307,6 +307,8 @@ namespace Cube.Net.Rss
             dest.Link        = src.Link;
             dest.LastChecked = src.LastChecked;
 
+            if (dest.LastPublished < src.LastPublished) dest.LastPublished = src.LastPublished;
+
             await Publish(src);
         }
 

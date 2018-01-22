@@ -118,6 +118,22 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
+        /// LastPublished
+        /// 
+        /// <summary>
+        /// RSS フィードの最新記事の更新日時を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public DateTime LastPublished
+        {
+            get => _lastPublished;
+            set => SetProperty(ref _lastPublished, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Items
         /// 
         /// <summary>
@@ -152,6 +168,7 @@ namespace Cube.Net.Rss
         private Uri _link = null;
         private Uri _uri = null;
         private DateTime _lastChecked = DateTime.MinValue;
+        private DateTime _lastPublished = DateTime.MinValue;
         private IList<RssItem> _items = null;
         #endregion
     }

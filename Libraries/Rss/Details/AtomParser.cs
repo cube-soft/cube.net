@@ -49,13 +49,20 @@ namespace Cube.Net.Rss
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(XElement root) => new RssFeed
+        public static RssFeed Parse(XElement root)
         {
-            Title       = root.GetTitle(),
-            Link        = root.GetUri("link"),
-            Items       = ParseItems(root),
-            LastChecked = DateTime.Now,
-        };
+            var dest = new RssFeed
+            {
+                Title       = root.GetTitle(),
+                Link        = root.GetUri("link"),
+                Items       = ParseItems(root),
+                LastChecked = DateTime.Now,
+            };
+
+            dest.LastPublished = dest.Items.FirstOrDefault()?.PublishTime ??
+                                 DateTime.MinValue;
+            return dest;
+        }
 
         #endregion
 
@@ -86,6 +93,7 @@ namespace Cube.Net.Rss
                 PublishTime = e.GetDateTime("published"),
                 Read        = false,
             })
+            .OrderByDescending(e => e.PublishTime)
             .ToList();
 
         /* ----------------------------------------------------------------- */

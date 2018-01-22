@@ -53,7 +53,8 @@ namespace Cube.Net.Rss
         {
             var e = root.Element("channel");
             if (e == null) return default(RssFeed);
-            return new RssFeed
+
+            var dest = new RssFeed
             {
                 Title       = e.GetTitle(),
                 Description = e.GetValue("description"),
@@ -61,6 +62,10 @@ namespace Cube.Net.Rss
                 Items       = ParseItems(e),
                 LastChecked = DateTime.Now,
             };
+
+            dest.LastPublished = dest.Items.FirstOrDefault()?.PublishTime ??
+                                 DateTime.MinValue;
+            return dest;
         }
 
         #endregion
@@ -92,6 +97,7 @@ namespace Cube.Net.Rss
                 PublishTime = e.GetDateTime("pubDate"),
                 Read        = false,
             })
+            .OrderByDescending(e => e.PublishTime)
             .ToList();
 
         /* ----------------------------------------------------------------- */

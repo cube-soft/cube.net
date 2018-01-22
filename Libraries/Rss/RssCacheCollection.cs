@@ -62,8 +62,8 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public RssCacheCollection(IDictionary<Uri, RssFeed> inner)
         {
-            _once = new OnceAction<bool>(Dispose);
-            _inner = inner;
+            _dispose = new OnceAction<bool>(Dispose);
+            _inner   = inner;
         }
 
         #endregion
@@ -293,13 +293,31 @@ namespace Cube.Net.Rss
         /// <returns>削除が成功したかどうか</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Remove(Uri key)
+        public bool Remove(Uri key) => Remove(key, false);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Remove
+        /// 
+        /// <summary>
+        /// 指定したキーを持つ要素を削除します。
+        /// </summary>
+        /// 
+        /// <param name="key">キー</param>
+        /// <param name="deleteCache">
+        /// キャッシュファイルを削除するかどうか
+        /// </param>
+        /// 
+        /// <returns>削除が成功したかどうか</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Remove(Uri key, bool deleteCache)
         {
-            var result =  _inner.Remove(key);
+            var result = _inner.Remove(key);
             if (result)
             {
                 _otm.Remove(key);
-                DeleteCache(key);
+                if (deleteCache) DeleteCache(key);
             }
             return result;
         }
@@ -321,17 +339,55 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Remove
+        /// 
+        /// <summary>
+        /// 指定した要素を削除します。
+        /// </summary>
+        /// 
+        /// <param name="item">要素</param>
+        /// <param name="deleteCache">
+        /// キャッシュファイルを削除するかどうか
+        /// </param>
+        /// 
+        /// <returns>削除が成功したかどうか</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Remove(KeyValuePair<Uri, RssFeed> item, bool deleteCache) =>
+            Remove(item.Key, deleteCache);
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Clear
         /// 
         /// <summary>
         /// 全ての項目を削除します。
         /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Clear() => Clear(false);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Clear
+        /// 
+        /// <summary>
+        /// 全ての項目を削除します。
+        /// </summary>
+        /// 
+        /// <param name="deleteCache">
+        /// キャッシュファイルを削除するかどうか
+        /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Clear()
+        public void Clear(bool deleteCache)
         {
-            _inner.Clear();
             _otm.Clear();
+            if (deleteCache)
+            {
+                foreach (var uri in _inner.Keys) DeleteCache(uri);
+            }
+            _inner.Clear();
         }
 
         /* ----------------------------------------------------------------- */
@@ -417,7 +473,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        ~RssCacheCollection() { _once.Invoke(false); }
+        ~RssCacheCollection() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -430,7 +486,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            _once.Invoke(true);
+            _dispose.Invoke(true);
             GC.SuppressFinalize(this);
         }
 
@@ -589,7 +645,7 @@ namespace Cube.Net.Rss
         #endregion
 
         #region Fields
-        private OnceAction<bool> _once;
+        private OnceAction<bool> _dispose;
         private IDictionary<Uri, RssFeed> _inner;
         private IList<Uri> _otm = new List<Uri>();
         private uint _capacity = 20;
