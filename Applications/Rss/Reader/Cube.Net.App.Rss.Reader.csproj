@@ -113,6 +113,8 @@
     <Compile Include="Models\Interactions\WebDocument.cs" />
     <Compile Include="Xui\Behaviors\EditMode.cs" />
     <Compile Include="Xui\Behaviors\WindowsFormsBehavior.cs" />
+    <Compile Include="Xui\BindableCommand.cs" />
+    <Compile Include="Xui\BindableCommandGeneric.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Converters\BooleanValueConverter.cs" />
     <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
