@@ -126,7 +126,12 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Setup()
         {
-            Select(Subscription.FindEntry(Settings.Value.Start));
+            var entry = Subscription.FindEntry(Settings.Value.Start);
+            if (entry != null)
+            {
+                Select(entry);
+                Subscription.Expand(entry.Parent);
+            }
         }
 
         /* ----------------------------------------------------------------- */

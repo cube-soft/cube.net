@@ -221,6 +221,26 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Expand
+        /// 
+        /// <summary>
+        /// RSS カテゴリの子要素が表示された状態に設定します。
+        /// </summary>
+        /// 
+        /// <param name="src">カテゴリ</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Expand(RssCategory src)
+        {
+            while (src != null)
+            {
+                src.Expanded = true;
+                src = src.Parent;
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Update
         ///
         /// <summary>
@@ -559,24 +579,6 @@ namespace Cube.Net.App.Rss.Reader
 
             if (src.Categories == null) return;
             foreach (var category in src.Categories) MakeFeed(category);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Expand
-        /// 
-        /// <summary>
-        /// RSS カテゴリの子要素が表示された状態に設定します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void Expand(RssCategory src)
-        {
-            while (src != null)
-            {
-                src.Expanded = true;
-                src = src.Parent;
-            }
         }
 
         /* ----------------------------------------------------------------- */
