@@ -42,8 +42,8 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public DivisionConverter(int divisor) : base(
-            e => (int)e / divisor,
-            e => (int)e * divisor
+            e => ((int)e / divisor).ToString(),
+            e => int.Parse(e as string) * divisor
         ) { }
     }
 
