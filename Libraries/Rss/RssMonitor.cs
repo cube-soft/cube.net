@@ -141,16 +141,28 @@ namespace Cube.Net.Rss
         /// <param name="uri">RSS フィード URL</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Register(Uri uri)
+        public void Register(Uri uri) => Register(uri, new RssFeed
+        {
+            Title = uri.ToString(),
+            Uri   = uri,
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register
+        ///
+        /// <summary>
+        /// 監視対象となる RSS フィード URL を登録します。
+        /// </summary>
+        /// 
+        /// <param name="uri">RSS フィード URL</param>
+        /// <param name="feed">RSS フィード</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Register(Uri uri, RssFeed feed)
         {
             if (Feeds.ContainsKey(uri)) return;
-
-            var feed = new RssFeed
-            {
-                Title = uri.ToString(),
-                Uri   = uri,
-            };
-
+            if (feed == null) throw new ArgumentException("RssFeed is null");
             Feeds.Add(uri, feed);
         }
 
@@ -339,8 +351,8 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private void Shrink(RssFeed src, DateTime threshold) =>
             src.Items = src.Items
-                           .Where(e => e.PublishTime > threshold)
-                           .OrderBy(e => e.PublishTime)
+                           .Reverse()
+                           .SkipWhile(e => e.PublishTime <= threshold)
                            .ToList();
 
         /* ----------------------------------------------------------------- */
