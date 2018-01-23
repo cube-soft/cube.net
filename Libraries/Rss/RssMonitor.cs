@@ -365,6 +365,7 @@ namespace Cube.Net.Rss
                 {
                     this.LogWarn(err.ToString(), err);
                     failed.Add(uri);
+                    if (Feeds.ContainsKey(uri)) Feeds[uri].ErrorCount++;
                 }
             }
         }

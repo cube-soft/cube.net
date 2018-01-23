@@ -134,6 +134,22 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
+        /// ErrorCount
+        /// 
+        /// <summary>
+        /// サーバへの問い合わせに失敗した回数を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public int ErrorCount
+        {
+            get => _errorCount;
+            set => SetProperty(ref _errorCount, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Items
         /// 
         /// <summary>
@@ -169,6 +185,7 @@ namespace Cube.Net.Rss
         private Uri _uri = null;
         private DateTime _lastChecked = DateTime.MinValue;
         private DateTime _lastPublished = DateTime.MinValue;
+        private int _errorCount = 0;
         private IList<RssItem> _items = null;
         #endregion
     }
