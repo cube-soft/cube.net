@@ -127,7 +127,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Settings => _settings ?? (
             _settings = new RelayCommand(
-                () => Messenger.Send(new SettingsViewModel())
+                () => Messenger.Send(new SettingsViewModel(Model.Settings))
             )
         );
 

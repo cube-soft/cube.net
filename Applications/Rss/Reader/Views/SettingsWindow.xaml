@@ -8,58 +8,170 @@
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     mc:Ignorable="d"
     
+    FontFamily="Meiryo UI"
     Style="{StaticResource Dialog}"
     Title="CubeRSS Reader 設定"
-    Height="500"
-    Width="400"
+    Height="470"
+    Width="450"
     WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
-        <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Themes/TabControl.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
     <i:Interaction.Triggers>
-        <xt:DialogTrigger Messenger="{Binding Messenger}">
-            <xt:DialogAction/>
-        </xt:DialogTrigger>
-
         <xt:CloseTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>
         </xt:CloseTrigger>
+
+        <xt:UpdateSourcesTrigger Messenger="{Binding Messenger}">
+            <xt:UpdateSourcesAction/>
+        </xt:UpdateSourcesTrigger>
     </i:Interaction.Triggers>
     
-    <Grid>
+    <Grid Background="{StaticResource MainBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
         <TabControl Margin="20" BorderThickness="1">
-            <TabItem Header="一般"/>
+            <!--
+                General
+            -->
+            <TabItem Header="一般">
+                <Grid Margin="20,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Text="チェック間隔"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="0"
+                        Grid.Column="0"/>
+
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Grid.Row="0"
+                        Grid.Column="1">
+                        <TextBox
+                            Text="60"
+                            Width="100"
+                            Style="{StaticResource InputNumberStyle}"/>
+                        <TextBlock
+                            Text="分（高頻度）"
+                            Style="{StaticResource SummaryStyle}"
+                            Margin="12,0,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Grid.Row="1"
+                        Grid.Column="1">
+                        <TextBox
+                            Text="24"
+                            Width="100"
+                            Style="{StaticResource InputNumberStyle}"/>
+                        <TextBlock
+                            Text="時間（低頻度）"
+                            Style="{StaticResource SummaryStyle}"
+                            Margin="12,0,0,0"/>
+                    </StackPanel>
+
+                    <TextBlock
+                        Text="その他"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="2"
+                        Grid.Column="0"/>
+
+                    <CheckBox
+                        Content="ソフトウェアのアップデートを確認する"
+                        IsChecked="True"
+                        VerticalAlignment="Center"
+                        Grid.Row="2"
+                        Grid.Column="1"/>
+                </Grid>
+            </TabItem>
+
+            <!--
+                Vertion
+            -->
             <TabItem Header="バージョン情報">
-                <TextBlock Text="CubeRSS Reader 1.0.0"/>
+                <Grid Margin="20,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Image
+                        Source="{Binding Logo}"
+                        Height="{Binding Source.PixelHeight, RelativeSource={RelativeSource Self}}"
+                        Width="{Binding Source.PixelWidth, RelativeSource={RelativeSource Self}}"
+                        Grid.Row="0"
+                        Grid.RowSpan="4"
+                        Grid.Column="0"/>
+
+                    <TextBlock
+                        Text="{Binding Product}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="0"
+                        Grid.Column="2"/>
+
+                    <TextBlock
+                        Text="{Binding Version}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="1"
+                        Grid.Column="2"/>
+
+                    <TextBlock
+                        Text="{Binding Windows}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="3"
+                        Grid.Column="2"/>
+
+                    <TextBlock
+                        Text="{Binding Framework}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="4"
+                        Grid.Column="2"/>
+
+                    <TextBlock
+                        Text="{Binding Copyright}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="6"
+                        Grid.Column="2"/>
+                </Grid>
             </TabItem>
         </TabControl>
 
-        <StackPanel
-            Orientation="Horizontal"
-            FlowDirection="RightToLeft"
-            Background="{StaticResource MainBackgroundBrush}"
-            Grid.Row="1">
-            <Button
-                Content="キャンセル"
-                Command="{Binding Close}"
-                Margin="20,0,0,0"
-                Width="125"
-                Height="30"/>
-            <Button
-                Content="OK"
-                Command="{Binding Close}"
-                IsDefault="True"
-                Margin="8,0,0,0"
-                Width="125"
-                Height="30"
-                Style="{StaticResource AccentButtonStyle}"/>
+        <StackPanel Style="{StaticResource FooterButtonsStyle}" Grid.Row="1">
+            <Button Command="{Binding Close}" Style="{StaticResource CancelButtonStyle}" IsCancel="True"/>
+            <Button Command="{Binding Apply}" Style="{StaticResource OkButtonStyle}" IsDefault="True"/>
         </StackPanel>
     </Grid>
 </Window>

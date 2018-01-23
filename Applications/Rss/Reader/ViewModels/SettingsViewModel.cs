@@ -15,7 +15,13 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Cube.Xui;
+using Cube.Xui.Converters;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -41,8 +47,131 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsViewModel() : base(new Messenger()) { }
+        public SettingsViewModel(SettingsFolder settings) : base(new Messenger())
+        {
+            Settings = settings;
+            Data = new Bindable<Settings>(settings.Value);
+        }
 
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Data
+        /// 
+        /// <summary>
+        /// ユーザ設定を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<Settings> Data { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Logo
+        /// 
+        /// <summary>
+        /// アプリケーションのロゴ画像を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public BitmapImage Logo => _logo ?? (
+            _logo = Properties.Resources.Logo.ToBitmapImage()
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Product
+        /// 
+        /// <summary>
+        /// アプリケーション名を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Product => Settings.Product;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Version
+        /// 
+        /// <summary>
+        /// バージョンを表す文字列を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Version => $"Version {Settings.Version.ToString(true)}";
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Windows
+        /// 
+        /// <summary>
+        /// Windows のバージョンを表す文字列を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Windows => Environment.OSVersion.ToString();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Framework
+        /// 
+        /// <summary>
+        /// .NET Framework のバージョンを表す文字列を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Framework => $"Microsoft .NET Framework {Environment.Version}";
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Copyright
+        /// 
+        /// <summary>
+        /// コピーライト表記を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Copyright => AssemblyReader.Default.Copyright;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Settings
+        /// 
+        /// <summary>
+        /// ユーザ設定を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private SettingsFolder Settings { get; }
+
+        #endregion
+
+        #region Commands
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Apply
+        /// 
+        /// <summary>
+        /// 内容を適用するコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Apply => _apply ?? (
+            _apply = new RelayCommand(() =>
+            {
+                Close.Execute(null);
+            })
+        );
+
+        #endregion
+
+        #region Fields
+        private BitmapImage _logo;
+        private ICommand _apply;
         #endregion
     }
 }
