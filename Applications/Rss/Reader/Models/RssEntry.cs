@@ -40,6 +40,8 @@ namespace Cube.Net.App.Rss.Reader
         High,
         /// <summary>低頻度</summary>
         Low,
+        /// <summary>チェックしない</summary>
+        None,
     }
 
     /* --------------------------------------------------------------------- */
@@ -184,6 +186,22 @@ namespace Cube.Net.App.Rss.Reader
             set => SetProperty(ref _frequency, value);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SkipContent
+        /// 
+        /// <summary>
+        /// Content の表示をスキップし、直接 Web ページを表示するかどうか
+        /// を示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool SkipContent
+        {
+            get => _skipContent;
+            set => SetProperty(ref _skipContent, value);
+        }
+
         #endregion
 
         #region Implementations
@@ -203,20 +221,23 @@ namespace Cube.Net.App.Rss.Reader
             [DataMember] public string Title { get; set; }
             [DataMember] public Uri Uri { get; set; }
             [DataMember] public Frequency Frequency { get; set; }
+            [DataMember] public bool SkipContent { get; set; }
 
             public Json(RssEntry src)
             {
-                Title     = src.Title;
-                Uri       = src.Uri;
-                Frequency = src.Frequency;
+                Title       = src.Title;
+                Uri         = src.Uri;
+                Frequency   = src.Frequency;
+                SkipContent = src.SkipContent;
             }
 
             public RssEntry Convert(RssCategory src) => new RssEntry
             {
-                Title     = Title,
-                Uri       = Uri,
-                Frequency = Frequency,
-                Parent    = src,
+                Title       = Title,
+                Uri         = Uri,
+                Frequency   = Frequency,
+                SkipContent = SkipContent,
+                Parent      = src,
             };
         }
 
@@ -225,6 +246,7 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private Uri _uri;
         private Frequency _frequency = Frequency.Auto;
+        private bool _skipContent = false;
         #endregion
     }
 
@@ -355,6 +377,7 @@ namespace Cube.Net.App.Rss.Reader
                 case Frequency.Auto: return Properties.Resources.MessageAutoFrequency;
                 case Frequency.High: return Properties.Resources.MessageHighFrequency;
                 case Frequency.Low:  return Properties.Resources.MessageLowFrequency;
+                case Frequency.None: return Properties.Resources.MessageNoneFrequency;
             }
             return string.Empty;
         }

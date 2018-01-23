@@ -12,8 +12,8 @@
     
     Style="{StaticResource Dialog}"
     FontFamily="Meiryo UI"
-    Title="CubeRSS Reader"
-    Height="330"
+    Title="{Binding Entry.Value.Title, StringFormat={}{0} のプロパティ}"
+    Height="380"
     Width="500"
     WindowStartupLocation="CenterOwner">
 
@@ -42,7 +42,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="20"/>
+                <RowDefinition Height="22"/>
                 <RowDefinition Height="22"/>
                 <RowDefinition Height="22"/>
                 <RowDefinition Height="22"/>
@@ -71,6 +73,7 @@
             <ComboBox
                 ItemsSource="{Binding Frequencies}"
                 SelectedItem="{Binding Entry.Value.Frequency}"
+                ToolTip="サーバに問い合わせる頻度を選択します"
                 VerticalAlignment="Center"
                 Grid.Row="1"
                 Grid.Column="1">
@@ -82,51 +85,80 @@
             </ComboBox>
 
             <TextBlock
-                Text="トップページ"
-                Style="{StaticResource SummaryStyle}"
-                Grid.Row="3"
+                Text="オプション"
+                VerticalAlignment="Center"
+                Grid.Row="2"
                 Grid.Column="0"/>
 
+            <CheckBox
+                IsChecked="{Binding Entry.Value.SkipContent}"
+                Content="Web ページを直接表示"
+                ToolTip="RSS フィードから取得された概要の表示をスキップします"
+                VerticalAlignment="Center"
+                Grid.Row="2"
+                Grid.Column="1"/>
+
             <TextBlock
-                Text="{Binding Feed.Value.Link, Converter={xc:ValueToString}}"
+                Text="トップページ URL"
                 Style="{StaticResource SummaryStyle}"
-                Grid.Row="3"
+                Grid.Row="4"
+                Grid.Column="0"/>
+
+            <TextBox
+                Text="{Binding Feed.Value.Link, Converter={xc:ValueToString}}"
+                Style="{StaticResource CopyableSummaryStyle}"
+                Grid.Row="4"
                 Grid.Column="1"/>
             
             <TextBlock
                 Text="フィード URL"
                 Style="{StaticResource SummaryStyle}"
-                Grid.Row="4"
+                Grid.Row="5"
                 Grid.Column="0"/>
             
-            <TextBlock
+            <TextBox
                 Text="{Binding Entry.Value.Uri, Converter={xc:ValueToString}}"
-                Style="{StaticResource SummaryStyle}"
-                Grid.Row="4"
+                Style="{StaticResource CopyableSummaryStyle}"
+                Grid.Row="5"
                 Grid.Column="1"/>
 
             <TextBlock
-                Text="最新記事の更新日時"
+                Text="最新記事の投稿日時"
                 Style="{StaticResource SummaryStyle}"
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="0"/>
             
-            <TextBlock
+            <TextBox
                 Text="{Binding Feed.Value.LastPublished, StringFormat=yyyy/MM/dd HH:mm:ss}"
-                Style="{StaticResource SummaryStyle}"
-                Grid.Row="5"
+                ToolTip="最新記事が投稿された日時を表します"
+                Style="{StaticResource CopyableSummaryStyle}"
+                Grid.Row="6"
                 Grid.Column="1"/>
 
             <TextBlock
                 Text="最終チェック日時"
                 Style="{StaticResource SummaryStyle}"
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="0"/>
 
-            <TextBlock
+            <TextBox
                 Text="{Binding Feed.Value.LastChecked, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                ToolTip="CubeRSS Reader が最後にチェックした日時を表します"
+                Style="{StaticResource CopyableSummaryStyle}"
+                Grid.Row="7"
+                Grid.Column="1"/>
+
+            <TextBlock
+                Text="通信エラー回数"
                 Style="{StaticResource SummaryStyle}"
-                Grid.Row="6"
+                Grid.Row="8"
+                Grid.Column="0"/>
+
+            <TextBox
+                Text="{Binding Feed.Value.ErrorCount, StringFormat={}{0} 回}"
+                ToolTip="サーバへの問い合わせに失敗した回数を表します"
+                Style="{StaticResource CopyableSummaryStyle}"
+                Grid.Row="8"
                 Grid.Column="1"/>
         </Grid>
 

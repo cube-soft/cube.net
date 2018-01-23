@@ -87,7 +87,18 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private SettingsFolder Settings { get; }
+        public SettingsFolder Settings { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Property
+        /// 
+        /// <summary>
+        /// 選択中の Web ページのプロパティを取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private RssEntry Property { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -293,6 +304,8 @@ namespace Cube.Net.App.Rss.Reader
             {
                 var prev = Data.Feed.Value;
                 if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
+
+                Property = entry;
                 Data.Feed.Value = Subscription.FindFeed(entry.Uri);
 
                 var items = Data.Feed.Value?.UnreadItems;
@@ -318,7 +331,8 @@ namespace Cube.Net.App.Rss.Reader
             if (src == Data.Article.Value) return;
 
             var tmp = Data.Article.Value;
-            Data.Article.Value = src;
+            if (Property.SkipContent) Data.Uri.Value = src.Link;
+            else Data.Article.Value = src;
             if (tmp != null) tmp.Read = true;
         }
 

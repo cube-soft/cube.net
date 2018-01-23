@@ -124,6 +124,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   チェックしない に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageNoneFrequency {
+            get {
+                return ResourceManager.GetString("MessageNoneFrequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   新着記事はありません ({0}) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageNoReceived {

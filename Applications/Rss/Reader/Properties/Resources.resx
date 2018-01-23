@@ -138,6 +138,9 @@
   <data name="MessageLowFrequency" xml:space="preserve">
     <value>低頻度</value>
   </data>
+  <data name="MessageNoneFrequency" xml:space="preserve">
+    <value>チェックしない</value>
+  </data>
   <data name="MessageNoReceived" xml:space="preserve">
     <value>新着記事はありません ({0})</value>
   </data>
