@@ -159,7 +159,7 @@ namespace Cube.Net.App.Rss.Reader
         private int _primary = 60 * 60;
         private int _secondary = 24 * 60 * 60;
         private bool _checkUpdate = true;
-        private DateTime _lastCheckUpdate = DateTime.MinValue;
+        private DateTime _lastCheckUpdate = new DateTime(1970, 1, 1);
         #endregion
     }
 
