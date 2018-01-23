@@ -7,15 +7,15 @@
     -->
     
     <ContextMenu x:Key="RssEntryMenu">
-        <MenuItem Header="最新の情報に更新"           Command="{Binding Update}"/>
-        <MenuItem Header="全ての記事を既読に設定"     Command="{Binding ReadAll}"/>
-        <MenuItem Header="キャッシュをクリアして更新" Command="{Binding Reset}"/>
+        <MenuItem Command="{Binding Update}"      Header="最新の情報に更新"/>
+        <MenuItem Command="{Binding ReadAll}"     Header="全ての記事を既読に設定"/>
+        <MenuItem Command="{Binding Reset}"       Header="キャッシュをクリアして更新"/>
         <Separator/>
-        <MenuItem Header="新しいフォルダーを追加"     Command="{Binding NewCategory}"/>
-        <MenuItem Header="削除"                       Command="{Binding Remove}"/>
-        <MenuItem Header="名前の変更"                 Command="{Binding Rename}"/>
+        <MenuItem Command="{Binding NewCategory}" Header="新しいフォルダーを追加"/>
+        <MenuItem Command="{Binding Remove}"      Header="削除"/>
+        <MenuItem Command="{Binding Rename}"      Header="名前の変更"/>
         <Separator/>
-        <MenuItem Header="プロパティ"                 Command="{Binding Property}"/>
+        <MenuItem Command="{Binding Property}"    Header="プロパティ"/>
     </ContextMenu>
 
     <!--
@@ -23,12 +23,12 @@
     -->
 
     <ContextMenu x:Key="SettingsMenu">
-        <MenuItem Header="インポート"/>
-        <MenuItem Header="エクスポート"/>
+        <MenuItem Command="{Binding Import}"      Header="インポート"/>
+        <MenuItem Command="{Binding Export}"      Header="エクスポート"/>
         <Separator/>
-        <MenuItem Header="設定"            Command="{Binding Settings}"/>
-        <MenuItem Header="バージョン情報"  Command="{Binding Settings}"/>
+        <MenuItem Command="{Binding Settings}"    Header="設定"/>
+        <MenuItem Command="{Binding Settings}"    Header="バージョン情報"/>
         <Separator/>
-        <MenuItem Header="終了"            Command="{Binding Close}"/>
+        <MenuItem Command="{Binding Close}"       Header="終了"/>
     </ContextMenu>
 </ResourceDictionary>

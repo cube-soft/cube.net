@@ -46,6 +46,14 @@
             <xt:CloseAction/>
         </xt:CloseTrigger>
 
+        <xt:OpenFileDialogTrigger Messenger="{Binding Messenger}">
+            <xt:OpenFileDialogAction/>
+        </xt:OpenFileDialogTrigger>
+
+        <xt:SaveFileDialogTrigger Messenger="{Binding Messenger}">
+            <xt:SaveFileDialogAction/>
+        </xt:SaveFileDialogTrigger>
+        
         <my:RegisterTrigger>
             <my:RegisterWindowAction/>
         </my:RegisterTrigger>

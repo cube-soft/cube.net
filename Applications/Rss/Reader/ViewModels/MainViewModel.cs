@@ -118,21 +118,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
-        /// 
-        /// <summary>
-        /// 設定画面表示時に実行されるコマンドです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ICommand Settings => _settings ?? (
-            _settings = new RelayCommand(
-                () => Messenger.Send(new SettingsViewModel(Model.Settings))
-            )
-        );
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Property
         /// 
         /// <summary>
@@ -148,6 +133,51 @@ namespace Cube.Net.App.Rss.Reader
                 )),
                 () => Data.Entry.Value is RssEntry && Data.Feed.Value != null,
                 Data.Entry
+            )
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Settings
+        /// 
+        /// <summary>
+        /// 設定画面表示時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Settings => _settings ?? (
+            _settings = new RelayCommand(
+                () => Messenger.Send(new SettingsViewModel(Model.Settings))
+            )
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Import
+        /// 
+        /// <summary>
+        /// RSS フィードをインポートするコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Import => _import ?? (
+            _import = new RelayCommand(
+                () => Messenger.Send(new OpenFileDialogMessage(e => { }))
+            )
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Export
+        /// 
+        /// <summary>
+        /// 現在の RSS フィードをエクスポートするコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Export => _export ?? (
+            _export = new RelayCommand(
+                () => Messenger.Send(new SaveFileDialogMessage(e => { }))
             )
         );
 
@@ -341,8 +371,10 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private ICommand _setup;
-        private ICommand _settings;
         private ICommand _property;
+        private ICommand _settings;
+        private ICommand _import;
+        private ICommand _export;
         private ICommand _newEntry;
         private ICommand _newCategory;
         private ICommand _update;
