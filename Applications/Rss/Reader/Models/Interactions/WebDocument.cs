@@ -49,11 +49,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public string Text
         {
-            get => _text;
+            get => _shared as string;
             set
             {
-                if (_text == value) return;
-                _text = value;
+                if (_shared as string == value) return;
+                _shared = value;
                 if (Source != null) Source.DocumentText = value;
             }
         }
@@ -93,11 +93,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public Uri Uri
         {
-            get => _uri;
+            get => _shared as Uri;
             set
             {
-                if (_uri == value) return;
-                _uri = value;
+                if (_shared as Uri == value) return;
+                _shared = value;
                 if (value != null && Source != null)
                 {
                     if (Source.IsBusy) Source.Stop();
@@ -239,8 +239,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private string _text;
-        private Uri _uri;
+        private object _shared;
         #endregion
     }
 }
