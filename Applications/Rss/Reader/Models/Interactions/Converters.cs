@@ -30,7 +30,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class TitleConverter : OneWayValueConverter
+    public class TitleConverter : SimplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -57,7 +57,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ArticleConverter : OneWayValueConverter
+    public class ArticleConverter : SimplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -92,7 +92,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class FrequencyConverter : OneWayValueConverter
+    public class FrequencyConverter : SimplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -116,7 +116,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class LastCheckedToString : OneWayValueConverter
+    public class LastCheckedToString : SimplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///

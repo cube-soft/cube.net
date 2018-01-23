@@ -61,7 +61,7 @@ namespace Cube.Xui.Converters
 
     /* --------------------------------------------------------------------- */
     ///
-    /// ImageValueConverter
+    /// ImageConverter
     ///
     /// <summary>
     /// System.Drawing.Image オブジェクトから BitmapImage オブジェクトに
@@ -69,7 +69,7 @@ namespace Cube.Xui.Converters
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ImageValueConverter : OneWayValueConverter
+    public class ImageConverter : SimplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -80,7 +80,7 @@ namespace Cube.Xui.Converters
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public ImageValueConverter() : base(e =>
+        public ImageConverter() : base(e =>
         {
             var src = e is System.Drawing.Image image ? image :
                       e is System.Drawing.Icon icon   ? icon.ToBitmap() :

@@ -30,7 +30,7 @@ namespace Cube.Xui.Converters
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class Inverse : OneWayValueConverter
+    public class Inverse : SimplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -53,7 +53,7 @@ namespace Cube.Xui.Converters
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class BooleanToGeneric<T> : OneWayValueConverter
+    public class BooleanToGeneric<T> : SimplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///

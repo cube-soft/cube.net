@@ -118,9 +118,9 @@
     <Compile Include="Xui\Components\DialogMessageBase.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Components\FileDialogMessage.cs" />
-    <Compile Include="Xui\Converters\BooleanValueConverter.cs" />
-    <Compile Include="Xui\Converters\ImageValueConverter.cs" />
-    <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
+    <Compile Include="Xui\Converters\BooleanConverter.cs" />
+    <Compile Include="Xui\Converters\ImageConverter.cs" />
+    <Compile Include="Xui\Converters\SimplexConverter.cs" />
     <Compile Include="Xui\Triggers\CloseAction.cs" />
     <Compile Include="Xui\Triggers\DialogAction.cs" />
     <Compile Include="Xui\Triggers\DisposeAction.cs" />

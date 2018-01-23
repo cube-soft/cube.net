@@ -24,7 +24,7 @@ namespace Cube.Xui.Converters
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// OneWayValueConverter
+    /// SimplexConverter
     ///
     /// <summary>
     /// 単方向の変換のみをサポートしている Converter クラスです。
@@ -32,13 +32,13 @@ namespace Cube.Xui.Converters
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class OneWayValueConverter : MarkupExtension, IValueConverter
+    public abstract class SimplexConverter : MarkupExtension, IValueConverter
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OneWayValueConverter
+        /// SimplexConverter
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -47,12 +47,12 @@ namespace Cube.Xui.Converters
         /// <param name="func">変換関数</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public OneWayValueConverter(Func<object, object> func) :
+        public SimplexConverter(Func<object, object> func) :
             this((x, _, __, ___) => func(x)) { }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OneWayValueConverter
+        /// SimplexConverter
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -61,12 +61,12 @@ namespace Cube.Xui.Converters
         /// <param name="func">変換関数</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public OneWayValueConverter(Func<object, object, object> func) :
+        public SimplexConverter(Func<object, object, object> func) :
             this((x, _, y, __) => func(x, y)) { }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OneWayValueConverter
+        /// SimplexConverter
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -75,7 +75,7 @@ namespace Cube.Xui.Converters
         /// <param name="func">変換関数</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public OneWayValueConverter(Func<object, Type, object, CultureInfo, object> func)
+        public SimplexConverter(Func<object, Type, object, CultureInfo, object> func)
         {
             _func = func;
         }
@@ -136,7 +136,7 @@ namespace Cube.Xui.Converters
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ValueToString : OneWayValueConverter
+    public class ValueToString : SimplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
