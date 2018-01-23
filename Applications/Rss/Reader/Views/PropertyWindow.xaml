@@ -17,6 +17,10 @@
     Width="500"
     WindowStartupLocation="CenterOwner">
 
+    <Window.BindingGroup>
+        <BindingGroup Name="SourceBindings" NotifyOnValidationError="False"/>
+    </Window.BindingGroup>
+    
     <Window.Resources>
         <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
     </Window.Resources>
@@ -25,6 +29,10 @@
         <xt:CloseTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>
         </xt:CloseTrigger>
+
+        <xt:UpdateSourcesTrigger Messenger="{Binding Messenger}">
+            <xt:UpdateSourcesAction/>
+        </xt:UpdateSourcesTrigger>
     </i:Interaction.Triggers>
     
     <Grid>
@@ -59,7 +67,10 @@
                 Grid.Column="0"/>
             
             <TextBox
-                Text="{Binding Entry.Value.Title}"
+                Text="{Binding Entry.Value.Title,
+                    Mode=TwoWay,
+                    BindingGroupName=SourceBindings,
+                    UpdateSourceTrigger=Explicit}"
                 Style="{StaticResource InputStyle}"
                 Grid.Row="0"
                 Grid.Column="1"/>
@@ -72,7 +83,10 @@
 
             <ComboBox
                 ItemsSource="{Binding Frequencies}"
-                SelectedItem="{Binding Entry.Value.Frequency}"
+                SelectedItem="{Binding Entry.Value.Frequency,
+                    Mode=TwoWay,
+                    BindingGroupName=SourceBindings,
+                    UpdateSourceTrigger=Explicit}"
                 ToolTip="サーバに問い合わせる頻度を選択します"
                 VerticalAlignment="Center"
                 Grid.Row="1"
@@ -91,7 +105,10 @@
                 Grid.Column="0"/>
 
             <CheckBox
-                IsChecked="{Binding Entry.Value.SkipContent}"
+                IsChecked="{Binding Entry.Value.SkipContent,
+                    Mode=TwoWay,
+                    BindingGroupName=SourceBindings,
+                    UpdateSourceTrigger=Explicit}"
                 Content="Web ページを直接表示"
                 ToolTip="RSS フィードから取得された概要の表示をスキップします"
                 VerticalAlignment="Center"
@@ -173,7 +190,7 @@
                 IsCancel="True"
                 Margin="20,0,0,0"/>
             <Button
-                Command="{Binding Close}"
+                Command="{Binding Apply}"
                 Style="{StaticResource OkButtonStyle}"
                 IsDefault="True"
                 Margin="8,0,0,0"/>

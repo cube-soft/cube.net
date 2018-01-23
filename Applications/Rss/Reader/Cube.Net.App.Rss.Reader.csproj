@@ -126,6 +126,7 @@
     <Compile Include="Xui\Bindable.cs" />
     <Compile Include="Xui\BindableCollection.cs" />
     <Compile Include="Xui\Components\DialogMessage.cs" />
+    <Compile Include="Xui\Triggers\UpdateSourcesAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

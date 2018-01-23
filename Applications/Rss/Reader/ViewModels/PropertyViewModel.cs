@@ -18,9 +18,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Cube.Net.Rss;
 using Cube.Xui;
+using Cube.Xui.Triggers;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -95,6 +98,31 @@ namespace Cube.Net.App.Rss.Reader
         public IEnumerable<Frequency> Frequencies { get; } =
             Enum.GetValues(typeof(Frequency)).Cast<Frequency>();
 
+        #endregion
+
+        #region Commands
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Apply
+        /// 
+        /// <summary>
+        /// 内容を適用するコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Apply => _apply ?? (
+            _apply = new RelayCommand(() =>
+            {
+                Messenger.Send(new UpdateSourcesMessage());
+                Close.Execute(null);
+            })
+        );
+
+        #endregion
+
+        #region Fields
+        private ICommand _apply;
         #endregion
     }
 }
