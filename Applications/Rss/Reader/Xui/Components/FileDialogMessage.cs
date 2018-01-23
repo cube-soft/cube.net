@@ -22,80 +22,30 @@ namespace Cube.Xui
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// DialogMessage
+    /// FileDialogMessage
     ///
     /// <summary>
-    /// メッセージボックスに表示する情報を保持するためのクラスです。
+    /// ファイルダイアログに表示する情報を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class DialogMessage : DialogMessageBase
+    public class FileDialogMessage : DialogMessageBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DialogMessage
+        /// FileDialogMessage
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         /// 
-        /// <param name="text">メッセージ内容</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public DialogMessage(string text)
-            : this(text, AssemblyReader.Default.Title) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DialogMessage
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
-        /// <param name="caption">タイトルキャプション</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public DialogMessage(string text, string caption)
-            : this(text, caption, null) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DialogMessage
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
         /// <param name="callback">コールバック用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public DialogMessage(string text, Action<MessageBoxResult> callback)
-            : this(text, AssemblyReader.Default.Title, callback) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DialogMessage
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
-        /// <param name="caption">タイトルキャプション</param>
-        /// <param name="callback">コールバック用オブジェクト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public DialogMessage(string text, string caption, Action<MessageBoxResult> callback) :
-            base(callback)
-        {
-            Text    = text;
-            Caption = caption;
-        }
+        public FileDialogMessage(Action<MessageBoxResult> callback) :
+            base(callback) { }
 
         #endregion
 
@@ -103,25 +53,74 @@ namespace Cube.Xui
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Button
+        /// Filter
         /// 
         /// <summary>
-        /// 表示ボタンを示す値を取得または設定します。
+        /// フィルタを表す文字列を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageBoxButton Button { get; set; } = MessageBoxButton.OK;
+        public string Filter { get; set; } = "すべてのファイル (*.*)|*.*";
+
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// OpenFileDialogMessage
+    ///
+    /// <summary>
+    /// OpenFileDialog に表示する情報を保持するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class OpenFileDialogMessage : FileDialogMessage
+    {
+        #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Image
+        /// OpenFileDialogMessage
         /// 
         /// <summary>
-        /// 表示イメージを示す値を取得または設定します。
+        /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <param name="callback">コールバック用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageBoxImage Image { get; set; } = MessageBoxImage.Error;
+        public OpenFileDialogMessage(Action<MessageBoxResult> callback) :
+            base(callback) { }
+
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// SaveFileDialogMessage
+    ///
+    /// <summary>
+    /// SaveFileDialog に表示する情報を保持するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class SaveFileDialogMessage : FileDialogMessage
+    {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SaveFileDialogMessage
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="callback">コールバック用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SaveFileDialogMessage(Action<MessageBoxResult> callback) :
+            base(callback) { }
 
         #endregion
     }

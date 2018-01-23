@@ -115,13 +115,16 @@
     <Compile Include="Xui\Behaviors\WindowsFormsBehavior.cs" />
     <Compile Include="Xui\BindableCommand.cs" />
     <Compile Include="Xui\BindableCommandGeneric.cs" />
+    <Compile Include="Xui\Components\DialogMessageBase.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
+    <Compile Include="Xui\Components\FileDialogMessage.cs" />
     <Compile Include="Xui\Converters\BooleanValueConverter.cs" />
     <Compile Include="Xui\Converters\ImageValueConverter.cs" />
     <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
     <Compile Include="Xui\Triggers\CloseAction.cs" />
     <Compile Include="Xui\Triggers\DialogAction.cs" />
     <Compile Include="Xui\Triggers\DisposeAction.cs" />
+    <Compile Include="Xui\Triggers\FileDialogAction.cs" />
     <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
     <Compile Include="Xui\Triggers\ShowAction.cs" />
     <Compile Include="Xui\Bindable.cs" />
