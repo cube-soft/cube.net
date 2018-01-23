@@ -49,7 +49,7 @@
                 Margin="0,2,6,0"
                 Grid.Column="0"/>
             <TextBlock
-                Text="{Binding Title, Mode=OneWay}"
+                Text="{Binding Title}"
                 Style="{StaticResource RssCategoryStyle}"
                 Grid.Column="1"/>
             <TextBlock
@@ -58,10 +58,13 @@
                 Grid.Column="2"/>
 
             <TextBox
-                Text="{Binding Title}"
+                Text="{Binding Title, UpdateSourceTrigger=LostFocus}"
                 Style="{StaticResource RssEditEntryStyle}"
                 Visibility="Collapsed"
                 Grid.Column="1">
+                <i:Interaction.Behaviors>
+                    <xb:EditMode Value="{Binding Editing, Mode=TwoWay}"/>
+                </i:Interaction.Behaviors>
             </TextBox>
 
             <i:Interaction.Triggers>
@@ -94,7 +97,7 @@
                 Margin="0,4,6,0"
                 Grid.Column="0"/>
             <TextBlock
-                Text="{Binding Title, Mode=OneWay}"
+                Text="{Binding Title}"
                 Style="{StaticResource RssEntryStyle}"
                 Grid.Column="1"/>
             <TextBlock
@@ -103,10 +106,13 @@
                 Grid.Column="2"/>
 
             <TextBox
-                Text="{Binding Title}"
+                Text="{Binding Title, UpdateSourceTrigger=LostFocus}"
                 Style="{StaticResource RssEditEntryStyle}"
                 Visibility="Collapsed"
                 Grid.Column="1">
+                <i:Interaction.Behaviors>
+                    <xb:EditMode Value="{Binding Editing, Mode=TwoWay}"/>
+                </i:Interaction.Behaviors>
             </TextBox>
 
             <i:Interaction.Triggers>

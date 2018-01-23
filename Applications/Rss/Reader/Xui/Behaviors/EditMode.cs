@@ -146,7 +146,12 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         private void WhenKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter) WhenLostFocus(sender, e);
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    WhenLostFocus(sender, e);
+                    break;
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -160,12 +165,7 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         private static void Enable(TextBox src)
         {
-            src.Background      = Brushes.White;
-            src.BorderBrush     = Brushes.Gray;
-            src.BorderThickness = new Thickness(1);
-            src.Cursor          = Cursors.IBeam;
-            src.Focusable       = true;
-            src.IsReadOnly      = false;
+            src.Visibility = Visibility.Visible;
             src.Focus();
             src.SelectAll();
         }
@@ -179,15 +179,10 @@ namespace Cube.Xui.Behaviors
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static void Disable(TextBox src)
+        private static void Disable(TextBox src)
         {
             src.Select(0, 0);
-            src.Background      = Brushes.Transparent;
-            src.BorderBrush     = Brushes.Transparent;
-            src.BorderThickness = new Thickness(0);
-            src.Cursor          = Cursors.Arrow;
-            src.IsReadOnly      = true;
-            src.Focusable       = false;
+            src.Visibility = Visibility.Collapsed;
         }
 
         #endregion
