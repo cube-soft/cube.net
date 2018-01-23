@@ -180,7 +180,11 @@ namespace Cube.Net.App.Rss.Reader
         protected override void OnAttached()
         {
             base.OnAttached();
-            if (Source != null) Source.DocumentCompleted += WhenDocumentCompleted;
+            if (Source != null)
+            {
+                Source.ScriptErrorsSuppressed = true;
+                Source.DocumentCompleted += WhenDocumentCompleted;
+            }
         }
 
         /* ----------------------------------------------------------------- */
