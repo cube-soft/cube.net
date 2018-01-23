@@ -22,12 +22,14 @@
         <Setter Property="Content" Value="OK"/>
         <Setter Property="Height" Value="30"/>
         <Setter Property="Width" Value="125"/>
+        <Setter Property="Margin" Value="8,0,0,0"/>
     </Style>
 
     <Style x:Key="CancelButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Content" Value="キャンセル"/>
         <Setter Property="Height" Value="30"/>
         <Setter Property="Width" Value="100"/>
+        <Setter Property="Margin" Value="20,0,0,0"/>
     </Style>
 
     <Style x:Key="SettingsButtonStyle" TargetType="{x:Type Button}">
@@ -51,6 +53,12 @@
         <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
         <Setter Property="Padding" Value="8,0,0,0"/>
+    </Style>
+
+    <Style x:Key="FooterButtonsStyle" TargetType="{x:Type StackPanel}">
+        <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
+        <Setter Property="FlowDirection" Value="RightToLeft"/>
+        <Setter Property="Orientation" Value="Horizontal"/>
     </Style>
 
     <Style x:Key="ShadowStyle" TargetType="{x:Type Border}">
@@ -82,6 +90,10 @@
     <Style x:Key="InputStyle" TargetType="{x:Type TextBox}">
         <Setter Property="Padding" Value="2"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="InputNumberStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource InputStyle}">
+        <Setter Property="TextAlignment" Value="Right"/>
     </Style>
 
     <Style x:Key="SplitterStyle" TargetType="{x:Type GridSplitter}">

@@ -179,21 +179,9 @@
                 Grid.Column="1"/>
         </Grid>
 
-        <StackPanel
-            Orientation="Horizontal"
-            FlowDirection="RightToLeft"
-            Background="{StaticResource MainBackgroundBrush}"
-            Grid.Row="1">
-            <Button
-                Command="{Binding Close}"
-                Style="{StaticResource CancelButtonStyle}"
-                IsCancel="True"
-                Margin="20,0,0,0"/>
-            <Button
-                Command="{Binding Apply}"
-                Style="{StaticResource OkButtonStyle}"
-                IsDefault="True"
-                Margin="8,0,0,0"/>
+        <StackPanel Style="{StaticResource FooterButtonsStyle}" Grid.Row="1">
+            <Button Command="{Binding Close}" Style="{StaticResource CancelButtonStyle}" IsCancel="True"/>
+            <Button Command="{Binding Apply}" Style="{StaticResource OkButtonStyle}" IsDefault="True"/>
         </StackPanel>
     </Grid>
 </Window>

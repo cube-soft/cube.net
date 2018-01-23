@@ -14,6 +14,7 @@
     
     <SolidColorBrush x:Key="MainBackgroundBrush"   Color="#FFF6F6F6"/>
     <SolidColorBrush x:Key="DarkBackgroundBrush"   Color="#FFEAEAEA"/>
+    <SolidColorBrush x:Key="LightBackgroundBrush"  Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="HoverBackgroundBrush"  Color="#FFF2F7FD"/>
     <SolidColorBrush x:Key="AccentBackgroundBrush" Color="#FF662D91"/>
     <SolidColorBrush x:Key="AlphaBackgroundBrush"  Color="#E0F6F6F6"/>
