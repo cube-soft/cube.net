@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
+    xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     mc:Ignorable="d"
     
     FontFamily="Meiryo UI"
@@ -68,7 +69,7 @@
                         Grid.Row="0"
                         Grid.Column="1">
                         <TextBox
-                            Text="60"
+                            Text="{Binding Data.Value.PrimaryInterval, Mode=TwoWay, Converter={my:MinuteConverter}}"
                             Width="100"
                             Style="{StaticResource InputNumberStyle}"/>
                         <TextBlock
@@ -82,7 +83,7 @@
                         Grid.Row="1"
                         Grid.Column="1">
                         <TextBox
-                            Text="24"
+                            Text="{Binding Data.Value.SecondaryInterval, Mode=TwoWay, Converter={my:HourConverter}}"
                             Width="100"
                             Style="{StaticResource InputNumberStyle}"/>
                         <TextBlock
