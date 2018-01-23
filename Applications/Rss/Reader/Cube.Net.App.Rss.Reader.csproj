@@ -117,6 +117,7 @@
     <Compile Include="Xui\BindableCommandGeneric.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Converters\BooleanValueConverter.cs" />
+    <Compile Include="Xui\Converters\ImageValueConverter.cs" />
     <Compile Include="Xui\Converters\OneWayValueConverter.cs" />
     <Compile Include="Xui\Triggers\CloseAction.cs" />
     <Compile Include="Xui\Triggers\DialogAction.cs" />
@@ -138,6 +139,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\RssComponents.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\TabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -222,6 +227,9 @@
       <Project>{06edf5d3-6a49-445b-a605-b9a9ee2250e2}</Project>
       <Name>Cube.Net</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
