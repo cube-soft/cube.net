@@ -42,6 +42,24 @@
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
     </Style>
 
+    <Style x:Key="RssEntryStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="0,2,0,2"/>
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+
+    <Style x:Key="RssCategoryStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource RssEntryStyle}">
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <Style x:Key="RssEditEntryStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="0,2,0,2"/>
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+
     <Style x:Key="RssFeedsStyle" TargetType="ListView" BasedOn="{StaticResource {x:Type ListView}}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
