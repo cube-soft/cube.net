@@ -85,12 +85,81 @@ namespace Cube.Net.App.Rss.Reader
             set => SetProperty(ref _height, value);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PrimaryInterval
+        /// 
+        /// <summary>
+        /// 高頻度モニタのチェック間隔を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public int PrimaryInterval
+        {
+            get => _primary;
+            set => SetProperty(ref _primary, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SecondaryInterval
+        /// 
+        /// <summary>
+        /// 低頻度モニタのチェック間隔を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public int SecondaryInterval
+        {
+            get => _secondary;
+            set => SetProperty(ref _secondary, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CheckUpdate
+        /// 
+        /// <summary>
+        /// ソフトウェアのアップデートを確認するかどうかを示す値を取得
+        /// または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public bool CheckUpdate
+        {
+            get => _checkUpdate;
+            set => SetProperty(ref _checkUpdate, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LastCheckUpdate
+        /// 
+        /// <summary>
+        /// ソフトウェアの最終アップデート確認日時を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public DateTime LastCheckUpdate
+        {
+            get => _lastCheckUpdate;
+            set => SetProperty(ref _lastCheckUpdate, value);
+        }
+
         #endregion
 
         #region Fields
         private Uri _feedUri;
         private int _width = 1060;
         private int _height = 630;
+        private int _primary = 60 * 60;
+        private int _secondary = 24 * 60 * 60;
+        private bool _checkUpdate = true;
+        private DateTime _lastCheckUpdate = DateTime.MinValue;
         #endregion
     }
 
