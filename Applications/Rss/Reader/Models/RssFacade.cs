@@ -300,7 +300,7 @@ namespace Cube.Net.App.Rss.Reader
             if (src == null) return;
             Data.Entry.Value = src;
 
-            if (src is RssEntry entry)
+            if (src is RssEntry entry && entry != Property)
             {
                 var prev = Data.Feed.Value;
                 if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
