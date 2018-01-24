@@ -119,6 +119,7 @@
     <Compile Include="Xui\Components\DialogMessageBase.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Components\FileDialogMessage.cs" />
+    <Compile Include="Xui\Components\Messenger.cs" />
     <Compile Include="Xui\Converters\BooleanConverter.cs" />
     <Compile Include="Xui\Converters\DuplexConverter.cs" />
     <Compile Include="Xui\Converters\ImageConverter.cs" />

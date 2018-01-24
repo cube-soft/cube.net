@@ -12,7 +12,7 @@
     FontFamily="Meiryo UI"
     Style="{StaticResource Dialog}"
     Title="CubeRSS Reader 設定"
-    Height="470"
+    Height="430"
     Width="450"
     WindowStartupLocation="CenterOwner">
 
@@ -24,6 +24,10 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
+
+    <Window.BindingGroup>
+        <BindingGroup Name="SourceBindings" NotifyOnValidationError="False"/>
+    </Window.BindingGroup>
 
     <i:Interaction.Triggers>
         <xt:CloseTrigger Messenger="{Binding Messenger}">
@@ -41,10 +45,7 @@
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
-        <TabControl Margin="20" BorderThickness="1">
-            <!--
-                General
-            -->
+        <TabControl Margin="20,20,20,0">
             <TabItem Header="一般">
                 <Grid Margin="20,20,0,0">
                     <Grid.ColumnDefinitions>
@@ -69,7 +70,8 @@
                         Grid.Row="0"
                         Grid.Column="1">
                         <TextBox
-                            Text="{Binding Data.Value.PrimaryInterval, Mode=TwoWay, Converter={my:MinuteConverter}}"
+                            Text="{Binding Data.Value.PrimaryInterval, Mode=TwoWay,
+                                Converter={my:MinuteConverter}, UpdateSourceTrigger=Explicit}"
                             Width="100"
                             Style="{StaticResource InputNumberStyle}"/>
                         <TextBlock
@@ -83,7 +85,8 @@
                         Grid.Row="1"
                         Grid.Column="1">
                         <TextBox
-                            Text="{Binding Data.Value.SecondaryInterval, Mode=TwoWay, Converter={my:HourConverter}}"
+                            Text="{Binding Data.Value.SecondaryInterval, Mode=TwoWay,
+                                Converter={my:HourConverter}, UpdateSourceTrigger=Explicit}"
                             Width="100"
                             Style="{StaticResource InputNumberStyle}"/>
                         <TextBlock
@@ -100,16 +103,13 @@
 
                     <CheckBox
                         Content="ソフトウェアのアップデートを確認する"
-                        IsChecked="True"
+                        IsChecked="{Binding Data.Value.CheckUpdate, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
                         VerticalAlignment="Center"
                         Grid.Row="2"
                         Grid.Column="1"/>
                 </Grid>
             </TabItem>
 
-            <!--
-                Vertion
-            -->
             <TabItem Header="バージョン情報">
                 <Grid Margin="20,20,0,0">
                     <Grid.ColumnDefinitions>

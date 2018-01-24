@@ -17,14 +17,14 @@
     Width="500"
     WindowStartupLocation="CenterOwner">
 
-    <Window.BindingGroup>
-        <BindingGroup Name="SourceBindings" NotifyOnValidationError="False"/>
-    </Window.BindingGroup>
-    
     <Window.Resources>
         <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
     </Window.Resources>
 
+    <Window.BindingGroup>
+        <BindingGroup Name="SourceBindings" NotifyOnValidationError="False"/>
+    </Window.BindingGroup>
+    
     <i:Interaction.Triggers>
         <xt:CloseTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>

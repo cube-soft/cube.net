@@ -22,6 +22,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Cube.Xui;
 using Cube.Xui.Converters;
+using Cube.Xui.Triggers;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -163,6 +164,7 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand Apply => _apply ?? (
             _apply = new RelayCommand(() =>
             {
+                Messenger.Send<UpdateSourcesMessage>();
                 Close.Execute(null);
             })
         );
