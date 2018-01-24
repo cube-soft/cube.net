@@ -75,7 +75,7 @@
     <Compile Include="Ntp\NtpMonitorTest.cs" />
     <Compile Include="Ntp\NtpPacketTest.cs" />
     <Compile Include="Ntp\NtpTimestampTest.cs" />
-    <Compile Include="Rss\RssCacheCollectionTest.cs" />
+    <Compile Include="Rss\RssCacheDictionaryTest.cs" />
     <Compile Include="Rss\RssClientTest.cs" />
     <Compile Include="Rss\RssMonitorTest.cs" />
     <Compile Include="Rss\RssParserTest.cs" />

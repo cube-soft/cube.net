@@ -27,14 +27,14 @@ namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssCacheCollection
+    /// RssCacheDictionary
     ///
     /// <summary>
     /// RSS フィードを保持するためのコレクションクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssCacheCollection : IDictionary<Uri, RssFeed>, IDisposable
+    public class RssCacheDictionary : IDictionary<Uri, RssFeed>, IDisposable
     {
         #region Constructors
 
@@ -47,7 +47,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssCacheCollection() : this(new Dictionary<Uri, RssFeed>()) { }
+        public RssCacheDictionary() : this(new Dictionary<Uri, RssFeed>()) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -60,7 +60,7 @@ namespace Cube.Net.Rss
         /// <param name="inner">内部バッファ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssCacheCollection(IDictionary<Uri, RssFeed> inner)
+        public RssCacheDictionary(IDictionary<Uri, RssFeed> inner)
         {
             _dispose = new OnceAction<bool>(Dispose);
             _inner   = inner;
@@ -473,7 +473,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        ~RssCacheCollection() { _dispose.Invoke(false); }
+        ~RssCacheDictionary() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///

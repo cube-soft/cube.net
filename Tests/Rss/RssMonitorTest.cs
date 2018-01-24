@@ -53,7 +53,7 @@ namespace Cube.Net.Tests
             var file0 = "722a6df5a86c7464e1eeaeb691ba50be";
             var file1 = "3a9c5f4a720884dddb53fb356680ef82";
 
-            using (var src = new RssCacheCollection() { Directory = Results })
+            using (var src = new RssCacheDictionary() { Directory = Results })
             {
                 using (var mon = new RssMonitor(src))
                 {
