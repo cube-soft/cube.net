@@ -161,10 +161,25 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Register(Uri uri, RssFeed feed)
         {
-            if (Feeds.ContainsKey(uri)) return;
+            if (Contains(uri)) return;
             if (feed == null) throw new ArgumentException("RssFeed is null");
             Feeds.Add(uri, feed);
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Contains
+        ///
+        /// <summary>
+        /// 指定された URL が監視対象かどうかを判別します。
+        /// </summary>
+        /// 
+        /// <param name="uri">RSS フィード URL</param>
+        /// 
+        /// <returns>監視対象かどうか</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public bool Contains(Uri uri) => Feeds.ContainsKey(uri);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -329,7 +344,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private async Task UpdateAsync(Uri uri)
         {
-            if (!Feeds.ContainsKey(uri)) return;
+            if (!Contains(uri)) return;
 
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
@@ -403,7 +418,7 @@ namespace Cube.Net.Rss
                 {
                     this.LogWarn(err.ToString(), err);
                     failed.Add(uri);
-                    if (Feeds.ContainsKey(uri)) Feeds[uri].ErrorCount++;
+                    if (Contains(uri)) Feeds[uri].ErrorCount++;
                 }
             }
         }
