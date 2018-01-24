@@ -54,11 +54,14 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssSubscription()
         {
-            _monitor = new RssMonitor(_feeds) { Interval = TimeSpan.FromHours(1) };
-            _monitor.Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
+            _primary = new RssMonitor() { Interval = TimeSpan.FromHours(1) };
+            _primary.Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
 
-            _items.Synchronously = true;
-            _items.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, e);
+            _secondary = new RssMonitor() { Interval = TimeSpan.FromHours(24) };
+            _secondary.Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
+
+            _tree.Synchronously = true;
+            _tree.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, e);
         }
 
         #endregion
@@ -160,37 +163,26 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Register
+        /// Clear
         /// 
         /// <summary>
-        /// 新規 URL を非同期で登録します。
+        /// コレクションの内容をクリアします。
         /// </summary>
         /// 
-        /// <param name="uri">URL オブジェクト</param>
-        /// 
         /* ----------------------------------------------------------------- */
-        public async Task Register(Uri uri)
+        public void Clear()
         {
-            using (var http = new RssClient())
-            {
-                var rss = await http.GetAsync(uri).ConfigureAwait(false);
-                if (rss == null) throw Error(Properties.Resources.ErrorFeedNotFound);
-                if (_feeds.ContainsKey(rss.Uri)) throw Error(Properties.Resources.ErrorFeedNotFound);
+            _primary.Stop();
+            _secondary.Stop();
 
-                _items.Add(new RssEntry
-                {
-                    Title = rss.Title,
-                    Uri = rss.Uri,
-                    Count = rss.UnreadItems.Count(),
-                });
-
-                _feeds.Add(rss.Uri, rss);
-            }
+            _tree.Clear();
+            _entries.Clear();
+            _feeds.Clear();
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// CreateCategory
+        /// Create
         ///
         /// <summary>
         /// 新しい RssCategory オブジェクトを生成して挿入します。
@@ -201,149 +193,53 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>生成オブジェクト</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        public RssCategory CreateCategory(RssEntryBase src)
+        public RssCategory Create(RssEntryBase src)
         {
-            var parent = src is RssCategory c ? c : src?.Parent;
             var dest = new RssCategory
             {
-                Title  = "新しいフォルダー",
-                Parent = parent,
+                Title   = "新しいフォルダー",
+                Parent  = src is RssCategory c ? c : src?.Parent,
                 Editing = true,
             };
 
-            var items = parent != null ? parent.Items : _items;
-            var count = parent != null ? parent.Entries.Count() : Entries.Count();
+            var items = src.Parent != null ? src.Parent.Items : _tree;
+            var count = src.Parent != null ? src.Parent.Entries.Count() : Entries.Count();
+
             items.Insert(items.Count - count, dest);
-            Expand(parent);
+            src.Parent.Expand();
 
             return dest;
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Expand
+        /// GetEntry
         /// 
         /// <summary>
-        /// RSS カテゴリの子要素が表示された状態に設定します。
+        /// URL に対応する RssEntry オブジェクトを取得します。
         /// </summary>
         /// 
-        /// <param name="src">カテゴリ</param>
+        /// <param name="uri">URL</param>
         /// 
+        /// <returns>RssEntry オブジェクト</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        public void Expand(RssCategory src)
-        {
-            while (src != null)
-            {
-                src.Expanded = true;
-                src = src.Parent;
-            }
-        }
+        public RssEntry GetEntry(Uri uri) => _entries.ContainsKey(uri) ? _entries[uri] : null;
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Update
-        ///
-        /// <summary>
-        /// RSS フィードの内容を更新します。
-        /// </summary>
-        /// 
-        /// <param name="uri">対象とするフィード URL</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Update(Uri uri) => _monitor.Update(uri);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Update
-        ///
-        /// <summary>
-        /// RSS フィードの内容を更新します。
-        /// </summary>
-        /// 
-        /// <param name="uris">対象とするフィード URL 一覧</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Update(IEnumerable<Uri> uris) => _monitor.Update(uris);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Remove
+        /// GetFeed
         /// 
         /// <summary>
-        /// RSS フィードを削除します。
+        /// URL に対応する RssFeed オブジェクトを取得します。
         /// </summary>
         /// 
-        /// <param name="src">削除する RSS フィード</param>
+        /// <param name="uri">URL</param>
+        /// 
+        /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public void Remove(RssEntryBase src)
-        {
-            var parent = src.Parent;
-            if (parent != null)
-            {
-                var prev = parent.Items.Count;
-                parent.Items.Remove(src);
-            }
-            else _items.Remove(src);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Move
-        /// 
-        /// <summary>
-        /// 項目を移動します。
-        /// </summary>
-        /// 
-        /// <param name="src">移動元の項目</param>
-        /// <param name="dest">移動先のカテゴリ</param>
-        /// <param name="index">カテゴリ中の挿入場所</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Move(RssEntryBase src, RssEntryBase dest, int index)
-        {
-            if (src.Parent is RssCategory c) c.Items.Remove(src);
-            else _items.Remove(src);
-
-            src.Parent = dest as RssCategory;
-            var items = src.Parent?.Items ?? _items;
-            if (index < 0 || index >= items.Count) items.Add(src);
-            else items.Insert(index, src);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Clear
-        /// 
-        /// <summary>
-        /// コレクションの内容をクリアします。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Clear()
-        {
-            _monitor.Stop();
-            if (_items.Count > 0) _items.Clear();
-            _feeds.Clear();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Reset
-        /// 
-        /// <summary>
-        /// RSS フィードの内容をクリアし、再取得します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Reset(Uri uri)
-        {
-            _feeds.DeleteCache(uri);
-            var feed = FindFeed(uri);
-            feed.Items.Clear();
-            feed.LastChecked = DateTime.MinValue;
-            Update(uri);
-        }
+        public RssFeed GetFeed(Uri uri) => _feeds.ContainsKey(uri) ? _feeds[uri] : null;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -366,17 +262,130 @@ namespace Cube.Net.App.Rss.Reader
                 foreach (var item in src.Select(e => e.Convert(null)))
                 {
                     MakeFeed(item);
-                    if (!string.IsNullOrEmpty(item.Title)) _items.Add(item);
+                    if (!string.IsNullOrEmpty(item.Title)) _tree.Add(item);
                     else foreach (var entry in item.Items)
                     {
-                        System.Diagnostics.Debug.Assert(entry is RssEntry);
                         entry.Parent = null;
-                        _items.Add(entry);
+                        _tree.Add(entry);
                     }
                 }
             }
 
-            _monitor.Start();
+            _primary.Start();
+            _secondary.Start();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Move
+        /// 
+        /// <summary>
+        /// 項目を移動します。
+        /// </summary>
+        /// 
+        /// <param name="src">移動元の項目</param>
+        /// <param name="dest">移動先のカテゴリ</param>
+        /// <param name="index">カテゴリ中の挿入場所</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Move(RssEntryBase src, RssEntryBase dest, int index)
+        {
+            if (src.Parent is RssCategory c) c.Items.Remove(src);
+            else _tree.Remove(src);
+
+            src.Parent = dest as RssCategory;
+            var items = src.Parent?.Items ?? _tree;
+            if (index < 0 || index >= items.Count) items.Add(src);
+            else items.Insert(index, src);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register
+        /// 
+        /// <summary>
+        /// 新規 URL を非同期で登録します。
+        /// </summary>
+        /// 
+        /// <param name="uri">URL オブジェクト</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public async Task Register(Uri uri)
+        {
+            using (var http = new RssClient())
+            {
+                var rss = await http.GetAsync(uri).ConfigureAwait(false);
+                if (rss == null) throw Error(Properties.Resources.ErrorFeedNotFound);
+                if (_feeds.ContainsKey(rss.Uri)) throw Error(Properties.Resources.ErrorFeedAlreadyExists);
+
+                _tree.Add(new RssEntry
+                {
+                    Title = rss.Title,
+                    Uri   = rss.Uri,
+                    Count = rss.UnreadItems.Count(),
+                });
+
+                _feeds.Add(rss.Uri, rss);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Remove
+        /// 
+        /// <summary>
+        /// RSS フィードを削除します。
+        /// </summary>
+        /// 
+        /// <param name="src">削除する RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Remove(RssEntryBase src)
+        {
+            if (src.Parent != null) src.Parent.Items.Remove(src);
+            else _tree.Remove(src);
+
+            if (src is RssEntry entry)
+            {
+                _entries.Remove(entry.Uri);
+                _feeds.Remove(entry.Uri);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reschedule
+        /// 
+        /// <summary>
+        /// RssMonitor を再設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Reschedule()
+        {
+            var now = DateTime.Now;
+            var thresh = TimeSpan.FromDays(30);
+
+            ResetPrimary(now, thresh);
+            ResetSecondary(now, thresh);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        /// 
+        /// <summary>
+        /// RSS フィードの内容をクリアし、再取得します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Reset(Uri uri)
+        {
+            _feeds.DeleteCache(uri);
+            var feed = GetFeed(uri);
+            feed.Items.Clear();
+            feed.LastChecked = new DateTime(1970, 1, 1);
+            Update(uri);
         }
 
         /* ----------------------------------------------------------------- */
@@ -392,60 +401,55 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Save(string json)
         {
-            using (var s = IO.Create(json))
+            var root = new RssCategory
             {
-                var root = new RssCategory
-                {
-                    Title = string.Empty,
-                    Items = new BindableCollection<RssEntryBase>(_items.OfType<RssEntry>()),
-                };
+                Title = string.Empty,
+                Items = new BindableCollection<RssEntryBase>(_tree.OfType<RssEntry>()),
+            };
 
-                var data = _items
-                    .OfType<RssCategory>()
-                    .Concat(new[] { root })
-                    .Select(e => new RssCategory.Json(e));
+            var data = _tree.OfType<RssCategory>()
+                            .Concat(new[] { root })
+                            .Select(e => new RssCategory.Json(e));
 
-                SettingsType.Json.Save(s, data);
-            }
+            using (var s = IO.Create(json)) SettingsType.Json.Save(s, data);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// FindFeed
-        /// 
+        /// Update
+        ///
         /// <summary>
-        /// URL に対応する RssEntry オブジェクトを取得します。
+        /// RSS フィードの内容を更新します。
         /// </summary>
         /// 
-        /// <param name="uri">URL</param>
+        /// <param name="uri">対象とするフィード URL</param>
         /// 
-        /// <returns>RssEntry オブジェクト</returns>
-        ///
         /* ----------------------------------------------------------------- */
-        public RssEntry FindEntry(Uri uri)
+        public void Update(Uri uri)
         {
-            var cvt = _items.Flatten(e => (e is RssCategory c) ? c.Items : null)
-                            .OfType<RssEntry>();
-
-            return uri != null ?
-                   cvt.FirstOrDefault(e => e.Uri == uri) :
-                   cvt.FirstOrDefault();
+            if (_primary.Contains(uri)) _primary.Update(uri);
+            else if (_secondary.Contains(uri)) _secondary.Update(uri);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// FindFeed
-        /// 
+        /// Update
+        ///
         /// <summary>
-        /// URL に対応する RssFeed オブジェクトを取得します。
+        /// RSS フィードの内容を更新します。
         /// </summary>
         /// 
-        /// <param name="uri">URL</param>
+        /// <param name="uris">対象とするフィード URL 一覧</param>
         /// 
-        /// <returns>RssFeed オブジェクト</returns>
-        ///
         /* ----------------------------------------------------------------- */
-        public RssFeed FindFeed(Uri uri) => _feeds.ContainsKey(uri) ? _feeds[uri] : null;
+        public void Update(IEnumerable<Uri> uris)
+        {
+            var pi = uris.Where(e => _primary.Contains(e));
+            var si = uris.Where(e => _secondary.Contains(e));
+
+            _primary.Update(pi);
+            _secondary.Update(si);
+        }
 
         #region IEnumerable
 
@@ -466,7 +470,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerator<RssEntryBase> GetEnumerator() => _items.GetEnumerator();
+        public IEnumerator<RssEntryBase> GetEnumerator() => _tree.GetEnumerator();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -527,7 +531,7 @@ namespace Cube.Net.App.Rss.Reader
 
             if (disposing)
             {
-                _monitor.Dispose();
+                _primary.Dispose();
                 _feeds.Dispose();
             }
         }
@@ -599,6 +603,50 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// ResetPrimary
+        /// 
+        /// <summary>
+        /// RssMonitor を再設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void ResetPrimary(DateTime now, TimeSpan thresh)
+        {
+            _primary.Suspend();
+            _primary.Clear();
+
+            foreach (var uri in _feeds
+                .Where(e => now - e.Value.LastPublished <= thresh)
+                .Select(e => e.Key)
+            ) _primary.Register(uri);
+
+            _primary.Start();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ResetSecondary
+        /// 
+        /// <summary>
+        /// RssMonitor を再設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void ResetSecondary(DateTime now, TimeSpan thresh)
+        {
+            _secondary.Suspend();
+            _secondary.Clear();
+
+            foreach (var uri in _feeds
+                .Where(e => now - e.Value.LastPublished > thresh)
+                .Select(e => e.Key)
+            ) _secondary.Register(uri);
+
+            _secondary.Start();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Error
         /// 
         /// <summary>
@@ -628,9 +676,11 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private bool _disposed = false;
-        private BindableCollection<RssEntryBase> _items = new BindableCollection<RssEntryBase>();
-        private RssCacheCollection _feeds = new RssCacheCollection();
-        private RssMonitor _monitor;
+        private BindableCollection<RssEntryBase> _tree = new BindableCollection<RssEntryBase>();
+        private IDictionary<Uri, RssEntry> _entries = new Dictionary<Uri, RssEntry>();
+        private RssCacheDictionary _feeds = new RssCacheDictionary();
+        private RssMonitor _primary;
+        private RssMonitor _secondary;
         #endregion
     }
 }
