@@ -348,15 +348,35 @@ namespace Cube.Net.App.Rss.Reader
 
     /* --------------------------------------------------------------------- */
     ///
-    /// RssEntryOperations
+    /// RssEntryOperator
     ///
     /// <summary>
-    /// RssEntry に関する拡張用クラスです。
+    /// RssEntry, RssCategory に関する拡張用クラスです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public static class RssEntryOperations
+    public static class RssEntryOperator
     {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Expand
+        /// 
+        /// <summary>
+        /// RSS カテゴリの子要素が表示された状態に設定します。
+        /// </summary>
+        /// 
+        /// <param name="src">カテゴリ</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static void Expand(this RssCategory src)
+        {
+            while (src != null)
+            {
+                src.Expanded = true;
+                src = src.Parent;
+            }
+        }
+
         /* ----------------------------------------------------------------- */
         ///
         /// ToMessage
@@ -381,40 +401,5 @@ namespace Cube.Net.App.Rss.Reader
             }
             return string.Empty;
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Flatten
-        /// 
-        /// <summary>
-        /// 木構造を一次元配列に変換します。
-        /// </summary>
-        /// 
-        /// <param name="src">木構造オブジェクト</param>
-        /// <param name="children">
-        /// 子要素を選択するための関数オブジェクト
-        /// </param>
-        /// 
-        /// <returns>変換後のオブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> src,
-            Func<T, IEnumerable<T>> children) =>
-            src.Flatten((e, s) => children(e));
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Flatten
-        /// 
-        /// <summary>
-        /// 木構造を一次元配列に変換します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static IEnumerable<T> Flatten<T>(this IEnumerable<T> src,
-            Func<T, IEnumerable<T>, IEnumerable<T>> func) => src.Concat(
-                src.Where(e => func(e, src) != null)
-                   .SelectMany(e => func(e, src).Flatten(func))
-            );
     }
 }

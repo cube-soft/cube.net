@@ -137,11 +137,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Setup()
         {
-            var entry = Subscription.FindEntry(Settings.Value.Start);
+            var entry = Subscription.GetEntry(Settings.Value.Start);
             if (entry != null)
             {
                 Select(entry);
-                Subscription.Expand(entry.Parent);
+                entry.Parent.Expand();
             }
         }
 
@@ -172,7 +172,7 @@ namespace Cube.Net.App.Rss.Reader
         /// 
         /* ----------------------------------------------------------------- */
         public void NewCategory() =>
-            Select(Subscription.CreateCategory(Data.Entry.Value));
+            Select(Subscription.Create(Data.Entry.Value));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -306,7 +306,7 @@ namespace Cube.Net.App.Rss.Reader
                 if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
 
                 Property = entry;
-                Data.Feed.Value = Subscription.FindFeed(entry.Uri);
+                Data.Feed.Value = Subscription.GetFeed(entry.Uri);
 
                 var items = Data.Feed.Value?.UnreadItems;
                 var first = items?.Count() > 0 ? items.First() : null;
@@ -421,7 +421,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void ReadAll(RssEntry entry)
         {
-            var feed = Subscription.FindFeed(entry.Uri);
+            var feed = Subscription.GetFeed(entry.Uri);
             if (feed == null) return;
             foreach (var article in feed.UnreadItems) article.Read = true;
         }
