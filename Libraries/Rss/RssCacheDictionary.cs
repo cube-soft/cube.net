@@ -40,7 +40,7 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssCacheCollection
+        /// RssCacheDictionary
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
@@ -51,7 +51,7 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssCacheCollection
+        /// RssCacheDictionary
         /// 
         /// <summary>
         /// オブジェクトを初期化します。

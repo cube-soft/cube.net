@@ -162,7 +162,7 @@ namespace Cube.Net.Rss
         public void Register(Uri uri, RssFeed feed)
         {
             if (Contains(uri)) return;
-            if (feed == null) throw new ArgumentException("RssFeed is null");
+            if (feed == null) throw new NullReferenceException(nameof(RssFeed));
             Feeds.Add(uri, feed);
         }
 

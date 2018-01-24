@@ -90,8 +90,8 @@ namespace Cube.Net.Tests
         public void Register_Remove()
         {
             var src  = new Dictionary<Uri, RssFeed>();
-            var uri0 = new Uri("http://blog.cube-soft.jp/?feed=rss2");
-            var uri1 = new Uri("https://blogs.msdn.microsoft.com/dotnet/feed");
+            var uri0 = new Uri("http://www.example.com/rss");
+            var uri1 = new Uri("http://www.example.com/rss2");
 
             using (var mon = new RssMonitor(src))
             {
@@ -108,5 +108,26 @@ namespace Cube.Net.Tests
                 Assert.That(src.Count, Is.EqualTo(0));
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register_Throws
+        /// 
+        /// <summary>
+        /// 登録時に null を指定した時の挙動を確認します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Register_Throws() => Assert.That(
+            () =>
+            {
+                using (var mon = new RssMonitor())
+                {
+                    mon.Register(new Uri("http://www.example.com/rss"), null);
+                }
+            },
+            Throws.TypeOf<NullReferenceException>().And.Message.EqualTo("RssFeed")
+        );
     }
 }
