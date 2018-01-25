@@ -21,20 +21,21 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Cube.Net.Rss;
+using Cube.Settings;
 
 namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssParserTest
+    /// RssFeedTest
     ///
     /// <summary>
-    /// RssParser のテスト用クラスです。
+    /// RssFeed に関するテスト用クラスです。
     /// </summary>
     /// 
     /// <remarks>
-    /// サンプルファイルの一部は下記 Web ページ、およびリンク先から
-    /// 取得しました。
+    /// Parse に使用するサンプルファイルの一部は下記 Web ページ、および
+    /// リンク先から取得しました。
     /// https://validator.w3.org/feed/docs/rss1.html
     /// https://validator.w3.org/feed/docs/rss2.html
     /// https://validator.w3.org/feed/docs/atom.html
@@ -42,7 +43,7 @@ namespace Cube.Net.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssParserTest : FileHelper
+    class RssFeedTest : FileHelper
     {
         #region Tests
 
@@ -127,10 +128,46 @@ namespace Cube.Net.Tests
                 var count = feed.Items.Count();
 
                 Assert.That(feed.UnreadItems.Count(), Is.EqualTo(count));
-                feed.Items[0].Read = true;
+                feed.Items[0].Status = RssItemStatus.Read;
                 Assert.That(feed.UnreadItems.Count(), Is.EqualTo(count - 1));
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LoadFeed_Uninitialized
+        /// 
+        /// <summary>
+        /// 初期化されていない RssFeed を読み込んだ時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void LoadFeed_Uninitialized()
+        {
+            var src = SettingsType.Json.Load<RssFeed>(Example("UninitializedRss.json"));
+            Assert.That(src.Title,                  Is.Empty);
+            Assert.That(src.Uri,                    Is.Null);
+            Assert.That(src.Link,                   Is.Null);
+            Assert.That(src.LastChecked.HasValue,   Is.False);
+            Assert.That(src.LastPublished.HasValue, Is.False);
+            Assert.That(src.Items.Count,            Is.EqualTo(0));
+            Assert.That(src.UnreadItems.Count(),    Is.EqualTo(0));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SaveFeed_Uninitialized
+        /// 
+        /// <summary>
+        /// 初期化されていない RssFeed を保存した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void SaveFeed_Uninitialized() => Assert.DoesNotThrow(
+            () => SettingsType.Json.Save(Result("Uninitialized.json"), new RssFeed())
+        );
 
         #endregion
 

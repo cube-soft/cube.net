@@ -23,6 +23,25 @@ namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
+    /// RssItemStatus
+    ///
+    /// <summary>
+    /// RssItem オブジェクトの状態を表す列挙型です。
+    /// </summary>
+    /// 
+    /* --------------------------------------------------------------------- */
+    public enum RssItemStatus
+    {
+        /// <summary>未初期化</summary>
+        Uninitialized,
+        /// <summary>未読</summary>
+        Unread,
+        /// <summary>既読</summary>
+        Read,
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
     /// RssItem
     ///
     /// <summary>
@@ -129,7 +148,7 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public DateTime PublishTime
+        public DateTime? PublishTime
         {
             get => _publishTime;
             set => SetProperty(ref _publishTime, value);
@@ -137,18 +156,18 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Read
+        /// Status
         /// 
         /// <summary>
-        /// 既読かどうかを示す値を取得または設定します。
+        /// オブジェクトの状態を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public bool Read
+        public RssItemStatus Status
         {
-            get => _read;
-            set => SetProperty(ref _read, value);
+            get => _status;
+            set => SetProperty(ref _status, value);
         }
 
         #endregion
@@ -159,8 +178,8 @@ namespace Cube.Net.Rss
         private string _content = string.Empty;
         private IList<string> _categories = null;
         private Uri _link = null;
-        private DateTime _publishTime = DateTime.MinValue;
-        private bool _read = false;
+        private DateTime? _publishTime = null;
+        private RssItemStatus _status = RssItemStatus.Uninitialized;
         #endregion
     }
 }

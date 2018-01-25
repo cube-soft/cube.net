@@ -91,7 +91,7 @@ namespace Cube.Net.Rss
                 Content     = GetContent(e),
                 Link        = e.GetUri("link"),
                 PublishTime = e.GetDateTime("published"),
-                Read        = false,
+                Status      = RssItemStatus.Unread,
             })
             .OrderByDescending(e => e.PublishTime)
             .ToList();

@@ -110,7 +110,7 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public DateTime LastChecked
+        public DateTime? LastChecked
         {
             get => _lastChecked;
             set => SetProperty(ref _lastChecked, value);
@@ -126,26 +126,10 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public DateTime LastPublished
+        public DateTime? LastPublished
         {
             get => _lastPublished;
             set => SetProperty(ref _lastPublished, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ErrorCount
-        /// 
-        /// <summary>
-        /// サーバへの問い合わせに失敗した回数を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public int ErrorCount
-        {
-            get => _errorCount;
-            set => SetProperty(ref _errorCount, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -173,7 +157,8 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssItem> UnreadItems => Items.Where(e => !e.Read);
+        public IEnumerable<RssItem> UnreadItems =>
+            Items.Where(e => e.Status == RssItemStatus.Unread);
 
         #endregion
 
@@ -183,9 +168,8 @@ namespace Cube.Net.Rss
         private string _description = string.Empty;
         private Uri _link = null;
         private Uri _uri = null;
-        private DateTime _lastChecked = DateTime.MinValue;
-        private DateTime _lastPublished = DateTime.MinValue;
-        private int _errorCount = 0;
+        private DateTime? _lastChecked = null;
+        private DateTime? _lastPublished = null;
         private IList<RssItem> _items = null;
         #endregion
     }

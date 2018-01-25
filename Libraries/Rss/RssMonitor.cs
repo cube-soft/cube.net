@@ -390,10 +390,10 @@ namespace Cube.Net.Rss
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void Shrink(RssFeed src, DateTime threshold) =>
+        private void Shrink(RssFeed src, DateTime? thresh) =>
             src.Items = src.Items
                            .Reverse()
-                           .SkipWhile(e => e.PublishTime <= threshold)
+                           .SkipWhile(e => e.PublishTime <= thresh)
                            .ToList();
 
         /* ----------------------------------------------------------------- */
@@ -418,7 +418,6 @@ namespace Cube.Net.Rss
                 {
                     this.LogWarn(err.ToString(), err);
                     failed.Add(uri);
-                    if (Contains(uri)) Feeds[uri].ErrorCount++;
                 }
             }
         }

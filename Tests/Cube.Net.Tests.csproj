@@ -78,7 +78,7 @@
     <Compile Include="Rss\RssCacheDictionaryTest.cs" />
     <Compile Include="Rss\RssClientTest.cs" />
     <Compile Include="Rss\RssMonitorTest.cs" />
-    <Compile Include="Rss\RssParserTest.cs" />
+    <Compile Include="Rss\RssFeedTest.cs" />
     <Compile Include="BrowserSettingsTest.cs" />
     <Compile Include="NetworkTest.cs" />
     <Compile Include="Rss\RssVersionTest.cs" />
@@ -86,6 +86,9 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="App.config" />
+    <None Include="Examples\UninitializedRss.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Packages.config" />
     <None Include="Examples\Sample.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
