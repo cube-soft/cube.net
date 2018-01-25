@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.ComponentModel;
 
 namespace Cube.Net.App.Rss.Reader
@@ -28,7 +29,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public interface IRssEntry : INotifyPropertyChanged
+    public interface IRssEntry : INotifyPropertyChanged, IDisposable
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -57,11 +58,11 @@ namespace Cube.Net.App.Rss.Reader
         /// Count
         /// 
         /// <summary>
-        /// 未読記事数を取得または設定します。
+        /// 未読記事数を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        int Count { get; set; }
+        int Count { get; }
 
         /* ----------------------------------------------------------------- */
         ///

@@ -15,7 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using Cube.Xui;
@@ -33,6 +36,25 @@ namespace Cube.Net.App.Rss.Reader
     /* --------------------------------------------------------------------- */
     public class RssCategory : ObservableProperty, IRssEntry
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssCategory
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssCategory()
+        {
+            _dispose = new OnceAction<bool>(Dispose);
+            Children.CollectionChanged += WhenChildrenChanged;
+        }
+
+        #endregion
+
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -76,8 +98,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public int Count
         {
-            get => _count;
-            set => SetProperty(ref _count, value);
+            get
+            {
+                if (!_count.HasValue) _count = Children.Aggregate(0, (x, i) => x + i.Count);
+                return _count.Value;
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -156,12 +181,93 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection<IRssEntry> Children { get; set; }
-            = new BindableCollection<IRssEntry>();
+        public BindableCollection<IRssEntry> Children { get; } =
+            new BindableCollection<IRssEntry>();
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~RssCategory
+        /// 
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        ~RssCategory() { _dispose.Invoke(false); }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            _dispose.Invoke(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージオブジェクトを開放するかどうか
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing) Children.CollectionChanged -= WhenChildrenChanged;
+        }
 
         #endregion
 
         #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnPropertyChanged
+        /// 
+        /// <summary>
+        /// プロパティ変更時に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Count))
+            {
+                _count = null;
+                if (Parent is RssCategory rc) rc.RaisePropertyChanged(nameof(Count));
+            }
+            base.OnPropertyChanged(e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenChildrenChanged
+        /// 
+        /// <summary>
+        /// 子要素の変更時に実行されるハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WhenChildrenChanged(object sender, NotifyCollectionChangedEventArgs e) =>
+            RaisePropertyChanged(nameof(Count));
+
+        #region Json
 
         /* ----------------------------------------------------------------- */
         ///
@@ -207,9 +313,12 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
+        #endregion
+
         #region Fields
+        private OnceAction<bool> _dispose;
         private string _title;
-        private int _count;
+        private int? _count;
         private IRssEntry _parent;
         private bool _selected = false;
         private bool _expanded = false;
