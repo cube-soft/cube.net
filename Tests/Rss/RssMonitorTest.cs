@@ -37,7 +37,7 @@ namespace Cube.Net.Tests
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// Start_CacheDictionary
         /// 
         /// <summary>
         /// 監視テストを実行します。
@@ -45,7 +45,7 @@ namespace Cube.Net.Tests
         /// 
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start()
+        public void Start_CacheDictionary()
         {
             var start = DateTime.Now;
             var uri0  = new Uri("http://blog.cube-soft.jp/?feed=rss2");
@@ -55,14 +55,20 @@ namespace Cube.Net.Tests
 
             using (var src = new RssCacheDictionary() { Directory = Results })
             {
-                using (var mon = new RssMonitor(src))
+                src.Add(uri0, default(RssFeed));
+                src.Add(uri1, default(RssFeed));
+
+                using (var mon = new RssMonitor())
                 {
                     var count = 0;
                     var cts   = new CancellationTokenSource();
 
-                    mon.Register(uri0);
-                    mon.Register(uri1);
-                    mon.Subscribe(e => { if (++count >= 2) cts.Cancel(); });
+                    mon.Register(src.Keys);
+                    mon.Subscribe(e =>
+                    {
+                        src[e.Uri] = e;
+                        if (++count >= 2) cts.Cancel();
+                    });
                     mon.Start();
                     WaitAsync(cts.Token).Wait();
                     mon.Stop();
@@ -89,45 +95,23 @@ namespace Cube.Net.Tests
         [Test]
         public void Register_Remove()
         {
-            var src  = new Dictionary<Uri, RssFeed>();
             var uri0 = new Uri("http://www.example.com/rss");
             var uri1 = new Uri("http://www.example.com/rss2");
 
-            using (var mon = new RssMonitor(src))
+            using (var mon = new RssMonitor())
             {
                 mon.Register(uri0);
-                Assert.That(src[uri0].Uri,   Is.EqualTo(uri0));
-                Assert.That(src[uri0].Title, Is.EqualTo(uri0.ToString()));
+                Assert.That(mon.Contains(uri0), Is.True);
+                Assert.That(mon.LastChecked(uri0).HasValue, Is.False);
                 mon.Register(uri1);
-                Assert.That(src[uri1].Uri,   Is.EqualTo(uri1));
-                Assert.That(src[uri1].Title, Is.EqualTo(uri1.ToString()));
+                Assert.That(mon.Contains(uri1), Is.True);
+                Assert.That(mon.LastChecked(uri1).HasValue, Is.False);
 
                 mon.Remove(uri0);
-                Assert.That(src.ContainsKey(uri0), Is.False);
+                Assert.That(mon.Contains(uri0), Is.False);
                 mon.Clear();
-                Assert.That(src.Count, Is.EqualTo(0));
+                Assert.That(mon.Contains(uri1), Is.False);
             }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Register_Throws
-        /// 
-        /// <summary>
-        /// 登録時に null を指定した時の挙動を確認します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Register_Throws() => Assert.That(
-            () =>
-            {
-                using (var mon = new RssMonitor())
-                {
-                    mon.Register(new Uri("http://www.example.com/rss"), null);
-                }
-            },
-            Throws.TypeOf<NullReferenceException>().And.Message.EqualTo("RssFeed")
-        );
     }
 }

@@ -54,18 +54,16 @@ namespace Cube.Net.Rss
             var e = root.Element("channel");
             if (e == null) return default(RssFeed);
 
-            var dest = new RssFeed
+            var items = ParseItems(e);
+            return new RssFeed
             {
-                Title       = e.GetTitle(),
-                Description = e.GetValue("description"),
-                Link        = e.GetUri("link"),
-                Items       = ParseItems(e),
-                LastChecked = DateTime.Now,
+                Title         = e.GetTitle(),
+                Description   = e.GetValue("description"),
+                Link          = e.GetUri("link"),
+                Items         = ParseItems(e),
+                LastChecked   = DateTime.Now,
+                LastPublished = items.FirstOrDefault()?.PublishTime,
             };
-
-            dest.LastPublished = dest.Items.FirstOrDefault()?.PublishTime ??
-                                 DateTime.MinValue;
-            return dest;
         }
 
         #endregion
