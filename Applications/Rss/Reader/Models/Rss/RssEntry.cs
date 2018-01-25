@@ -51,6 +51,28 @@ namespace Cube.Net.App.Rss.Reader
             _dispose = new OnceAction<bool>(Dispose);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssEntry
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="cp">コピー元オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssEntry(RssFeed cp) : this()
+        {
+            Title         = cp.Title;
+            Uri           = cp.Uri;
+            Link          = cp.Link;
+            Description   = cp.Description;
+            LastChecked   = cp.LastChecked;
+            LastPublished = cp.LastPublished;
+            Items         = cp.Items;
+        }
+
         #endregion
 
         #region Properties

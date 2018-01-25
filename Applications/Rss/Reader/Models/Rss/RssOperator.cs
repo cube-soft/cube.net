@@ -15,6 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Cube.Net.Rss;
+
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
@@ -28,6 +33,8 @@ namespace Cube.Net.App.Rss.Reader
     /* --------------------------------------------------------------------- */
     public static class RssOperator
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
         /// Expand
@@ -47,6 +54,94 @@ namespace Cube.Net.App.Rss.Reader
                 src = category.Parent;
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reschedule
+        /// 
+        /// <summary>
+        /// RssMonitor を再設定します。
+        /// </summary>
+        /// 
+        /// <param name="mon">モニタ</param>
+        /// <param name="feeds">対象 RSS フィード一覧</param>
+        /// <param name="pred">叙述関数</param>
+        /// 
+        /// <remarks>
+        /// RssEntry に変換できないオブジェクトは無視されます。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static void Reschedule(this RssMonitor mon,
+            IEnumerable<RssFeed> feeds, Func<RssEntry, bool> pred) =>
+            Reschedule(mon, feeds.OfType<RssEntry>(), pred);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reschedule
+        /// 
+        /// <summary>
+        /// RssMonitor を再設定します。
+        /// </summary>
+        /// 
+        /// <param name="mon">モニタ</param>
+        /// <param name="entries">対象 RSS エントリ一覧</param>
+        /// <param name="pred">叙述関数</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static void Reschedule(this RssMonitor mon,
+            IEnumerable<RssEntry> entries, Func<RssEntry, bool> pred)
+        {
+            try
+            {
+                mon.Suspend();
+                mon.Clear();
+
+                var none  = RssCheckFrequency.None;
+                var items = entries.Where(e => e.Frequency != none && pred(e));
+
+                foreach (var e in items) mon.Register(e.Uri, e.LastChecked);
+            }
+            finally { mon.Start(); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsHighFrequency
+        /// 
+        /// <summary>
+        /// チェック間隔が高頻度に該当するかどうかを判別します。
+        /// </summary>
+        /// 
+        /// <param name="src">RSS エントリ</param>
+        /// <param name="now">基準時刻</param>
+        /// 
+        /// <returns>高頻度かどうか</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static bool IsHighFrequency(this RssEntry src, DateTime now) =>
+            src.Frequency == RssCheckFrequency.High ||
+            src.Frequency == RssCheckFrequency.Auto &&
+            now - src.LastPublished <= _border;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsLowFrequency
+        /// 
+        /// <summary>
+        /// チェック間隔が低頻度に該当するかどうかを判別します。
+        /// </summary>
+        /// 
+        /// <param name="src">RSS エントリ</param>
+        /// <param name="now">基準時刻</param>
+        /// 
+        /// <returns>低頻度かどうか</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static bool IsLowFrequency(this RssEntry src, DateTime now) =>
+            src.Frequency == RssCheckFrequency.Low ||
+            src.Frequency == RssCheckFrequency.Auto &&
+            now - src.LastPublished <= _border;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -72,5 +167,27 @@ namespace Cube.Net.App.Rss.Reader
             }
             return string.Empty;
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ToException
+        /// 
+        /// <summary>
+        /// 例外オブジェクトに変換します。
+        /// </summary>
+        /// 
+        /// <param name="src">メッセージ</param>
+        /// 
+        /// <returns>例外オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static Exception ToException(this string src) =>
+            new ArgumentException(src);
+
+        #endregion
+
+        #region Fields
+        private static readonly TimeSpan _border = TimeSpan.FromDays(30);
+        #endregion
     }
 }

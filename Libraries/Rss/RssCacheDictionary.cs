@@ -253,15 +253,13 @@ namespace Cube.Net.Rss
         /// Add
         /// 
         /// <summary>
-        /// 指定したキーおよび値を持つ要素を追加します。
+        /// 要素を追加します。
         /// </summary>
         /// 
-        /// <param name="key">キー</param>
-        /// <param name="value">値</param>
+        /// <param name="item">要素</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Add(Uri key, RssFeed value) =>
-            Add(new KeyValuePair<Uri, RssFeed>(key, value));
+        public void Add(RssFeed item) => Add(item.Uri, item);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -278,6 +276,24 @@ namespace Cube.Net.Rss
         {
             _inner.Add(item);
             Pop(item);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Add
+        /// 
+        /// <summary>
+        /// 指定したキーおよび値を持つ要素を追加します。
+        /// </summary>
+        /// 
+        /// <param name="key">キー</param>
+        /// <param name="value">値</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Add(Uri key, RssFeed value)
+        {
+            _inner.Add(key, value);
+            Pop(key, value);
         }
 
         /* ----------------------------------------------------------------- */

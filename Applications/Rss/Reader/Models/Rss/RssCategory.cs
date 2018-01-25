@@ -181,7 +181,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection<IRssEntry> Children { get; } =
+        public BindableCollection<IRssEntry> Children { get; set; } =
             new BindableCollection<IRssEntry>();
 
         #endregion

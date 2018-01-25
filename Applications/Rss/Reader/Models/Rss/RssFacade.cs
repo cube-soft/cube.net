@@ -54,10 +54,9 @@ namespace Cube.Net.App.Rss.Reader
             Settings.AutoSave = true;
 
             Subscription.IO = Settings.IO;
+            Subscription.FileName = Settings.Feed;
             Subscription.CacheDirectory = Settings.Cache;
-            if (IO.Exists(settings.Feed)) Subscription.Load(settings.Feed);
-            Subscription.CollectionChanged += (s, e) => Subscription.Save(Settings.Feed);
-            Subscription.SubCollectionChanged += (s, e) => Subscription.Save(Settings.Feed);
+            Subscription.Load();
             Subscription.Received += WhenReceived;
 
             Data = new RssBindableData(Subscription, Settings.Value);
@@ -120,7 +119,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssSubscription Subscription { get; } = new RssSubscription();
+        private RssSubscriber Subscription { get; } = new RssSubscriber();
 
         #endregion
 
@@ -137,7 +136,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Setup()
         {
-            var entry = Subscription.GetEntry(Settings.Value.Start);
+            var entry = Subscription.Find<RssEntry>(Settings.Value.Start);
             if (entry != null)
             {
                 Select(entry);
@@ -306,7 +305,7 @@ namespace Cube.Net.App.Rss.Reader
                 if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
 
                 Property = entry;
-                Data.Feed.Value = Subscription.GetFeed(entry.Uri);
+                Data.Feed.Value = Subscription.Find<RssFeed>(entry.Uri);
 
                 var items = Data.Feed.Value?.UnreadItems;
                 var first = items?.Count() > 0 ? items.First() : null;
@@ -422,9 +421,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void ReadAll(RssEntry entry)
         {
-            var dest = Subscription.GetFeed(entry.Uri);
-            if (dest == null) return;
-            foreach (var i in dest.UnreadItems) i.Status = RssItemStatus.Read;
+            foreach (var i in entry.UnreadItems) i.Status = RssItemStatus.Read;
         }
 
         /* ----------------------------------------------------------------- */

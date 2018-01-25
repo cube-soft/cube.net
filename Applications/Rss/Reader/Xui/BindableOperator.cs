@@ -15,51 +15,35 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Linq;
-using Cube.Net.App.Rss.Reader;
-using NUnit.Framework;
+using System.Collections.Generic;
 
-namespace Cube.Net.App.Rss.Tests
+namespace Cube.Xui
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssEntryTest
+    /// BindableOperator
     ///
     /// <summary>
-    /// RssEntry およびそれに付随するクラスのテスト用クラスです。
+    /// Bindable(T) および BindableCollection(T) の拡張用クラスです。
     /// </summary>
-    ///
+    /// 
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class RssEntryTest : FileHelper
+    public static class BindableOperator
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Load
+        /// ToBindable
         /// 
         /// <summary>
-        /// JSON ファイルをロードするテストを実行します。
+        /// コレクションを BindingCollection(T) オブジェクトに変換します。
         /// </summary>
+        /// 
+        /// <param name="src">コレクション</param>
+        /// 
+        /// <returns>BindableCollection(T) オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void Load()
-        {
-            var count = 0;
-            var src = new RssSubscriber();
-            src.FileName = Example("Feeds.json");
-            src.CollectionChanged += (s, e) => count++;
-            src.Load();
-
-            Assert.That(src.Categories.Count(), Is.EqualTo(2));
-            Assert.That(count, Is.EqualTo(4), nameof(src.CollectionChanged));
-
-            var uri = new Uri("https://github.com/blog.atom");
-            Assert.That(src.Entries.Count(), Is.EqualTo(2));
-            Assert.That(src.Entries.First().Title, Is.EqualTo("The GitHub Blog"));
-            Assert.That(src.Entries.First().Uri, Is.EqualTo(uri));
-            Assert.That(src.Entries.First().Parent, Is.Null);
-        }
+        public static BindableCollection<T> ToBindable<T>(this IEnumerable<T> src) =>
+            new BindableCollection<T>(src);
     }
 }

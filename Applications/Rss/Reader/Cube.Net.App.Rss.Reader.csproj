@@ -96,7 +96,7 @@
     <Compile Include="Models\Rss\RssEntry.cs" />
     <Compile Include="Models\Rss\RssEntryDropTarget.cs" />
     <Compile Include="Models\Rss\RssFacade.cs" />
-    <Compile Include="Models\Rss\RssSubscription.cs" />
+    <Compile Include="Models\Rss\RssSubscriber.cs" />
     <Compile Include="Models\Interactions\Triggers.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -119,6 +119,7 @@
     <Compile Include="Xui\Behaviors\WindowsFormsBehavior.cs" />
     <Compile Include="Xui\BindableCommand.cs" />
     <Compile Include="Xui\BindableCommandGeneric.cs" />
+    <Compile Include="Xui\BindableOperator.cs" />
     <Compile Include="Xui\Components\DialogMessageBase.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Components\FileDialogMessage.cs" />
