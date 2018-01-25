@@ -185,7 +185,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">選択中の RSS エントリ</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Update(RssEntryBase src)
+        public void Update(IRssEntry src)
         {
             if (src is RssEntry entry) Subscription.Update(entry.Uri);
             else if (src is RssCategory category)
@@ -220,7 +220,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="index">カテゴリ中の挿入場所</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Move(RssEntryBase src, RssEntryBase dest, int index)
+        public void Move(IRssEntry src, IRssEntry dest, int index)
             => Subscription.Move(src, dest, index);
 
         /* ----------------------------------------------------------------- */
@@ -295,7 +295,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Select(RssEntryBase src)
+        public void Select(IRssEntry src)
         {
             if (src == null) return;
             Data.Entry.Value = src;
@@ -333,7 +333,7 @@ namespace Cube.Net.App.Rss.Reader
             var tmp = Data.Article.Value;
             if (Property.SkipContent) Data.Uri.Value = src.Link;
             else Data.Article.Value = src;
-            if (tmp != null) tmp.Read = true;
+            if (tmp != null) tmp.Status = RssItemStatus.Read;
         }
 
         #region IDisposable
@@ -380,7 +380,8 @@ namespace Cube.Net.App.Rss.Reader
 
             if (disposing)
             {
-                if (Data.Article.Value != null) Data.Article.Value.Read = true;
+                var value = Data.Article.Value;
+                if (value != null) value.Status = RssItemStatus.Read;
                 Subscription.Dispose();
                 Settings.Dispose();
             }
@@ -403,10 +404,10 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void ReadAll(RssCategory root)
         {
-            foreach (var item in root.Items)
+            foreach (var i in root.Children)
             {
-                if (item is RssCategory category) ReadAll(category);
-                else if (item is RssEntry entry) ReadAll(entry);
+                if (i is RssCategory category) ReadAll(category);
+                else if (i is RssEntry entry) ReadAll(entry);
             }
         }
 
@@ -421,9 +422,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void ReadAll(RssEntry entry)
         {
-            var feed = Subscription.GetFeed(entry.Uri);
-            if (feed == null) return;
-            foreach (var article in feed.UnreadItems) article.Read = true;
+            var dest = Subscription.GetFeed(entry.Uri);
+            if (dest == null) return;
+            foreach (var i in dest.UnreadItems) i.Status = RssItemStatus.Read;
         }
 
         /* ----------------------------------------------------------------- */

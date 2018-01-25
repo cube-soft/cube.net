@@ -104,7 +104,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public FrequencyConverter() :
-            base(e => e is Frequency f ? f.ToMessage() : string.Empty) { }
+            base(e => e is RssCheckFrequency f ? f.ToMessage() : string.Empty) { }
     }
 
     /* --------------------------------------------------------------------- */
@@ -128,10 +128,10 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public LastCheckedToString() : base(e =>
-            e is RssFeed src && src.LastChecked != DateTime.MinValue ?
+            e is RssFeed src && src.LastChecked.HasValue ?
             string.Format("{0} {1}",
                 Properties.Resources.MessageLastChecked,
-                src.LastChecked.ToString("yyyy/MM/dd HH:mm:ss")
+                src.LastChecked?.ToString("yyyy/MM/dd HH:mm:ss")
             ) :
             string.Empty
         ) { }

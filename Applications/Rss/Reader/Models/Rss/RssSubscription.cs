@@ -39,7 +39,7 @@ namespace Cube.Net.App.Rss.Reader
     /// 
     /* --------------------------------------------------------------------- */
     public sealed class RssSubscription
-        : IEnumerable<RssEntryBase>, INotifyCollectionChanged, IDisposable
+        : IEnumerable<IRssEntry>, INotifyCollectionChanged, IDisposable
     {
         #region Constructors
 
@@ -193,7 +193,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>生成オブジェクト</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        public RssCategory Create(RssEntryBase src)
+        public RssCategory Create(IRssEntry src)
         {
             var dest = new RssCategory
             {
@@ -202,11 +202,12 @@ namespace Cube.Net.App.Rss.Reader
                 Editing = true,
             };
 
-            var items = src.Parent != null ? src.Parent.Items : _tree;
-            var count = src.Parent != null ? src.Parent.Entries.Count() : Entries.Count();
+            var parent   = src.Parent as RssCategory;
+            var children = parent != null ? parent.Children : _tree;
+            var count    = parent != null ? parent.Entries.Count() : Entries.Count();
 
-            items.Insert(items.Count - count, dest);
-            src.Parent.Expand();
+            children.Insert(children.Count - count, dest);
+            parent.Expand();
 
             return dest;
         }
@@ -263,7 +264,7 @@ namespace Cube.Net.App.Rss.Reader
                 {
                     MakeFeed(item);
                     if (!string.IsNullOrEmpty(item.Title)) _tree.Add(item);
-                    else foreach (var entry in item.Items)
+                    else foreach (var entry in item.Children)
                     {
                         entry.Parent = null;
                         _tree.Add(entry);
@@ -288,15 +289,16 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="index">カテゴリ中の挿入場所</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Move(RssEntryBase src, RssEntryBase dest, int index)
+        public void Move(IRssEntry src, IRssEntry dest, int index)
         {
-            if (src.Parent is RssCategory c) c.Items.Remove(src);
+            if (src.Parent is RssCategory c) c.Children.Remove(src);
             else _tree.Remove(src);
 
-            src.Parent = dest as RssCategory;
-            var items = src.Parent?.Items ?? _tree;
-            if (index < 0 || index >= items.Count) items.Add(src);
-            else items.Insert(index, src);
+            var parent   = dest as RssCategory;
+            var children = parent?.Children ?? _tree;
+            src.Parent = parent;
+            if (index < 0 || index >= children.Count) children.Add(src);
+            else children.Insert(index, src);
         }
 
         /* ----------------------------------------------------------------- */
@@ -340,9 +342,9 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">削除する RSS フィード</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Remove(RssEntryBase src)
+        public void Remove(IRssEntry src)
         {
-            if (src.Parent != null) src.Parent.Items.Remove(src);
+            if (src.Parent is RssCategory parent) parent.Children.Remove(src);
             else _tree.Remove(src);
 
             if (src is RssEntry entry)
@@ -403,8 +405,8 @@ namespace Cube.Net.App.Rss.Reader
         {
             var root = new RssCategory
             {
-                Title = string.Empty,
-                Items = new BindableCollection<RssEntryBase>(_tree.OfType<RssEntry>()),
+                Title    = string.Empty,
+                Children = new BindableCollection<IRssEntry>(_tree.OfType<RssEntry>()),
             };
 
             var data = _tree.OfType<RssCategory>()
@@ -470,7 +472,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerator<RssEntryBase> GetEnumerator() => _tree.GetEnumerator();
+        public IEnumerator<IRssEntry> GetEnumerator() => _tree.GetEnumerator();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -555,9 +557,9 @@ namespace Cube.Net.App.Rss.Reader
         {
             src.PropertyChanged -= WhenPropertyChanged;
             src.PropertyChanged += WhenPropertyChanged;
-            src.Items.CollectionChanged += (s, e) =>
+            src.Children.CollectionChanged += (s, e) =>
             {
-                src.Count = src.Items.Aggregate(0, (x, i) => x + i.Count);
+                src.Count = src.Children.Aggregate(0, (x, i) => x + i.Count);
                 SubCollectionChanged?.Invoke(this, e);
             };
 
@@ -594,11 +596,12 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void UpdateCount(RssEntryBase src)
+        private void UpdateCount(IRssEntry src)
         {
-            if (src == null || src.Parent == null) return;
-            var parent = src.Parent;
-            parent.Count = parent.Items.Aggregate(0, (x, e) => x + e.Count);
+            if (src != null && src.Parent is RssCategory parent)
+            {
+                parent.Count = parent.Children.Aggregate(0, (x, e) => x + e.Count);
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -668,15 +671,15 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void WhenPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != nameof(RssEntryBase.Count)) return;
-            UpdateCount(sender as RssEntryBase);
+            if (e.PropertyName != nameof(IRssEntry.Count)) return;
+            UpdateCount(sender as IRssEntry);
         }
 
         #endregion
 
         #region Fields
         private bool _disposed = false;
-        private BindableCollection<RssEntryBase> _tree = new BindableCollection<RssEntryBase>();
+        private BindableCollection<IRssEntry> _tree = new BindableCollection<IRssEntry>();
         private IDictionary<Uri, RssEntry> _entries = new Dictionary<Uri, RssEntry>();
         private RssCacheDictionary _feeds = new RssCacheDictionary();
         private RssMonitor _primary;

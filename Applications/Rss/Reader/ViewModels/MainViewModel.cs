@@ -298,8 +298,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand SelectEntry => _selectEntry ?? (
             _selectEntry = new RelayCommand<object>(
-                e => Model.Select(e as RssEntryBase),
-                e => e is RssEntryBase
+                e => Model.Select(e as IRssEntry),
+                e => e is IRssEntry
             )
         );
 

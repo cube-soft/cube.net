@@ -15,114 +15,86 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using Cube.Net.Rss;
-using Cube.Xui;
-using Cube.Xui.Triggers;
+using System.ComponentModel;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// PropertyViewModel
+    /// IRssEntry
     ///
     /// <summary>
-    /// RSS フィードのプロパティ画面とモデルを関連付けるためのクラスです。
+    /// RSS のエントリおよびカテゴリを表すインターフェースです。
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class PropertyViewModel : CommonViewModel
+    public interface IRssEntry : INotifyPropertyChanged
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
-        /// PropertyViewModel
+        /// Parent
         /// 
         /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="entry">RssEntry オブジェクト</param>
-        /// <param name="feed">RssFeed オブジェクト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public PropertyViewModel(RssEntry entry, RssFeed feed) :
-            base(new Messenger())
-        {
-            System.Diagnostics.Debug.Assert(entry != null && feed != null);
-            Entry = new Bindable<RssEntry>(entry);
-            Feed  = new Bindable<RssFeed>(feed);
-        }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Entry
-        /// 
-        /// <summary>
-        /// 対象となる RssEntry オブジェクトを取得します。
+        /// 親要素を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssEntry> Entry { get; }
+        IRssEntry Parent { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Feed
+        /// Title
         /// 
         /// <summary>
-        /// 対象となる RssFeed オブジェクトを取得します。
+        /// タイトルを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssFeed> Feed { get; }
+        string Title { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Frequencies
+        /// Count
         /// 
         /// <summary>
-        /// 更新頻度を表すオブジェクト一覧を取得します。
+        /// 未読記事数を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssCheckFrequency> Frequencies { get; } =
-            Enum.GetValues(typeof(RssCheckFrequency)).Cast<RssCheckFrequency>();
-
-        #endregion
-
-        #region Commands
+        int Count { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Apply
+        /// Selected
         /// 
         /// <summary>
-        /// 内容を適用するコマンドです。
+        /// 選択状態かどうかを示す値を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Apply => _apply ?? (
-            _apply = new RelayCommand(() =>
-            {
-                Messenger.Send(new UpdateSourcesMessage());
-                Close.Execute(null);
-            })
-        );
+        bool Selected { get; set; }
 
-        #endregion
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Expanded
+        /// 
+        /// <summary>
+        /// 子要素が表示状態かどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        bool Expanded { get; set; }
 
-        #region Fields
-        private ICommand _apply;
-        #endregion
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Editing
+        /// 
+        /// <summary>
+        /// ユーザによる編集中かどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        bool Editing { get; set; }
     }
+
 }
