@@ -195,8 +195,8 @@ namespace Cube.Net.App.Rss.Reader
             var dest = Find<RssFeed>(src.Uri);
             if (dest == null) return;
 
-            var items = src.Items.Shrink(dest.LastChecked);
-            foreach (var item in items) dest.Items.Insert(0, item);
+            src.Items = src.Items.Shrink(dest.LastChecked).ToList();
+            foreach (var item in src.Items) dest.Items.Insert(0, item);
 
             dest.Description   = src.Description;
             dest.Link          = src.Link;
