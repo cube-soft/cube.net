@@ -129,7 +129,8 @@ namespace Cube.Net.App.Rss.Reader
             _property = new BindableCommand(
                 () => Messenger.Send(new PropertyViewModel(
                     Data.Entry.Value as RssEntry,
-                    Data.Feed.Value
+                    Data.Feed.Value,
+                    e => Model.Reschedule(e)
                 )),
                 () => Data.Entry.Value is RssEntry && Data.Feed.Value != null,
                 Data.Entry
@@ -245,7 +246,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Update => _update ?? (
-            _update = new RelayCommand(() => Model.Update(Data.Entry.Value))
+            _update = new RelayCommand(() => Model.UpdateEntry(Data.Entry.Value))
         );
 
         /* ----------------------------------------------------------------- */
@@ -258,7 +259,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand UpdateOne => _updateOne ?? (
-            _updateOne = new RelayCommand(() => Model.Update(Data.Feed.Value))
+            _updateOne = new RelayCommand(() => Model.UpdateFeed(Data.Feed.Value))
         );
 
         /* ----------------------------------------------------------------- */

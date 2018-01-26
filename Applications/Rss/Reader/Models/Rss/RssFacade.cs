@@ -179,16 +179,16 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Update
+        /// UpdateEntry
         ///
         /// <summary>
-        /// 選択中の RSS フィードの内容を更新します。
+        /// 選択中の RSS エントリの内容を更新します。
         /// </summary>
         /// 
         /// <param name="src">選択中の RSS エントリ</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Update(IRssEntry src)
+        public void UpdateEntry(IRssEntry src)
         {
             if (src is RssEntry entry) Core.Update(entry.Uri);
             else if (src is RssCategory category)
@@ -199,7 +199,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Update
+        /// UpdateFeed
         ///
         /// <summary>
         /// 選択中の RSS フィードの内容を更新します。
@@ -208,7 +208,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">選択中の RSS フィード</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Update(RssFeed src) => Core.Update(src?.Uri);
+        public void UpdateFeed(RssFeed src) => Core.Update(src?.Uri);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -223,8 +223,8 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="index">カテゴリ中の挿入場所</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Move(IRssEntry src, IRssEntry dest, int index)
-            => Core.Move(src, dest, index);
+        public void Move(IRssEntry src, IRssEntry dest, int index) =>
+            Core.Move(src, dest, index);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -237,8 +237,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Remove()
         {
-            if (Data.Entry.Value == null) return;
-            Core.Remove(Data.Entry.Value);
+            if (Data.Entry.Value != null) Core.Remove(Data.Entry.Value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -338,6 +337,19 @@ namespace Cube.Net.App.Rss.Reader
             else Data.Article.Value = src;
             if (tmp != null) tmp.Status = RssItemStatus.Read;
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reschedule
+        /// 
+        /// <summary>
+        /// RSS フィードのチェック方法を再設定します。
+        /// </summary>
+        /// 
+        /// <param name="src">選択項目</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Reschedule(RssEntry src) => Core.Reschedule(src);
 
         #region IDisposable
 
