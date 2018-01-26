@@ -20,6 +20,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Forms;
 using Cube.Forms;
+using Cube.Log;
 using Cube.Xui.Behaviors;
 
 namespace Cube.Net.App.Rss.Reader
@@ -221,8 +222,13 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void WhenBeforeNewWindow(object sender, NavigatingEventArgs e)
         {
-            e.Cancel = true;
-            Source.Navigate(e.Url);
+            try
+            {
+                e.Cancel = true;
+                var uri = new Uri(e.Url);
+                System.Diagnostics.Process.Start(uri.ToString());
+            }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
         }
 
         /* ----------------------------------------------------------------- */
