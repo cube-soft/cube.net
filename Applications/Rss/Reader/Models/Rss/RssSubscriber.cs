@@ -517,15 +517,18 @@ namespace Cube.Net.App.Rss.Reader
         /// RSS フィードのチェック間隔を設定します。
         /// </summary>
         /// 
-        /// <param name="kind">種類</param>
-        /// <param name="value">チェック間隔</param>
+        /// <param name="times">チェック間隔</param>
+        /// 
+        /// <remarks>
+        /// 最初の項目が高頻度モニタ、次の項目が低頻度モニタのチェック
+        /// 間隔に設定されます。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public void SetInterval(RssCheckFrequency kind, TimeSpan value)
+        public void SetInterval(IList<TimeSpan> times)
         {
-            var mon = kind == RssCheckFrequency.High ? _monitors[0] :
-                      kind == RssCheckFrequency.Low  ? _monitors[1] : null;
-            if (mon != null) mon.Interval = value;
+            var count = Math.Min(times.Count, _monitors.Length);
+            for (var i = 0; i < count; ++i) _monitors[i].Interval = times[i];
         }
 
         #endregion
@@ -612,8 +615,6 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Implementations
 
-        #region Entry
-
         /* ----------------------------------------------------------------- */
         ///
         /// LoadCore
@@ -678,6 +679,10 @@ namespace Cube.Net.App.Rss.Reader
         {
             foreach (var re in src.Entries) RegisterCore(re);
             foreach (var rc in src.Categories) RegisterCore(rc);
+
+            src.Children.CollectionChanged -= WhenChildrenChanged;
+            src.Children.CollectionChanged += WhenChildrenChanged;
+
             if (src.Parent == null) _tree.Add(src);
         }
 
@@ -712,6 +717,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void RemoveCore(RssCategory src)
         {
+            src.Children.CollectionChanged -= WhenChildrenChanged;
+
             foreach (var item in src.Children)
             {
                 if (item is RssCategory c) RemoveCore(c);
@@ -743,7 +750,16 @@ namespace Cube.Net.App.Rss.Reader
             src.Dispose();
         }
 
-        #endregion
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenChildrenChanged
+        /// 
+        /// <summary>
+        /// RssCategory.Children が変更時に実行されるハンドラです。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void WhenChildrenChanged(object s, NotifyCollectionChangedEventArgs e) => Save();
 
         #endregion
 
