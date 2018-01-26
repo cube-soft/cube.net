@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Cube.FileSystem;
@@ -51,15 +52,16 @@ namespace Cube.Net.App.Rss.Reader
         {
             Settings = settings;
             if (IO.Exists(Settings.Path)) Settings.Load();
+            Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
 
-            Subscription.IO = Settings.IO;
-            Subscription.FileName = Settings.Feed;
-            Subscription.CacheDirectory = Settings.Cache;
-            Subscription.Received += WhenReceived;
-            Subscription.Load();
+            Core.IO = Settings.IO;
+            Core.FileName = Settings.Feed;
+            Core.CacheDirectory = Settings.Cache;
+            Core.Received += WhenReceived;
+            Core.Load();
 
-            Data = new RssBindableData(Subscription, Settings.Value);
+            Data = new RssBindableData(Core, Settings.Value);
         }
 
         #endregion
@@ -112,14 +114,14 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Subscription
+        /// Core
         /// 
         /// <summary>
         /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssSubscriber Subscription { get; } = new RssSubscriber();
+        private RssSubscriber Core { get; } = new RssSubscriber();
 
         #endregion
 
@@ -136,7 +138,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Setup()
         {
-            var entry = Subscription.Find<RssEntry>(Settings.Value.Start);
+            var entry = Core.Find<RssEntry>(Settings.Value.Start);
             if (entry != null)
             {
                 Select(entry);
@@ -155,7 +157,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">URL</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public Task NewEntry(string src) => Subscription.Register(
+        public Task NewEntry(string src) => Core.Register(
             src.Contains("://") ?
             new Uri(src) :
             new Uri("http://" + src)
@@ -171,7 +173,7 @@ namespace Cube.Net.App.Rss.Reader
         /// 
         /* ----------------------------------------------------------------- */
         public void NewCategory() =>
-            Select(Subscription.Create(Data.Entry.Value));
+            Select(Core.Create(Data.Entry.Value));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -186,10 +188,10 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Update(IRssEntry src)
         {
-            if (src is RssEntry entry) Subscription.Update(entry.Uri);
+            if (src is RssEntry entry) Core.Update(entry.Uri);
             else if (src is RssCategory category)
             {
-                Subscription.Update(category.Entries.Select(e => e.Uri));
+                Core.Update(category.Entries.Select(e => e.Uri));
             }
         }
 
@@ -204,7 +206,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">選択中の RSS フィード</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Update(RssFeed src) => Subscription.Update(src?.Uri);
+        public void Update(RssFeed src) => Core.Update(src?.Uri);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -220,7 +222,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Move(IRssEntry src, IRssEntry dest, int index)
-            => Subscription.Move(src, dest, index);
+            => Core.Move(src, dest, index);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -234,7 +236,7 @@ namespace Cube.Net.App.Rss.Reader
         public void Remove()
         {
             if (Data.Entry.Value == null) return;
-            Subscription.Remove(Data.Entry.Value);
+            Core.Remove(Data.Entry.Value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -274,7 +276,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Reset()
         {
-            if (Data.Entry.Value is RssEntry entry) Subscription.Reset(entry.Uri);
+            if (Data.Entry.Value is RssEntry entry) Core.Reset(entry.Uri);
         }
 
         /* ----------------------------------------------------------------- */
@@ -305,7 +307,7 @@ namespace Cube.Net.App.Rss.Reader
                 if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
 
                 Property = entry;
-                Data.Feed.Value = Subscription.Find<RssFeed>(entry.Uri);
+                Data.Feed.Value = Core.Find<RssFeed>(entry.Uri);
 
                 var items = Data.Feed.Value?.UnreadItems;
                 var first = items?.Count() > 0 ? items.First() : null;
@@ -381,7 +383,7 @@ namespace Cube.Net.App.Rss.Reader
             {
                 var value = Data.Article.Value;
                 if (value != null) value.Status = RssItemStatus.Read;
-                Subscription.Dispose();
+                Core.Dispose();
                 Settings.Dispose();
             }
         }
@@ -438,6 +440,30 @@ namespace Cube.Net.App.Rss.Reader
                 e.Value.Items.Count > 0 ?
                 string.Format(Properties.Resources.MessageReceived, e.Value.Items.Count, e.Value.Title ) :
                 string.Format(Properties.Resources.MessageNoReceived, e.Value.Title);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenSettingsChanged
+        /// 
+        /// <summary>
+        /// 設定内容変更時に実行されるハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WhenSettingsChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Settings.Value.HighInterval):
+                    Core.SetInterval(RssCheckFrequency.High,
+                        TimeSpan.FromSeconds(Settings.Value.HighInterval));
+                    break;
+                case nameof(Settings.Value.LowInterval):
+                    Core.SetInterval(RssCheckFrequency.Low,
+                        TimeSpan.FromSeconds(Settings.Value.LowInterval));
+                    break;
+            }
+        }
 
         #endregion
 
