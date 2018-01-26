@@ -56,7 +56,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             _dispose = new OnceAction<bool>(Dispose);
 
-            _tree.Synchronously = true;
+            _tree.IsSynchronous = true;
             _tree.CollectionChanged += (s, e) => OnCollectionChanged(e);
 
             _monitors[0] = new RssMonitor() { Interval = TimeSpan.FromHours(1) };
