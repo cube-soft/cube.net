@@ -87,7 +87,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// PrimaryInterval
+        /// HighInterval
         /// 
         /// <summary>
         /// 高頻度モニタのチェック間隔を取得または設定します。
@@ -95,15 +95,15 @@ namespace Cube.Net.App.Rss.Reader
         /// 
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public int PrimaryInterval
+        public int HighInterval
         {
-            get => _primary;
-            set => SetProperty(ref _primary, value);
+            get => _high;
+            set => SetProperty(ref _high, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SecondaryInterval
+        /// LowInterval
         /// 
         /// <summary>
         /// 低頻度モニタのチェック間隔を取得または設定します。
@@ -111,10 +111,10 @@ namespace Cube.Net.App.Rss.Reader
         /// 
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public int SecondaryInterval
+        public int LowInterval
         {
-            get => _secondary;
-            set => SetProperty(ref _secondary, value);
+            get => _low;
+            set => SetProperty(ref _low, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -156,8 +156,8 @@ namespace Cube.Net.App.Rss.Reader
         private Uri _feedUri;
         private int _width = 1060;
         private int _height = 630;
-        private int _primary = 60 * 60;
-        private int _secondary = 24 * 60 * 60;
+        private int _high = 60 * 60;
+        private int _low = 24 * 60 * 60;
         private bool _checkUpdate = true;
         private DateTime _lastCheckUpdate = new DateTime(1970, 1, 1);
         #endregion

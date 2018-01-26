@@ -528,18 +528,21 @@ namespace Cube.Net.App.Rss.Reader
         /// RSS フィードのチェック間隔を設定します。
         /// </summary>
         /// 
-        /// <param name="times">チェック間隔</param>
-        /// 
-        /// <remarks>
-        /// 最初の項目が高頻度モニタ、次の項目が低頻度モニタのチェック
-        /// 間隔に設定されます。
-        /// </remarks>
+        /// <param name="kind">種類</param>
+        /// <param name="value">チェック間隔</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void SetInterval(IList<TimeSpan> times)
+        public void SetInterval(RssCheckFrequency kind, TimeSpan value)
         {
-            var count = Math.Min(times.Count, _monitors.Length);
-            for (var i = 0; i < count; ++i) _monitors[i].Interval = times[i];
+            var mon = kind == RssCheckFrequency.High ? _monitors[0] :
+                      kind == RssCheckFrequency.Low  ? _monitors[1] : null;
+
+            if (mon != null && !mon.Interval.Equals(value))
+            {
+                mon.Stop();
+                mon.Interval = value;
+                mon.Start(value);
+            }
         }
 
         #endregion
