@@ -267,10 +267,10 @@ namespace Cube.Net.Rss
         /// 
         /* ----------------------------------------------------------------- */
         public IDisposable Subscribe(Action<RssFeed> action) =>
-            Subscribe(async e =>
+            SubscribeAsync(e =>
         {
             action(e);
-            await Task.FromResult(0);
+            return Task.FromResult(0);
         });
 
         /* ----------------------------------------------------------------- */
@@ -351,6 +351,7 @@ namespace Cube.Net.Rss
                 _http.Dispose();
                 Handler.Dispose();
             }
+            base.Dispose(disposing);
         }
 
         #endregion
