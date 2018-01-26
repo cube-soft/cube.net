@@ -634,7 +634,7 @@ namespace Cube.Net.Rss
             if (feed == null || !feed.LastChecked.HasValue) return;
 
             if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, feed);
+            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, new RssFeed(feed));
 
             feed.Items.Clear();
         }

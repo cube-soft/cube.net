@@ -34,6 +34,43 @@ namespace Cube.Net.Rss
     [DataContract]
     public class RssFeed : ObservableProperty
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssFeed
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssFeed() { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssFeed
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="cp">コピー元オブジェクト</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public RssFeed(RssFeed cp)
+        {
+            Title         = cp.Title;
+            Description   = cp.Description;
+            Link          = cp.Link;
+            Uri           = cp.Uri;
+            LastChecked   = cp.LastChecked;
+            LastPublished = cp.LastPublished;
+            Items         = cp.Items;
+        }
+
+        #endregion
+
         #region Properties
 
         /* ----------------------------------------------------------------- */
