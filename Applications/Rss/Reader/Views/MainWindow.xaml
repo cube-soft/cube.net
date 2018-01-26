@@ -70,9 +70,9 @@
     <Grid x:Name="Root">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.4*" MinWidth="50"/>
-            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="0.5*" MinWidth="50"/>
-            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"    MinWidth="50"/>
         </Grid.ColumnDefinitions>
 

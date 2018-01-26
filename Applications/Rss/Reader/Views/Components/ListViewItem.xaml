@@ -41,7 +41,7 @@
                     LineHeight="10"
                     MaxHeight="48"
                     Margin="12,8,12,8"
-                    TextTrimming="None"
+                    TextTrimming="WordEllipsis"
                     TextWrapping="Wrap"/>
             </StackPanel>
             <i:Interaction.Triggers>
