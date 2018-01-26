@@ -146,7 +146,7 @@ namespace Cube.Net.App.Rss.Reader
         public bool Expanded
         {
             get => false;
-            set => throw new NotSupportedException();
+            set { }
         }
 
         /* ----------------------------------------------------------------- */
