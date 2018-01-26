@@ -119,6 +119,22 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// LightMode
+        ///
+        /// <summary>
+        /// 軽量モードを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public bool LightMode
+        {
+            get => _lightMode;
+            set => SetProperty(ref _lightMode, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// EnableMonitorMessage
         /// 
         /// <summary>
@@ -175,6 +191,7 @@ namespace Cube.Net.App.Rss.Reader
         private int _height = 630;
         private int _high = 60 * 60;
         private int _low = 24 * 60 * 60;
+        private bool _lightMode = false;
         private bool _enableMonitorMessage = true;
         private bool _checkUpdate = true;
         private DateTime? _lastCheckUpdate = null;

@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Windows;
 using Cube.Net.Rss;
 using Cube.Xui.Converters;
 
@@ -105,6 +106,30 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public FrequencyConverter() :
             base(e => e is RssCheckFrequency f ? f.ToMessage() : string.Empty) { }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// TextWrappingConverter
+    ///
+    /// <summary>
+    /// LightMode の値を TextWrapping に変換するクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class TextWrappingConverter : BooleanToGeneric<TextWrapping>
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TextWrappingConverter
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public TextWrappingConverter() :
+            base(TextWrapping.NoWrap, TextWrapping.Wrap) { }
     }
 
     /* --------------------------------------------------------------------- */

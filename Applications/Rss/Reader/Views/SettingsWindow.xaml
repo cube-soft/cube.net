@@ -58,6 +58,7 @@
                         <RowDefinition Height="12"/>
                         <RowDefinition Height="25"/>
                         <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock
@@ -101,17 +102,24 @@
                         Grid.Column="0"/>
 
                     <CheckBox
+                        Content="軽量モード"
+                        IsChecked="{Binding Data.Value.LightMode, UpdateSourceTrigger=Explicit}"
+                        VerticalAlignment="Center"
+                        Grid.Row="3"
+                        Grid.Column="1"/>
+
+                    <CheckBox
                         Content="記事の取得状況をステータスバーに表示する"
                         IsChecked="{Binding Data.Value.EnableMonitorMessage, UpdateSourceTrigger=Explicit}"
                         VerticalAlignment="Center"
-                        Grid.Row="3"
+                        Grid.Row="4"
                         Grid.Column="1"/>
 
                     <CheckBox
                         Content="ソフトウェアのアップデートを確認する"
                         IsChecked="{Binding Data.Value.CheckUpdate, UpdateSourceTrigger=Explicit}"
                         VerticalAlignment="Center"
-                        Grid.Row="4"
+                        Grid.Row="5"
                         Grid.Column="1"/>
                 </Grid>
             </TabItem>

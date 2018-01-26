@@ -2,7 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net">
+    xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net"
+    xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
@@ -42,7 +43,8 @@
                     MaxHeight="48"
                     Margin="12,8,12,8"
                     TextTrimming="WordEllipsis"
-                    TextWrapping="Wrap"/>
+                    TextWrapping="{Binding DataContext.Data.User.Value.LightMode,
+                        ElementName=Root, Converter={my:TextWrappingConverter}}"/>
             </StackPanel>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseEnter">
