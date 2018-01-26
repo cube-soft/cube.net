@@ -48,6 +48,8 @@ namespace Cube.Net.App.Rss.Reader
 
             System.Net.ServicePointManager.DefaultConnectionLimit = 10;
             BrowserSettings.Version = BrowserVersion.Latest;
+            BrowserSettings.MaxConnections = 10;
+            BrowserSettings.NavigationSounds = false;
         }
     }
 }
