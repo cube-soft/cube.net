@@ -58,6 +58,8 @@ namespace Cube.Net.App.Rss.Reader
             Core.IO = Settings.IO;
             Core.FileName = Settings.Feed;
             Core.CacheDirectory = Settings.Cache;
+            Core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
+            Core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
             Core.Received += WhenReceived;
             Core.Load();
 
@@ -455,12 +457,10 @@ namespace Cube.Net.App.Rss.Reader
             switch (e.PropertyName)
             {
                 case nameof(Settings.Value.HighInterval):
-                    Core.SetInterval(RssCheckFrequency.High,
-                        TimeSpan.FromSeconds(Settings.Value.HighInterval));
+                    Core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
                     break;
                 case nameof(Settings.Value.LowInterval):
-                    Core.SetInterval(RssCheckFrequency.Low,
-                        TimeSpan.FromSeconds(Settings.Value.LowInterval));
+                    Core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
                     break;
             }
         }

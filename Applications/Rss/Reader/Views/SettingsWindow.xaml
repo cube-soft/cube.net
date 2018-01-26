@@ -69,7 +69,7 @@
                         Grid.Row="0"
                         Grid.Column="1">
                         <TextBox
-                            Text="{Binding Data.Value.PrimaryInterval, Converter={my:MinuteConverter}, UpdateSourceTrigger=Explicit}"
+                            Text="{Binding Data.Value.HighInterval, Converter={my:MinuteConverter}, UpdateSourceTrigger=Explicit}"
                             Width="100"
                             Style="{StaticResource InputNumberStyle}"/>
                         <TextBlock
@@ -83,7 +83,7 @@
                         Grid.Row="1"
                         Grid.Column="1">
                         <TextBox
-                            Text="{Binding Data.Value.SecondaryInterval, Converter={my:HourConverter}, UpdateSourceTrigger=Explicit}"
+                            Text="{Binding Data.Value.LowInterval, Converter={my:HourConverter}, UpdateSourceTrigger=Explicit}"
                             Width="100"
                             Style="{StaticResource InputNumberStyle}"/>
                         <TextBlock
