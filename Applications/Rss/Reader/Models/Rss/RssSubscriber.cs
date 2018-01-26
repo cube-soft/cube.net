@@ -19,7 +19,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Cube.FileSystem;
@@ -58,13 +57,13 @@ namespace Cube.Net.App.Rss.Reader
             _dispose = new OnceAction<bool>(Dispose);
 
             _tree.Synchronously = true;
-            _tree.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, e);
+            _tree.CollectionChanged += (s, e) => OnCollectionChanged(e);
 
             _monitors[0] = new RssMonitor() { Interval = TimeSpan.FromHours(1) };
-            _monitors[0].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
+            _monitors[0].Subscribe(OnReceived);
 
             _monitors[1] = new RssMonitor() { Interval = TimeSpan.FromHours(24) };
-            _monitors[1].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
+            _monitors[1].Subscribe(OnReceived);
         }
 
         #endregion
@@ -139,6 +138,8 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Events
 
+        #region CollectionChanged
+
         /* ----------------------------------------------------------------- */
         ///
         /// CollectionChanged
@@ -152,6 +153,25 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// OnCollectionChanged
+        /// 
+        /// <summary>
+        /// CollectionChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            Save();
+            CollectionChanged?.Invoke(this, e);
+        }
+
+        #endregion
+
+        #region Received
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Received
         /// 
         /// <summary>
@@ -160,6 +180,22 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public event ValueEventHandler<RssFeed> Received;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnReceived
+        /// 
+        /// <summary>
+        /// Received イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void OnReceived(RssFeed src)
+        {
+            Received?.Invoke(this, ValueEventArgs.Create(src));
+        }
+
+        #endregion
 
         #endregion
 
@@ -323,22 +359,17 @@ namespace Cube.Net.App.Rss.Reader
         /// Save
         /// 
         /// <summary>
-        /// JSON ファイルに保存します。
+        /// 設定ファイルに保存します。
         /// </summary>
         /// 
-        /// <param name="json">JSON ファイルのパス</param>
-        ///
         /* ----------------------------------------------------------------- */
-        public void Save(string json)
-        {
-            var data = Categories.Concat(new[] { new RssCategory
+        public void Save() => SaveCore(
+            Categories.Concat(new[] { new RssCategory
             {
                 Title    = string.Empty,
                 Children = new BindableCollection<IRssEntry>(Entries),
-            }}).Select(e => new RssCategory.Json(e));
-
-            using (var ss = IO.Create(json)) SettingsType.Json.Save(ss, data);
-        }
+            }})
+        );
 
         #endregion
 
@@ -448,6 +479,34 @@ namespace Cube.Net.App.Rss.Reader
             var now = DateTime.Now;
             _monitors[0].Reschedule(_feeds.Values, e => e.IsHighFrequency(now));
             _monitors[1].Reschedule(_feeds.Values, e => e.IsLowFrequency(now));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reschedule
+        /// 
+        /// <summary>
+        /// RSS フィードのチェック方法を再設定します。
+        /// </summary>
+        /// 
+        /// <param name="src">対象とする RSS フィード</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Reschedule(RssEntry src)
+        {
+            var now  = DateTime.Now;
+            var dest = src.IsHighFrequency(now) ? _monitors[0] :
+                       src.IsLowFrequency(now)  ? _monitors[1] : null;
+
+            foreach (var mon in _monitors)
+            {
+                if (!mon.Contains(src.Uri)) continue;
+                if (mon == dest) return;
+                mon.Remove(src.Uri);
+                break;
+            }
+
+            dest?.Register(src.Uri, src.LastChecked);
         }
 
         /* ----------------------------------------------------------------- */
@@ -589,6 +648,25 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// SaveCore
+        /// 
+        /// <summary>
+        /// カテゴリおよび RSS エントリ情報を設定ファイルに保存します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void SaveCore(IEnumerable<RssCategory> src)
+        {
+            try
+            {
+                var json = src.Select(e => new RssCategory.Json(e));
+                using (var ss = IO.Create(FileName)) SettingsType.Json.Save(ss, json);
+            }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// RegisterCore
         /// 
         /// <summary>
@@ -617,13 +695,10 @@ namespace Cube.Net.App.Rss.Reader
             if (_feeds.ContainsKey(src.Uri)) return;
             var items = new BindableCollection<RssItem>(src.Items);
             src.Items = src.Items.ToBindable();
+
             _feeds.Add(src);
             if (src.Parent == null) _tree.Add(src);
-
-            var now = DateTime.Now;
-            var mon = src.IsHighFrequency(now) ? _monitors[0] :
-                      src.IsLowFrequency(now)  ? _monitors[1] : null;
-            mon?.Register(src.Uri, src.LastChecked);
+            Reschedule(src);
         }
 
         /* ----------------------------------------------------------------- */
