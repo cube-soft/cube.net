@@ -119,6 +119,23 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// EnableMonitorMessage
+        /// 
+        /// <summary>
+        /// RSS フィードの取得状況をステータスバーに表示するかどうかを
+        /// 示す値を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public bool EnableMonitorMessage
+        {
+            get => _enableMonitorMessage;
+            set => SetProperty(ref _enableMonitorMessage, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// CheckUpdate
         /// 
         /// <summary>
@@ -144,7 +161,7 @@ namespace Cube.Net.App.Rss.Reader
         /// 
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public DateTime LastCheckUpdate
+        public DateTime? LastCheckUpdate
         {
             get => _lastCheckUpdate;
             set => SetProperty(ref _lastCheckUpdate, value);
@@ -158,8 +175,9 @@ namespace Cube.Net.App.Rss.Reader
         private int _height = 630;
         private int _high = 60 * 60;
         private int _low = 24 * 60 * 60;
+        private bool _enableMonitorMessage = true;
         private bool _checkUpdate = true;
-        private DateTime _lastCheckUpdate = new DateTime(1970, 1, 1);
+        private DateTime? _lastCheckUpdate = null;
         #endregion
     }
 

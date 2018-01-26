@@ -228,7 +228,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public T Find<T>(Uri uri) where T : class =>
-            _feeds.ContainsKey(uri) ? _feeds[uri] as T : null;
+            uri != null && _feeds.ContainsKey(uri) ? _feeds[uri] as T : null;
         
         /* ----------------------------------------------------------------- */
         ///

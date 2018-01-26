@@ -11,8 +11,8 @@
     FontFamily="Meiryo UI"
     Style="{StaticResource Dialog}"
     Title="CubeRSS Reader 設定"
-    Height="430"
-    Width="450"
+    Height="460"
+    Width="480"
     WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
@@ -55,7 +55,9 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock
@@ -95,14 +97,21 @@
                     <TextBlock
                         Text="その他"
                         Style="{StaticResource SummaryStyle}"
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Grid.Column="0"/>
+
+                    <CheckBox
+                        Content="記事の取得状況をステータスバーに表示する"
+                        IsChecked="{Binding Data.Value.EnableMonitorMessage, UpdateSourceTrigger=Explicit}"
+                        VerticalAlignment="Center"
+                        Grid.Row="3"
+                        Grid.Column="1"/>
 
                     <CheckBox
                         Content="ソフトウェアのアップデートを確認する"
                         IsChecked="{Binding Data.Value.CheckUpdate, UpdateSourceTrigger=Explicit}"
                         VerticalAlignment="Center"
-                        Grid.Row="2"
+                        Grid.Row="4"
                         Grid.Column="1"/>
                 </Grid>
             </TabItem>

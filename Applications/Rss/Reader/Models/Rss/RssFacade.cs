@@ -449,11 +449,15 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenReceived(object sender, ValueEventArgs<RssFeed> e) =>
+        private void WhenReceived(object sender, ValueEventArgs<RssFeed> e)
+        {
+            if (!Settings.Value.EnableMonitorMessage) return;
+
             Data.Message.Value =
                 e.Value.Items.Count > 0 ?
-                string.Format(Properties.Resources.MessageReceived, e.Value.Items.Count, e.Value.Title ) :
+                string.Format(Properties.Resources.MessageReceived, e.Value.Items.Count, e.Value.Title) :
                 string.Format(Properties.Resources.MessageNoReceived, e.Value.Title);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
