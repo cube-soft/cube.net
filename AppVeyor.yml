@@ -13,6 +13,8 @@ configuration: Release
 before_build:
     - nuget sources add -name Cube.Core -source https://ci.appveyor.com/nuget/cube.core
     - nuget sources add -name Cube.FileSystem -source https://ci.appveyor.com/nuget/cube.filesystem
+    - nuget sources add -name Cube.Images -source https://ci.appveyor.com/nuget/cube.images
+    - nuget sources add -name Cube.Forms -source https://ci.appveyor.com/nuget/cube.forms
     - nuget restore Cube.Net.Rss.sln
 build: 
     parallel: true
