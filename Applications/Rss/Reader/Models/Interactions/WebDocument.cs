@@ -19,6 +19,7 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Forms;
+using Cube.Forms;
 using Cube.Xui.Behaviors;
 
 namespace Cube.Net.App.Rss.Reader
@@ -32,7 +33,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     /// 
     /* --------------------------------------------------------------------- */
-    public class WebDocument : WindowsFormsBehavior<WebBrowser>
+    public class WebDocument : WindowsFormsBehavior<WebControl>
     {
         #region Properties
 
@@ -183,6 +184,9 @@ namespace Cube.Net.App.Rss.Reader
             if (Source != null)
             {
                 Source.ScriptErrorsSuppressed = true;
+                Source.BeforeNewWindow   -= WhenBeforeNewWindow;
+                Source.BeforeNewWindow   += WhenBeforeNewWindow;
+                Source.DocumentCompleted -= WhenDocumentCompleted;
                 Source.DocumentCompleted += WhenDocumentCompleted;
             }
         }
@@ -198,8 +202,27 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void OnDetaching()
         {
-            if (Source != null) Source.DocumentCompleted -= WhenDocumentCompleted;
+            if (Source != null)
+            {
+                Source.BeforeNewWindow   -= WhenBeforeNewWindow;
+                Source.DocumentCompleted -= WhenDocumentCompleted;
+            }
             base.OnDetaching();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenBeforeNewWindow
+        ///
+        /// <summary>
+        /// 新しいウィンドウが開く直前に実行されるハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WhenBeforeNewWindow(object sender, NavigatingEventArgs e)
+        {
+            e.Cancel = true;
+            Source.Navigate(e.Url);
         }
 
         /* ----------------------------------------------------------------- */

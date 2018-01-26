@@ -6,8 +6,8 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" 
     xmlns:dd="urn:gong-wpf-dragdrop"
+    xmlns:wf="clr-namespace:Cube.Forms;assembly=Cube.Forms"
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     
@@ -214,7 +214,7 @@
             </Button>
 
             <WindowsFormsHost Grid.Row="1">
-                <wf:WebBrowser/>
+                <wf:WebControl/>
                 <i:Interaction.Behaviors>
                     <my:WebDocument
                         Text="{Binding Data.Article.Value, Converter={my:ArticleConverter}, Mode=OneWay}"
