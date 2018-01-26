@@ -143,7 +143,7 @@ namespace Cube.Net.App.Rss.Reader
         public static bool IsHighFrequency(this RssEntry src, DateTime now) =>
             src.Frequency == RssCheckFrequency.High ||
             src.Frequency == RssCheckFrequency.Auto &&
-            now - src.LastPublished <= _border;
+            (!src.LastChecked.HasValue || now - src.LastPublished <= _border);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -162,7 +162,7 @@ namespace Cube.Net.App.Rss.Reader
         public static bool IsLowFrequency(this RssEntry src, DateTime now) =>
             src.Frequency == RssCheckFrequency.Low ||
             src.Frequency == RssCheckFrequency.Auto &&
-            now - src.LastPublished <= _border;
+            src.LastChecked.HasValue && now - src.LastPublished > _border;
 
         /* ----------------------------------------------------------------- */
         ///

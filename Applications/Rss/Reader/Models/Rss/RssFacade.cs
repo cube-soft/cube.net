@@ -56,8 +56,8 @@ namespace Cube.Net.App.Rss.Reader
             Subscription.IO = Settings.IO;
             Subscription.FileName = Settings.Feed;
             Subscription.CacheDirectory = Settings.Cache;
-            Subscription.Load();
             Subscription.Received += WhenReceived;
+            Subscription.Load();
 
             Data = new RssBindableData(Subscription, Settings.Value);
         }
