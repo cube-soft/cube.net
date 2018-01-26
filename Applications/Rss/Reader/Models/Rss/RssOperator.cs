@@ -57,6 +57,27 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Shrink
+        ///
+        /// <summary>
+        /// 更新日時を基準として不要な項目を削除します。
+        /// </summary>
+        /// 
+        /// <param name="src">新着記事一覧</param>
+        /// <param name="threshold">基準日時</param>
+        /// 
+        /// <remarks>
+        /// 新着記事一覧は発行日時で降順に並んでいる事を前提としています。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static IEnumerable<RssItem> Shrink(this IEnumerable<RssItem> src, DateTime? threshold) =>
+            src.Reverse()
+               .SkipWhile(e => e.PublishTime <= threshold)
+               .ToList();
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Reschedule
         /// 
         /// <summary>

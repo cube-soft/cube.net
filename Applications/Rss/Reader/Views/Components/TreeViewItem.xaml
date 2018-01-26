@@ -35,7 +35,7 @@
         TreeViewItem for RssCategory
     -->
     
-    <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Items}">
+    <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Children}">
         <Grid ToolTip="{StaticResource RssEntryToolTip}" Margin="2,4,0,4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

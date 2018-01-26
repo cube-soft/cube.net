@@ -192,6 +192,17 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void OnReceived(RssFeed src)
         {
+            var dest = Find<RssFeed>(src.Uri);
+            if (dest == null) return;
+
+            var items = src.Items.Shrink(dest.LastChecked);
+            foreach (var item in items) dest.Items.Insert(0, item);
+
+            dest.Description   = src.Description;
+            dest.Link          = src.Link;
+            dest.LastChecked   = src.LastChecked;
+            dest.LastPublished = src.LastPublished;
+
             Received?.Invoke(this, ValueEventArgs.Create(src));
         }
 
