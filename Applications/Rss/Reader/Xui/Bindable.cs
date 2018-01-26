@@ -101,16 +101,26 @@ namespace Cube.Xui
             set
             {
                 if (_value != null && _value.Equals(value)) return;
-                if (_value is INotifyPropertyChanged p0) p0.PropertyChanged -= WhenMemberChanged;
+                if (_value is INotifyPropertyChanged prev)
+                {
+                    prev.PropertyChanged -= WhenMemberChanged;
+                }
+
                 _value = value;
-                if (_value is INotifyPropertyChanged p1) p1.PropertyChanged += WhenMemberChanged;
+
+                if (IsRedirected && _value is INotifyPropertyChanged next)
+                {
+                    next.PropertyChanged -= WhenMemberChanged;
+                    next.PropertyChanged += WhenMemberChanged;
+                }
+
                 RaisePropertyChanged();
             }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Synchronously
+        /// IsSynchronous
         /// 
         /// <summary>
         /// UI スレッドに対して同期的にイベントを発生させるかどうかを
@@ -123,7 +133,25 @@ namespace Cube.Xui
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Synchronously { get; set; } = false;
+        public bool IsSynchronous { get; set; } = false;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsRedirected
+        /// 
+        /// <summary>
+        /// PropertyChanged イベントをリダイレクトするかどうかを示す値を
+        /// 取得または設定します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// true に設定した場合、Value.PropertyChanged イベントが発生した
+        /// 時に PropertyName を "Value" に設定した状態で PropertyChanged
+        /// イベントを発生させます。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool IsRedirected { get; set; } = true;
 
         #endregion
 
@@ -166,7 +194,7 @@ namespace Cube.Xui
             var e = new PropertyChangedEventArgs(name);
             if (_context != null)
             {
-                if (Synchronously) _context.Send(_ => OnPropertyChanged(e), null);
+                if (IsSynchronous) _context.Send(_ => OnPropertyChanged(e), null);
                 else _context.Post(_ => OnPropertyChanged(e), null);
             }
             else OnPropertyChanged(e);

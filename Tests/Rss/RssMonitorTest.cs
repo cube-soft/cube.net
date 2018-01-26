@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cube.Net.Rss;
 using NUnit.Framework;
@@ -36,7 +37,7 @@ namespace Cube.Net.Tests
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// Start_CacheDictionary
         /// 
         /// <summary>
         /// 監視テストを実行します。
@@ -44,36 +45,73 @@ namespace Cube.Net.Tests
         /// 
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start()
+        public void Start_CacheDictionary()
         {
             var start = DateTime.Now;
-            var u0  = new Uri("http://blog.cube-soft.jp/?feed=rss2");
-            var f0 = "722a6df5a86c7464e1eeaeb691ba50be";
-            var u1  = new Uri("https://blogs.msdn.microsoft.com/dotnet/feed");
-            var f1  = "3a9c5f4a720884dddb53fb356680ef82";
+            var uri0  = new Uri("http://blog.cube-soft.jp/?feed=rss2");
+            var uri1  = new Uri("https://blogs.msdn.microsoft.com/dotnet/feed");
+            var file0 = "722a6df5a86c7464e1eeaeb691ba50be";
+            var file1 = "3a9c5f4a720884dddb53fb356680ef82";
 
-            using (var src = new RssCacheCollection() { Directory = Results })
+            using (var src = new RssCacheDictionary() { Directory = Results })
             {
-                using (var mon = new RssMonitor(src))
+                src.Add(uri0, default(RssFeed));
+                src.Add(uri1, default(RssFeed));
+
+                using (var mon = new RssMonitor())
                 {
                     var count = 0;
                     var cts   = new CancellationTokenSource();
 
-                    mon.Register(u0);
-                    mon.Register(u1);
-                    mon.Subscribe(e => { if (++count >= 2) cts.Cancel(); });
+                    mon.Register(src.Keys);
+                    mon.Subscribe(e =>
+                    {
+                        src[e.Uri] = e;
+                        if (++count >= 2) cts.Cancel();
+                    });
                     mon.Start();
                     WaitAsync(cts.Token).Wait();
                     mon.Stop();
                 }
 
-                Assert.That(src[u0].Title,       Is.EqualTo("CubeSoft Blog"));
-                Assert.That(src[u0].LastChecked, Is.GreaterThan(start));
-                Assert.That(src[u0].Items.Count, Is.GreaterThan(0));
+                Assert.That(src[uri0].Title,       Is.EqualTo("CubeSoft Blog"));
+                Assert.That(src[uri0].LastChecked, Is.GreaterThan(start));
+                Assert.That(src[uri0].Items.Count, Is.GreaterThan(0));
             }
 
-            Assert.That(IO.Exists(Result(f0)), Is.True, f0);
-            Assert.That(IO.Exists(Result(f1)), Is.True, f1);
+            Assert.That(IO.Exists(Result(file0)), Is.True, file0);
+            Assert.That(IO.Exists(Result(file1)), Is.True, file1);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register_Remove
+        /// 
+        /// <summary>
+        /// RSS フィード URL の登録および削除処理のテストを実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Register_Remove()
+        {
+            var uri0 = new Uri("http://www.example.com/rss");
+            var uri1 = new Uri("http://www.example.com/rss2");
+
+            using (var mon = new RssMonitor())
+            {
+                mon.Register(uri0);
+                Assert.That(mon.Contains(uri0), Is.True);
+                Assert.That(mon.LastChecked(uri0).HasValue, Is.False);
+                mon.Register(uri1);
+                Assert.That(mon.Contains(uri1), Is.True);
+                Assert.That(mon.LastChecked(uri1).HasValue, Is.False);
+
+                mon.Remove(uri0);
+                Assert.That(mon.Contains(uri0), Is.False);
+                mon.Clear();
+                Assert.That(mon.Contains(uri1), Is.False);
+            }
         }
     }
 }

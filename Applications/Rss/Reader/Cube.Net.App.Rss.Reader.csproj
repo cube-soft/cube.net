@@ -87,13 +87,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Interactions\DuplexConverters.cs" />
-    <Compile Include="Models\RssBindableData.cs" />
+    <Compile Include="Models\Rss\IRssEntry.cs" />
+    <Compile Include="Models\Rss\RssBindableData.cs" />
+    <Compile Include="Models\Rss\RssCategory.cs" />
+    <Compile Include="Models\Rss\RssOperator.cs" />
     <Compile Include="ViewModels\CommonViewModel.cs" />
     <Compile Include="Models\Interactions\SimplexConverters.cs" />
-    <Compile Include="Models\RssEntry.cs" />
-    <Compile Include="Models\RssEntryDropTarget.cs" />
-    <Compile Include="Models\RssFacade.cs" />
-    <Compile Include="Models\RssSubscription.cs" />
+    <Compile Include="Models\Rss\RssEntry.cs" />
+    <Compile Include="Models\Rss\RssEntryDropTarget.cs" />
+    <Compile Include="Models\Rss\RssFacade.cs" />
+    <Compile Include="Models\Rss\RssSubscriber.cs" />
     <Compile Include="Models\Interactions\Triggers.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -116,9 +119,11 @@
     <Compile Include="Xui\Behaviors\WindowsFormsBehavior.cs" />
     <Compile Include="Xui\BindableCommand.cs" />
     <Compile Include="Xui\BindableCommandGeneric.cs" />
+    <Compile Include="Xui\BindableOperator.cs" />
     <Compile Include="Xui\Components\DialogMessageBase.cs" />
     <Compile Include="Xui\Components\ExpandIcon.cs" />
     <Compile Include="Xui\Components\FileDialogMessage.cs" />
+    <Compile Include="Xui\Components\Messenger.cs" />
     <Compile Include="Xui\Converters\BooleanConverter.cs" />
     <Compile Include="Xui\Converters\DuplexConverter.cs" />
     <Compile Include="Xui\Converters\ImageConverter.cs" />

@@ -47,7 +47,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="settings">設定用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssBindableData(IEnumerable<RssEntryBase> root, Settings settings)
+        public RssBindableData(IEnumerable<IRssEntry> root, Settings settings)
         {
             Root = root;
             User = new Bindable<Settings>(settings);
@@ -67,7 +67,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssEntryBase> Root { get; }
+        public IEnumerable<IRssEntry> Root { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -89,7 +89,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssEntryBase> Entry { get; } = new Bindable<RssEntryBase>();
+        public Bindable<IRssEntry> Entry { get; } = new Bindable<IRssEntry>();
 
         /* ----------------------------------------------------------------- */
         ///

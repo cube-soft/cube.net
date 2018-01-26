@@ -51,17 +51,15 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root)
         {
-            var dest = new RssFeed
+            var items = ParseItems(root);
+            return new RssFeed
             {
-                Title       = root.GetTitle(),
-                Link        = root.GetUri("link"),
-                Items       = ParseItems(root),
-                LastChecked = DateTime.Now,
+                Title         = root.GetTitle(),
+                Link          = root.GetUri("link"),
+                Items         = items,
+                LastChecked   = DateTime.Now,
+                LastPublished = items.FirstOrDefault()?.PublishTime,
             };
-
-            dest.LastPublished = dest.Items.FirstOrDefault()?.PublishTime ??
-                                 DateTime.MinValue;
-            return dest;
         }
 
         #endregion
@@ -91,7 +89,7 @@ namespace Cube.Net.Rss
                 Content     = GetContent(e),
                 Link        = e.GetUri("link"),
                 PublishTime = e.GetDateTime("published"),
-                Read        = false,
+                Status      = RssItemStatus.Unread,
             })
             .OrderByDescending(e => e.PublishTime)
             .ToList();

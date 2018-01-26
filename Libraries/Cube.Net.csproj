@@ -86,7 +86,7 @@
     <Compile Include="Rss\Details\RssParseOptions.cs" />
     <Compile Include="Rss\Details\XmlOperations.cs" />
     <Compile Include="Rss\RssItem.cs" />
-    <Compile Include="Rss\RssCacheCollection.cs" />
+    <Compile Include="Rss\RssCacheDictionary.cs" />
     <Compile Include="Rss\RssClient.cs" />
     <Compile Include="Rss\RssFeed.cs" />
     <Compile Include="Rss\RssUriConverter.cs" />

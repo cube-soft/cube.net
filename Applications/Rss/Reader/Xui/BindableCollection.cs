@@ -93,7 +93,7 @@ namespace Cube.Xui
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Synchronously
+        /// IsSynchronous
         /// 
         /// <summary>
         /// UI スレッドに対して同期的にイベントを発生させるかどうかを
@@ -106,7 +106,25 @@ namespace Cube.Xui
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Synchronously { get; set; } = false;
+        public bool IsSynchronous { get; set; } = false;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsRedirected
+        /// 
+        /// <summary>
+        /// 要素のイベントをリダイレクトするかどうかを示す値を取得または
+        /// 設定します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// true に設定した場合、要素の PropertyChanged イベントが発生した
+        /// 時に該当要素に対して NotifyCollectionChangedAction.Replace を
+        /// 設定した状態で CollectionChanged イベントを発生させます。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool IsRedirected { get; set; } = true;
 
         #endregion
 
@@ -125,7 +143,7 @@ namespace Cube.Xui
         {
             if (_context != null)
             {
-                if (Synchronously) _context.Send(_ => base.OnPropertyChanged(e), null);
+                if (IsSynchronous) _context.Send(_ => base.OnPropertyChanged(e), null);
                 else _context.Post(_ => base.OnPropertyChanged(e), null);
             }
             else base.OnPropertyChanged(e);
@@ -144,7 +162,7 @@ namespace Cube.Xui
         {
             if (_context != null)
             {
-                if (Synchronously) _context.Send(_ => OnCollectionChangedCore(e), null);
+                if (IsSynchronous) _context.Send(_ => OnCollectionChangedCore(e), null);
                 else _context.Post(_ => OnCollectionChangedCore(e), null);
             }
             else OnCollectionChangedCore(e);
@@ -192,9 +210,15 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         private void SetHandler(IList items)
         {
+            if (!IsRedirected) return;
+
             foreach (var item in items)
             {
-                if (item is INotifyPropertyChanged e) e.PropertyChanged += WhenMemberChanged;
+                if (item is INotifyPropertyChanged e)
+                {
+                    e.PropertyChanged -= WhenMemberChanged;
+                    e.PropertyChanged += WhenMemberChanged;
+                }
             }
         }
 

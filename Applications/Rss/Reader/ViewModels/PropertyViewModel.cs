@@ -50,14 +50,16 @@ namespace Cube.Net.App.Rss.Reader
         /// 
         /// <param name="entry">RssEntry オブジェクト</param>
         /// <param name="feed">RssFeed オブジェクト</param>
+        /// <param name="callback">コールバック関数</param>
         ///
         /* ----------------------------------------------------------------- */
-        public PropertyViewModel(RssEntry entry, RssFeed feed) :
+        public PropertyViewModel(RssEntry entry, RssFeed feed, Action<RssEntry> callback) :
             base(new Messenger())
         {
             System.Diagnostics.Debug.Assert(entry != null && feed != null);
-            Entry = new Bindable<RssEntry>(entry);
-            Feed  = new Bindable<RssFeed>(feed);
+            Entry     = new Bindable<RssEntry>(entry);
+            Feed      = new Bindable<RssFeed>(feed);
+            _callback = callback;
         }
 
         #endregion
@@ -95,8 +97,8 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<Frequency> Frequencies { get; } =
-            Enum.GetValues(typeof(Frequency)).Cast<Frequency>();
+        public IEnumerable<RssCheckFrequency> Frequencies { get; } =
+            Enum.GetValues(typeof(RssCheckFrequency)).Cast<RssCheckFrequency>();
 
         #endregion
 
@@ -116,6 +118,7 @@ namespace Cube.Net.App.Rss.Reader
             {
                 Messenger.Send(new UpdateSourcesMessage());
                 Close.Execute(null);
+                _callback?.Invoke(Entry.Value);
             })
         );
 
@@ -123,6 +126,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private ICommand _apply;
+        private Action<RssEntry> _callback;
         #endregion
     }
 }

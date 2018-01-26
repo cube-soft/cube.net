@@ -15,51 +15,38 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Linq;
-using Cube.Net.App.Rss.Reader;
-using NUnit.Framework;
+using GalaSoft.MvvmLight.Messaging;
 
-namespace Cube.Net.App.Rss.Tests
+namespace Cube.Xui
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssEntryTest
+    /// MessengerOperator
     ///
     /// <summary>
-    /// RssEntry およびそれに付随するクラスのテスト用クラスです。
+    /// Messenger の拡張用クラスです。
     /// </summary>
-    ///
+    /// 
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class RssEntryTest : FileHelper
+    public static class MessengerOperator
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Load
+        /// Send
         /// 
         /// <summary>
-        /// JSON ファイルをロードするテストを実行します。
+        /// 既定のメッセージを送信します。
         /// </summary>
+        /// 
+        /// <param name="src">Messenger オブジェクト</param>
+        /// 
+        /// <remarks>
+        /// Messenger は型で判別しているため、不要な場合でもメッセージ
+        /// オブジェクトを送信する必要がある。Send 拡張メソッドは、
+        /// 型を指定すると既定のオブジェクトを送信する。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void Load()
-        {
-            var count = 0;
-            var src = new RssSubscriber();
-            src.FileName = Example("Feeds.json");
-            src.CollectionChanged += (s, e) => count++;
-            src.Load();
-
-            Assert.That(src.Categories.Count(), Is.EqualTo(2));
-            Assert.That(count, Is.EqualTo(4), nameof(src.CollectionChanged));
-
-            var uri = new Uri("https://github.com/blog.atom");
-            Assert.That(src.Entries.Count(), Is.EqualTo(2));
-            Assert.That(src.Entries.First().Title, Is.EqualTo("The GitHub Blog"));
-            Assert.That(src.Entries.First().Uri, Is.EqualTo(uri));
-            Assert.That(src.Entries.First().Parent, Is.Null);
-        }
+        public static void Send<T>(this IMessenger src) where T : new() => src.Send(new T());
     }
 }

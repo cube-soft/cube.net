@@ -134,6 +134,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   新しいフォルダー に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageNewCategory {
+            get {
+                return ResourceManager.GetString("MessageNewCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   チェックしない に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageNoneFrequency {

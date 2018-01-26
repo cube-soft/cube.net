@@ -48,7 +48,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntryDropTarget(Action<RssEntryBase, RssEntryBase, int> callback)
+        public RssEntryDropTarget(Action<IRssEntry, IRssEntry, int> callback)
         {
             System.Diagnostics.Debug.Assert(callback != null);
             _callback = callback;
@@ -71,14 +71,12 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void DragOver(IDropInfo e)
         {
-            if (CanDrop(e))
-            {
-                var branch = e.TargetItem is RssCategory; 
-                e.Effects = DragDropEffects.Move;
-                e.DropTargetAdorner = branch ?
-                    DropTargetAdorners.Highlight :
-                    DropTargetAdorners.Insert;
-            }
+            if (!CanDrop(e)) return;
+
+            e.Effects           = DragDropEffects.Move;
+            e.DropTargetAdorner = e.TargetItem is RssCategory ?
+                                  DropTargetAdorners.Highlight :
+                                  DropTargetAdorners.Insert;
         }
 
         /* ----------------------------------------------------------------- */
@@ -94,8 +92,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Drop(IDropInfo e)
         {
-            var cvt   = e.TargetItem as RssEntryBase;
-            var src   = e.Data as RssEntryBase;
+            var cvt   = e.TargetItem as IRssEntry;
+            var src   = e.Data as IRssEntry;
             var dest  = cvt is RssEntry ? cvt.Parent : cvt;
             var index = cvt is RssEntry ? e.InsertIndex : -1;
 
@@ -117,16 +115,16 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private bool CanDrop(IDropInfo e)
         {
-            var src  = e.Data as RssEntryBase;
-            var dest = e.TargetItem as RssEntryBase;
+            var src  = e.Data as IRssEntry;
+            var dest = e.TargetItem as IRssEntry;
 
             return src != dest && src.Parent != dest;
         }
 
-        #region Fields
-        private Action<RssEntryBase, RssEntryBase, int> _callback;
         #endregion
 
+        #region Fields
+        private Action<IRssEntry, IRssEntry, int> _callback;
         #endregion
     }
 }

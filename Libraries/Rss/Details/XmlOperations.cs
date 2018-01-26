@@ -184,7 +184,7 @@ namespace Cube.Net.Rss.Parsing
         /// <returns>DateTime オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DateTime GetDateTime(this XElement e, string name)
+        public static DateTime? GetDateTime(this XElement e, string name)
             => GetDateTime(e, string.Empty, name);
 
         /* ----------------------------------------------------------------- */
@@ -202,12 +202,11 @@ namespace Cube.Net.Rss.Parsing
         /// <returns>DateTime オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DateTime GetDateTime(this XElement e, string ns, string name)
-            => TryFunc(() =>
+        public static DateTime? GetDateTime(this XElement e, string ns, string name)
         {
             var value = e.GetValue(ns, name);
-            return !string.IsNullOrEmpty(value) ? DateTime.Parse(value) : default(DateTime);
-        });
+            return DateTime.TryParse(value, out DateTime dest) ? dest : (DateTime?)null;
+        }
 
         #endregion
 

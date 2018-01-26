@@ -27,31 +27,31 @@ namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssCacheCollection
+    /// RssCacheDictionary
     ///
     /// <summary>
     /// RSS フィードを保持するためのコレクションクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssCacheCollection : IDictionary<Uri, RssFeed>, IDisposable
+    public class RssCacheDictionary : IDictionary<Uri, RssFeed>, IDisposable
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssCacheCollection
+        /// RssCacheDictionary
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssCacheCollection() : this(new Dictionary<Uri, RssFeed>()) { }
+        public RssCacheDictionary() : this(new Dictionary<Uri, RssFeed>()) { }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssCacheCollection
+        /// RssCacheDictionary
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
@@ -60,7 +60,7 @@ namespace Cube.Net.Rss
         /// <param name="inner">内部バッファ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssCacheCollection(IDictionary<Uri, RssFeed> inner)
+        public RssCacheDictionary(IDictionary<Uri, RssFeed> inner)
         {
             _dispose = new OnceAction<bool>(Dispose);
             _inner   = inner;
@@ -253,15 +253,13 @@ namespace Cube.Net.Rss
         /// Add
         /// 
         /// <summary>
-        /// 指定したキーおよび値を持つ要素を追加します。
+        /// 要素を追加します。
         /// </summary>
         /// 
-        /// <param name="key">キー</param>
-        /// <param name="value">値</param>
+        /// <param name="item">要素</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Add(Uri key, RssFeed value) =>
-            Add(new KeyValuePair<Uri, RssFeed>(key, value));
+        public void Add(RssFeed item) => Add(item.Uri, item);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -278,6 +276,24 @@ namespace Cube.Net.Rss
         {
             _inner.Add(item);
             Pop(item);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Add
+        /// 
+        /// <summary>
+        /// 指定したキーおよび値を持つ要素を追加します。
+        /// </summary>
+        /// 
+        /// <param name="key">キー</param>
+        /// <param name="value">値</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Add(Uri key, RssFeed value)
+        {
+            _inner.Add(key, value);
+            Pop(key, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -473,7 +489,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        ~RssCacheCollection() { _dispose.Invoke(false); }
+        ~RssCacheDictionary() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -615,10 +631,10 @@ namespace Cube.Net.Rss
             if (string.IsNullOrEmpty(Directory) || !_inner.ContainsKey(uri)) return;
 
             var feed = _inner[uri];
-            if (feed == null || feed.LastChecked == DateTime.MinValue) return;
+            if (feed == null || !feed.LastChecked.HasValue) return;
 
             if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, feed);
+            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, new RssFeed(feed));
 
             feed.Items.Clear();
         }

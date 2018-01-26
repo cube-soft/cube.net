@@ -34,6 +34,43 @@ namespace Cube.Net.Rss
     [DataContract]
     public class RssFeed : ObservableProperty
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssFeed
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssFeed() { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssFeed
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="cp">コピー元オブジェクト</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public RssFeed(RssFeed cp)
+        {
+            Title         = cp.Title;
+            Description   = cp.Description;
+            Link          = cp.Link;
+            Uri           = cp.Uri;
+            LastChecked   = cp.LastChecked;
+            LastPublished = cp.LastPublished;
+            Items         = cp.Items;
+        }
+
+        #endregion
+
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -110,7 +147,7 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public DateTime LastChecked
+        public DateTime? LastChecked
         {
             get => _lastChecked;
             set => SetProperty(ref _lastChecked, value);
@@ -126,26 +163,10 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public DateTime LastPublished
+        public DateTime? LastPublished
         {
             get => _lastPublished;
             set => SetProperty(ref _lastPublished, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ErrorCount
-        /// 
-        /// <summary>
-        /// サーバへの問い合わせに失敗した回数を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public int ErrorCount
-        {
-            get => _errorCount;
-            set => SetProperty(ref _errorCount, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -173,7 +194,8 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<RssItem> UnreadItems => Items.Where(e => !e.Read);
+        public IEnumerable<RssItem> UnreadItems =>
+            Items.Where(e => e.Status == RssItemStatus.Unread);
 
         #endregion
 
@@ -183,9 +205,8 @@ namespace Cube.Net.Rss
         private string _description = string.Empty;
         private Uri _link = null;
         private Uri _uri = null;
-        private DateTime _lastChecked = DateTime.MinValue;
-        private DateTime _lastPublished = DateTime.MinValue;
-        private int _errorCount = 0;
+        private DateTime? _lastChecked = null;
+        private DateTime? _lastPublished = null;
         private IList<RssItem> _items = null;
         #endregion
     }

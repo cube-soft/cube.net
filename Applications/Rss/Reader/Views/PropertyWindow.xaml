@@ -13,18 +13,18 @@
     Style="{StaticResource Dialog}"
     FontFamily="Meiryo UI"
     Title="{Binding Entry.Value.Title, StringFormat={}{0} のプロパティ}"
-    Height="380"
-    Width="500"
+    Height="350"
+    Width="450"
     WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
+    </Window.Resources>
 
     <Window.BindingGroup>
         <BindingGroup Name="SourceBindings" NotifyOnValidationError="False"/>
     </Window.BindingGroup>
     
-    <Window.Resources>
-        <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
-    </Window.Resources>
-
     <i:Interaction.Triggers>
         <xt:CloseTrigger Messenger="{Binding Messenger}">
             <xt:CloseAction/>
@@ -52,7 +52,6 @@
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="20"/>
-                <RowDefinition Height="22"/>
                 <RowDefinition Height="22"/>
                 <RowDefinition Height="22"/>
                 <RowDefinition Height="22"/>
@@ -163,19 +162,6 @@
                 ToolTip="CubeRSS Reader が最後にチェックした日時を表します"
                 Style="{StaticResource CopyableSummaryStyle}"
                 Grid.Row="7"
-                Grid.Column="1"/>
-
-            <TextBlock
-                Text="通信エラー回数"
-                Style="{StaticResource SummaryStyle}"
-                Grid.Row="8"
-                Grid.Column="0"/>
-
-            <TextBox
-                Text="{Binding Feed.Value.ErrorCount, StringFormat={}{0} 回}"
-                ToolTip="サーバへの問い合わせに失敗した回数を表します"
-                Style="{StaticResource CopyableSummaryStyle}"
-                Grid.Row="8"
                 Grid.Column="1"/>
         </Grid>
 

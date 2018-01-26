@@ -59,7 +59,8 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         public NetworkAwareTimer(TimeSpan interval) : base(interval)
         {
-            Network.AvailabilityChanged += (s, e) => OnNetworkChanged(e);
+            Network.AvailabilityChanged -= WhenNetworkChanged;
+            Network.AvailabilityChanged += WhenNetworkChanged;
         }
 
         #endregion
@@ -91,6 +92,41 @@ namespace Cube.Net
             if (Network.Available && State == TimerState.Suspend) Resume(TimeSpan.FromMilliseconds(100));
             else if (!Network.Available && State == TimerState.Run) Suspend();
             NetworkChanged?.Invoke(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenNetworkChanged
+        /// 
+        /// <summary>
+        /// NetworkChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WhenNetworkChanged(object s, NetworkAvailabilityEventArgs e) =>
+            OnNetworkChanged(e);
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// オブジェクトを開放します。
+        /// </summary>
+        /// 
+        /// <param name="disposing">
+        /// マネージオブジェクトを開放するかどうか
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            Network.AvailabilityChanged -= WhenNetworkChanged;
+            base.Dispose(disposing);
         }
 
         #endregion

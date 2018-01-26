@@ -47,24 +47,8 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor() : this(new Dictionary<Uri, RssFeed>()) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RssMonitor
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="buffer">結果を保持するためのバッファ</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public RssMonitor(IDictionary<Uri, RssFeed> buffer) : base()
+        public RssMonitor()
         {
-            System.Diagnostics.Debug.Assert(buffer != null);
-
-            Feeds      = buffer;
             Handler    = new HeaderHandler { UseEntityTag = false };
             _http      = new RssClient(Handler);
             Timeout    = _http.Timeout;
@@ -101,7 +85,8 @@ namespace Cube.Net.Rss
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        protected IDictionary<Uri, RssFeed> Feeds { get; }
+        protected IDictionary<Uri, DateTime?> Feeds { get; } =
+            new Dictionary<Uri, DateTime?>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -132,20 +117,33 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Register
+        /// Contains
         ///
         /// <summary>
-        /// 監視対象となる RSS フィード URL を登録します。
+        /// 指定された URL が監視対象かどうかを判別します。
         /// </summary>
         /// 
         /// <param name="uri">RSS フィード URL</param>
         /// 
+        /// <returns>監視対象かどうか</returns>
+        /// 
         /* ----------------------------------------------------------------- */
-        public void Register(Uri uri) => Register(uri, new RssFeed
-        {
-            Title = uri.ToString(),
-            Uri   = uri,
-        });
+        public bool Contains(Uri uri) => Feeds.ContainsKey(uri);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LastChecked
+        ///
+        /// <summary>
+        /// 指定された URL の最後チェック日時を取得します。
+        /// </summary>
+        /// 
+        /// <param name="uri">RSS フィード URL</param>
+        /// 
+        /// <returns>最後チェック日時</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public DateTime? LastChecked(Uri uri) => Feeds[uri];
 
         /* ----------------------------------------------------------------- */
         ///
@@ -156,19 +154,89 @@ namespace Cube.Net.Rss
         /// </summary>
         /// 
         /// <param name="uri">RSS フィード URL</param>
-        /// <param name="feed">RSS フィード</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public void Register(Uri uri, RssFeed feed)
+        public void Register(Uri uri) => Register(uri, null);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register
+        ///
+        /// <summary>
+        /// 監視対象となる RSS フィード URL を登録します。
+        /// </summary>
+        /// 
+        /// <param name="uri">RSS フィード URL</param>
+        /// <param name="last">最終チェック日時</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Register(Uri uri, DateTime? last)
         {
-            if (Feeds.ContainsKey(uri)) return;
-            if (feed == null) throw new ArgumentException("RssFeed is null");
-            Feeds.Add(uri, feed);
+            if (Contains(uri)) return;
+            Feeds.Add(uri, last);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Subscribe
+        /// Register
+        ///
+        /// <summary>
+        /// 監視対象となる RSS フィード URL 一覧を登録します。
+        /// </summary>
+        /// 
+        /// <param name="items">RSS フィード URL 一覧</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Register(IEnumerable<Uri> items)
+        {
+            foreach (var uri in items) Register(uri);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register
+        ///
+        /// <summary>
+        /// 監視対象となる RSS フィード URL 一覧を登録します。
+        /// </summary>
+        /// 
+        /// <param name="items">RSS フィード URL 一覧</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Register(IEnumerable<KeyValuePair<Uri, DateTime?>> items)
+        {
+            foreach (var kv in items) Register(kv.Key, kv.Value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Remove
+        ///
+        /// <summary>
+        /// 監視対象リストから削除します。
+        /// </summary>
+        /// 
+        /// <param name="uri">RSS フィード URL</param>
+        /// 
+        /// <returns>削除に成功したかどうか</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public bool Remove(Uri uri) => Feeds.Remove(uri);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Clear
+        ///
+        /// <summary>
+        /// 監視対象リストをクリアします。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Clear() => Feeds.Clear();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SubscribeAsync
         ///
         /// <summary>
         /// データ受信時に非同期実行する処理を登録します。
@@ -179,7 +247,7 @@ namespace Cube.Net.Rss
         /// <returns>登録解除用オブジェクト</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Func<RssFeed, Task> action)
+        public IDisposable SubscribeAsync(Func<RssFeed, Task> action)
         {
             Subscriptions.Add(action);
             return Disposable.Create(() => Subscriptions.Remove(action));
@@ -199,10 +267,10 @@ namespace Cube.Net.Rss
         /// 
         /* ----------------------------------------------------------------- */
         public IDisposable Subscribe(Action<RssFeed> action) =>
-            Subscribe(async e =>
+            SubscribeAsync(e =>
         {
             action(e);
-            await Task.FromResult(0);
+            return Task.FromResult(0);
         });
 
         /* ----------------------------------------------------------------- */
@@ -224,15 +292,12 @@ namespace Cube.Net.Rss
         /// Update
         ///
         /// <summary>
-        /// RSS フィードの内容を更新します。更新が終了すると Publish
-        /// メソッドを通じて結果が通知されます。
+        /// RSS フィードの内容を更新します。非同期処理は非同期で実行され、
+        /// 終了すると Subscribe で登録されたコールバック関数を通じて
+        /// 結果が通知されます。
         /// </summary>
         /// 
         /// <param name="uris">対象とするフィード URL 一覧</param>
-        /// 
-        /// <remarks>
-        /// Feeds に登録されていない URL が指定された場合、無視されます。
-        /// </remarks>
         /// 
         /* ----------------------------------------------------------------- */
         public void Update(IEnumerable<Uri> uris) => Task.Run(async () =>
@@ -248,7 +313,7 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Publish
+        /// PublishAsync
         ///
         /// <summary>
         /// 新しい結果を発行します。
@@ -257,7 +322,7 @@ namespace Cube.Net.Rss
         /// <param name="feed">RSS フィード</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual async Task Publish(RssFeed feed)
+        protected virtual async Task PublishAsync(RssFeed feed)
         {
             foreach (var action in Subscriptions)
             {
@@ -286,6 +351,7 @@ namespace Cube.Net.Rss
                 _http.Dispose();
                 Handler.Dispose();
             }
+            base.Dispose(disposing);
         }
 
         #endregion
@@ -303,25 +369,16 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private async Task UpdateAsync(Uri uri)
         {
-            if (!Feeds.ContainsKey(uri)) return;
+            if (!Contains(uri)) return;
 
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
-            var dest = Feeds[uri];
-            var src  = await GetAsync(uri).ConfigureAwait(false);
-            Shrink(src, dest.LastChecked);
+            var dest = await GetAsync(uri).ConfigureAwait(false);
             sw.Stop();
             this.LogDebug($"Url:{uri}\tTime:{sw.Elapsed}");
 
-            foreach (var item in src.Items) dest.Items.Insert(0, item);
-            dest.Title       = src.Title;
-            dest.Description = src.Description;
-            dest.Link        = src.Link;
-            dest.LastChecked = src.LastChecked;
-
-            if (dest.LastPublished < src.LastPublished) dest.LastPublished = src.LastPublished;
-
-            await Publish(src);
+            Feeds[uri] = dest.LastChecked;
+            await PublishAsync(dest);
         }
 
         /* ----------------------------------------------------------------- */
@@ -342,21 +399,6 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Shrink
-        ///
-        /// <summary>
-        /// 更新日時を基準として不要な項目を削除します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void Shrink(RssFeed src, DateTime threshold) =>
-            src.Items = src.Items
-                           .Reverse()
-                           .SkipWhile(e => e.PublishTime <= threshold)
-                           .ToList();
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// RunAsync
         ///
         /// <summary>
@@ -364,7 +406,7 @@ namespace Cube.Net.Rss
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private async Task RunAsync(IList<Uri> src, IList<Uri> failed)
+        private async Task RunAsync(IList<Uri> src, IList<Uri> errors)
         {
             foreach (var uri in src.ToArray())
             {
@@ -376,8 +418,7 @@ namespace Cube.Net.Rss
                 catch (Exception err)
                 {
                     this.LogWarn(err.ToString(), err);
-                    failed.Add(uri);
-                    if (Feeds.ContainsKey(uri)) Feeds[uri].ErrorCount++;
+                    errors.Add(uri);
                 }
             }
         }
@@ -395,25 +436,19 @@ namespace Cube.Net.Rss
         {
             if (State != TimerState.Run) return;
 
-            var failed = new List<Uri>();
+            var src    = Feeds.OrderBy(e => e.Value).Select(e => e.Key).ToList();
+            var errors = new List<Uri>();
+            await RunAsync(src, errors);
 
-            await RunAsync(
-                Feeds.Values
-                     .OrderBy(e => e.LastChecked)
-                     .Select(e => e.Uri)
-                     .ToList(),
-                failed
-            );
-
-            for (var i = 0; i < RetryCount && failed.Count > 0; ++i)
+            for (var i = 0; i < RetryCount && errors.Count > 0; ++i)
             {
                 if (State != TimerState.Run) return;
                 await Task.Delay(RetryInterval);
                 if (State != TimerState.Run) return;
 
-                var src = failed.ToList();
-                failed.Clear();
-                await RunAsync(src, failed);
+                var retry = errors.ToList();
+                errors.Clear();
+                await RunAsync(retry, errors);
             }
         }
 

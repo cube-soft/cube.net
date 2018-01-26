@@ -22,15 +22,15 @@ namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssCacheCollectionTest
+    /// RssCacheDictionaryTest
     ///
     /// <summary>
-    /// RssCacheCollection のテスト用クラスです。
+    /// RssCacheDictionary のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssCacheCollectionTest
+    class RssCacheDictionaryTest
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -44,7 +44,7 @@ namespace Cube.Net.Tests
         [Test]
         public void Properties_Default()
         {
-            var collection = new RssCacheCollection();
+            var collection = new RssCacheDictionary();
 
             Assert.That(collection.Count,        Is.EqualTo(0));
             Assert.That(collection.IsReadOnly,   Is.False);
