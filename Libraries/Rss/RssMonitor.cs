@@ -236,7 +236,7 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Subscribe
+        /// SubscribeAsync
         ///
         /// <summary>
         /// データ受信時に非同期実行する処理を登録します。
@@ -247,7 +247,7 @@ namespace Cube.Net.Rss
         /// <returns>登録解除用オブジェクト</returns>
         /// 
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Func<RssFeed, Task> action)
+        public IDisposable SubscribeAsync(Func<RssFeed, Task> action)
         {
             Subscriptions.Add(action);
             return Disposable.Create(() => Subscriptions.Remove(action));
@@ -313,7 +313,7 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Publish
+        /// PublishAsync
         ///
         /// <summary>
         /// 新しい結果を発行します。
@@ -322,7 +322,7 @@ namespace Cube.Net.Rss
         /// <param name="feed">RSS フィード</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual async Task Publish(RssFeed feed)
+        protected virtual async Task PublishAsync(RssFeed feed)
         {
             foreach (var action in Subscriptions)
             {
@@ -377,7 +377,7 @@ namespace Cube.Net.Rss
             this.LogDebug($"Url:{uri}\tTime:{sw.Elapsed}");
 
             Feeds[uri] = dest.LastChecked;
-            await Publish(dest);
+            await PublishAsync(dest);
         }
 
         /* ----------------------------------------------------------------- */
