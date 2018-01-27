@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Cube.Xml;
 using Cube.Net.Rss.Parsing;
 
 namespace Cube.Net.Rss
