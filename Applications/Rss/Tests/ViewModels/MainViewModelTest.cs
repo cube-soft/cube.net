@@ -33,7 +33,7 @@ namespace Cube.Net.App.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class MainViewModelTest : FileHelper
+    class MainViewModelTest : ViewModelHelper
     {
         #region Tests
 
@@ -66,29 +66,6 @@ namespace Cube.Net.App.Rss.Tests
             vm.SelectArticle.Execute(vm.Data.Feed.Value.UnreadItems.First());
 
             Assert.That(vm.Data.Article.Value, Is.Not.Null);
-        }
-
-        #endregion
-
-        #region Helpers
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OneTimeSetup
-        /// 
-        /// <summary>
-        /// 一度だけ初期化されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            var json = "Feeds.json";
-            var src  = Example(json);
-            var dest = IO.Combine(Results, json);
-
-            IO.Copy(src, dest, true);
         }
 
         #endregion

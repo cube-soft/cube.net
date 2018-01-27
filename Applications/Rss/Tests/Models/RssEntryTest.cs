@@ -48,7 +48,7 @@ namespace Cube.Net.App.Rss.Tests
         {
             var count = 0;
             var src = new RssSubscriber();
-            src.FileName = Example("Feeds.json");
+            src.FileName = Example("Sample.json");
             src.CollectionChanged += (s, e) => count++;
             src.Load();
 

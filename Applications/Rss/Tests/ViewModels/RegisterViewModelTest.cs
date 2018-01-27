@@ -34,7 +34,7 @@ namespace Cube.Net.App.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RegisterViewModelTest : FileHelper
+    class RegisterViewModelTest : ViewModelHelper
     {
         #region Tests
 
@@ -81,29 +81,6 @@ namespace Cube.Net.App.Rss.Tests
                 await Task.Delay(5000, cts.Token).ConfigureAwait(false);
             }
             catch (TaskCanceledException /* err */) { /* OK */ }
-        }
-
-        #endregion
-
-        #region Helper methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OneTimeSetup
-        /// 
-        /// <summary>
-        /// 一度だけ初期化されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            var json = "Feeds.json";
-            var src  = Example(json);
-            var dest = IO.Combine(Results, json);
-
-            IO.Copy(src, dest, true);
         }
 
         #endregion
