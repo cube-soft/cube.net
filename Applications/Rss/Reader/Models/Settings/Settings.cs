@@ -87,38 +87,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// HighInterval
-        /// 
-        /// <summary>
-        /// 高頻度モニタのチェック間隔を取得または設定します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public int HighInterval
-        {
-            get => _high;
-            set => SetProperty(ref _high, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LowInterval
-        /// 
-        /// <summary>
-        /// 低頻度モニタのチェック間隔を取得または設定します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public int LowInterval
-        {
-            get => _low;
-            set => SetProperty(ref _low, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// LightMode
         ///
         /// <summary>
@@ -183,18 +151,50 @@ namespace Cube.Net.App.Rss.Reader
             set => SetProperty(ref _lastCheckUpdate, value);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// HighInterval
+        ///
+        /// <summary>
+        /// 高頻度モニタのチェック間隔を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public TimeSpan? HighInterval
+        {
+            get => _highInterval;
+            set => SetProperty(ref _highInterval, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LowInterval
+        ///
+        /// <summary>
+        /// 低頻度モニタのチェック間隔を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public TimeSpan? LowInterval
+        {
+            get => _lowInterval;
+            set => SetProperty(ref _lowInterval, value);
+        }
+
         #endregion
 
         #region Fields
         private Uri _feedUri;
         private int _width = 1060;
         private int _height = 630;
-        private int _high = 60 * 60;
-        private int _low = 24 * 60 * 60;
         private bool _lightMode = false;
         private bool _enableMonitorMessage = true;
         private bool _checkUpdate = true;
         private DateTime? _lastCheckUpdate = null;
+        private TimeSpan? _highInterval = TimeSpan.FromHours(1);
+        private TimeSpan? _lowInterval = TimeSpan.FromHours(24);
         #endregion
     }
 

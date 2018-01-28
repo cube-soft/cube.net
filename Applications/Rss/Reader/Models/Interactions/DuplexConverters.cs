@@ -15,38 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using Cube.Xui.Converters;
 
 namespace Cube.Net.App.Rss.Reader
 {
-    /* --------------------------------------------------------------------- */
-    ///
-    /// DivisionConverter
-    ///
-    /// <summary>
-    /// 特定の値で除算するための変換用クラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public class DivisionConverter : DuplexConverter
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DivisionConverter
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="divisor">除数</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public DivisionConverter(int divisor) : base(
-            e => ((int)e / divisor).ToString(),
-            e => int.Parse(e as string) * divisor
-        ) { }
-    }
-
     /* --------------------------------------------------------------------- */
     ///
     /// MinuteConverter
@@ -56,7 +29,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class MinuteConverter : DivisionConverter
+    public class MinuteConverter : DuplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -67,7 +40,10 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public MinuteConverter() : base(60) { }
+        public MinuteConverter() : base(
+            e => ((TimeSpan?)e)?.TotalMinutes ?? 0,
+            e => TimeSpan.FromMinutes(int.Parse(e as string))
+        ) { }
     }
 
     /* --------------------------------------------------------------------- */
@@ -79,7 +55,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class HourConverter : DivisionConverter
+    public class HourConverter : DuplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -90,6 +66,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        public HourConverter() : base(60 * 60) { }
+        public HourConverter() : base(
+            e => ((TimeSpan?)e)?.TotalHours ?? 0,
+            e => TimeSpan.FromHours(int.Parse(e as string))
+        ) { }
     }
 }
