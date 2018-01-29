@@ -4,7 +4,8 @@
         "Categories": null,
         "Entries": [
             {
-                "Uri": "http:\/\/blog.cube-soft.jp\/?feed=rss2",
+                "Uri": "https:\/\/blog.cube-soft.jp\/?feed=rss2",
+                "Link": "https:\/\/blog.cube-soft.jp\/",
                 "Title": "CubeSoft Blog"
             }
         ]
@@ -17,11 +18,13 @@
                 "Categories": null,
                 "Entries": [
                     {
-                        "Uri": "http:\/\/blogs.windows.com\/feed",
+                        "Uri": "https:\/\/blogs.windows.com\/feed",
+                        "Link": "https:\/\/blogs.windows.com\/",
                         "Title": "Windows Blog"
                     },
                     {
-                        "Uri": "http:\/\/blogs.windows.com\/buildingapps\/feed",
+                        "Uri": "https:\/\/blogs.windows.com\/buildingapps\/feed",
+                        "Link": "https:\/\/blogs.windows.com\/buildingapps",
                         "Title": "Building Apps for Windows"
                     }
                 ]
@@ -32,10 +35,12 @@
                 "Entries": [
                     {
                         "Uri": "https:\/\/blogs.msdn.microsoft.com\/visualstudio\/feed\/",
+                        "Link": "https:\/\/blogs.msdn.microsoft.com\/visualstudio",
                         "Title": "The Visual Studio Blog"
                     },
                     {
                         "Uri": "https:\/\/blogs.msdn.microsoft.com\/dotnet\/feed",
+                        "Link": "https:\/\/blogs.msdn.microsoft.com\/dotnet",
                         "Title": ".NET Blog"
                     }
                 ]
@@ -43,15 +48,18 @@
         ],
         "Entries": [
             {
-                "Uri": "http:\/\/blogs.microsoft.com\/feed",
+                "Uri": "https:\/\/blogs.microsoft.com\/feed",
+                "Link": "https:\/\/blogs.microsoft.com\/",
                 "Title": "Official Microsoft Blog"
             },
             {
-                "Uri": "http:\/\/blogs.microsoft.com\/on-the-issues\/feed",
+                "Uri": "https:\/\/blogs.microsoft.com\/on-the-issues\/feed",
+                "Link": "https:\/\/blogs.microsoft.com\/on-the-issues",
                 "Title": "Microsoft on the Issues"
             },
             {
-                "Uri": "http:\/\/blogs.microsoft.com\/iot\/feed",
+                "Uri": "https:\/\/blogs.microsoft.com\/iot\/feed",
+                "Link": "https:\/\/blogs.microsoft.com\/iot",
                 "Title": "Internet of Things"
             }
         ]
@@ -62,10 +70,12 @@
         "Entries": [
             {
                 "Uri": "https:\/\/github.com\/blog.atom",
+                "Link": "https:\/\/github.com\/blog",
                 "Title": "The GitHub Blog"
             },
             {
                 "Uri": "http:\/\/japanese.engadget.com\/rss.xml",
+                "Link": "http:\/\/japanese.engadget.com\/rss.xml",
                 "Title": "Engadget Japanese RSS Feed"
             }
         ]
