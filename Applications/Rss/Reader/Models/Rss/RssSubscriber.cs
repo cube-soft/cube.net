@@ -391,7 +391,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void Import(string path)
+        public void Import(string path)
         {
             var dest = RssOpml.Load(path);
             if (dest.Count() <= 0) return;
@@ -767,7 +767,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             src.Children.CollectionChanged -= WhenChildrenChanged;
 
-            foreach (var item in src.Children)
+            foreach (var item in src.Children.ToList())
             {
                 if (item is RssCategory c) RemoveCore(c);
                 else if (item is RssEntry e) RemoveCore(e);

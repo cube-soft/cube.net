@@ -88,6 +88,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   OPML ファイル (*.opml, *.xml)|*.opml;*.OPML;*.xml;*.XML|すべてのファイル (*.*)|*.* に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FilterOpml {
+            get {
+                return ResourceManager.GetString("FilterOpml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap Logo {

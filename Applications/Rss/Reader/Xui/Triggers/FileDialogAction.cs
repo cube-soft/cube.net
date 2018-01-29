@@ -60,14 +60,23 @@ namespace Cube.Xui.Triggers
             {
                 var dialog = new OpenFileDialog
                 {
-                    Filter = msg.Filter,
-                    Title = msg.Text,
+                    CheckPathExists = msg.CheckPathExists,
+                    Multiselect     = msg.Multiselect,
                 };
 
-                var result = dialog.ShowDialog() ?? false ?
-                             MessageBoxResult.OK :
-                             MessageBoxResult.Cancel;
-                msg.Callback?.Invoke(result);
+                if (!string.IsNullOrEmpty(msg.Title)) dialog.Title = msg.Title;
+                if (!string.IsNullOrEmpty(msg.FileName)) dialog.FileName = msg.FileName;
+                if (!string.IsNullOrEmpty(msg.Filter)) dialog.Filter = msg.Filter;
+                if (!string.IsNullOrEmpty(msg.InitialDirectory)) dialog.InitialDirectory = msg.InitialDirectory;
+
+                var result = dialog.ShowDialog() ?? false;
+                msg.Cancel = !result;
+                if (!msg.Cancel)
+                {
+                    msg.FileName  = dialog.FileName;
+                    msg.FileNames = dialog.FileNames;
+                }
+                msg.Callback?.Invoke(msg);
             }
         }
     }
@@ -113,14 +122,19 @@ namespace Cube.Xui.Triggers
             {
                 var dialog = new SaveFileDialog
                 {
-                    Filter = msg.Filter,
-                    Title  = msg.Text,
+                    CheckPathExists = msg.CheckPathExists,
+                    OverwritePrompt = msg.OverwritePrompt,
                 };
 
-                var result = dialog.ShowDialog() ?? false ?
-                             MessageBoxResult.OK :
-                             MessageBoxResult.Cancel;
-                msg.Callback?.Invoke(result);
+                if (!string.IsNullOrEmpty(msg.Title)) dialog.Title = msg.Title;
+                if (!string.IsNullOrEmpty(msg.FileName)) dialog.FileName = msg.FileName;
+                if (!string.IsNullOrEmpty(msg.Filter)) dialog.Filter = msg.Filter;
+                if (!string.IsNullOrEmpty(msg.InitialDirectory)) dialog.InitialDirectory = msg.InitialDirectory;
+
+                var result = dialog.ShowDialog() ?? false;
+                msg.Cancel = !result;
+                if (!msg.Cancel) msg.FileName = dialog.FileName;
+                msg.Callback?.Invoke(msg);
             }
         }
     }

@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
-using System.Windows;
 
 namespace Cube.Xui
 {
@@ -30,26 +29,8 @@ namespace Cube.Xui
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class FileDialogMessage : DialogMessageBase
+    public abstract class FileDialogMessage
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FileDialogMessage
-        /// 
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        /// 
-        /// <param name="callback">コールバック用オブジェクト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public FileDialogMessage(Action<MessageBoxResult> callback) :
-            base(callback) { }
-
-        #endregion
-
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -91,11 +72,33 @@ namespace Cube.Xui
         /// Filter
         /// 
         /// <summary>
-        /// フィルタを表す文字列を取得します。
+        /// フィルタを表す文字列を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public string Filter { get; set; } = "All Files (*.*)|*.*";
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Title
+        /// 
+        /// <summary>
+        /// タイトルを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Title { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Cancel
+        /// 
+        /// <summary>
+        /// ユーザがキャンセルしたかどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Cancel { get; set; } = true;
 
         #endregion
     }
@@ -124,15 +127,26 @@ namespace Cube.Xui
         /// <param name="callback">コールバック用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public OpenFileDialogMessage(Action<MessageBoxResult> callback) :
-            base(callback)
+        public OpenFileDialogMessage(Action<OpenFileDialogMessage> callback) : base()
         {
+            Callback        = callback;
             CheckPathExists = true;
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Callback
+        /// 
+        /// <summary>
+        /// コールバック用オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Action<OpenFileDialogMessage> Callback { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -183,15 +197,26 @@ namespace Cube.Xui
         /// <param name="callback">コールバック用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SaveFileDialogMessage(Action<MessageBoxResult> callback) :
-            base(callback)
+        public SaveFileDialogMessage(Action<SaveFileDialogMessage> callback) : base()
         {
+            Callback        = callback;
             CheckPathExists = false;
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Callback
+        /// 
+        /// <summary>
+        /// コールバック用オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Action<SaveFileDialogMessage> Callback { get; }
 
         /* ----------------------------------------------------------------- */
         ///

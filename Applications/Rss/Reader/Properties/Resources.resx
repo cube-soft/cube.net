@@ -160,4 +160,7 @@
   <data name="MessageNewCategory" xml:space="preserve">
     <value>新しいフォルダー</value>
   </data>
+  <data name="FilterOpml" xml:space="preserve">
+    <value>OPML ファイル (*.opml, *.xml)|*.opml;*.OPML;*.xml;*.XML|すべてのファイル (*.*)|*.*</value>
+  </data>
 </root>

@@ -29,7 +29,7 @@ namespace Cube.Xui
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class DialogMessage : DialogMessageBase
+    public class DialogMessage
     {
         #region Constructors
 
@@ -90,16 +90,49 @@ namespace Cube.Xui
         /// <param name="callback">コールバック用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public DialogMessage(string text, string caption, Action<MessageBoxResult> callback) :
-            base(callback)
+        public DialogMessage(string text, string caption, Action<MessageBoxResult> callback)
         {
-            Text    = text;
-            Caption = caption;
+            Text     = text;
+            Caption  = caption;
+            Callback = callback;
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Callback
+        /// 
+        /// <summary>
+        /// コールバック用オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Action<MessageBoxResult> Callback { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Text
+        /// 
+        /// <summary>
+        /// メッセージ内容を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Text { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Caption
+        /// 
+        /// <summary>
+        /// タイトルキャプションを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Caption { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
