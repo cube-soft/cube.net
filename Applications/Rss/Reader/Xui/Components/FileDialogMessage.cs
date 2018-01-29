@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace Cube.Xui
@@ -53,6 +54,40 @@ namespace Cube.Xui
 
         /* ----------------------------------------------------------------- */
         ///
+        /// CheckPathExists
+        /// 
+        /// <summary>
+        /// 指定されたファイルの存在チェックを実行するかどうかを示す値を
+        /// 取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool CheckPathExists { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// InitialDirectory
+        /// 
+        /// <summary>
+        /// ディレクトリの初期設定を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string InitialDirectory { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FileName
+        /// 
+        /// <summary>
+        /// 選択されたファイルのパスを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string FileName { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Filter
         /// 
         /// <summary>
@@ -60,7 +95,7 @@ namespace Cube.Xui
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Filter { get; set; } = "すべてのファイル (*.*)|*.*";
+        public string Filter { get; set; } = "All Files (*.*)|*.*";
 
         #endregion
     }
@@ -90,7 +125,36 @@ namespace Cube.Xui
         ///
         /* ----------------------------------------------------------------- */
         public OpenFileDialogMessage(Action<MessageBoxResult> callback) :
-            base(callback) { }
+            base(callback)
+        {
+            CheckPathExists = true;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Multiselect
+        /// 
+        /// <summary>
+        /// 複数選択可能かどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Multiselect { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FileNames
+        /// 
+        /// <summary>
+        /// 選択されたファイルのパス一覧を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IEnumerable<string> FileNames { get; set; }
 
         #endregion
     }
@@ -120,7 +184,26 @@ namespace Cube.Xui
         ///
         /* ----------------------------------------------------------------- */
         public SaveFileDialogMessage(Action<MessageBoxResult> callback) :
-            base(callback) { }
+            base(callback)
+        {
+            CheckPathExists = false;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OverwritePrompt
+        /// 
+        /// <summary>
+        /// 上書き確認ダイアログを表示するかどうかを示す値を取得または
+        /// 設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public bool OverwritePrompt { get; set; } = true;
 
         #endregion
     }
