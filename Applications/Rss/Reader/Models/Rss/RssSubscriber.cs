@@ -384,6 +384,29 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Import
+        /// 
+        /// <summary>
+        /// OPML 形式ファイルをインポートします。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void Import(string path)
+        {
+            var dest = RssOpml.Load(path);
+            if (dest.Count() <= 0) return;
+
+            Clear();
+            foreach (var item in dest)
+            {
+                if (item is RssCategory rc) RegisterCore(rc);
+                else if (item is RssEntry re) RegisterCore(re);
+            }
+            Start();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Export
         /// 
         /// <summary>
