@@ -44,7 +44,7 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Load()
+        public void LoadJson()
         {
             var count = 0;
             var src = new RssSubscriber();

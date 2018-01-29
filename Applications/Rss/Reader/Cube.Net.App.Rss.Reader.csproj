@@ -97,6 +97,7 @@
     <Compile Include="Models\Rss\RssBindableData.cs" />
     <Compile Include="Models\Rss\RssCategory.cs" />
     <Compile Include="Models\Rss\RssOperator.cs" />
+    <Compile Include="Models\Rss\RssOpml.cs" />
     <Compile Include="ViewModels\CommonViewModel.cs" />
     <Compile Include="Models\Interactions\SimplexConverters.cs" />
     <Compile Include="Models\Rss\RssEntry.cs" />

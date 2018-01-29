@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Cube.Xml
@@ -76,6 +77,51 @@ namespace Cube.Xml
 
         #endregion
 
+        #region GetElements
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetElements
+        /// 
+        /// <summary>
+        /// XElement オブジェクト一覧を取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>XElements オブジェクトの配列</returns>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static IEnumerable<XElement> GetElements(this XElement e, string name) =>
+            GetElements(e, string.Empty, name);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetElements
+        /// 
+        /// <summary>
+        /// XElement オブジェクト一覧を取得します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="ns">名前空間</param>
+        /// <param name="name">要素名</param>
+        /// 
+        /// <returns>XElements オブジェクトの配列</returns>
+        /// 
+        /// <remarks>
+        /// 名前空間が空文字の場合、既定の名前空間を使用します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static IEnumerable<XElement> GetElements(this XElement e, string ns, string name) =>
+            !string.IsNullOrEmpty(ns) ?
+            e.Elements(XNamespace.Get(ns) + name) :
+            e.Elements(e.GetDefaultNamespace() + name);
+
+        #endregion
+
         #region GetValue
 
         /* ----------------------------------------------------------------- */
@@ -113,9 +159,13 @@ namespace Cube.Xml
         public static string GetValue(this XElement e, string ns, string name) =>
             GetElement(e, ns, name)?.Value ?? string.Empty;
 
+        #endregion
+
+        #region GetValueOrAttribute
+
         /* ----------------------------------------------------------------- */
         ///
-        /// GetValue
+        /// GetValueOrAttribute
         /// 
         /// <summary>
         /// 値を取得します。Value が存在しない場合はヒントに指定された名前に
@@ -134,63 +184,36 @@ namespace Cube.Xml
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public static string GetValue(this XElement e, string ns, string name, string hint)
+        public static string GetValueOrAttribute(this XElement e,
+            string ns, string name, string hint) =>
+            e.GetElement(ns, name).GetValueOrAttribute(hint);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetValue
+        /// 
+        /// <summary>
+        /// 値を取得します。Value が存在しない場合はヒントに指定された名前に
+        /// 対応する属性値を返します。
+        /// </summary>
+        /// 
+        /// <param name="e">XML オブジェクト</param>
+        /// <param name="hint">ヒントとなる要素名</param>
+        /// 
+        /// <returns>文字列</returns>
+        ///
+        /// <remarks>
+        /// null を string.Empty に正規化します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string GetValueOrAttribute(this XElement e, string hint)
         {
-            var node = e.GetElement(ns, name);
-            if (node == null) return string.Empty;
-            if (!string.IsNullOrEmpty(node.Value)) return node.Value;
+            if (e == null) return string.Empty;
+            if (!string.IsNullOrEmpty(e.Value)) return e.Value;
             if (string.IsNullOrEmpty(hint)) return string.Empty;
-            return node.Attribute(hint)?.Value ?? string.Empty;
+            return (string)e.Attribute(hint) ?? string.Empty;
         }
-
-        #endregion
-
-        #region GetAttribute
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAttribute
-        /// 
-        /// <summary>
-        /// 属性値を取得します。
-        /// </summary>
-        /// 
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="name">要素名</param>
-        /// <param name="attr">属性名</param>
-        /// 
-        /// <returns>文字列</returns>
-        /// 
-        /// <remarks>
-        /// null を string.Empty に正規化します。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static string GetAttribute(this XElement e, string name, string attr) =>
-            GetAttribute(e, string.Empty, name, attr);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAttribute
-        /// 
-        /// <summary>
-        /// 属性値を取得します。
-        /// </summary>
-        /// 
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="ns">名前空間</param>
-        /// <param name="name">要素名</param>
-        /// <param name="attr">属性名</param>
-        /// 
-        /// <returns>文字列</returns>
-        /// 
-        /// <remarks>
-        /// null を string.Empty に正規化します。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static string GetAttribute(this XElement e, string ns, string name, string attr) =>
-            e.GetElement(ns, name)?.Attribute(attr)?.Value ?? string.Empty;
 
         #endregion
 
@@ -251,7 +274,7 @@ namespace Cube.Xml
         /* ----------------------------------------------------------------- */
         public static DateTime? GetDateTime(this XElement e, string ns, string name, string hint)
         {
-            var value = e.GetValue(ns, name, hint);
+            var value = e.GetValueOrAttribute(ns, name, hint);
             return DateTime.TryParse(value, out DateTime dest) ? dest : (DateTime?)null;
         }
 
@@ -316,7 +339,7 @@ namespace Cube.Xml
         {
             try
             {
-                var value = e.GetValue(ns, name, hint);
+                var value = e.GetValueOrAttribute(ns, name, hint);
                 return !string.IsNullOrEmpty(value) ? new Uri(value) : default(Uri);
             }
             catch (Exception /* err */) { return default(Uri); }

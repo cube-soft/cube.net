@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Details\FileHelper.cs" />
     <Compile Include="Details\ViewModelHelper.cs" />
+    <Compile Include="Models\RssOpmlTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\RssEntryTest.cs" />
     <Compile Include="ViewModels\RegisterViewModelTest.cs" />

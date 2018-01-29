@@ -98,7 +98,7 @@
     <Compile Include="NetworkAwareTimer.cs" />
     <Compile Include="NetworkMonitorBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XmlOperator.cs" />
+    <Compile Include="Rss\XmlOperator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Cube.snk" />
