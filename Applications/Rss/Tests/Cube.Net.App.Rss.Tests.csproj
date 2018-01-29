@@ -69,7 +69,7 @@
     <Compile Include="Details\ViewModelHelper.cs" />
     <Compile Include="Models\RssOpmlTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\RssEntryTest.cs" />
+    <Compile Include="Models\RssSubscriberTest.cs" />
     <Compile Include="ViewModels\RegisterViewModelTest.cs" />
     <Compile Include="ViewModels\MainViewModelTest.cs" />
     <None Include="Examples\Sample.json">

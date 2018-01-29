@@ -299,6 +299,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             [DataMember] public string Title { get; set; }
             [DataMember] public Uri Uri { get; set; }
+            [DataMember] public Uri Link { get; set; }
             [DataMember] public RssCheckFrequency Frequency { get; set; }
             [DataMember] public bool SkipContent { get; set; }
 
@@ -306,6 +307,7 @@ namespace Cube.Net.App.Rss.Reader
             {
                 Title       = src.Title;
                 Uri         = src.Uri;
+                Link        = src.Link;
                 Frequency   = src.Frequency;
                 SkipContent = src.SkipContent;
             }
@@ -314,6 +316,7 @@ namespace Cube.Net.App.Rss.Reader
             {
                 Title       = Title,
                 Uri         = Uri,
+                Link        = Link,
                 Frequency   = Frequency,
                 SkipContent = SkipContent,
                 Parent      = src,

@@ -382,6 +382,17 @@ namespace Cube.Net.App.Rss.Reader
             }})
         );
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Export
+        /// 
+        /// <summary>
+        /// OPML 形式でエクスポートします。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Export(string path) => RssOpml.Save(this, path, IO);
+
         #endregion
 
         #region Monitor

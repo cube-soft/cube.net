@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -37,6 +38,8 @@ namespace Cube.Net.App.Rss.Reader
     public static class RssOpml
     {
         #region Methods
+
+        #region Load
 
         /* ----------------------------------------------------------------- */
         ///
@@ -79,7 +82,62 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
+        #region Save
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Save
+        ///
+        /// <summary>
+        /// OPML ファイルに保存します。
+        /// </summary>
+        ///
+        /// <param name="src">保存元データ</param>
+        /// <param name="path">ファイルのパス</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static void Save(IEnumerable<IRssEntry> src, string path) =>
+            Save(src, path, new Operator());
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Save
+        ///
+        /// <summary>
+        /// OPML ファイルに保存します。
+        /// </summary>
+        ///
+        /// <param name="src">保存元データ</param>
+        /// <param name="path">ファイルのパス</param>
+        /// <param name="io">入出力用のオブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static void Save(IEnumerable<IRssEntry> src, string path, Operator io)
+        {
+            var root = new XElement("outline", new XAttribute("title", "Subscriptions"));
+            foreach (var item in ConvertBack(src)) root.Add(item);
+
+            var body = new XElement("body", root);
+            var head = new XElement("head",
+                new XElement("title", "CubeRSS Reader subscriptions"),
+                new XElement("dateCreated", DateTime.Now.ToUniversalTime().ToString("r"))
+            );
+
+            var doc = new XDocument(
+                new XDeclaration("1.0", "utf-8", "true"),
+                new XElement("opml", new XAttribute("version", "1.0"), head, body)
+            );
+
+            using (var ss = io.Create(path)) doc.Save(ss);
+        }
+
+        #endregion
+
+        #endregion
+
         #region Implementations
+
+        #region Load
 
         /* ----------------------------------------------------------------- */
         ///
@@ -99,13 +157,13 @@ namespace Cube.Net.App.Rss.Reader
         private static IEnumerable<IRssEntry> Convert(XElement src, IRssEntry parent) =>
             src.GetElements("outline").Select(
                 e => e.Attribute("xmlUrl") != null ?
-                ConvertEntry(e, parent) :
-                ConvertCategory(e, parent)
+                ToEntry(e, parent) :
+                ToCategory(e, parent)
             );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ConvertEntry
+        /// ToEntry
         /// 
         /// <summary>
         /// XElement オブジェクトを解析し、RssEntry オブジェクトに
@@ -118,7 +176,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        private static IRssEntry ConvertEntry(XElement src, IRssEntry parent) => new RssEntry
+        private static IRssEntry ToEntry(XElement src, IRssEntry parent) => new RssEntry
         {
             Parent = parent,
             Title  = (string)src.Attribute("title") ?? string.Empty,
@@ -128,7 +186,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ConvertCategory
+        /// ToCategory
         /// 
         /// <summary>
         /// XElement オブジェクトを解析し、RssCategory オブジェクトに
@@ -141,7 +199,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        private static IRssEntry ConvertCategory(XElement src, IRssEntry parent)
+        private static IRssEntry ToCategory(XElement src, IRssEntry parent)
         {
             var dest = new RssCategory
             {
@@ -152,6 +210,76 @@ namespace Cube.Net.App.Rss.Reader
             dest.Children = Convert(src, dest).ToBindable();
             return dest;
         }
+
+        #endregion
+
+        #region Save
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ConvertBack
+        /// 
+        /// <summary>
+        /// IRssEntry オブジェクトから XElement オブジェクトに変換します。
+        /// </summary>
+        /// 
+        /// <param name="src">IRssEntry オブジェクト一覧</param>
+        /// 
+        /// <returns>変換オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IEnumerable<XElement> ConvertBack(IEnumerable<IRssEntry> src) =>
+            src.Select(e =>
+                e is RssCategory rc ?
+                FromCategory(rc) :
+                FromEntry(e as RssEntry)
+            );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FromEntry
+        /// 
+        /// <summary>
+        /// RssEntry オブジェクトから XElement オブジェクトに変換します。
+        /// </summary>
+        /// 
+        /// <param name="src">RssEntry オブジェクト</param>
+        /// 
+        /// <returns>変換オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static XElement FromEntry(RssEntry src) => new XElement(
+            "outline",
+            new XAttribute("type", "rss"),
+            new XAttribute("title", src.Title),
+            new XAttribute("xmlUrl", src.Uri.ToString()),
+            new XAttribute("htmlUrl", src.Link.ToString())
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FromCategory
+        /// 
+        /// <summary>
+        /// RssCategory オブジェクトから XElement オブジェクトに変換します。
+        /// </summary>
+        /// 
+        /// <param name="src">RssCategory オブジェクト</param>
+        /// 
+        /// <returns>変換オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static XElement FromCategory(RssCategory src)
+        {
+            var dest = new XElement("outline", new XAttribute("title", src.Title));
+            if (src.Children.Count > 0)
+            {
+                foreach (var item in ConvertBack(src.Children)) dest.Add(item);
+            }
+            return dest;
+        }
+
+        #endregion
 
         #endregion
     }
