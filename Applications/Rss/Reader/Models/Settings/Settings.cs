@@ -19,6 +19,7 @@ using System;
 using System.Runtime.Serialization;
 using Cube.FileSystem;
 using Cube.Settings;
+using Cube.Log;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -296,5 +297,37 @@ namespace Cube.Net.App.Rss.Reader
         public string Feed => IO.Combine(Root, "Feeds.json");
 
         #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// SettingsOperator
+    ///
+    /// <summary>
+    /// SettingsFolder の拡張用クラスです。
+    /// </summary>
+    /// 
+    /* --------------------------------------------------------------------- */
+    public static class SettingsOperator
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LoadOrDelete
+        /// 
+        /// <summary>
+        /// 設定を読み込みます。読み込みに失敗した場合、該当ファイルに
+        /// 問題のある可能性が高いので削除します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static void LoadOrDelete(this SettingsFolder src)
+        {
+            try { if (src.IO.Exists(src.Path)) src.Load(); }
+            catch (Exception err)
+            {
+                src.LogWarn(err.ToString(), err);
+                src.IO.Delete(src.Path);
+            }
+        }
     }
 }

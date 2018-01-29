@@ -51,7 +51,7 @@ namespace Cube.Net.App.Rss.Reader
         public RssFacade(SettingsFolder settings)
         {
             Settings = settings;
-            if (IO.Exists(Settings.Path)) Settings.Load();
+            Settings.LoadOrDelete();
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
 
