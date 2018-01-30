@@ -209,6 +209,7 @@ namespace Cube.Net.App.Rss.Reader
             dest.LastChecked   = src.LastChecked;
             dest.LastPublished = src.LastPublished;
 
+            if (dest is RssEntry re) re.Count = re.UnreadItems.Count();
             Received?.Invoke(this, ValueEventArgs.Create(src));
         }
 
@@ -265,6 +266,44 @@ namespace Cube.Net.App.Rss.Reader
             parent.Expand();
 
             return dest;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Read
+        /// 
+        /// <summary>
+        /// 既読設定にします。
+        /// </summary>
+        /// 
+        /// <param name="src">RssEntry オブジェクト</param>
+        /// <param name="item">RssItem オブジェクト</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Read(RssEntry src, RssItem item)
+        {
+            if (src != null && item != null && item.Status != RssItemStatus.Read)
+            {
+                src.Count = Math.Max(src.Count - 1, 0);
+                item.Status = RssItemStatus.Read;
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Read
+        /// 
+        /// <summary>
+        /// 指定されたオブジェクトの全ての記事を既読設定にします。
+        /// </summary>
+        /// 
+        /// <param name="src">RSS エントリまたはカテゴリ</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void Read(IRssEntry src)
+        {
+            if (src is RssCategory rc) ReadCore(rc);
+            else if (src is RssEntry re) ReadCore(re);
         }
 
         /* ----------------------------------------------------------------- */
@@ -671,69 +710,31 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LoadCore
+        /// ReadCore
         /// 
         /// <summary>
-        /// 設定ファイルからカテゴリおよび RSS エントリ情報を読み込みます。
+        /// カテゴリ中の全記事を既読設定します。
         /// </summary>
         /// 
-        /// <remarks>
-        /// TODO: エラー時に元ファイルの削除およびバックアップ領域からの
-        /// 復旧処理を追加。
-        /// </remarks>
-        /// 
         /* ----------------------------------------------------------------- */
-        private IEnumerable<RssCategory> LoadCore()
+        private void ReadCore(RssCategory src)
         {
-            if (IO.Exists(FileName))
-            {
-                try
-                {
-                    using (var ss = IO.OpenRead(FileName))
-                    {
-                        return SettingsType.Json
-                                           .Load<List<RssCategory.Json>>(ss)
-                                           .Select(e => e.Convert(null));
-                    }
-                }
-                catch (Exception err) { this.LogWarn(err.ToString(), err); }
-            }
-            return new RssCategory[0];
+            foreach (var item in src.Children) Read(item);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SaveCore
+        /// ReadCore
         /// 
         /// <summary>
-        /// カテゴリおよび RSS エントリ情報を設定ファイルに保存します。
+        /// RSS エントリ中の全記事を既読設定します。
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void SaveCore(IEnumerable<RssCategory> src)
+        private void ReadCore(RssEntry src)
         {
-            try
-            {
-                var json = src.Select(e => new RssCategory.Json(e));
-                using (var ss = IO.Create(FileName)) SettingsType.Json.Save(ss, json);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// AutoSaveCore
-        /// 
-        /// <summary>
-        /// 自動保存を実行します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void AutoSaveCore()
-        {
-            _autosaver.Stop();
-            _autosaver.Interval = 1000.0;
-            _autosaver.Start();
+            foreach (var item in src.UnreadItems) item.Status = RssItemStatus.Read;
+            src.Count = 0;
         }
 
         /* ----------------------------------------------------------------- */
@@ -818,6 +819,73 @@ namespace Cube.Net.App.Rss.Reader
             if (src.Parent is RssCategory rc) rc.Children.Remove(src);
             else _tree.Remove(src);
             src.Dispose();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LoadCore
+        /// 
+        /// <summary>
+        /// 設定ファイルからカテゴリおよび RSS エントリ情報を読み込みます。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// TODO: エラー時に元ファイルの削除およびバックアップ領域からの
+        /// 復旧処理を追加。
+        /// </remarks>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private IEnumerable<RssCategory> LoadCore()
+        {
+            if (IO.Exists(FileName))
+            {
+                try
+                {
+                    using (var ss = IO.OpenRead(FileName))
+                    {
+                        return SettingsType.Json
+                                           .Load<List<RssCategory.Json>>(ss)
+                                           .Select(e => e.Convert(null));
+                    }
+                }
+                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            }
+            return new RssCategory[0];
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SaveCore
+        /// 
+        /// <summary>
+        /// カテゴリおよび RSS エントリ情報を設定ファイルに保存します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void SaveCore(IEnumerable<RssCategory> src)
+        {
+            try
+            {
+                var json = src.Select(e => new RssCategory.Json(e));
+                using (var ss = IO.Create(FileName)) SettingsType.Json.Save(ss, json);
+            }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// AutoSaveCore
+        /// 
+        /// <summary>
+        /// 自動保存を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void AutoSaveCore()
+        {
+            _autosaver.Stop();
+            _autosaver.Interval = 1000.0;
+            _autosaver.Start();
         }
 
         /* ----------------------------------------------------------------- */

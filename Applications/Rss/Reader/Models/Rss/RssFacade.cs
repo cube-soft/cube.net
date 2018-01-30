@@ -257,11 +257,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void ReadAll()
-        {
-            if (Data.Entry.Value is RssEntry entry) ReadAll(entry);
-            else if (Data.Entry.Value is RssCategory category) ReadAll(category);
-        }
+        public void ReadAll() => Core.Read(Data.Entry.Value);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -332,7 +328,7 @@ namespace Cube.Net.App.Rss.Reader
             var tmp = Data.Article.Value;
             if (Property.SkipContent) Data.Uri.Value = src.Link;
             else Data.Article.Value = src;
-            if (tmp != null) tmp.Status = RssItemStatus.Read;
+            Core.Read(Data.Feed.Value as RssEntry, tmp);
         }
 
         /* ----------------------------------------------------------------- */
@@ -426,38 +422,6 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ReadAll
-        /// 
-        /// <summary>
-        /// 指定された RssCategory 下の全ての記事を既読に設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void ReadAll(RssCategory root)
-        {
-            foreach (var i in root.Children)
-            {
-                if (i is RssCategory category) ReadAll(category);
-                else if (i is RssEntry entry) ReadAll(entry);
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ReadAll
-        /// 
-        /// <summary>
-        /// 指定された RssEntry 下の全ての記事を既読に設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void ReadAll(RssEntry entry)
-        {
-            foreach (var i in entry.UnreadItems) i.Status = RssItemStatus.Read;
-        }
 
         /* ----------------------------------------------------------------- */
         ///
