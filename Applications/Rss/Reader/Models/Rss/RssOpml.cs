@@ -114,10 +114,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static void Save(IEnumerable<IRssEntry> src, string path, Operator io)
         {
-            var root = new XElement("outline", new XAttribute("title", "Subscriptions"));
-            foreach (var item in ConvertBack(src)) root.Add(item);
+            var body = new XElement("body");
+            foreach (var item in ConvertBack(src)) body.Add(item);
 
-            var body = new XElement("body", root);
             var head = new XElement("head",
                 new XElement("title", "CubeRSS Reader subscriptions"),
                 new XElement("dateCreated", DateTime.Now.ToUniversalTime().ToString("r"))
