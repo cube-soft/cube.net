@@ -328,17 +328,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Select(RssItem src)
         {
-            if (Property.SkipContent)
-            {
-                if (Data.Uri.Value == src.Link) return;
-                Data.Uri.Value = src.Link;
-            }
-            else
-            {
-                if (Data.Article.Value == src) return;
-                Data.Article.Value = src;
-            }
-
+            if (src == null) return;
+            if (Property.SkipContent) Data.Uri.Value = src.Link;
+            else Data.Article.Value = src;
             if (Data.Feed.Value is RssEntry entry) entry.Read(src);
         }
 
