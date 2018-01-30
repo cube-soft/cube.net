@@ -166,7 +166,7 @@
 
             <ListView
                 x:Name="RssFeeds"
-                ItemsSource="{Binding Data.Feed.Value.Items}"
+                ItemsSource="{Binding Data.Feed.Value.SafeItems}"
                 ItemContainerStyle="{StaticResource RssItemStyle}"
                 ItemTemplate="{StaticResource RssItemTemplate}"
                 Style="{StaticResource RssFeedsStyle}"

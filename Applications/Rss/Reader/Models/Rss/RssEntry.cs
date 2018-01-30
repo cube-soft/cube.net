@@ -16,6 +16,8 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Cube.Net.Rss;
 
@@ -186,6 +188,22 @@ namespace Cube.Net.App.Rss.Reader
             get => _skipContent;
             set => SetProperty(ref _skipContent, value);
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SafeItems
+        /// 
+        /// <summary>
+        /// 新着記事一覧を取得します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// TODO: Items を直接 Binding するとエラーが発生する場合がある。
+        /// 該当の現象が解消でき次第、このプロパティは削除する。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IEnumerable<RssItem> SafeItems => Items.Where(e => true);
 
         #endregion
 

@@ -306,7 +306,7 @@ namespace Cube.Net.App.Rss.Reader
                 }
 
                 Property = current;
-                Data.Feed.Value = Core.Find<RssFeed>(current.Uri);
+                Data.Feed.Value = current;
 
                 var items = Data.Feed.Value?.Items;
                 var first = items?.Count > 0 ? items[0] : null;

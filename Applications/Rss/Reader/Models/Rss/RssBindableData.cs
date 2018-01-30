@@ -100,7 +100,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssFeed> Feed { get; } = new Bindable<RssFeed>();
+        public Bindable<RssEntry> Feed { get; } = new Bindable<RssEntry>();
 
         /* ----------------------------------------------------------------- */
         ///
