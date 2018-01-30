@@ -53,6 +53,10 @@
         <xt:SaveFileDialogTrigger Messenger="{Binding Messenger}">
             <xt:SaveFileDialogAction/>
         </xt:SaveFileDialogTrigger>
+
+        <xt:DialogTrigger Messenger="{Binding Messenger}">
+            <xt:DialogAction/>
+        </xt:DialogTrigger>
         
         <my:RegisterTrigger>
             <my:RegisterWindowAction/>

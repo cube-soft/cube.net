@@ -169,4 +169,19 @@
   <data name="MessageImport" xml:space="preserve">
     <value>インポートするファイルを選択</value>
   </data>
+  <data name="MessageImportWarning" xml:space="preserve">
+    <value>購読中の Web サイトは全て削除され、インポートされた情報で上書きされます。エクスポート機能を利用するなどして、あらかじめバックアップを取得して下さい。
+
+インポートを実行しますか？</value>
+  </data>
+  <data name="TitleWarning" xml:space="preserve">
+    <value>注意</value>
+  </data>
+  <data name="MessageRemove" xml:space="preserve">
+    <value>{0} を削除しますか？
+カテゴリを指定した場合、カテゴリ中の Web サイトも全て削除されます。</value>
+  </data>
+  <data name="TitleInformation" xml:space="preserve">
+    <value>確認</value>
+  </data>
 </root>

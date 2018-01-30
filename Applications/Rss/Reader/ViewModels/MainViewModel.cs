@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using Cube.Net.Rss;
@@ -162,10 +163,16 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Import => _import ?? (
-            _import = new RelayCommand(
-                () => Messenger.Send(MessageFactory.Import(e =>
+            _import = new RelayCommand(() => Messenger.Send(
+                MessageFactory.ImportWarning(e0 =>
                 {
-                    if (!e.Cancel) Model.Import(e.FileName);
+                    if (e0 == MessageBoxResult.Yes)
+                    {
+                        Messenger.Send(MessageFactory.Import(e1 =>
+                        {
+                            if (!e1.Cancel) Model.Import(e1.FileName);
+                        }));
+                    }
                 }))
             )
         );
@@ -180,8 +187,8 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Export => _export ?? (
-            _export = new RelayCommand(
-                () => Messenger.Send(MessageFactory.Export(e =>
+            _export = new RelayCommand(() => Messenger.Send(
+                MessageFactory.Export(e =>
                 {
                     if (!e.Cancel) Model.Export(e.FileName);
                 }))
@@ -198,8 +205,8 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand NewEntry => _newEntry ?? (
-            _newEntry = new RelayCommand(
-                () => Messenger.Send(new RegisterViewModel(e => Model.NewEntry(e)))
+            _newEntry = new RelayCommand(() => Messenger.Send(
+                new RegisterViewModel(e => Model.NewEntry(e)))
             )
         );
 
@@ -226,7 +233,12 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Remove => _remove ?? (
-            _remove = new RelayCommand(() => Model.Remove())
+            _remove = new RelayCommand(() => Messenger.Send(
+                MessageFactory.RemoveWarning(Data.Entry.Value?.Title, e =>
+                {
+                    if (e == MessageBoxResult.Yes) Model.Remove();
+                }))
+            )
         );
 
         /* ----------------------------------------------------------------- */

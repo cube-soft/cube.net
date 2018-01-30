@@ -143,6 +143,17 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   購読中の Web サイトは全て削除され、インポートされた情報で上書きされます。エクスポート機能を利用するなどして、あらかじめバックアップを取得して下さい。
+        ///
+        ///インポートを実行しますか？ に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageImportWarning {
+            get {
+                return ResourceManager.GetString("MessageImportWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   最終チェック に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageLastChecked {
@@ -193,6 +204,16 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         internal static string MessageReceived {
             get {
                 return ResourceManager.GetString("MessageReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   {0} を削除しますか？
+        ///カテゴリを指定した場合、カテゴリ中の Web サイトも全て削除されます。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageRemove {
+            get {
+                return ResourceManager.GetString("MessageRemove", resourceCulture);
             }
         }
         
@@ -256,6 +277,24 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         internal static string SkeletonStyle {
             get {
                 return ResourceManager.GetString("SkeletonStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   確認 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string TitleInformation {
+            get {
+                return ResourceManager.GetString("TitleInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   注意 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string TitleWarning {
+            get {
+                return ResourceManager.GetString("TitleWarning", resourceCulture);
             }
         }
     }

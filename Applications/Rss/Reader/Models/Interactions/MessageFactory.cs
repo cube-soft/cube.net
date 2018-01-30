@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Windows;
 using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
@@ -31,6 +32,53 @@ namespace Cube.Net.App.Rss.Reader
     /* --------------------------------------------------------------------- */
     public static class MessageFactory
     {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RemoveWarning
+        /// 
+        /// <summary>
+        /// 削除時の警告メッセージを生成します。
+        /// </summary>
+        /// 
+        /// <param name="name">削除名</param>
+        /// <param name="e">コールバック関数</param>
+        /// 
+        /// <returns>DialogMessage オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static DialogMessage RemoveWarning(string name, Action<MessageBoxResult> e) =>
+            new DialogMessage(
+                string.Format(Properties.Resources.MessageRemove, name),
+                Properties.Resources.TitleInformation,
+                e
+            ) {
+                Button = MessageBoxButton.YesNo,
+                Image  = MessageBoxImage.Information,
+            };
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ImportWarning
+        /// 
+        /// <summary>
+        /// インポート時の警告メッセージを生成します。
+        /// </summary>
+        /// 
+        /// <param name="e">コールバック関数</param>
+        /// 
+        /// <returns>DialogMessage オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static DialogMessage ImportWarning(Action<MessageBoxResult> e) =>
+            new DialogMessage(
+                Properties.Resources.MessageImportWarning,
+                Properties.Resources.TitleWarning,
+                e
+            ) {
+                Button = MessageBoxButton.YesNo,
+                Image  = MessageBoxImage.Warning,
+            };
+
         /* ----------------------------------------------------------------- */
         ///
         /// Import
