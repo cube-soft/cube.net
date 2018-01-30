@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Cube.Conversions;
 
 namespace Cube.Net.Rss
 {
@@ -49,13 +50,11 @@ namespace Cube.Net.Rss
             var doc = ToXDocument(src);
             var ns  = doc.Root.GetDefaultNamespace();
 
-            return doc
-                .Descendants(ns + "link")
-                .Where(e => IsRssLink(e))
-                .OrderBy(e => e.Attribute("type").Value)
-                .Select(e => new Uri(e.Attribute("href").Value));
+            return doc.Descendants(ns + "link")
+                      .Where(e => IsRssLink(e))
+                      .OrderBy(e => (string)e.Attribute("type"))
+                      .Select(e => ((string)e.Attribute("href")).ToUri());
         }
-
 
         #endregion
 
@@ -72,8 +71,8 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static bool IsRssLink(XElement e)
         {
-            if (e.Attribute("rel")?.Value != "alternate") return false;
-            var dest = e.Attribute("type")?.Value?.ToLower() ?? "";
+            if ((string)e.Attribute("rel") != "alternate") return false;
+            var dest = ((string)e.Attribute("type") ?? "").ToLower();
             return dest.Contains("rss") || dest.Contains("atom");
         }
 

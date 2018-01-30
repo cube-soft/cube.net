@@ -19,6 +19,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Cube.Conversions;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 
@@ -159,11 +160,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">URL</param>
         /// 
         /* ----------------------------------------------------------------- */
-        public Task NewEntry(string src) => Core.Register(
-            src.Contains("://") ?
-            new Uri(src) :
-            new Uri("http://" + src)
-        );
+        public Task NewEntry(string src) => Core.Register(src.ToUri());
 
         /* ----------------------------------------------------------------- */
         ///
