@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,6 +23,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Collections.Specialized;
 using Cube.Generics;
+using Cube.Log;
 
 namespace Cube.Xui
 {
@@ -179,24 +181,28 @@ namespace Cube.Xui
         /// <summary>
         /// CollectionChanged イベントを発生させます。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
         private void OnCollectionChangedCore(NotifyCollectionChangedEventArgs e)
         {
-            switch (e.Action)
+            try
             {
-                case NotifyCollectionChangedAction.Add:
-                    SetHandler(e.NewItems);
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    UnsetHandler(e.OldItems);
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    UnsetHandler(e.OldItems);
-                    SetHandler(e.NewItems);
-                    break;
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        SetHandler(e.NewItems);
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        UnsetHandler(e.OldItems);
+                        break;
+                    case NotifyCollectionChangedAction.Replace:
+                        UnsetHandler(e.OldItems);
+                        SetHandler(e.NewItems);
+                        break;
+                }
+                base.OnCollectionChanged(e);
             }
-            base.OnCollectionChanged(e);
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
         }
 
         /* ----------------------------------------------------------------- */

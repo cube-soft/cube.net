@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Cube.Xui
 {
@@ -45,5 +46,22 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         public static BindableCollection<T> ToBindable<T>(this IEnumerable<T> src) =>
             new BindableCollection<T>(src);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ToBindable
+        /// 
+        /// <summary>
+        /// コレクションを BindingCollection(T) オブジェクトに変換します。
+        /// </summary>
+        /// 
+        /// <param name="src">コレクション</param>
+        /// <param name="context">同期用コンテキスト</param>
+        /// 
+        /// <returns>BindableCollection(T) オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static BindableCollection<T> ToBindable<T>(this IEnumerable<T> src,
+            SynchronizationContext context) => new BindableCollection<T>(src, context);
     }
 }

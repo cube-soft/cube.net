@@ -20,8 +20,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 using Cube.Log;
@@ -702,8 +702,7 @@ namespace Cube.Net.App.Rss.Reader
         private void RegisterCore(RssEntry src)
         {
             if (_feeds.ContainsKey(src.Uri)) return;
-            var items = new BindableCollection<RssItem>(src.Items);
-            src.Items = src.Items.ToBindable();
+            src.Items = src.Items.ToBindable(_context);
 
             _feeds.Add(src);
             if (src.Parent == null) _tree.Add(src);
@@ -842,7 +841,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void WhenSaved(object sender, ElapsedEventArgs e) =>
+        private void WhenSaved(object sender, System.Timers.ElapsedEventArgs e) =>
             Task.Run(() => Save()).Forget();
 
         #endregion
@@ -853,7 +852,8 @@ namespace Cube.Net.App.Rss.Reader
         private RssCacheDictionary _feeds = new RssCacheDictionary();
         private RssMonitor[] _monitors = new RssMonitor[2];
         private RssClient _client = new RssClient();
-        private Timer _autosaver = new Timer();
+        private SynchronizationContext _context = SynchronizationContext.Current;
+        private System.Timers.Timer _autosaver = new System.Timers.Timer();
         #endregion
     }
 }
