@@ -100,7 +100,10 @@ namespace Cube.Net.App.Rss.Reader
         {
             get
             {
-                if (!_count.HasValue) _count = Children.Aggregate(0, (x, i) => x + i.Count);
+                if (!_count.HasValue)
+                {
+                    _count = Children.Aggregate(0, (x, i) => x + i.Count);
+                }
                 return _count.Value;
             }
         }

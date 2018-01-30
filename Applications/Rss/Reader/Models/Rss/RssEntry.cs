@@ -16,9 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
 using Cube.Net.Rss;
 
@@ -116,7 +113,17 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public int Count => UnreadItems.Count();
+        public int Count
+        {
+            get => _count;
+            set
+            {
+                if (SetProperty(ref _count, value) && Parent is RssCategory rc)
+                {
+                    rc.RaisePropertyChanged(nameof(Count));
+                }
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -223,65 +230,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (Items is INotifyCollectionChanged cc)
-                {
-                    cc.CollectionChanged -= WhenItemsChanged;
-                }
-            }
-        }
+        protected virtual void Dispose(bool disposing) { }
 
         #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnPropertyChanged
-        /// 
-        /// <summary>
-        /// プロパティ変更時に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-            switch (e.PropertyName)
-            {
-                case nameof(Items):
-                    if (Items is INotifyCollectionChanged cc)
-                    {
-                        cc.CollectionChanged -= WhenItemsChanged;
-                        cc.CollectionChanged += WhenItemsChanged;
-                        RaisePropertyChanged(nameof(Count));
-                    }
-                    break;
-                case nameof(Count):
-                    if (Parent is RssCategory rc)
-                    {
-                        rc.RaisePropertyChanged(nameof(Count));
-                    }
-                    break;
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenItemsChanged
-        /// 
-        /// <summary>
-        /// Items.CollectionChanged イベント発生時に実行されるハンドラです。
-        /// Items が INotifyCollectionChanged を実装しない場合、この処理は
-        /// スキップされます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenItemsChanged(object sender, NotifyCollectionChangedEventArgs e) =>
-            RaisePropertyChanged(nameof(Count));
 
         #region Json
 
@@ -300,6 +251,7 @@ namespace Cube.Net.App.Rss.Reader
             [DataMember] public string Title { get; set; }
             [DataMember] public Uri Uri { get; set; }
             [DataMember] public Uri Link { get; set; }
+            [DataMember] public int Count { get; set; }
             [DataMember] public RssCheckFrequency Frequency { get; set; }
             [DataMember] public bool SkipContent { get; set; }
 
@@ -308,6 +260,7 @@ namespace Cube.Net.App.Rss.Reader
                 Title       = src.Title;
                 Uri         = src.Uri;
                 Link        = src.Link;
+                Count       = src.Count;
                 Frequency   = src.Frequency;
                 SkipContent = src.SkipContent;
             }
@@ -317,6 +270,7 @@ namespace Cube.Net.App.Rss.Reader
                 Title       = Title,
                 Uri         = Uri,
                 Link        = Link,
+                Count       = Count,
                 Frequency   = Frequency,
                 SkipContent = SkipContent,
                 Parent      = src,
@@ -325,12 +279,11 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
-        #endregion
-
         #region Fields
         private OnceAction<bool> _dispose;
         private IRssEntry _parent;
         private RssCheckFrequency _frequency = RssCheckFrequency.Auto;
+        private int _count = 0;
         private bool _selected = false;
         private bool _editing = false;
         private bool _skipContent = false;

@@ -437,7 +437,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Start()
         {
-            _monitors[0].Start();
+            _monitors[0].Start(TimeSpan.FromSeconds(3));
             _monitors[1].Start(TimeSpan.FromMinutes(1));
         }
 
