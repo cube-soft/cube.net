@@ -293,11 +293,18 @@ namespace Cube.Net.App.Rss.Reader
         public void Select(IRssEntry src)
         {
             if (src == null) return;
+
             Data.Entry.Value = src;
+            Data.Entry.Value.Selected = true;
 
             if (src is RssEntry current && current != Property)
             {
-                var previous = Data.Feed.Value as RssEntry;
+                if (Data.Feed.Value is RssEntry previous)
+                {
+                    previous.Shrink();
+                    previous.Selected = false;
+                }
+
                 Property = current;
                 Data.Feed.Value = Core.Find<RssFeed>(current.Uri);
 
@@ -305,7 +312,6 @@ namespace Cube.Net.App.Rss.Reader
                 var first = items?.Count > 0 ? items[0] : null;
                 Select(first);
                 Settings.Value.Start = current.Uri;
-                previous?.Shrink();
             }
         }
 

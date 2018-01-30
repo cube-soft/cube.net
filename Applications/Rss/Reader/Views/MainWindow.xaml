@@ -105,14 +105,6 @@
                             AncestorType=ContentPresenter, AncestorLevel=1}}"/>
                     </ItemsPanelTemplate>
                 </TreeView.ItemsPanel>
-
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectedItemChanged">
-                        <i:InvokeCommandAction
-                            Command="{Binding SelectEntry}"
-                            CommandParameter="{Binding SelectedItem, ElementName=RssEntries}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
             </TreeView>
         </Grid>
         <!-- LeftSide (RssEntries) -->
