@@ -21,11 +21,13 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using Cube.FileSystem;
 using Cube.Net.Rss;
-using Cube.Settings;
-using Cube.Xui;
 using Cube.Log;
+using Cube.Settings;
+using Cube.Tasks;
+using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -64,6 +66,10 @@ namespace Cube.Net.App.Rss.Reader
 
             _monitors[1] = new RssMonitor() { Interval = TimeSpan.FromHours(24) };
             _monitors[1].Subscribe(OnReceived);
+
+            _autosaver.AutoReset = false;
+            _autosaver.Interval = 1000.0;
+            _autosaver.Elapsed += WhenSaved;
         }
 
         #endregion
@@ -162,7 +168,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            Save();
+            AutoSaveCore();
             CollectionChanged?.Invoke(this, e);
         }
 
@@ -716,6 +722,22 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// AutoSaveCore
+        /// 
+        /// <summary>
+        /// 自動保存を実行します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void AutoSaveCore()
+        {
+            _autosaver.Stop();
+            _autosaver.Interval = 1000.0;
+            _autosaver.Start();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// RegisterCore
         /// 
         /// <summary>
@@ -807,7 +829,20 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         /// 
         /* ----------------------------------------------------------------- */
-        private void WhenChildrenChanged(object s, NotifyCollectionChangedEventArgs e) => Save();
+        private void WhenChildrenChanged(object s,
+            NotifyCollectionChangedEventArgs e) => AutoSaveCore();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenSaved
+        /// 
+        /// <summary>
+        /// 自動保存時に実行されます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private void WhenSaved(object sender, ElapsedEventArgs e) =>
+            Task.Run(() => Save()).Forget();
 
         #endregion
 
@@ -817,6 +852,7 @@ namespace Cube.Net.App.Rss.Reader
         private RssCacheDictionary _feeds = new RssCacheDictionary();
         private RssMonitor[] _monitors = new RssMonitor[2];
         private RssClient _client = new RssClient();
+        private Timer _autosaver = new Timer();
         #endregion
     }
 }

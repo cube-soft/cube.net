@@ -667,7 +667,7 @@ namespace Cube.Net.Rss
         private OnceAction<bool> _dispose;
         private IDictionary<Uri, RssFeed> _inner;
         private IList<Uri> _otm = new List<Uri>();
-        private uint _capacity = 20;
+        private uint _capacity = 100;
         #endregion
     }
 }
