@@ -116,11 +116,29 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   ファイル名を指定して保存 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageExport {
+            get {
+                return ResourceManager.GetString("MessageExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   高頻度 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageHighFrequency {
             get {
                 return ResourceManager.GetString("MessageHighFrequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   インポートするファイルを選択 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageImport {
+            get {
+                return ResourceManager.GetString("MessageImport", resourceCulture);
             }
         }
         

@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Interactions\DuplexConverters.cs" />
+    <Compile Include="Models\Interactions\MessageFactory.cs" />
     <Compile Include="Models\Rss\IRssEntry.cs" />
     <Compile Include="Models\Rss\RssBindableData.cs" />
     <Compile Include="Models\Rss\RssCategory.cs" />

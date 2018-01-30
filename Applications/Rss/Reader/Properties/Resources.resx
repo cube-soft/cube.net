@@ -163,4 +163,10 @@
   <data name="FilterOpml" xml:space="preserve">
     <value>OPML ファイル (*.opml, *.xml)|*.opml;*.OPML;*.xml;*.XML|すべてのファイル (*.*)|*.*</value>
   </data>
+  <data name="MessageExport" xml:space="preserve">
+    <value>ファイル名を指定して保存</value>
+  </data>
+  <data name="MessageImport" xml:space="preserve">
+    <value>インポートするファイルを選択</value>
+  </data>
 </root>

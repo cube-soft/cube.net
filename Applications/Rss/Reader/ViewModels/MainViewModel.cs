@@ -163,7 +163,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Import => _import ?? (
             _import = new RelayCommand(
-                () => Messenger.Send(new OpenFileDialogMessage(e =>
+                () => Messenger.Send(MessageFactory.Import(e =>
                 {
                     if (!e.Cancel) Model.Import(e.FileName);
                 }))
@@ -181,7 +181,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Export => _export ?? (
             _export = new RelayCommand(
-                () => Messenger.Send(new SaveFileDialogMessage(e =>
+                () => Messenger.Send(MessageFactory.Export(e =>
                 {
                     if (!e.Cancel) Model.Export(e.FileName);
                 }))
