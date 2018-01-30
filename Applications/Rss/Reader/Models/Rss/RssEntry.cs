@@ -66,6 +66,7 @@ namespace Cube.Net.App.Rss.Reader
             Title         = cp.Title;
             Uri           = cp.Uri;
             Link          = cp.Link;
+            Count         = cp.UnreadItems.Count();
             Description   = cp.Description;
             LastChecked   = cp.LastChecked;
             LastPublished = cp.LastPublished;
