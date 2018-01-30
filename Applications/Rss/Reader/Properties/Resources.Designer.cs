@@ -97,6 +97,47 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;ja&quot;&gt;
+        ///
+        ///&lt;head&gt;
+        ///&lt;meta charset=&quot;utf-8&quot;&gt;
+        ///&lt;meta name=&quot;author&quot; content=&quot;CubeSoft, Inc.&quot;&gt;
+        ///
+        ///&lt;title&gt;Loading...&lt;/title&gt;
+        ///
+        ///&lt;style&gt;
+        ///.container {
+        ///    position : absolute;
+        ///    top      : 0;
+        ///    left     : 0;
+        ///    right    : 0;
+        ///    bottom   : 0;
+        ///}
+        ///
+        ///.box {
+        ///    width    : 32px;
+        ///    height   : 32px;
+        ///    position : absolute;
+        ///    top      : 50%;
+        ///    left     : 50%;
+        ///    margin   : -32px 0 0 -32px;
+        ///}
+        ///&lt;/style&gt;
+        ///&lt;/head&gt;
+        ///
+        ///&lt;body&gt;
+        ///&lt;div class=&quot;container&quot;&gt;
+        ///&lt;div class=&quot;box&quot;&gt;
+        ///&lt;img src=&quot;data:image/gif;base64,R0lGOD [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Loading {
+            get {
+                return ResourceManager.GetString("Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap Logo {

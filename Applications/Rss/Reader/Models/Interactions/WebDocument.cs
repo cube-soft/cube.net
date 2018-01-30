@@ -56,7 +56,11 @@ namespace Cube.Net.App.Rss.Reader
             {
                 if (_shared as string == value) return;
                 _shared = value;
-                if (Source != null) Source.DocumentText = value;
+                if (Source != null)
+                {
+                    Source.DocumentCompleted -= WhenLoading;
+                    Source.DocumentText = value;
+                }
             }
         }
 
@@ -91,6 +95,11 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// Web ページの URL を取得または設定します。
         /// </summary>
+        /// 
+        /// <remarks>
+        /// URL 経由の Web ページの読み込みは時間を要するので、先に
+        /// ローディングページを読み込みます。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         public Uri Uri
@@ -103,7 +112,9 @@ namespace Cube.Net.App.Rss.Reader
                 if (value != null && Source != null)
                 {
                     if (Source.IsBusy) Source.Stop();
-                    Source.Navigate(value);
+                    Source.DocumentCompleted -= WhenLoading;
+                    Source.DocumentCompleted += WhenLoading;
+                    Source.DocumentText = Properties.Resources.Loading;
                 }
             }
         }
@@ -244,6 +255,21 @@ namespace Cube.Net.App.Rss.Reader
         {
             Source.Document.MouseOver -= WhenMouseOver;
             Source.Document.MouseOver += WhenMouseOver;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenLoading
+        /// 
+        /// <summary>
+        /// ローディング画面の読み込み完了時に実行されるハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WhenLoading(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            Source.DocumentCompleted -= WhenLoading;
+            Source.Navigate(Uri);
         }
 
         /* ----------------------------------------------------------------- */

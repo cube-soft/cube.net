@@ -248,5 +248,8 @@
   <ItemGroup>
     <None Include="Assets\Logo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Loading.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
