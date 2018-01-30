@@ -270,44 +270,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Read
-        /// 
-        /// <summary>
-        /// 既読設定にします。
-        /// </summary>
-        /// 
-        /// <param name="src">RssEntry オブジェクト</param>
-        /// <param name="item">RssItem オブジェクト</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Read(RssEntry src, RssItem item)
-        {
-            if (src != null && item != null && item.Status != RssItemStatus.Read)
-            {
-                src.Count = Math.Max(src.Count - 1, 0);
-                item.Status = RssItemStatus.Read;
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Read
-        /// 
-        /// <summary>
-        /// 指定されたオブジェクトの全ての記事を既読設定にします。
-        /// </summary>
-        /// 
-        /// <param name="src">RSS エントリまたはカテゴリ</param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Read(IRssEntry src)
-        {
-            if (src is RssCategory rc) ReadCore(rc);
-            else if (src is RssEntry re) ReadCore(re);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Register
         /// 
         /// <summary>
@@ -707,35 +669,6 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ReadCore
-        /// 
-        /// <summary>
-        /// カテゴリ中の全記事を既読設定します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void ReadCore(RssCategory src)
-        {
-            foreach (var item in src.Children) Read(item);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ReadCore
-        /// 
-        /// <summary>
-        /// RSS エントリ中の全記事を既読設定します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void ReadCore(RssEntry src)
-        {
-            foreach (var item in src.UnreadItems) item.Status = RssItemStatus.Read;
-            src.Count = 0;
-        }
 
         /* ----------------------------------------------------------------- */
         ///

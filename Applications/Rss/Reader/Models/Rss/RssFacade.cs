@@ -257,7 +257,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void ReadAll() => Core.Read(Data.Entry.Value);
+        public void ReadAll() => Data.Entry.Value?.Read();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -295,18 +295,17 @@ namespace Cube.Net.App.Rss.Reader
             if (src == null) return;
             Data.Entry.Value = src;
 
-            if (src is RssEntry entry && entry != Property)
+            if (src is RssEntry current && current != Property)
             {
-                var prev = Data.Feed.Value;
-                if (prev?.UnreadItems.Count() <= 0) prev.Items.Clear();
+                var previous = Data.Feed.Value as RssEntry;
+                Property = current;
+                Data.Feed.Value = Core.Find<RssFeed>(current.Uri);
 
-                Property = entry;
-                Data.Feed.Value = Core.Find<RssFeed>(entry.Uri);
-
-                var items = Data.Feed.Value?.UnreadItems;
-                var first = items?.Count() > 0 ? items.First() : null;
+                var items = Data.Feed.Value?.Items;
+                var first = items?.Count > 0 ? items[0] : null;
                 Select(first);
-                Settings.Value.Start = entry.Uri;
+                Settings.Value.Start = current.Uri;
+                previous?.Shrink();
             }
         }
 
@@ -325,10 +324,9 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (src == Data.Article.Value) return;
 
-            var tmp = Data.Article.Value;
             if (Property.SkipContent) Data.Uri.Value = src.Link;
             else Data.Article.Value = src;
-            Core.Read(Data.Feed.Value as RssEntry, tmp);
+            if (Data.Feed.Value is RssEntry entry) entry.Read(src);
         }
 
         /* ----------------------------------------------------------------- */

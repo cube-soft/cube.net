@@ -25,15 +25,21 @@
                     FontSize="8"
                     HorizontalAlignment="Right"
                     Margin="12,8,12,0"/>
-                <TextBlock
-                    Text="{Binding Title}"
-                    Foreground="{StaticResource MainTextBrush}"
-                    FontFamily="Meiryo"
-                    FontSize="12"
-                    FontWeight="Bold"
-                    Margin="12,8,12,0"
-                    TextTrimming="WordEllipsis"
-                    TextWrapping="NoWrap"/>
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="12,8,12,0">
+                    <TextBlock
+                        Text="{Binding Status, Converter={my:ItemStatusToString}}"
+                        Foreground="{StaticResource StatusTextBrush}"
+                        FontFamily="Meiryo"
+                        FontSize="12"/>
+                    <TextBlock
+                        Text="{Binding Title}"
+                        Foreground="{StaticResource MainTextBrush}"
+                        FontFamily="Meiryo"
+                        FontSize="12"
+                        FontWeight="Bold"/>
+                </StackPanel>
                 <TextBlock
                     Text="{Binding Summary}"
                     Foreground="{StaticResource FeedTextBrush}"

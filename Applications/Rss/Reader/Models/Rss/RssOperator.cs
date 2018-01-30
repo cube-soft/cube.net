@@ -78,6 +78,64 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Shrink
+        /// 
+        /// <summary>
+        /// 既読記事を削除します。
+        /// </summary>
+        /// 
+        /// <param name="src">RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static void Shrink(this RssEntry src)
+        {
+            if (src == null || src.Items.Count <= 0) return;
+            for (var i = src.Items.Count - 1; i >= 0; --i)
+            {
+                if (src.Items[i].Status == RssItemStatus.Read) src.Items.RemoveAt(i);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Read
+        /// 
+        /// <summary>
+        /// 指定されたオブジェクトの全ての記事を既読設定にします。
+        /// </summary>
+        /// 
+        /// <param name="src">RSS エントリまたはカテゴリ</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static void Read(this IRssEntry src)
+        {
+            if (src is RssCategory rc) ReadCore(rc);
+            else if (src is RssEntry re) ReadCore(re);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Read
+        /// 
+        /// <summary>
+        /// 既読設定にします。
+        /// </summary>
+        /// 
+        /// <param name="src">RssEntry オブジェクト</param>
+        /// <param name="item">RssItem オブジェクト</param>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public static void Read(this RssEntry src, RssItem item)
+        {
+            if (src != null && item != null && item.Status != RssItemStatus.Read)
+            {
+                src.Count = Math.Max(src.Count - 1, 0);
+                item.Status = RssItemStatus.Read;
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Reschedule
         /// 
         /// <summary>
@@ -204,6 +262,39 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static Exception ToException(this string src) =>
             new ArgumentException(src);
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ReadCore
+        /// 
+        /// <summary>
+        /// カテゴリ中の全記事を既読設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private static void ReadCore(RssCategory src)
+        {
+            foreach (var item in src.Children) Read(item);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ReadCore
+        /// 
+        /// <summary>
+        /// RSS エントリ中の全記事を既読設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        private static void ReadCore(RssEntry src)
+        {
+            foreach (var item in src.UnreadItems) item.Status = RssItemStatus.Read;
+            src.Count = 0;
+        }
 
         #endregion
 

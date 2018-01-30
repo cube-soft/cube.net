@@ -134,6 +134,33 @@ namespace Cube.Net.App.Rss.Reader
 
     /* --------------------------------------------------------------------- */
     ///
+    /// ItemStatusToString
+    ///
+    /// <summary>
+    /// RssItem.Status を文字列に変換するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class ItemStatusToString : SimplexConverter
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ItemStatusToString
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ItemStatusToString() : base(e =>
+            e is RssItemStatus status && status != RssItemStatus.Read ?
+            $"{System.Convert.ToChar(11044)} " :
+            string.Empty
+        ) { }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
     /// LastCheckedToString
     ///
     /// <summary>
