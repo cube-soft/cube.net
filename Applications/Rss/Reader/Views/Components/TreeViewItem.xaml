@@ -44,9 +44,11 @@
             </Grid.ColumnDefinitions>
             
             <TextBlock
-                Text="&#xf101;"
+                Text="{Binding IsExpanded,
+                    RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeViewItem},
+                    Converter={my:ExpandConverter}}"
                 Style="{StaticResource IconStyle}"
-                Margin="0,2,6,0"
+                Margin="0,4,6,0"
                 Grid.Column="0"/>
             <TextBlock
                 Text="{Binding Title}"
@@ -68,7 +70,7 @@
             </TextBox>
 
             <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewMouseRightButtonDown">
+                <i:EventTrigger EventName="PreviewMouseDown">
                     <ei:ChangePropertyAction
                         PropertyName="IsSelected"
                         Value="true"
@@ -116,7 +118,7 @@
             </TextBox>
 
             <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewMouseRightButtonDown">
+                <i:EventTrigger EventName="PreviewMouseDown">
                     <ei:ChangePropertyAction
                         PropertyName="IsSelected"
                         Value="true"

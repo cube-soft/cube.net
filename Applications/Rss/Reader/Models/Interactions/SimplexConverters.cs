@@ -86,6 +86,32 @@ namespace Cube.Net.App.Rss.Reader
 
     /* --------------------------------------------------------------------- */
     ///
+    /// ExpandConverter
+    ///
+    /// <summary>
+    /// カテゴリの拡張アイコンに変換するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class ExpandConverter : BooleanToGeneric<string>
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FrequencyConverter
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ExpandConverter() : base(
+            System.Convert.ToChar(61699).ToString(),
+            System.Convert.ToChar(61697).ToString()
+        ) { }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
     /// FrequencyConverter
     ///
     /// <summary>
