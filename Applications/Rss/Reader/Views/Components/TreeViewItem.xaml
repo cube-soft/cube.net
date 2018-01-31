@@ -82,11 +82,11 @@
     -->
 
     <ControlTemplate x:Key="RssCategoryTemplate">
-        <Grid ToolTip="{StaticResource RssEntryToolTip}" Margin="2,2,0,2">
+        <Grid ToolTip="{StaticResource RssEntryToolTip}" Cursor="Hand" Margin="2,2,0,2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <TextBlock
