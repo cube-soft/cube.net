@@ -17,7 +17,6 @@
     
     <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
         <Setter Property="IsExpanded" Value="{Binding Expanded, Mode=TwoWay}"/>
-        <Setter Property="IsSelected" Value="{Binding Selected, Mode=TwoWay}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TreeViewItem">
@@ -132,15 +131,15 @@
     <!--
         TreeViewItem for RssEntry
     -->
-    
-    <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
+
+    <ControlTemplate x:Key="RssEntryTemplate">
         <Grid ToolTip="{StaticResource RssEntryToolTip}" Cursor="Hand" Margin="2,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            
+
             <TextBlock
                 Text="&#xe903;"
                 Style="{StaticResource SymbolStyle}"
@@ -173,5 +172,12 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Grid>
+    </ControlTemplate>
+
+    <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
+        <RadioButton
+            GroupName="RssEntryGroup"
+            IsChecked="{Binding Selected}"
+            Template="{StaticResource RssEntryTemplate}"/>
     </HierarchicalDataTemplate>
 </ResourceDictionary>
