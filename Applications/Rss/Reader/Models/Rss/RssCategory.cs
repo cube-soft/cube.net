@@ -110,21 +110,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Selected
-        /// 
-        /// <summary>
-        /// 選択状態かどうかを示す値を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool Selected
-        {
-            get => _selected;
-            set => SetProperty(ref _selected, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Expanded
         /// 
         /// <summary>
@@ -323,7 +308,6 @@ namespace Cube.Net.App.Rss.Reader
         private string _title;
         private int? _count;
         private IRssEntry _parent;
-        private bool _selected = false;
         private bool _expanded = false;
         private bool _editing = false;
         #endregion

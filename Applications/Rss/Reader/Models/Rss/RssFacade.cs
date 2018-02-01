@@ -295,10 +295,10 @@ namespace Cube.Net.App.Rss.Reader
             if (src == null) return;
 
             Data.Entry.Value = src;
-            Data.Entry.Value.Selected = true;
 
             if (src is RssEntry current && current != Property)
             {
+                current.Selected = true;
                 Property = current;
                 Data.Feed.Value = current;
 
