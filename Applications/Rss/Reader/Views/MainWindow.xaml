@@ -144,10 +144,17 @@
                 Grid.Row="1">
                 <Button.Template>
                     <ControlTemplate>
-                        <TextBlock
-                            Text="{Binding Data.Feed.Value.Title}"
-                            ToolTip="{Binding Data.Feed.Value.Title}"
-                            Style="{StaticResource RssTitleStyle}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Text="&#xe903;"
+                                Style="{StaticResource SymbolStyle}"
+                                Margin="0,0,6,3"
+                                VerticalAlignment="Center"/>
+                            <TextBlock
+                                Text="{Binding Data.Feed.Value.Title}"
+                                ToolTip="{Binding Data.Feed.Value.Title}"
+                                Style="{StaticResource RssTitleStyle}"/>
+                        </StackPanel>
                     </ControlTemplate>
                 </Button.Template>
                 <i:Interaction.Triggers>

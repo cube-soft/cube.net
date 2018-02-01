@@ -27,8 +27,8 @@
     -->
 
     <Style x:Key="NewEntryButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-        <Setter Property="Content" Value="&#xf067;"/>
-        <Setter Property="FontFamily" Value="{StaticResource FontAwesome}"/>
+        <Setter Property="Content" Value="&#xe906;"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolFont}"/>
         <Setter Property="ToolTip" Value="新しい Web サイトを登録"/>
     </Style>
 

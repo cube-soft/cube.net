@@ -33,11 +33,11 @@
     </Style>
 
     <Style x:Key="SettingsButtonStyle" TargetType="{x:Type Button}">
-        <Setter Property="Content" Value="&#xf0c9;"/>
+        <Setter Property="Content" Value="&#xe905;"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
-        <Setter Property="FontFamily" Value="{StaticResource FontAwesome}"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolFont}"/>
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -66,9 +66,9 @@
         <Setter Property="BorderThickness" Value="0,0,1,1"/>
     </Style>
 
-    <Style x:Key="IconStyle" TargetType="{x:Type TextBlock}">
-        <Setter Property="Foreground" Value="{StaticResource IconTextBrush}"/>
-        <Setter Property="FontFamily" Value="{StaticResource FontAwesome}"/>
+    <Style x:Key="SymbolStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource SymbolTextBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolFont}"/>
         <Setter Property="FontSize" Value="16"/>
     </Style>
 

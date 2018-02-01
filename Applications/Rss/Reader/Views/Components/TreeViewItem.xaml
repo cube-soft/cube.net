@@ -91,7 +91,7 @@
 
             <TextBlock
                 Text="{Binding Expanded, Converter={my:ExpandConverter}}"
-                Style="{StaticResource IconStyle}"
+                Style="{StaticResource SymbolStyle}"
                 Margin="0,4,6,0"
                 Grid.Column="0"/>
             <TextBlock
@@ -142,8 +142,8 @@
             </Grid.ColumnDefinitions>
             
             <TextBlock
-                Text="&#xf0f6;"
-                Style="{StaticResource IconStyle}"
+                Text="&#xe903;"
+                Style="{StaticResource SymbolStyle}"
                 Margin="0,4,6,0"
                 Grid.Column="0"/>
             <TextBlock

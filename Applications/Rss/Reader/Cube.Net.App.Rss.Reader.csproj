@@ -224,6 +224,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Assets\CustomSymbol.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -231,7 +232,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="App.ico" />
-    <Resource Include="Assets\FortAwesome.ttf" />
     <None Include="App.config" />
     <None Include="App.manifest" />
     <None Include="Packages.config" />

@@ -105,8 +105,8 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ExpandConverter() : base(
-            System.Convert.ToChar(61699).ToString(),
-            System.Convert.ToChar(61697).ToString()
+            System.Convert.ToChar(59650).ToString(),
+            System.Convert.ToChar(59649).ToString()
         ) { }
     }
 

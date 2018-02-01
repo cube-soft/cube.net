@@ -5,8 +5,8 @@
     <!--
         Fonts
     -->
-    
-    <FontFamily x:Key="FontAwesome">pack://application:,,,/Assets/#FontAwesome</FontFamily>
+
+    <FontFamily x:Key="SymbolFont">pack://application:,,,/Assets/#CustomSymbol</FontFamily>
 
     <!--
         Background colors
@@ -35,7 +35,7 @@
     
     <SolidColorBrush x:Key="MainTextBrush"         Color="#FF444444"/>
     <SolidColorBrush x:Key="AccentTextBrush"       Color="#FFFFFFFF"/>
-    <SolidColorBrush x:Key="IconTextBrush"         Color="#FFB3B3B3"/>
+    <SolidColorBrush x:Key="SymbolTextBrush"       Color="#FFB3B3B3"/>
     <SolidColorBrush x:Key="StatusTextBrush"       Color="#FFD200D2"/>
     <SolidColorBrush x:Key="GrayTextBrush"         Color="#FF999999"/>
     <SolidColorBrush x:Key="FeedTextBrush"         Color="#FF838383"/>
