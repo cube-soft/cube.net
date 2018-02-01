@@ -299,12 +299,6 @@ namespace Cube.Net.App.Rss.Reader
 
             if (src is RssEntry current && current != Property)
             {
-                if (Data.Feed.Value is RssEntry previous)
-                {
-                    previous.Shrink();
-                    previous.Selected = false;
-                }
-
                 Property = current;
                 Data.Feed.Value = current;
 
