@@ -63,6 +63,8 @@
     <Style x:Key="RssFeedsStyle" TargetType="ListView" BasedOn="{StaticResource {x:Type ListView}}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="SelectionMode" Value="Single"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
         <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
