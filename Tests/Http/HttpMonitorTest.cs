@@ -93,7 +93,7 @@ namespace Cube.Net.Tests.Http
         [Test]
         public void Start_NoSubscriptions() => Assert.DoesNotThrow(() =>
         {
-            using (var mon = Create())
+            using (var mon = new HttpMonitor<int>(e => e.ReadByte()))
             {
                 mon.Interval = TimeSpan.FromMilliseconds(10);
                 mon.Uri = new Uri("http://www.example.com/");
@@ -120,6 +120,7 @@ namespace Cube.Net.Tests.Http
             using (var mon = Create())
             {
                 mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
+                mon.RetryCount = 0;
                 mon.Subscribe((_, x) => count++);
 
                 mon.Start();

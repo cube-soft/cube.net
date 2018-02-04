@@ -46,8 +46,8 @@ namespace Cube.Net.Http
         /// <param name="func">変換用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public HttpMonitor(Func<Stream, TValue> func)
-            : this(new ContentConverter<TValue>(func)) { }
+        public HttpMonitor(Func<Stream, TValue> func) :
+            this(new ContentConverter<TValue>(func)) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -60,8 +60,8 @@ namespace Cube.Net.Http
         /// <param name="converter">変換用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public HttpMonitor(IContentConverter<TValue> converter)
-            : this(new ContentHandler<TValue>(converter)) { }
+        public HttpMonitor(IContentConverter<TValue> converter) :
+            this(new ContentHandler<TValue>(converter)) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -126,14 +126,15 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private async Task WhenTick()
         {
-            if (State != TimerState.Run || Subscriptions.Count <= 0) return;
+            if (Subscriptions.Count <= 0) return;
 
             var uri = GetRequestUri();
 
-            for (var i = 0; i < RetryCount; ++i)
+            for (var i = 0; i <= RetryCount; ++i)
             {
                 try
                 {
+                    if (State != TimerState.Run) return;
                     await PublishAsync(uri);
                     break;
                 }

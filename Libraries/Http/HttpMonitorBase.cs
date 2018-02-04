@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -43,7 +43,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="handler">HTTP 通信用ハンドラ</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -61,7 +61,7 @@ namespace Cube.Net.Http
         /* --------------------------------------------------------------------- */
         ///
         /// UserAgent
-        /// 
+        ///
         /// <summary>
         /// ユーザエージェントを取得または設定します。
         /// </summary>
@@ -80,7 +80,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// HTTP ハンドラを取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected ContentHandler<TValue> Handler { get; }
 
@@ -91,10 +91,10 @@ namespace Cube.Net.Http
         /// <summary>
         /// 購読者一覧を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        protected IList<Func<Uri, TValue, Task>> Subscriptions { get; }
-            = new List<Func<Uri, TValue, Task>>();
+        protected IList<Func<Uri, TValue, Task>> Subscriptions { get; } =
+            new List<Func<Uri, TValue, Task>>();
 
         #endregion
 
@@ -102,18 +102,18 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Subscribe
+        /// SubscribeAsync
         ///
         /// <summary>
         /// データ受信時に非同期実行する処理を登録します。
         /// </summary>
-        /// 
+        ///
         /// <param name="action">非同期実行する処理</param>
-        /// 
+        ///
         /// <returns>登録解除用オブジェクト</returns>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Func<Uri, TValue, Task> action)
+        public IDisposable SubscribeAsync(Func<Uri, TValue, Task> action)
         {
             Subscriptions.Add(action);
             return Disposable.Create(() => Subscriptions.Remove(action));
@@ -126,32 +126,32 @@ namespace Cube.Net.Http
         /// <summary>
         /// データ受信時に実行する処理を登録します。
         /// </summary>
-        /// 
+        ///
         /// <param name="action">実行する処理</param>
-        /// 
+        ///
         /// <returns>登録解除用オブジェクト</returns>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<Uri, TValue> action)
-            => Subscribe(async (u, v) =>
-        {
-            action(u, v);
-            await Task.FromResult(0);
-        });
+        public IDisposable Subscribe(Action<Uri, TValue> action) =>
+            SubscribeAsync((u, v) =>
+            {
+                action(u, v);
+                return Task.FromResult(0);
+            });
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Publish
+        /// PublishAsync
         ///
         /// <summary>
         /// 新しい結果を発行します。
         /// </summary>
-        /// 
+        ///
         /// <param name="uri">URL</param>
         /// <param name="value">通信結果</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual async Task Publish(Uri uri, TValue value)
+        protected virtual async Task PublishAsync(Uri uri, TValue value)
         {
             foreach (var action in Subscriptions)
             {
@@ -168,7 +168,7 @@ namespace Cube.Net.Http
         /// HTTP 通信を実行し、変換結果を引数にして Publish メソッドを
         /// 実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected async Task PublishAsync(Uri uri)
         {
@@ -180,7 +180,7 @@ namespace Cube.Net.Http
                 var code = (int)status;
                 var digit = code / 100;
 
-                if (response.Content is HttpValueContent<TValue> c) await Publish(uri, c.Value); // OK
+                if (response.Content is HttpValueContent<TValue> c) await PublishAsync(uri, c.Value); // OK
                 else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
                 else if (digit == 4) LogWarn(uri, $"HTTP:{code} {status}");
                 else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
@@ -195,11 +195,11 @@ namespace Cube.Net.Http
         /// <summary>
         /// HTTP 通信を実行します。
         /// </summary>
-        /// 
+        ///
         /// <param name="uri">URL</param>
-        /// 
+        ///
         /// <returns>通信結果</returns>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected async Task<HttpResponseMessage> GetAsync(Uri uri)
         {
@@ -214,11 +214,11 @@ namespace Cube.Net.Http
         /// <summary>
         /// リソースを解放します。
         /// </summary>
-        /// 
+        ///
         /// <param name="disposing">
         /// マネージリソースを解放するかどうかを示す値
         /// </param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
         {
@@ -240,7 +240,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// タイムアウト時間を設定します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private void SetTimeout()
         {
@@ -255,7 +255,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// エラー内容をログに出力します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private void LogWarn(Uri uri, string message)
         {
@@ -263,10 +263,10 @@ namespace Cube.Net.Http
             this.LogWarn(message);
         }
 
-        #region Fields
-        private HttpClient _http;
         #endregion
 
+        #region Fields
+        private HttpClient _http;
         #endregion
     }
 }
