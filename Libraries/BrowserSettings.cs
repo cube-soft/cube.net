@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,13 +16,14 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using Cube.Log;
 
 namespace Cube.Net
 {
     /* --------------------------------------------------------------------- */
     ///
     /// BrowserVersion
-    /// 
+    ///
     /// <summary>
     /// ブラウザのバージョンを定義した列挙型です。
     /// </summary>
@@ -55,7 +56,7 @@ namespace Cube.Net
     /* --------------------------------------------------------------------- */
     ///
     /// BrowserSettings
-    /// 
+    ///
     /// <summary>
     /// Web ブラウザ用コントロールに関する各種設定情報を取得または
     /// 更新するためのクラスです。
@@ -69,7 +70,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// Version
-        /// 
+        ///
         /// <summary>
         /// エミュレートされている IE バージョンを取得または設定します。
         /// </summary>
@@ -84,7 +85,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// GpuRendering
-        /// 
+        ///
         /// <summary>
         /// GPU レンダリングモードが有効かどうかを取得または設定します。
         /// </summary>
@@ -99,7 +100,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// MaxConnections
-        /// 
+        ///
         /// <summary>
         /// 最大同時接続数を取得または設定します。
         /// </summary>
@@ -114,7 +115,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// NavigationSounds
-        /// 
+        ///
         /// <summary>
         /// クリック音等が有効かどうかを示す値を取得または設定します。
         /// </summary>
@@ -135,7 +136,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// GetEmulateVersion
-        /// 
+        ///
         /// <summary>
         /// エミュレートされている IE バージョンを取得します。
         /// </summary>
@@ -158,7 +159,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// SetEmulateVersion
-        /// 
+        ///
         /// <summary>
         /// エミュレートする IE バージョンを設定します。
         /// </summary>
@@ -183,7 +184,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// GetGpuRendering
-        /// 
+        ///
         /// <summary>
         /// GPU レンダリングモードが有効かどうかを取得します。
         /// </summary>
@@ -207,7 +208,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// SetGpuRendering
-        /// 
+        ///
         /// <summary>
         /// GPU レンダリングモードを有効にするかどうかを設定します。
         /// </summary>
@@ -232,7 +233,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// GetMaxConnections
-        /// 
+        ///
         /// <summary>
         /// 最大同時接続数を取得します。
         /// </summary>
@@ -257,7 +258,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// SetMaxConnections
-        /// 
+        ///
         /// <summary>
         /// 最大同時接続数を設定します。
         /// </summary>
@@ -285,7 +286,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// GetNavigationSounds
-        /// 
+        ///
         /// <summary>
         /// クリック音等が有効かどうかを判別します。
         /// </summary>
@@ -300,7 +301,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// SetNavigationSounds
-        /// 
+        ///
         /// <summary>
         /// クリック音等を有効または無効に設定します。
         /// </summary>
@@ -318,7 +319,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// OpenFeatureControl
-        /// 
+        ///
         /// <summary>
         /// FeatureControl 直下のサブキーを取得します。
         /// </summary>
@@ -335,7 +336,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// GetLatestVersion
-        /// 
+        ///
         /// <summary>
         /// PC にインストールされた最新の IE バージョンを取得します。
         /// </summary>
@@ -364,7 +365,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// Log
-        /// 
+        ///
         /// <summary>
         /// 例外情報をログに出力します。
         /// </summary>
@@ -375,7 +376,7 @@ namespace Cube.Net
             try { return func(); }
             catch (Exception e)
             {
-                Cube.Log.Operations.Warn(typeof(BrowserSettings), e.ToString(), e);
+                LogOperator.Warn(typeof(BrowserSettings), e.ToString(), e);
                 return alternate;
             }
         }
@@ -383,7 +384,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// Log
-        /// 
+        ///
         /// <summary>
         /// 例外情報をログに出力します。
         /// </summary>
@@ -392,10 +393,7 @@ namespace Cube.Net
         private static void Log(Action action)
         {
             try { action(); }
-            catch (Exception e)
-            {
-                Cube.Log.Operations.Warn(typeof(BrowserSettings), e.ToString(), e);
-            }
+            catch (Exception e) { LogOperator.Warn(typeof(BrowserSettings), e.ToString(), e); }
         }
 
         #endregion

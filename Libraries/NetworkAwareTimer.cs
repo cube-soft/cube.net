@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,7 +18,6 @@
 using System;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
-using Microsoft.Win32;
 
 namespace Cube.Net
 {
@@ -29,7 +28,7 @@ namespace Cube.Net
     /// <summary>
     /// ネットワーク状況の変化に反応するタイマーです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class NetworkAwareTimer : WakeableTimer
     {
@@ -38,7 +37,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// NetworkAwareMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -49,11 +48,11 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// NetworkAwareMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="interval">実行周期</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -70,7 +69,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// NetworkChanged
-        /// 
+        ///
         /// <summary>
         /// ネットワークの状況が変化した時に発生するイベントです。
         /// </summary>
@@ -81,7 +80,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// OnNetworkChanged
-        /// 
+        ///
         /// <summary>
         /// NetworkChanged イベントを発生させます。
         /// </summary>
@@ -97,7 +96,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// WhenNetworkChanged
-        /// 
+        ///
         /// <summary>
         /// NetworkChanged イベントを発生させます。
         /// </summary>
@@ -113,11 +112,11 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを開放します。
         /// </summary>
-        /// 
+        ///
         /// <param name="disposing">
         /// マネージオブジェクトを開放するかどうか
         /// </param>
@@ -135,34 +134,34 @@ namespace Cube.Net
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Publish
-        /// 
+        /// PublishAsync
+        ///
         /// <summary>
         /// モニタリングのための操作を実行するタイミングになった時に
         /// 実行されます。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// ネットワークが利用不可能な状態の場合 Suspend を実行します。
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        protected override async Task Publish()
+        protected override async Task PublishAsync()
         {
             if (!Network.Available) Suspend();
-            else await base.Publish();
+            else await base.PublishAsync();
         }
 
         /* ----------------------------------------------------------------- */
         ///
         /// OnPowerModeChanged
-        /// 
+        ///
         /// <summary>
         /// 電源の状態が変更された時に実行されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnPowerModeChanged(PowerModeChangedEventArgs e)
+        protected override void OnPowerModeChanged(EventArgs e)
         {
             if (!Network.Available)
             {

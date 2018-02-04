@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -40,11 +40,11 @@ namespace Cube.Net.Tests.Http
         /* ----------------------------------------------------------------- */
         ///
         /// Start
-        /// 
+        ///
         /// <summary>
         /// 監視テストを実行します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// 過去、TCP コネクションが CLOSE_WAIT のまま残存し、3 回目以降の
         /// 通信に失敗すると言う不都合（.NET の初期設定では一つのエンド
@@ -83,7 +83,7 @@ namespace Cube.Net.Tests.Http
         /* ----------------------------------------------------------------- */
         ///
         /// Start_NoSubscriptions
-        /// 
+        ///
         /// <summary>
         /// Subscribe している要素がない状態で監視した時の挙動を
         /// 確認します。
@@ -107,7 +107,7 @@ namespace Cube.Net.Tests.Http
         /* ----------------------------------------------------------------- */
         ///
         /// Start_NotFound
-        /// 
+        ///
         /// <summary>
         /// 存在しない Web ページを監視した時の挙動を確認します。
         /// </summary>
@@ -132,7 +132,7 @@ namespace Cube.Net.Tests.Http
         /* ----------------------------------------------------------------- */
         ///
         /// Start_PowerMode
-        /// 
+        ///
         /// <summary>
         /// 電源状態が変更された時の挙動を確認します。
         /// </summary>
@@ -154,11 +154,11 @@ namespace Cube.Net.Tests.Http
                 mon.Subscribe((_, x) => { count++; cts.Cancel(); });
 
                 mon.Start(mon.Interval);
-                power.Mode = Microsoft.Win32.PowerModes.Suspend;
+                power.Mode = PowerModes.Suspend;
                 Task.Delay(200).Wait();
                 Assert.That(count, Is.EqualTo(0));
 
-                power.Mode = Microsoft.Win32.PowerModes.Resume;
+                power.Mode = PowerModes.Resume;
                 WaitAsync(cts.Token).Wait();
                 mon.Stop();
                 Assert.That(count, Is.EqualTo(1));
@@ -168,7 +168,7 @@ namespace Cube.Net.Tests.Http
         /* ----------------------------------------------------------------- */
         ///
         /// Reset
-        /// 
+        ///
         /// <summary>
         /// リセット処理のテストを実行します。
         /// </summary>
@@ -201,16 +201,16 @@ namespace Cube.Net.Tests.Http
         /* ----------------------------------------------------------------- */
         ///
         /// Create
-        /// 
+        ///
         /// <summary>
         /// HttpMonitor オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// テスト中で 3XX が返されると不都合な項目があるため
         /// HttpMonitor のテストでは EntityTag は無効に設定しています。
         /// </remarks>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private HttpMonitor<int> Create() => new HttpMonitor<int>(
             new ContentHandler<int>(s => s.ReadByte()) { UseEntityTag = false })

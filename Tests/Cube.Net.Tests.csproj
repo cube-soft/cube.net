@@ -36,17 +36,11 @@
     <DocumentationFile>bin\Release\Cube.Net.Tests.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\Cube.Net.csproj">
-      <Project>{06edf5d3-6a49-445b-a605-b9a9ee2250e2}</Project>
-      <Name>Cube.Net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.1.6.1\lib\net45\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.1.7.0\lib\net45\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\packages\Cube.FileSystem.1.6.1\lib\net45\Cube.FileSystem.dll</HintPath>
+      <HintPath>..\..\packages\Cube.FileSystem.1.7.0\lib\net45\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -82,13 +76,10 @@
     <Compile Include="BrowserSettingsTest.cs" />
     <Compile Include="NetworkTest.cs" />
     <Compile Include="Rss\RssVersionTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="App.config" />
-    <None Include="Examples\UninitializedRss.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Packages.config" />
     <None Include="Examples\Sample.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -117,16 +108,18 @@
     <None Include="Examples\SampleAtom-01.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Examples\UninitializedRss.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\Cube.Net.csproj">
+      <Project>{06edf5d3-6a49-445b-a605-b9a9ee2250e2}</Project>
+      <Name>Cube.Net</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

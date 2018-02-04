@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System.Reflection;
 using System.Windows;
+using Cube.Log;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -27,14 +28,14 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// メインプログラムを表すクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public partial class App : Application
     {
         /* ----------------------------------------------------------------- */
         ///
         /// Application_Startup
-        /// 
+        ///
         /// <summary>
         /// 起動時に実行されるハンドラです。
         /// </summary>
@@ -42,9 +43,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            Cube.Log.Operations.Configure();
-            Cube.Log.Operations.ObserveTaskException();
-            Cube.Log.Operations.Info(GetType(), Assembly.GetExecutingAssembly());
+            LogOperator.Configure();
+            LogOperator.ObserveTaskException();
+            LogOperator.Info(GetType(), Assembly.GetExecutingAssembly());
 
             System.Net.ServicePointManager.DefaultConnectionLimit = 10;
             BrowserSettings.Version = BrowserVersion.Latest;

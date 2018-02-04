@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -42,7 +42,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="func">変換用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -56,7 +56,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="converter">変換用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -70,13 +70,13 @@ namespace Cube.Net.Http
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="handler">HTTP 通信用ハンドラ</param>
         ///
         /* ----------------------------------------------------------------- */
         public HttpMonitor(ContentHandler<TValue> handler) : base(handler)
         {
-            Timer.Subscribe(WhenTick);
+            Timer.SubscribeAsync(WhenTick);
         }
 
         #endregion
@@ -90,7 +90,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// Uris の最初の項目を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public Uri Uri { get; set; }
 
@@ -105,9 +105,9 @@ namespace Cube.Net.Http
         /// <summary>
         /// リクエスト送信先 URL を取得します。
         /// </summary>
-        /// 
+        ///
         /// <returns>URL</returns>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected virtual Uri GetRequestUri() => Uri;
 
@@ -122,7 +122,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// 一定間隔で実行されます。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private async Task WhenTick()
         {

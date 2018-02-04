@@ -7,7 +7,7 @@
     <authors>$author$</authors>
     <owners>$author$</owners>
     <copyright>$copyright$</copyright>
-    <description>Cube network library.</description>
+    <description>Network library for CubeSoft applications.</description>
     <releaseNotes>Private release.</releaseNotes>
     <tags>Cube Windows Network</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

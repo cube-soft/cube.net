@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -39,7 +39,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// NtpMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -50,11 +50,11 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// NtpMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="server">NTP サーバ</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -63,11 +63,11 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// NtpMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="server">NTP サーバ</param>
         /// <param name="port">ポート番号</param>
         ///
@@ -77,7 +77,8 @@ namespace Cube.Net.Ntp
             Interval = TimeSpan.FromHours(1);
             _server  = server;
             _port    = port;
-            Timer.Subscribe(WhenTick);
+
+            Timer.SubscribeAsync(WhenTick);
             SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
 
@@ -88,7 +89,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// Server
-        /// 
+        ///
         /// <summary>
         /// NTP サーバのアドレス (ホスト名または IP アドレス) を取得
         /// または設定します。
@@ -109,7 +110,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// Port
-        /// 
+        ///
         /// <summary>
         /// ポート番号を取得または設定します。
         /// </summary>
@@ -144,7 +145,7 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// 購読者一覧を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected IList<Func<TimeSpan, Task>> Subscriptions { get; }
             = new List<Func<TimeSpan, Task>>();
@@ -156,7 +157,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// TimeChanged
-        /// 
+        ///
         /// <summary>
         /// システムの時刻が変更された時に発生するイベントです。
         /// </summary>
@@ -167,7 +168,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// OnTimeChanged
-        /// 
+        ///
         /// <summary>
         /// システムの時刻が変更された時に発生するイベントです。
         /// </summary>
@@ -191,7 +192,7 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// データ受信時に実行する処理を登録します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public IDisposable Subscribe(Func<TimeSpan, Task> action)
         {
@@ -206,7 +207,7 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// データ受信時に実行する処理を登録します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public IDisposable Subscribe(Action<TimeSpan> action)
             => Subscribe(async (e) =>
@@ -222,7 +223,7 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// 新しい結果を発行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected virtual async Task Publish(TimeSpan value)
         {
@@ -241,11 +242,11 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// WhenTick
-        /// 
+        ///
         /// <summary>
         /// 一定間隔毎に実行されます。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// アプリケーションの起動直後等に NTP 通信を実行すると精度の
         /// 悪い傾向が確認されています。そのため、毎回の実行時の最初に

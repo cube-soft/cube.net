@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,7 +27,7 @@ namespace Cube.Net
     /// <summary>
     /// 定期的にネットワーク通信を実行するための基底クラスです。
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// このクラスは NetworkAwareTimer の簡易ラッパークラスとなります。
     /// 実際に何らかの処理を実装する場合はこのクラスを継承し、
@@ -60,7 +60,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// State
-        /// 
+        ///
         /// <summary>
         /// オブジェクトの状態を取得します。
         /// </summary>
@@ -71,18 +71,18 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// LastPublished
-        /// 
+        ///
         /// <summary>
         /// 最後に Publish が実行された日時を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public DateTime LastPublished => Timer.LastPublished;
+        public DateTime? LastPublished => Timer.LastPublished;
 
         /* ----------------------------------------------------------------- */
         ///
         /// Interval
-        /// 
+        ///
         /// <summary>
         /// 実行間隔を取得または設定します。
         /// </summary>
@@ -97,7 +97,7 @@ namespace Cube.Net
         /* --------------------------------------------------------------------- */
         ///
         /// RetryCount
-        /// 
+        ///
         /// <summary>
         /// 通信失敗時に再試行する最大回数を取得または設定します。
         /// </summary>
@@ -108,7 +108,7 @@ namespace Cube.Net
         /* --------------------------------------------------------------------- */
         ///
         /// RetryInterval
-        /// 
+        ///
         /// <summary>
         /// 通信失敗時に再試行する間隔を取得または設定します。
         /// </summary>
@@ -119,7 +119,7 @@ namespace Cube.Net
         /* --------------------------------------------------------------------- */
         ///
         /// Timeout
-        /// 
+        ///
         /// <summary>
         /// タイムアウト時間を取得または設定します。
         /// </summary>
@@ -134,7 +134,7 @@ namespace Cube.Net
         /// <summary>
         /// 内部用タイマーを取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected NetworkAwareTimer Timer { get; } = new NetworkAwareTimer();
 
@@ -149,7 +149,7 @@ namespace Cube.Net
         /// <summary>
         /// 監視を実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Start() => Start(TimeSpan.Zero);
 
@@ -160,9 +160,9 @@ namespace Cube.Net
         /// <summary>
         /// 監視を実行します。
         /// </summary>
-        /// 
+        ///
         /// <param name="delay">初期遅延時間</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public virtual void Start(TimeSpan delay)
         {
@@ -179,7 +179,7 @@ namespace Cube.Net
         /// <summary>
         /// 監視を停止します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public virtual void Stop()
         {
@@ -196,7 +196,7 @@ namespace Cube.Net
         /// <summary>
         /// 監視を一時停止します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Suspend() => Timer.Suspend();
 
@@ -207,7 +207,7 @@ namespace Cube.Net
         /// <summary>
         /// リセットします。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public virtual void Reset()
         {
@@ -229,7 +229,7 @@ namespace Cube.Net
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         ~NetworkMonitorBase() { _dispose.Invoke(false); }
 
@@ -240,7 +240,7 @@ namespace Cube.Net
         /// <summary>
         /// リソースを解放します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
@@ -255,11 +255,11 @@ namespace Cube.Net
         /// <summary>
         /// リソースを解放します。
         /// </summary>
-        /// 
+        ///
         /// <param name="disposing">
         /// マネージリソースを解放するかどうかを示す値
         /// </param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
