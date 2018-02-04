@@ -172,19 +172,13 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected async Task PublishAsync(Uri uri)
         {
-            if (State != TimerState.Run) return;
-
             using (var response = await GetAsync(uri))
             {
                 var status = response.StatusCode;
-                var code = (int)status;
-                var digit = code / 100;
+                var code   = (int)status;
 
                 if (response.Content is HttpValueContent<TValue> c) await PublishAsync(uri, c.Value); // OK
-                else if (digit == 3) this.LogDebug($"HTTP:{code} {status}");
-                else if (digit == 4) LogWarn(uri, $"HTTP:{code} {status}");
-                else if (digit == 5) throw new HttpRequestException($"HTTP:{code} {status}");
-                else LogWarn(uri, $"Content is not {nameof(TValue)} ({code})");
+                else { this.LogWarn($"{uri} ({code} {status})"); }
             }
         }
 
@@ -245,22 +239,7 @@ namespace Cube.Net.Http
         private void SetTimeout()
         {
             try { if (_http.Timeout != Timeout) _http.Timeout = Timeout; }
-            catch (Exception /* err */) { this.LogWarn("Timeout cannot be applied"); }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LogWarn
-        ///
-        /// <summary>
-        /// エラー内容をログに出力します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void LogWarn(Uri uri, string message)
-        {
-            this.LogWarn(uri.ToString());
-            this.LogWarn(message);
+            catch (Exception /* err */) { this.LogWarn("SetTimeout"); }
         }
 
         #endregion

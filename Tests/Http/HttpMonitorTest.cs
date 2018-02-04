@@ -61,13 +61,14 @@ namespace Cube.Net.Tests.Http
             {
                 Assert.That(mon.UserAgent, Does.StartWith("Cube.Net.Tests"));
 
-                mon.Interval = TimeSpan.FromMilliseconds(200);
+                mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.example.com/");
 
                 var cts = new CancellationTokenSource();
                 mon.Subscribe((u, x) =>
                 {
                     count++;
+                    mon.Interval = TimeSpan.FromMilliseconds(100);
                     if (count >= 3) cts.Cancel();
                 });
 
@@ -119,9 +120,10 @@ namespace Cube.Net.Tests.Http
             var count = 0;
             using (var mon = Create())
             {
+                mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
                 mon.RetryCount = 0;
-                mon.Subscribe((_, x) => count++);
+                mon.Subscribe((_, __) => count++);
 
                 mon.Start();
                 Task.Delay(300).Wait();
@@ -150,13 +152,13 @@ namespace Cube.Net.Tests.Http
             {
                 var cts = new CancellationTokenSource();
 
-                mon.Interval = TimeSpan.FromMilliseconds(100);
+                mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.example.com/");
-                mon.Subscribe((_, x) => { count++; cts.Cancel(); });
+                mon.Subscribe((_, __) => { count++; cts.Cancel(); });
 
                 mon.Start(mon.Interval);
                 power.Mode = PowerModes.Suspend;
-                Task.Delay(200).Wait();
+                Task.Delay(100).Wait();
                 Assert.That(count, Is.EqualTo(0));
 
                 power.Mode = PowerModes.Resume;
