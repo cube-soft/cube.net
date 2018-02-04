@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -31,7 +31,7 @@ namespace Cube.Net.Rss
     /// <summary>
     /// RSS 1.0 を解析するクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     internal static class Rss100Parser
     {
@@ -40,13 +40,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Parse
-        /// 
+        ///
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="root">XML のルート要素</param>
-        /// 
+        ///
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -75,13 +75,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// ParseItems
-        /// 
+        ///
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">XML</param>
-        /// 
+        ///
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -93,7 +93,7 @@ namespace Cube.Net.Rss
                 Summary     = GetSummary(e),
                 Content     = GetContent(e),
                 Link        = e.GetUri("link"),
-                PublishTime = e.GetDateTime(RssParseOptions.NsDcElements, "date"),
+                PublishTime = e.GetDateTime("dc", "date"),
                 Status      = RssItemStatus.Unread,
             })
             .OrderByDescending(e => e.PublishTime)
@@ -102,11 +102,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// GetSummary
-        /// 
+        ///
         /// <summary>
         /// Summary を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private static string GetSummary(XElement src) =>
             src.GetValue("description").Strip(RssParseOptions.MaxSummaryLength);
@@ -114,15 +114,15 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// GetContent
-        /// 
+        ///
         /// <summary>
         /// Content を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private static string GetContent(XElement src)
         {
-            var end  = src.GetValue(RssParseOptions.NsModContent, "encoded");
+            var end  = src.GetValue("content", "encoded");
             var dest = !string.IsNullOrEmpty(end) ?
                        end :
                        src.GetValue("description") ??

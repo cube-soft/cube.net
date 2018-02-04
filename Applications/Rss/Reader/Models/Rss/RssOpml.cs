@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -33,7 +33,7 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// OPML 形式のデータを相互変換するためのクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public static class RssOpml
     {
@@ -44,13 +44,13 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Load
-        /// 
+        ///
         /// <summary>
         /// OPML ファイルを読み込みます。
         /// </summary>
-        /// 
+        ///
         /// <param name="path">ファイルのパス</param>
-        /// 
+        ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -60,14 +60,14 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Load
-        /// 
+        ///
         /// <summary>
         /// OPML ファイルを読み込みます。
         /// </summary>
-        /// 
+        ///
         /// <param name="path">ファイルのパス</param>
         /// <param name="io">入出力用のオブジェクト</param>
-        /// 
+        ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -114,17 +114,16 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static void Save(IEnumerable<IRssEntry> src, string path, Operator io)
         {
-            var body = new XElement("body");
-            foreach (var item in ConvertBack(src)) body.Add(item);
-
-            var head = new XElement("head",
-                new XElement("title", "CubeRSS Reader subscriptions"),
-                new XElement("dateCreated", DateTime.Now.ToUniversalTime().ToString("r"))
-            );
-
             var doc = new XDocument(
                 new XDeclaration("1.0", "utf-8", "true"),
-                new XElement("opml", new XAttribute("version", "1.0"), head, body)
+                new XElement("opml",
+                    new XAttribute("version", "1.0"),
+                    new XElement("head",
+                        new XElement("title", "CubeRSS Reader subscriptions"),
+                        new XElement("dateCreated", DateTime.Now.ToUniversalTime().ToString("r"))
+                    ),
+                    CreateBody(src)
+                )
             );
 
             using (var ss = io.Create(path)) doc.Save(ss);
@@ -141,15 +140,15 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Convert
-        /// 
+        ///
         /// <summary>
         /// XElement オブジェクトを解析し、IRssEntry オブジェクトに
         /// 変換します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">XElement オブジェクト</param>
         /// <param name="parent">親要素</param>
-        /// 
+        ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -163,15 +162,15 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// ToEntry
-        /// 
+        ///
         /// <summary>
         /// XElement オブジェクトを解析し、RssEntry オブジェクトに
         /// 変換します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">XElement オブジェクト</param>
         /// <param name="parent">親要素</param>
-        /// 
+        ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -186,15 +185,15 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// ToCategory
-        /// 
+        ///
         /// <summary>
         /// XElement オブジェクトを解析し、RssCategory オブジェクトに
         /// 変換します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">XElement オブジェクト</param>
         /// <param name="parent">親要素</param>
-        /// 
+        ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -216,14 +215,30 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// CreateBodyElement
+        ///
+        /// <summary>
+        /// body を表す XElement オブジェクトを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static XElement CreateBody(IEnumerable<IRssEntry> src)
+        {
+            var dest = new XElement("body");
+            foreach (var item in ConvertBack(src)) dest.Add(item);
+            return dest;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// ConvertBack
-        /// 
+        ///
         /// <summary>
         /// IRssEntry オブジェクトから XElement オブジェクトに変換します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">IRssEntry オブジェクト一覧</param>
-        /// 
+        ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -237,13 +252,13 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// FromEntry
-        /// 
+        ///
         /// <summary>
         /// RssEntry オブジェクトから XElement オブジェクトに変換します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">RssEntry オブジェクト</param>
-        /// 
+        ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -258,13 +273,13 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// FromCategory
-        /// 
+        ///
         /// <summary>
         /// RssCategory オブジェクトから XElement オブジェクトに変換します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">RssCategory オブジェクト</param>
-        /// 
+        ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */

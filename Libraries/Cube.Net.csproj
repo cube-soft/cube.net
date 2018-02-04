@@ -91,7 +91,6 @@
     <Compile Include="Rss\RssParser.cs" />
     <Compile Include="Rss\RssUriConverter.cs" />
     <Compile Include="Rss\RssVersion.cs" />
-    <Compile Include="Rss\XmlOperator.cs" />
     <Compile Include="BrowserSettings.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="NetworkAwareTimer.cs" />

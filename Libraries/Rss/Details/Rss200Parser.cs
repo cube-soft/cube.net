@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Cube.Xml;
 using Cube.Net.Rss.Parsing;
 
 namespace Cube.Net.Rss
@@ -31,7 +30,7 @@ namespace Cube.Net.Rss
     /// <summary>
     /// RSS 2.0 を解析するクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     internal static class Rss200Parser
     {
@@ -40,13 +39,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Parse
-        /// 
+        ///
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="root">XML のルート要素</param>
-        /// 
+        ///
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -74,13 +73,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// ParseItems
-        /// 
+        ///
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">XML</param>
-        /// 
+        ///
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -102,11 +101,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// GetSummary
-        /// 
+        ///
         /// <summary>
         /// Summary を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private static string GetSummary(XElement src) =>
             src.GetValue("description").Strip(RssParseOptions.MaxSummaryLength);
@@ -114,22 +113,22 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// GetContent
-        /// 
+        ///
         /// <summary>
         /// Content を取得します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// RSS 1.0 の content:encoded タグを利用される事が多いため、
         /// 該当タグが存在する場合はその内容を返します。
         /// RSS 2.0 の仕様には Content に相当するものが存在しないため、
         /// それ以外の場合は description の内容を返します。
         /// </remarks>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private static string GetContent(XElement src)
         {
-            var enc  = src.GetValue(RssParseOptions.NsModContent, "encoded");
+            var enc  = src.GetValue("content", "encoded");
             var dest = !string.IsNullOrEmpty(enc) ?
                        enc :
                        src.GetValue("description") ??
@@ -147,22 +146,22 @@ namespace Cube.Net.Rss
     /// <summary>
     /// RSS 0.92 を解析するクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     internal static class Rss092Parser
     {
         /* ----------------------------------------------------------------- */
         ///
         /// Parse
-        /// 
+        ///
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="root">XML のルート要素</param>
-        /// 
+        ///
         /// <returns>RssFeed オブジェクト</returns>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root) =>
             Rss200Parser.Parse(root);
@@ -175,20 +174,20 @@ namespace Cube.Net.Rss
     /// <summary>
     /// RSS 0.91 を解析するクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     internal static class Rss091Parser
     {
         /* ----------------------------------------------------------------- */
         ///
         /// Parse
-        /// 
+        ///
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="root">XML のルート要素</param>
-        /// 
+        ///
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */

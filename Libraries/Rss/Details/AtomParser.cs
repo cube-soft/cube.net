@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Cube.Xml;
 using Cube.Net.Rss.Parsing;
 
 namespace Cube.Net.Rss
@@ -31,7 +30,7 @@ namespace Cube.Net.Rss
     /// <summary>
     /// Atom を解析するクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     internal static class AtomParser
     {
@@ -40,13 +39,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Parse
-        /// 
+        ///
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="root">XML のルート要素</param>
-        /// 
+        ///
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -70,13 +69,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// ParseItems
-        /// 
+        ///
         /// <summary>
         /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">XML</param>
-        /// 
+        ///
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -98,11 +97,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// GetSummary
-        /// 
+        ///
         /// <summary>
         /// Summary を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private static string GetSummary(XElement src)
         {
@@ -114,11 +113,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// GetContent
-        /// 
+        ///
         /// <summary>
         /// Content を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private static string GetContent(XElement src)
         {
