@@ -65,11 +65,11 @@ namespace Cube.Net.Tests.Http
                 mon.Uri = new Uri("http://www.example.com/");
 
                 var cts = new CancellationTokenSource();
-                mon.Subscribe((u, x) => ++count);
+                mon.Subscribe((u, x) => throw new ArgumentException("Test"));
                 mon.Subscribe((u, x) =>
                 {
-                    count += 2;
-                    if (count >= 9) cts.Cancel();
+                    count++;
+                    if (count >= 3) cts.Cancel();
                 });
 
                 mon.Start();
@@ -78,7 +78,7 @@ namespace Cube.Net.Tests.Http
                 mon.Stop();
                 mon.Stop(); // ignore
             }
-            Assert.That(count, Is.GreaterThanOrEqualTo(9));
+            Assert.That(count, Is.GreaterThanOrEqualTo(3));
         }
 
         /* ----------------------------------------------------------------- */
@@ -124,33 +124,6 @@ namespace Cube.Net.Tests.Http
                 mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
                 mon.RetryCount = 0;
-                mon.Subscribe((_, __) => count++);
-
-                mon.Start();
-                Task.Delay(mon.Timeout).Wait();
-                mon.Stop();
-            }
-            Assert.That(count, Is.EqualTo(0));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Monitor_ConverterReturnsNull
-        ///
-        /// <summary>
-        /// Converter が null を返した時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Monitor_ConverterReturnsNull()
-        {
-            var count = 0;
-            using (var mon = new HttpMonitor<string>(e => null))
-            {
-                mon.Timeout = TimeSpan.FromMilliseconds(200);
-                mon.Interval = TimeSpan.FromMilliseconds(50);
-                mon.Uri = new Uri("http://www.example.com/");
                 mon.Subscribe((_, __) => count++);
 
                 mon.Start();
