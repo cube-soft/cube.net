@@ -187,14 +187,14 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Subscribe
+        /// SubscribeAsync
         ///
         /// <summary>
-        /// データ受信時に実行する処理を登録します。
+        /// データ受信時に非同期で実行する処理を登録します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Func<TimeSpan, Task> action)
+        public IDisposable SubscribeAsync(Func<TimeSpan, Task> action)
         {
             Subscriptions.Add(action);
             return Disposable.Create(() => Subscriptions.Remove(action));
@@ -209,23 +209,23 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<TimeSpan> action)
-            => Subscribe(async (e) =>
-        {
-            action(e);
-            await Task.FromResult(0);
-        });
+        public IDisposable Subscribe(Action<TimeSpan> action) =>
+            SubscribeAsync(e =>
+            {
+                action(e);
+                return Task.FromResult(0);
+            });
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Publish
+        /// PublishAsync
         ///
         /// <summary>
         /// 新しい結果を発行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual async Task Publish(TimeSpan value)
+        protected virtual async Task PublishAsync(TimeSpan value)
         {
             foreach (var action in Subscriptions)
             {
@@ -256,7 +256,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private async Task WhenTick()
         {
-            if (State != TimerState.Run || Subscriptions.Count <= 0) return;
+            if (Subscriptions.Count <= 0) return;
 
             await Task.Delay(500); // see ramarks
 
@@ -264,9 +264,10 @@ namespace Cube.Net.Ntp
             {
                 try
                 {
+                    if (State != TimerState.Run) return;
                     var client = new NtpClient(Server, Port) { Timeout = Timeout };
                     var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid) await Publish(packet.LocalClockOffset);
+                    if (packet != null && packet.IsValid) await PublishAsync(packet.LocalClockOffset);
                     else throw new ArgumentException("InvalidPacket");
                     break;
                 }
@@ -279,11 +280,11 @@ namespace Cube.Net.Ntp
             }
         }
 
+        #endregion
+
         #region Fields
         private string _server = string.Empty;
         private int _port = NtpClient.DefaultPort;
-        #endregion
-
         #endregion
     }
 }

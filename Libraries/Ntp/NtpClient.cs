@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -40,7 +40,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// NtpClient
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -51,7 +51,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// NtpClient
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -62,7 +62,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// NtpClient
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -83,7 +83,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// DefaultServer
-        /// 
+        ///
         /// <summary>
         /// NTP 通信のデフォルトサーバを取得します。
         /// </summary>
@@ -94,7 +94,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// DefaultPort
-        /// 
+        ///
         /// <summary>
         /// NTP 通信のデフォルトポート番号を取得します。
         /// </summary>
@@ -105,7 +105,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// Host
-        /// 
+        ///
         /// <summary>
         /// 通信する NTP サーバのホスト情報を取得します。
         /// </summary>
@@ -116,7 +116,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// Port
-        /// 
+        ///
         /// <summary>
         /// 通信する NTP サーバのポート番号を取得します。
         /// </summary>
@@ -127,7 +127,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// Timeout
-        /// 
+        ///
         /// <summary>
         /// NTP パケット受信時のタイムアウト時間を取得、または設定します。
         /// </summary>
@@ -142,7 +142,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync
-        /// 
+        ///
         /// <summary>
         /// NTP サーバと通信を行い、NTP パケットを取得します。
         /// </summary>
@@ -155,7 +155,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// ~Client
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
@@ -169,7 +169,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを開放します。
         /// </summary>
@@ -188,11 +188,11 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// リソースを解放します。
         /// </summary>
-        /// 
+        ///
         /// <param name="disposing">
         /// マネージリソースを解放するかどうかを示す値
         /// </param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
@@ -208,7 +208,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsyncCore
-        /// 
+        ///
         /// <summary>
         /// NTP サーバと通信を行い、NTP パケットを取得します。
         /// </summary>
@@ -223,7 +223,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// SendTo
-        /// 
+        ///
         /// <summary>
         /// NTP サーバへパケットを送信します。
         /// </summary>
@@ -241,7 +241,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// ReceiveFrom
-        /// 
+        ///
         /// <summary>
         /// NTP サーバからパケットを受信します。
         /// </summary>
@@ -255,11 +255,11 @@ namespace Cube.Net.Ntp
             return new NtpPacket(raw);
         }
 
+        #endregion
+
         #region Fields
         private OnceAction<bool> _dispose;
         private Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        #endregion
-
         #endregion
     }
 }

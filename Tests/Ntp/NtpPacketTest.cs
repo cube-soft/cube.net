@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,15 +35,14 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// TooManyBytes_Throws
-        /// 
+        ///
         /// <summary>
         /// NTP パケットの初期化に失敗するテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TooManyBytes_Throws()
-            =>Assert.That(
+        public void TooManyBytes_Throws() => Assert.That(
             () => new Ntp.NtpPacket(new byte[47]),
             Throws.TypeOf<ArgumentException>()
         );

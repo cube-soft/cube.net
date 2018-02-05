@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -34,31 +34,36 @@ namespace Cube.Net.Tests
     [TestFixture]
     class NtpMonitorTest : NetworkHelper
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
-        /// 
+        /// Monitor_CubeNtpServer
+        ///
         /// <summary>
         /// NTP サーバを監視するテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Start()
+        public void Monitor_CubeNtpServer()
         {
             using (var mon = new Ntp.NtpMonitor())
             {
-                mon.Server  = "ntp.nict.jp";
+                mon.Server  = ""; // test
+                mon.Server  = "ntp.cube-soft.jp";
+                mon.Port    = 0; // test
                 mon.Port    = 123;
                 mon.Timeout = TimeSpan.FromMilliseconds(500);
 
                 var cts   = new CancellationTokenSource();
                 var count = 0;
 
+                mon.Subscribe(_ => throw new ArgumentException("Test"));
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start();
                 mon.Start(); // ignore
-                await WaitAsync(cts.Token);
+                WaitAsync(cts.Token).Wait();
                 mon.Stop();
                 mon.Stop(); // ignore
 
@@ -68,15 +73,63 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Monitor_InvalidNtpServer
+        ///
+        /// <summary>
+        /// 無効な NTP サーバを指定した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Monitor_InvalidNtpServer()
+        {
+            using (var mon = new Ntp.NtpMonitor())
+            {
+                mon.Server  = "dummy";
+                mon.Port    = 999;
+                mon.Timeout = TimeSpan.FromMilliseconds(100);
+
+                var count = 0;
+                mon.Subscribe(_ => ++count);
+                mon.Start();
+                Task.Delay(150).Wait();
+                mon.Stop();
+
+                Assert.That(count, Is.EqualTo(0));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor_NoSubscriptions
+        ///
+        /// <summary>
+        /// コールバック関数を指定しなかった時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Monitor_NoSubscriptions() => Assert.DoesNotThrow(() =>
+        {
+            using (var mon = new Ntp.NtpMonitor())
+            {
+                mon.Start();
+                Task.Delay(150).Wait();
+                mon.Stop();
+            }
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Reset
-        /// 
+        ///
         /// <summary>
         /// リセット処理のテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Reset()
+        public void Reset()
         {
             using (var mon = new Ntp.NtpMonitor())
             {
@@ -90,11 +143,13 @@ namespace Cube.Net.Tests
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start(mon.Interval);
                 mon.Reset();
-                await WaitAsync(cts.Token);
+                WaitAsync(cts.Token).Wait();
                 mon.Stop();
 
                 Assert.That(count, Is.EqualTo(1));
             }
         }
+
+        #endregion
     }
 }

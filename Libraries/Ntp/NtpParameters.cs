@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,7 +22,7 @@ namespace Cube.Net.Ntp
     /* --------------------------------------------------------------------- */
     ///
     /// LeapIndicator
-    /// 
+    ///
     /// <summary>
     /// 閏秒指示子 (LI: Leap Indicator) の状態を定義した列挙型です。
     /// </summary>
@@ -43,7 +43,7 @@ namespace Cube.Net.Ntp
     /* --------------------------------------------------------------------- */
     ///
     /// Mode
-    /// 
+    ///
     /// <summary>
     /// 動作モードの状態を定義した列挙型です。
     /// </summary>
@@ -68,7 +68,7 @@ namespace Cube.Net.Ntp
     /* --------------------------------------------------------------------- */
     ///
     /// Stratum
-    /// 
+    ///
     /// <summary>
     /// 階層の状態を定義した列挙型です。
     /// </summary>
@@ -94,7 +94,7 @@ namespace Cube.Net.Ntp
     /// NTP タイムスタンプと DateTime タイムオブジェクトの相互変換機能を
     /// 提供するためのクラスです。
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// NTP Timestamp Format (as described in RFC 2030)
     ///                         1                   2                   3
@@ -104,7 +104,7 @@ namespace Cube.Net.Ntp
     /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     /// |                  Seconds Fraction (0-padded)                  |
     /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    /// 
+    ///
     /// 尚、RFC 4330 にしたがって最上位ビットが 0 の場合は時刻が 2036 年
     /// から 2104 年の間であると見なして変換を行います。
     /// </remarks>
@@ -112,10 +112,12 @@ namespace Cube.Net.Ntp
     /* --------------------------------------------------------------------- */
     public static class Timestamp
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
         /// Convert
-        /// 
+        ///
         /// <summary>
         /// NTP タイムスタンプから DateTime オブジェクトへ変換します。
         /// </summary>
@@ -135,7 +137,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// Convert
-        /// 
+        ///
         /// <summary>
         /// DateTime オブジェクトから NTP タイムスタンプへ変換します。
         /// </summary>
@@ -152,7 +154,9 @@ namespace Cube.Net.Ntp
             return (long)(((ulong)seconds << 32) | fraction);
         }
 
-        #region Constant variables
+        #endregion
+
+        #region Fields
         private static readonly ulong _CompensatingRate32 = 0x100000000L;
         private static readonly uint _ConpensatingRate31 = 0x80000000u;
         private static readonly DateTime _BaseTerm = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -163,7 +167,7 @@ namespace Cube.Net.Ntp
     /* --------------------------------------------------------------------- */
     ///
     /// FixedPoint
-    /// 
+    ///
     /// <summary>
     /// 符号付き 32bit 固定小数点数から double への変換機能を提供するための
     /// クラスです。
@@ -172,10 +176,12 @@ namespace Cube.Net.Ntp
     /* --------------------------------------------------------------------- */
     internal static class FixedPoint
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
         /// ToDouble
-        /// 
+        ///
         /// <summary>
         /// 符号付き 32bit 固定小数点数から double へ変換します。
         /// </summary>
@@ -188,7 +194,9 @@ namespace Cube.Net.Ntp
             return number + fraction / _CompensatingRate16;
         }
 
-        #region Constant variables
+        #endregion
+
+        #region Fields
         private static readonly double _CompensatingRate16 = 0x10000d;
         #endregion
     }
