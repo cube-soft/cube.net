@@ -229,7 +229,6 @@ namespace Cube.Net.Ntp
         {
             foreach (var action in Subscriptions)
             {
-                if (State != TimerState.Run) return;
                 try { await action(value); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
