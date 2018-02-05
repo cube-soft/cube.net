@@ -50,14 +50,15 @@ namespace Cube.Net.Tests
         {
             using (var mon = new Ntp.NtpMonitor())
             {
+                var start = DateTime.Now;
+                var count = 0;
+                var cts   = new CancellationTokenSource();
+
                 mon.Server  = ""; // test
                 mon.Server  = "ntp.cube-soft.jp";
                 mon.Port    = 0; // test
                 mon.Port    = 123;
                 mon.Timeout = TimeSpan.FromMilliseconds(500);
-
-                var cts   = new CancellationTokenSource();
-                var count = 0;
 
                 mon.Subscribe(_ => throw new ArgumentException("Test"));
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
@@ -68,6 +69,7 @@ namespace Cube.Net.Tests
                 mon.Stop(); // ignore
 
                 Assert.That(count, Is.AtLeast(1));
+                Assert.That(mon.LastPublished.Value, Is.GreaterThan(start));
             }
         }
 
@@ -85,11 +87,12 @@ namespace Cube.Net.Tests
         {
             using (var mon = new Ntp.NtpMonitor())
             {
+                var count = 0;
+
                 mon.Server  = "dummy";
                 mon.Port    = 999;
                 mon.Timeout = TimeSpan.FromMilliseconds(100);
 
-                var count = 0;
                 mon.Subscribe(_ => ++count);
                 mon.Start();
                 Task.Delay(150).Wait();
@@ -133,12 +136,12 @@ namespace Cube.Net.Tests
         {
             using (var mon = new Ntp.NtpMonitor())
             {
+                var count = 0;
+                var cts   = new CancellationTokenSource();
+
                 mon.Server  = "ntp.cube-soft.jp";
                 mon.Port    = 123;
                 mon.Timeout = TimeSpan.FromMilliseconds(500);
-
-                var cts   = new CancellationTokenSource();
-                var count = 0;
 
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start(mon.Interval);

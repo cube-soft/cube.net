@@ -56,9 +56,11 @@ namespace Cube.Net.Tests.Http
         [Test]
         public void Monitor_NormalCase()
         {
-            var count = 0;
             using (var mon = Create())
             {
+                var count = 0;
+                var start = DateTime.Now;
+
                 Assert.That(mon.UserAgent, Does.StartWith("Cube.Net.Tests"));
 
                 mon.Interval = TimeSpan.FromMilliseconds(50);
@@ -77,8 +79,10 @@ namespace Cube.Net.Tests.Http
                 WaitAsync(cts.Token).Wait();
                 mon.Stop();
                 mon.Stop(); // ignore
+
+                Assert.That(mon.LastPublished.Value, Is.GreaterThan(start));
+                Assert.That(count, Is.AtLeast(3));
             }
-            Assert.That(count, Is.GreaterThanOrEqualTo(3));
         }
 
         /* ----------------------------------------------------------------- */
@@ -117,9 +121,10 @@ namespace Cube.Net.Tests.Http
         [Test]
         public void Monitor_UriNotFound()
         {
-            var count = 0;
             using (var mon = Create())
             {
+                var count = 0;
+
                 mon.Timeout  = TimeSpan.FromMilliseconds(200);
                 mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
@@ -129,8 +134,8 @@ namespace Cube.Net.Tests.Http
                 mon.Start();
                 Task.Delay(mon.Timeout).Wait();
                 mon.Stop();
+                Assert.That(count, Is.EqualTo(0));
             }
-            Assert.That(count, Is.EqualTo(0));
         }
 
         /* ----------------------------------------------------------------- */
@@ -145,9 +150,10 @@ namespace Cube.Net.Tests.Http
         [Test]
         public void Monitor_ConverterThrows()
         {
-            var count = 0;
             using (var mon = new HttpMonitor<string>(e => throw new ArgumentException("Test")))
             {
+                var count = 0;
+
                 mon.Timeout = TimeSpan.FromMilliseconds(200);
                 mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.example.com/");
@@ -156,8 +162,8 @@ namespace Cube.Net.Tests.Http
                 mon.Start();
                 Task.Delay(mon.Timeout).Wait();
                 mon.Stop();
+                Assert.That(count, Is.EqualTo(0));
             }
-            Assert.That(count, Is.EqualTo(0));
         }
 
         /* ----------------------------------------------------------------- */
@@ -175,10 +181,10 @@ namespace Cube.Net.Tests.Http
             var power = new PowerModeContext(Power.Mode);
             Power.Configure(power);
 
-            var count = 0;
             using (var mon = Create())
             {
-                var cts = new CancellationTokenSource();
+                var count = 0;
+                var cts   = new CancellationTokenSource();
 
                 mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.example.com/");
@@ -208,12 +214,13 @@ namespace Cube.Net.Tests.Http
         [Test]
         public void Reset()
         {
-            var count = 0;
             using (var mon = Create())
             {
+                var count = 0;
+                var cts   = new CancellationTokenSource();
+
                 mon.Interval = TimeSpan.FromMinutes(1);
                 mon.Uri = new Uri("http://www.example.com/");
-                var cts = new CancellationTokenSource();
                 mon.Subscribe((u, v) => { ++count; cts.Cancel(); });
 
                 mon.Reset();
@@ -221,8 +228,8 @@ namespace Cube.Net.Tests.Http
                 mon.Reset();
                 WaitAsync(cts.Token).Wait();
                 mon.Stop();
+                Assert.That(count, Is.EqualTo(1));
             }
-            Assert.That(count, Is.EqualTo(1));
         }
 
         #endregion
