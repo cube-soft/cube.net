@@ -39,7 +39,7 @@ namespace Cube.Net.Tests.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// Monitor_NormalCase
         ///
         /// <summary>
         /// 監視テストを実行します。
@@ -54,7 +54,7 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start()
+        public void Monitor_NormalCase()
         {
             var count = 0;
             using (var mon = Create())
@@ -65,11 +65,11 @@ namespace Cube.Net.Tests.Http
                 mon.Uri = new Uri("http://www.example.com/");
 
                 var cts = new CancellationTokenSource();
+                mon.Subscribe((u, x) => ++count);
                 mon.Subscribe((u, x) =>
                 {
-                    count++;
-                    mon.Interval = TimeSpan.FromMilliseconds(100);
-                    if (count >= 3) cts.Cancel();
+                    count += 2;
+                    if (count >= 9) cts.Cancel();
                 });
 
                 mon.Start();
@@ -78,12 +78,12 @@ namespace Cube.Net.Tests.Http
                 mon.Stop();
                 mon.Stop(); // ignore
             }
-            Assert.That(count, Is.GreaterThanOrEqualTo(3));
+            Assert.That(count, Is.GreaterThanOrEqualTo(9));
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start_NoSubscriptions
+        /// Monitor_NoSubscriptions
         ///
         /// <summary>
         /// Subscribe している要素がない状態で監視した時の挙動を
@@ -92,9 +92,9 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start_NoSubscriptions() => Assert.DoesNotThrow(() =>
+        public void Monitor_NoSubscriptions() => Assert.DoesNotThrow(() =>
         {
-            using (var mon = new HttpMonitor<int>(e => e.ReadByte()))
+            using (var mon = Create())
             {
                 mon.Interval = TimeSpan.FromMilliseconds(10);
                 mon.Uri = new Uri("http://www.example.com/");
@@ -107,7 +107,7 @@ namespace Cube.Net.Tests.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start_NotFound
+        /// Monitor_UriNotFound
         ///
         /// <summary>
         /// 存在しない Web ページを監視した時の挙動を確認します。
@@ -115,18 +115,19 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start_NotFound()
+        public void Monitor_UriNotFound()
         {
             var count = 0;
             using (var mon = Create())
             {
+                mon.Timeout  = TimeSpan.FromMilliseconds(200);
                 mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
                 mon.RetryCount = 0;
                 mon.Subscribe((_, __) => count++);
 
                 mon.Start();
-                Task.Delay(300).Wait();
+                Task.Delay(mon.Timeout).Wait();
                 mon.Stop();
             }
             Assert.That(count, Is.EqualTo(0));
@@ -134,7 +135,61 @@ namespace Cube.Net.Tests.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start_PowerMode
+        /// Monitor_ConverterReturnsNull
+        ///
+        /// <summary>
+        /// Converter が null を返した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Monitor_ConverterReturnsNull()
+        {
+            var count = 0;
+            using (var mon = new HttpMonitor<string>(e => null))
+            {
+                mon.Timeout = TimeSpan.FromMilliseconds(200);
+                mon.Interval = TimeSpan.FromMilliseconds(50);
+                mon.Uri = new Uri("http://www.example.com/");
+                mon.Subscribe((_, __) => count++);
+
+                mon.Start();
+                Task.Delay(mon.Timeout).Wait();
+                mon.Stop();
+            }
+            Assert.That(count, Is.EqualTo(0));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor_ConverterThrows
+        ///
+        /// <summary>
+        /// Converter が例外を送出した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Monitor_ConverterThrows()
+        {
+            var count = 0;
+            using (var mon = new HttpMonitor<string>(e => throw new ArgumentException("Test")))
+            {
+                mon.Timeout = TimeSpan.FromMilliseconds(200);
+                mon.Interval = TimeSpan.FromMilliseconds(50);
+                mon.Uri = new Uri("http://www.example.com/");
+                mon.Subscribe((_, __) => count++);
+
+                mon.Start();
+                Task.Delay(mon.Timeout).Wait();
+                mon.Stop();
+            }
+            Assert.That(count, Is.EqualTo(0));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor_PowerModeChanged
         ///
         /// <summary>
         /// 電源状態が変更された時の挙動を確認します。
@@ -142,7 +197,7 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start_PowerMode()
+        public void Monitor_PowerModeChanged()
         {
             var power = new PowerModeContext(Power.Mode);
             Power.Configure(power);

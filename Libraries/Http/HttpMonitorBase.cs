@@ -172,33 +172,15 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected async Task PublishAsync(Uri uri)
         {
-            using (var response = await GetAsync(uri))
+            var option = HttpCompletionOption.ResponseContentRead;
+            try { if (_http.Timeout != Timeout) _http.Timeout = Timeout; }
+            catch (Exception /* err */) { this.LogWarn("SetTimeout"); }
+
+            using (var msg = await _http.GetAsync(uri, option))
             {
-                var status = response.StatusCode;
-                var code   = (int)status;
-
-                if (response.Content is HttpValueContent<TValue> c) await PublishAsync(uri, c.Value); // OK
-                else { this.LogWarn($"{uri} ({code} {status})"); }
+                if (msg.Content is HttpValueContent<TValue> c) await PublishAsync(uri, c.Value);
+                else this.LogWarn($"{uri} ({(int)msg.StatusCode} {msg.StatusCode})");
             }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync
-        ///
-        /// <summary>
-        /// HTTP 通信を実行します。
-        /// </summary>
-        ///
-        /// <param name="uri">URL</param>
-        ///
-        /// <returns>通信結果</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected async Task<HttpResponseMessage> GetAsync(Uri uri)
-        {
-            SetTimeout();
-            return await _http.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
         }
 
         /* ----------------------------------------------------------------- */
@@ -221,25 +203,6 @@ namespace Cube.Net.Http
                 _http.Dispose();
                 Handler.Dispose();
             }
-        }
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SetTimeout
-        ///
-        /// <summary>
-        /// タイムアウト時間を設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void SetTimeout()
-        {
-            try { if (_http.Timeout != Timeout) _http.Timeout = Timeout; }
-            catch (Exception /* err */) { this.LogWarn("SetTimeout"); }
         }
 
         #endregion
