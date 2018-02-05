@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -31,7 +31,7 @@ namespace Cube.Net.Rss
     /// <summary>
     /// RSS フィードを取得するためのクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class RssClient : IDisposable
     {
@@ -40,7 +40,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// RssClient
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -51,18 +51,18 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// RssClient
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="handler">HTTP 通信用ハンドラ</param>
         ///
         /* ----------------------------------------------------------------- */
         public RssClient(HttpClientHandler handler)
         {
             _dispose = new OnceAction<bool>(Dispose);
-            _http = HttpClientFactory.Create(handler, TimeSpan.FromSeconds(10));
+            _http    = HttpClientFactory.Create(handler, TimeSpan.FromSeconds(10));
         }
 
         #endregion
@@ -72,11 +72,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Timeout
-        /// 
+        ///
         /// <summary>
         /// タイムアウト時間を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public TimeSpan Timeout
         {
@@ -91,11 +91,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Redirected
-        /// 
+        ///
         /// <summary>
         /// リダイレクト時に発生するイベントです。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// 通信結果が HTML かつ alternate メタ情報が存在する場合に
         /// 発生します。
@@ -107,19 +107,19 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// OnRedirected
-        /// 
+        ///
         /// <summary>
         /// リダイレクト時に発生するイベントです。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// 通信結果が HTML かつ alternate メタ情報が存在する場合に
         /// 発生します。
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnRedirected(ValueChangedEventArgs<Uri> e)
-            => Redirected?.Invoke(this, e);
+        protected virtual void OnRedirected(ValueChangedEventArgs<Uri> e) =>
+            Redirected?.Invoke(this, e);
 
         #endregion
 
@@ -128,13 +128,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync
-        /// 
+        ///
         /// <summary>
         /// RSS フィードを非同期で取得します。
         /// </summary>
-        /// 
+        ///
         /// <param name="uri">フィード取得用 URL</param>
-        /// 
+        ///
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -155,22 +155,22 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// ~RssClient
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         ~RssClient() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを解放します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
@@ -181,13 +181,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを解放します。
         /// </summary>
-        /// 
+        ///
         /// <param name="disposing">マネージリソースを解放するか</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
@@ -204,16 +204,16 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// ParseAsync
-        /// 
+        ///
         /// <summary>
         /// RSS フィードを解析します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// 通信結果が HTML かつ alternate メタ情報が存在する場合、
         /// 該当の URL に対して再度 HTTP 通信を試みます。
         /// </remarks>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private async Task<RssFeed> ParseAsync(Uri uri, System.IO.Stream content)
         {
@@ -238,11 +238,11 @@ namespace Cube.Net.Rss
             return await GetAsync(cvt);
         }
 
+        #endregion
+
         #region Fields
         private OnceAction<bool> _dispose;
         private HttpClient _http;
-        #endregion
-
         #endregion
     }
 }

@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,7 +26,7 @@ namespace Cube.Net.Rss
     /// <summary>
     /// RSS および Atom フィードの種類を表す列挙型です。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public enum RssVersion
     {
@@ -51,7 +51,7 @@ namespace Cube.Net.Rss
     /// <summary>
     /// RssVersion の拡張用クラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public static class RssVersionConverter
     {
@@ -62,9 +62,9 @@ namespace Cube.Net.Rss
         /// <summary>
         /// XML から RssVersion オブジェクトを取得します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">XML</param>
-        /// 
+        ///
         /// <returns>RssVersion</returns>
         ///
         /* ----------------------------------------------------------------- */

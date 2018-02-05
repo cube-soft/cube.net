@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,31 +23,12 @@ namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssItemStatus
-    ///
-    /// <summary>
-    /// RssItem オブジェクトの状態を表す列挙型です。
-    /// </summary>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public enum RssItemStatus
-    {
-        /// <summary>未初期化</summary>
-        Uninitialized,
-        /// <summary>未読</summary>
-        Unread,
-        /// <summary>既読</summary>
-        Read,
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
     /// RssItem
     ///
     /// <summary>
     /// RSS の項目情報を保持するクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     [DataContract]
     public class RssItem : ObservableProperty
@@ -57,7 +38,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Title
-        /// 
+        ///
         /// <summary>
         /// 記事タイトルを取得または設定します。
         /// </summary>
@@ -73,11 +54,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Summary
-        /// 
+        ///
         /// <summary>
         /// 記事の概要を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// RSS では description タグ、Atom では summary タグに相当します。
         /// </remarks>
@@ -93,11 +74,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Content
-        /// 
+        ///
         /// <summary>
         /// 記事の詳細内容を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public string Content
@@ -109,7 +90,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Categories
-        /// 
+        ///
         /// <summary>
         /// 記事の属するカテゴリ一覧を取得または設定します。
         /// </summary>
@@ -125,7 +106,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Link
-        /// 
+        ///
         /// <summary>
         /// 記事の URL 一覧を取得または設定します。
         /// </summary>
@@ -141,7 +122,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// PublishTime
-        /// 
+        ///
         /// <summary>
         /// 記事の発行日時を取得または設定します。
         /// </summary>
@@ -157,7 +138,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         ///
         /// Status
-        /// 
+        ///
         /// <summary>
         /// オブジェクトの状態を取得または設定します。
         /// </summary>
@@ -181,5 +162,24 @@ namespace Cube.Net.Rss
         private DateTime? _publishTime = null;
         private RssItemStatus _status = RssItemStatus.Uninitialized;
         #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RssItemStatus
+    ///
+    /// <summary>
+    /// RssItem オブジェクトの状態を表す列挙型です。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public enum RssItemStatus
+    {
+        /// <summary>未初期化</summary>
+        Uninitialized,
+        /// <summary>未読</summary>
+        Unread,
+        /// <summary>既読</summary>
+        Read,
     }
 }

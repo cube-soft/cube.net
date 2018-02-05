@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -40,17 +40,17 @@ namespace Cube.Net.Tests
         /// <summary>
         /// RssVersion オブジェクトを取得するテストを実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         [TestCase("SampleRss091.xml",   ExpectedResult = RssVersion.Rss091)]
         [TestCase("SampleRss092.xml",   ExpectedResult = RssVersion.Rss092)]
         [TestCase("SampleRss10-01.xml", ExpectedResult = RssVersion.Rss10)]
         [TestCase("SampleRss20-01.xml", ExpectedResult = RssVersion.Rss20)]
         [TestCase("SampleAtom-01.xml",  ExpectedResult = RssVersion.Atom)]
-        public RssVersion GetRssVersion(string filename)
-        {
-            var doc = XDocument.Load(Example(filename));
-            return doc.Root.GetRssVersion();
-        }
+        [TestCase("Sample.xml",         ExpectedResult = RssVersion.Unknown)]
+        public RssVersion GetRssVersion(string filename) => XDocument
+            .Load(Example(filename))
+            .Root
+            .GetRssVersion();
     }
 }

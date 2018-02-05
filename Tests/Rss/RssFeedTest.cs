@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -32,7 +32,7 @@ namespace Cube.Net.Tests
     /// <summary>
     /// RssFeed に関するテスト用クラスです。
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// Parse に使用するサンプルファイルの一部は下記 Web ページ、および
     /// リンク先から取得しました。
@@ -50,7 +50,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetRssUris
-        /// 
+        ///
         /// <summary>
         /// RSS フィードの取得用 URL を解析するテストを実行します。
         /// </summary>
@@ -69,7 +69,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// ParseFeed
-        /// 
+        ///
         /// <summary>
         /// フィードを解析するテストを実行します。
         /// </summary>
@@ -93,7 +93,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// ParseFeed_Content
-        /// 
+        ///
         /// <summary>
         /// RSS フィードの最初の Item から Content を取得するテストを
         /// 実行します。
@@ -113,16 +113,16 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// ParseFeed_UnreadItems
-        /// 
+        ///
         /// <summary>
         /// UnreadItems の挙動を確認します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TestCase("SampleRss20-01.xml")]
-        public void ParseFeed_UnreadItems(string filename)
+        [Test]
+        public void ParseFeed_UnreadItems()
         {
-            using (var stream = File.OpenRead(Example(filename)))
+            using (var stream = File.OpenRead(Example("SampleRss20-01.xml")))
             {
                 var feed  = RssParser.Parse(stream);
                 var count = feed.Items.Count();
@@ -135,8 +135,50 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// ParseFeed_Categories
+        ///
+        /// <summary>
+        /// Categories の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void ParseFeed_Categories()
+        {
+            using (var stream = File.OpenRead(Example("SampleRss20-01.xml")))
+            {
+                var feed = RssParser.Parse(stream);
+                var item = feed.Items[0];
+                Assert.That(item.Categories.Count, Is.EqualTo(0));
+
+                item.Categories = new[] { "Foo", "Bar", "Bas" };
+                Assert.That(item.Categories.Count, Is.EqualTo(3));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ParseFeed_NotRss
+        ///
+        /// <summary>
+        /// RSS フィードではない XML ファイルを指定した時の挙動を
+        /// 確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void ParseFeed_NotRss()
+        {
+            using (var stream = File.OpenRead(Example("Sample.xml")))
+            {
+                Assert.That(RssParser.Parse(stream), Is.Null);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// LoadFeed_Uninitialized
-        /// 
+        ///
         /// <summary>
         /// 初期化されていない RssFeed を読み込んだ時の挙動を確認します。
         /// </summary>
@@ -145,7 +187,7 @@ namespace Cube.Net.Tests
         [Test]
         public void LoadFeed_Uninitialized()
         {
-            var src = SettingsType.Json.Load<RssFeed>(Example("UninitializedRss.json"));
+            var src = SettingsType.Json.Load<RssFeed>(Example("SampleUninitialized.json"));
             Assert.That(src.Title,                  Is.Empty);
             Assert.That(src.Uri,                    Is.Null);
             Assert.That(src.Link,                   Is.Null);
@@ -158,7 +200,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// SaveFeed_Uninitialized
-        /// 
+        ///
         /// <summary>
         /// 初期化されていない RssFeed を保存した時の挙動を確認します。
         /// </summary>
@@ -176,7 +218,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// TestCases
-        /// 
+        ///
         /// <summary>
         /// テスト用データを取得します。
         /// </summary>

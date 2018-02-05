@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -36,11 +36,11 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync
-        /// 
+        ///
         /// <summary>
         /// RSS フィードを取得するテストを実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         [Test]
         public void GetAsync()
@@ -58,45 +58,18 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsync_Continuously
-        /// 
-        /// <summary>
-        /// 複数のフィードを連続して取得するテストを実行します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void GetAsync_Continuously()
-        {
-            var http = new RssClient();
-            var uris = new[]
-            {
-                new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
-                new Uri("https://blogs.msdn.microsoft.com/visualstudio/feed/"),
-                new Uri("http://blogs.windows.com/buildingapps/feed"),
-            };
-
-            foreach (var uri in uris)
-            {
-                var rss = http.GetAsync(uri).Result;
-                Assert.That(rss.Items.Count, Is.GreaterThan(1));
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// GetAsync_Redirect
-        /// 
+        ///
         /// <summary>
         /// HTML ページを示す URL を指定した時の挙動を確認します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         [TestCase("https://blog.cube-soft.jp/", ExpectedResult = "https://blog.cube-soft.jp/?feed=rss2")]
         [TestCase("https://www.asahi.com/",     ExpectedResult = "http://www3.asahi.com/rss/index.rdf")]
         public string GetAsync_Redirect(string src)
         {
-            var uri = default(Uri);
+            var uri  = default(Uri);
             var http = new RssClient();
             http.Redirected += (s, e) => uri = e.NewValue;
 
@@ -107,16 +80,32 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// GetAsync_Redirect_NoHandlers
+        ///
+        /// <summary>
+        /// HTML ページを示す URL を指定した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void GetAsync_Recirect_NoHandlers() => Assert.That(
+            new RssClient().GetAsync(new Uri("https://blog.cube-soft.jp/")).Result,
+            Is.Not.Null
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// GetAsync_NotFound
-        /// 
+        ///
         /// <summary>
         /// RSS フィードが見つからない時の挙動を確認します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void GetAsync_NotFound() => Assert.That(
-            new RssClient().GetAsync(new Uri("http://www.cube-soft.jp/")).Result,
+        [TestCase("http://www.cube-soft.jp/")]
+        [TestCase("http://www.cube-soft.jp/404.html")]
+        public void GetAsync_NotFound(string src) => Assert.That(
+            new RssClient().GetAsync(new Uri(src)).Result,
             Is.Null
         );
     }

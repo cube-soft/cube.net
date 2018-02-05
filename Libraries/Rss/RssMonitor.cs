@@ -187,10 +187,9 @@ namespace Cube.Net.Rss
         /// <param name="items">RSS フィード URL 一覧</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Register(IEnumerable<Uri> items)
-        {
-            foreach (var uri in items) Register(uri);
-        }
+        public void Register(IEnumerable<Uri> items) => Register(
+            items.Select(e => new KeyValuePair<Uri, DateTime?>(e, default(DateTime?)))
+        );
 
         /* ----------------------------------------------------------------- */
         ///

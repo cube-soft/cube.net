@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Cube.Net.Rss;
 using NUnit.Framework;
 
@@ -37,33 +38,47 @@ namespace Cube.Net.Tests
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Start_CacheDictionary
-        /// 
+        /// Monitor_RssCacheDictionary
+        ///
         /// <summary>
-        /// 監視テストを実行します。
+        /// RssCacheDirectory オブジェクトを利用した監視テストを実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start_CacheDictionary()
+        public void Monitor_RssCacheDictionary()
         {
             var start = DateTime.Now;
-            var uri0  = new Uri("http://blog.cube-soft.jp/?feed=rss2");
-            var uri1  = new Uri("https://blogs.msdn.microsoft.com/dotnet/feed");
-            var file0 = "722a6df5a86c7464e1eeaeb691ba50be";
-            var file1 = "3a9c5f4a720884dddb53fb356680ef82";
-
-            using (var src = new RssCacheDictionary() { Directory = Results })
+            var uris  = new[]
             {
-                src.Add(uri0, default(RssFeed));
-                src.Add(uri1, default(RssFeed));
+                new Uri("https://blog.cube-soft.jp/?feed=rss2"),
+                new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
+            };
+
+            var files = new[]
+            {
+                "872e24035276c7104afd116c2052172b",
+                "3a9c5f4a720884dddb53fb356680ef82",
+            };
+
+            using (var src = new RssCacheDictionary())
+            {
+                src.Directory = Results;
+                foreach (var uri in uris) src.Add(uri, default(RssFeed));
 
                 using (var mon = new RssMonitor())
                 {
                     var count = 0;
                     var cts   = new CancellationTokenSource();
+                    var agent = $"CubeRssMonitorTest/{AssemblyReader.Default.Version}";
 
-                    mon.Register(src.Keys);
+                    mon.Timeout = TimeSpan.FromSeconds(5);
+                    mon.UserAgent = agent;
+                    Assert.That(mon.UserAgent, Is.EqualTo(agent));
+
+                    mon.Register(uris);
+                    mon.Register(uris); // ignore
+                    mon.Subscribe(_ => throw new ArgumentException("Test"));
                     mon.Subscribe(e =>
                     {
                         src[e.Uri] = e;
@@ -74,43 +89,95 @@ namespace Cube.Net.Tests
                     mon.Stop();
                 }
 
-                Assert.That(src[uri0].Title,       Is.EqualTo("CubeSoft Blog"));
-                Assert.That(src[uri0].LastChecked, Is.GreaterThan(start));
-                Assert.That(src[uri0].Items.Count, Is.GreaterThan(0));
+                foreach (var item in src) Assert.That(item.Value, Is.Not.Null);
+
+                var feed = default(RssFeed);
+                Assert.That(src.TryGetValue(uris[0], out feed), Is.True);
+                Assert.That(feed.Title,       Is.EqualTo("CubeSoft Blog"));
+                Assert.That(feed.LastChecked, Is.GreaterThan(start), uris[0].ToString());
+                Assert.That(feed.Items.Count, Is.GreaterThan(0), uris[0].ToString());
+
+                Assert.That(src.TryGetValue(uris[1], out feed), Is.True);
+                Assert.That(feed.Title,       Is.EqualTo(".NET Blog"));
+                Assert.That(feed.LastChecked, Is.GreaterThan(start), uris[1].ToString());
+                Assert.That(feed.Items.Count, Is.GreaterThan(0), uris[1].ToString());
+
+                Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out feed), Is.False);
             }
 
-            Assert.That(IO.Exists(Result(file0)), Is.True, file0);
-            Assert.That(IO.Exists(Result(file1)), Is.True, file1);
+            Assert.That(IO.Get(Result(files[0])).Length, Is.GreaterThan(0), files[0]);
+            Assert.That(IO.Get(Result(files[1])).Length, Is.GreaterThan(0), files[1]);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// RssMonitor を用いて手動で更新するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Update()
+        {
+            var dest = new Dictionary<Uri, RssFeed>();
+            var src  = new[]
+            {
+                new Uri("https://blog.cube-soft.jp/?feed=rss2"),
+                new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
+            };
+
+            using (var mon = new RssMonitor())
+            {
+                var cts = new CancellationTokenSource();
+
+                mon.Register(src[0]);
+                mon.Subscribe(e =>
+                {
+                    dest.Add(e.Uri, e);
+                    cts.Cancel();
+                });
+                mon.Update(src[1]);
+                mon.Update(src[0]);
+                WaitAsync(cts.Token).Wait();
+            }
+
+            Assert.That(dest.ContainsKey(src[0]), Is.True);
+            Assert.That(dest.ContainsKey(src[1]), Is.False);
         }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Register_Remove
-        /// 
+        ///
         /// <summary>
         /// RSS フィード URL の登録および削除処理のテストを実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         [Test]
         public void Register_Remove()
         {
-            var uri0 = new Uri("http://www.example.com/rss");
-            var uri1 = new Uri("http://www.example.com/rss2");
+            var uris = new[]
+            {
+                new Uri("http://www.example.com/rss"),
+                new Uri("http://www.example.com/rss2"),
+            };
 
             using (var mon = new RssMonitor())
             {
-                mon.Register(uri0);
-                Assert.That(mon.Contains(uri0), Is.True);
-                Assert.That(mon.LastChecked(uri0).HasValue, Is.False);
-                mon.Register(uri1);
-                Assert.That(mon.Contains(uri1), Is.True);
-                Assert.That(mon.LastChecked(uri1).HasValue, Is.False);
+                mon.Register(uris[0]);
+                Assert.That(mon.Contains(uris[0]), Is.True);
+                Assert.That(mon.LastChecked(uris[0]).HasValue, Is.False);
+                mon.Register(uris[1]);
+                Assert.That(mon.Contains(uris[1]), Is.True);
+                Assert.That(mon.LastChecked(uris[1]).HasValue, Is.False);
 
-                mon.Remove(uri0);
-                Assert.That(mon.Contains(uri0), Is.False);
+                mon.Remove(uris[0]);
+                Assert.That(mon.Contains(uris[0]), Is.False);
                 mon.Clear();
-                Assert.That(mon.Contains(uri1), Is.False);
+                Assert.That(mon.Contains(uris[1]), Is.False);
             }
         }
     }

@@ -87,6 +87,12 @@
     <None Include="Examples\SampleNoRss.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Examples\Sample.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Examples\SampleAtom-01.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Examples\SampleRss091.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -105,10 +111,7 @@
     <None Include="Examples\SampleRss20-02.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Examples\SampleAtom-01.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\UninitializedRss.json">
+    <None Include="Examples\SampleUninitialized.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

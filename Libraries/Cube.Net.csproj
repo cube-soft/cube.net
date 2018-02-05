@@ -89,7 +89,6 @@
     <Compile Include="Rss\RssItem.cs" />
     <Compile Include="Rss\RssMonitor.cs" />
     <Compile Include="Rss\RssParser.cs" />
-    <Compile Include="Rss\RssUriConverter.cs" />
     <Compile Include="Rss\RssVersion.cs" />
     <Compile Include="BrowserSettings.cs" />
     <Compile Include="Network.cs" />
