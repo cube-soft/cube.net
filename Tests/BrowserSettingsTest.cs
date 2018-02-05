@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,7 +22,7 @@ namespace Cube.Net.Tests
     /* --------------------------------------------------------------------- */
     ///
     /// BrowserSettingsTest
-    /// 
+    ///
     /// <summary>
     /// BrowserSettings のテスト用クラスです。
     /// </summary>
@@ -34,7 +34,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// Version
-        /// 
+        ///
         /// <summary>
         /// ブラウザのバージョンを設定するテストを実行します。
         /// </summary>
@@ -53,7 +53,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GpuRendering
-        /// 
+        ///
         /// <summary>
         /// GPU レンダリングの有効・無効を設定するテストを実行します。
         /// </summary>
@@ -70,7 +70,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// NavigationSounds
-        /// 
+        ///
         /// <summary>
         /// クリック音の有効・無効を設定するテストを実行します。
         /// </summary>
@@ -87,7 +87,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// MaxConnections
-        /// 
+        ///
         /// <summary>
         /// 単一アプリケーションあたりの最大コネクション数を設定する
         /// テストを実行します。

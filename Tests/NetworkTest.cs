@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,33 +35,31 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// Status
-        /// 
+        ///
         /// <summary>
         /// ネットワーク状況を取得するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Status()
-            => Assert.That(Network.Status, Is.EqualTo(OperationalStatus.Up));
+        public void Status() => Assert.That(Network.Status, Is.EqualTo(OperationalStatus.Up));
 
         /* ----------------------------------------------------------------- */
         ///
         /// Available
-        /// 
+        ///
         /// <summary>
         /// ネットワークが利用可能かどうか判別するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Available()
-            => Assert.That(Network.Available);
+        public void Available() => Assert.That(Network.Available);
 
         /* ----------------------------------------------------------------- */
         ///
         /// DisableOptions
-        /// 
+        ///
         /// <summary>
         /// 各種ネットワークオプションを無効にするテストを実行します。
         /// </summary>
