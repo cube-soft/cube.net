@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,7 +24,7 @@ namespace Cube.Net.Http
     /* --------------------------------------------------------------------- */
     ///
     /// HttpClientFactory
-    /// 
+    ///
     /// <summary>
     /// HTTP クライアントを生成するためのクラスです。
     /// </summary>
@@ -32,6 +32,8 @@ namespace Cube.Net.Http
     /* --------------------------------------------------------------------- */
     public static class HttpClientFactory
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
         /// DefaultTimeout
@@ -51,10 +53,10 @@ namespace Cube.Net.Http
         /// <summary>
         /// HTTP クライアントを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="handler">HTTP ハンドラ</param>
         /// <param name="timeout">タイムアウト時間</param>
-        /// 
+        ///
         /// <returns>HttpClient オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -72,14 +74,14 @@ namespace Cube.Net.Http
         /// <summary>
         /// HTTP クライアントを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="handler">HTTP ハンドラ</param>
-        /// 
+        ///
         /// <returns>HttpClient オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static HttpClient Create(HttpClientHandler handler)
-            => Create(handler, DefaultTimeout);
+        public static HttpClient Create(HttpClientHandler handler) =>
+            Create(handler, DefaultTimeout);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -88,9 +90,9 @@ namespace Cube.Net.Http
         /// <summary>
         /// HTTP クライアントを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="timeout">タイムアウト時間</param>
-        /// 
+        ///
         /// <returns>HttpClient オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -118,10 +120,12 @@ namespace Cube.Net.Http
         /// <summary>
         /// HTTP クライアントを生成します。
         /// </summary>
-        /// 
+        ///
         /// <returns>HttpClient オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static HttpClient Create() => Create(DefaultTimeout);
+
+        #endregion
     }
 }

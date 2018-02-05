@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -39,14 +39,14 @@ namespace Cube.Net.Http
         /// <summary>
         /// 例外を無視するかどうかを示す値を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// HttpMonitor のように、例外発生時に既定回数再試行するような
         /// クラスで使用された場合、変換の失敗が原因で余分な通信を発生
         /// させる可能性があります。そのような場合には IgnoreException を
         /// true にして抑制します。
         /// </remarks>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         bool IgnoreException { get; set; }
 
@@ -57,9 +57,9 @@ namespace Cube.Net.Http
         /// <summary>
         /// 変換処理を実行します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">Stream オブジェクト</param>
-        /// 
+        ///
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -86,7 +86,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected ContentConverterBase() { }
 
@@ -101,7 +101,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// 例外を無視するかどうかを示す値を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public bool IgnoreException { get; set; } = false;
 
@@ -116,9 +116,9 @@ namespace Cube.Net.Http
         /// <summary>
         /// 変換処理を実行します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">Stream オブジェクト</param>
-        /// 
+        ///
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -140,18 +140,17 @@ namespace Cube.Net.Http
         /// <summary>
         /// 変換処理を実行します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">Stream オブジェクト</param>
-        /// 
+        ///
         /// <returns>変換後のオブジェクト</returns>
-        /// 
+        ///
         /// <remarks>
         /// 継承したクラスで実装する必要があります。
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual TValue OnConvert(Stream src)
-            => throw new NotImplementedException();
+        protected virtual TValue OnConvert(Stream src) => throw new NotImplementedException();
 
         #endregion
     }
@@ -176,9 +175,9 @@ namespace Cube.Net.Http
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="func">変換用オブジェクト</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public ContentConverter(Func<Stream, TValue> func)
         {
@@ -196,9 +195,9 @@ namespace Cube.Net.Http
         /// <summary>
         /// 変換処理を実行します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">Stream オブジェクト</param>
-        /// 
+        ///
         /// <returns>変換後のオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */

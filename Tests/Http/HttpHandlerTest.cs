@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -39,12 +39,12 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ConnectionClose
+        /// GetAsync_ConnectionClose
         ///
         /// <summary>
         /// ConnectionClose を設定するテストを行います。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// NuGet に公開されている System.Net.Http for .NET 3.5 には
         /// ConnectionClose に関するバグが存在する模様。
@@ -54,7 +54,7 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task ConnectionClose()
+        public async Task GetAsync_ConnectionClose()
         {
             var uri = new Uri("http://www.cube-soft.jp/");
             var h   = new Cube.Net.Http.HeaderHandler
@@ -72,7 +72,7 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// EntityTag
+        /// GetAsync_EntityTag
         ///
         /// <summary>
         /// EntityTag (ETag) のテストを行います。
@@ -80,7 +80,7 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task EntityTag()
+        public async Task GetAsync_EntityTag()
         {
             var uri = new Uri("http://www.example.com/");
             var h   = new Cube.Net.Http.HeaderHandler { UserAgent = GetUserAgent() };

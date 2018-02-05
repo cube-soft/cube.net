@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -64,18 +64,18 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         ///
         /// GetJsonAsync
-        /// 
+        ///
         /// <summary>
         /// JSON 形式のデータを非同期で取得します。
         /// </summary>
-        /// 
+        ///
         /// <param name="client">HTTP クライアント</param>
         /// <param name="uri">レスポンス取得 URL</param>
-        /// 
+        ///
         /// <returns>JSON 形式データの変換結果</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static Task<T> GetJsonAsync<T>(this HttpClient client, Uri uri) where T : class
-            => client.GetAsync(uri, new JsonContentConverter<T>());
+        public static Task<T> GetJsonAsync<T>(this HttpClient client, Uri uri)
+            where T : class => client.GetAsync(uri, new JsonContentConverter<T>());
     }
 }

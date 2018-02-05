@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,10 +17,8 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.IO;
-using System.Linq;
 using NUnit.Framework;
 using Cube.Net.Http;
-using Cube.Net.Rss;
 
 namespace Cube.Net.Tests
 {
@@ -31,7 +29,7 @@ namespace Cube.Net.Tests
     /// <summary>
     /// HttpClient に関連するテストを行うためのクラスです。
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// internal class の場合 GetXmlAsync() のテストに失敗するため、
     /// public class に設定しています。
@@ -46,7 +44,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetJsonAsync
-        /// 
+        ///
         /// <summary>
         /// JSON データを非同期で取得するテストを実行します。
         /// </summary>
@@ -72,7 +70,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetXmlAsync
-        /// 
+        ///
         /// <summary>
         /// XML データを非同期で取得するテストを実行します。
         /// </summary>
@@ -98,7 +96,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync
-        /// 
+        ///
         /// <summary>
         /// Handler に null を指定した場合のテストを実行します。
         /// </summary>
@@ -120,7 +118,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync_NotFound
-        /// 
+        ///
         /// <summary>
         /// 存在しない URL を指定した時の挙動を確認します。
         /// </summary>
@@ -140,7 +138,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync_ConverterThrows
-        /// 
+        ///
         /// <summary>
         /// 変換用オブジェクトが例外を送出した時の挙動を確認します。
         /// </summary>
@@ -153,8 +151,8 @@ namespace Cube.Net.Tests
             using (var http = HttpClientFactory.Create())
             {
                 Assert.That(
-                    () => http.GetAsync(uri, Error).Result,
-                    Throws.TypeOf<AggregateException>()
+                    () => http.GetAsync(uri, Throws).Result,
+                    NUnit.Framework.Throws.TypeOf<AggregateException>()
                           .And
                           .InnerException
                           .InstanceOf<ArgumentException>()
@@ -165,7 +163,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync_IgnoreException
-        /// 
+        ///
         /// <summary>
         /// 変換用オブジェクトが例外を無視する時の挙動を確認します。
         /// </summary>
@@ -179,7 +177,7 @@ namespace Cube.Net.Tests
             {
                 var result = http.GetAsync(
                     uri,
-                    new ContentConverter<long>(Error) { IgnoreException = true }
+                    new ContentConverter<long>(Throws) { IgnoreException = true }
                 ).Result;
                 Assert.That(result, Is.EqualTo(0L));
             }
@@ -192,13 +190,13 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// Throws
-        /// 
+        ///
         /// <summary>
         /// 例外を発生させる関数オブジェクトです。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        private Func<Stream, long> Error = (_) =>
+        private Func<Stream, long> Throws = (_) =>
         {
             throw new ArgumentException("ErrorTest");
         };

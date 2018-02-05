@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,29 +25,29 @@ namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// HttpOperations
+    /// HttpOperator
     ///
     /// <summary>
     /// HTTP 通信に関する拡張用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class HttpOperations
+    public static class HttpOperator
     {
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync(T)
-        /// 
+        ///
         /// <summary>
         /// HTTP 通信を実行し、変換結果を取得します。
         /// </summary>
-        /// 
+        ///
         /// <param name="client">HTTP クライアント</param>
         /// <param name="uri">レスポンス取得 URL</param>
         /// <param name="converter">変換用オブジェクト</param>
-        /// 
+        ///
         /// <returns>変換結果</returns>
-        /// 
+        ///
         /// <remarks>
         /// 例外の扱いについては、IContentConverter(T).IgnoreException の
         /// 設定に準じます。
@@ -81,20 +81,20 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync(T)
-        /// 
+        ///
         /// <summary>
         /// HTTP 通信を実行し、変換結果を取得します。
         /// </summary>
-        /// 
+        ///
         /// <param name="client">HTTP クライアント</param>
         /// <param name="uri">レスポンス取得 URL</param>
         /// <param name="func">変換用の関数オブジェクト</param>
-        /// 
+        ///
         /// <returns>変換結果</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static Task<T> GetAsync<T>(this HttpClient client,
-            Uri uri, Func<Stream, T> func)
-            => client.GetAsync(uri, new ContentConverter<T>(func));
+            Uri uri, Func<Stream, T> func) =>
+            client.GetAsync(uri, new ContentConverter<T>(func));
     }
 }
