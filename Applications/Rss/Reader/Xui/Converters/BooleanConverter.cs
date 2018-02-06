@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -62,7 +62,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="positive">true に対応する値</param>
         /// <param name="negative">false に対応する値</param>
         ///
@@ -77,7 +77,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="positive">true に対応する値</param>
         /// <param name="negative">false に対応する値</param>
         /// <param name="func">真偽判定用オブジェクト</param>
@@ -93,7 +93,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="positive">true に対応する値</param>
         /// <param name="negative">false に対応する値</param>
         /// <param name="func">真偽判定用オブジェクト</param>
@@ -110,7 +110,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="positive">true に対応する値</param>
         /// <param name="negative">false に対応する値</param>
         /// <param name="func">真偽判定用オブジェクト</param>
@@ -150,7 +150,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="positive">true に対応する整数値</param>
         /// <param name="negative">false に対応する整数値</param>
         ///
@@ -165,7 +165,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="positive">true に対応する整数値</param>
         /// <param name="negative">false に対応する整数値</param>
         /// <param name="func">真偽判定用オブジェクト</param>
@@ -205,7 +205,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="func">真偽判定用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -219,7 +219,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="positive">true に対応する値</param>
         /// <param name="negative">false に対応する値</param>
         /// <param name="func">真偽判定用オブジェクト</param>

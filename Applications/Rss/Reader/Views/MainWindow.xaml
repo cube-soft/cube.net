@@ -8,9 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:wf="clr-namespace:Cube.Forms;assembly=Cube.Forms"
+    xmlns:xc="clr-namespace:Cube.Xui.Converters"
     xmlns:xt="clr-namespace:Cube.Xui.Triggers"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
-    
+
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
     Title="{Binding Data.Article.Value, Converter={my:TitleConverter}}"
@@ -37,7 +38,7 @@
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding Setup}"/>
         </i:EventTrigger>
-        
+
         <i:EventTrigger EventName="Closed">
             <xt:DialogAction/>
         </i:EventTrigger>
@@ -57,7 +58,7 @@
         <xt:DialogTrigger Messenger="{Binding Messenger}">
             <xt:DialogAction/>
         </xt:DialogTrigger>
-        
+
         <my:RegisterTrigger>
             <my:RegisterWindowAction/>
         </my:RegisterTrigger>
@@ -138,7 +139,7 @@
                 Visibility="{Binding Data.Feed.Value, Converter={my:LastCheckedToVisibility}}">
             </Button>
 
-            <Button 
+            <Button
                 Command="{Binding Navigate}"
                 CommandParameter="{Binding Data.Feed.Value.Link}"
                 Grid.Row="1">
@@ -149,7 +150,8 @@
                                 Text="&#xe903;"
                                 Style="{StaticResource SymbolStyle}"
                                 Margin="0,0,6,3"
-                                VerticalAlignment="Center"/>
+                                VerticalAlignment="Center"
+                                Visibility="{Binding Data.Feed.HasValue, Converter={xc:BooleanToVisibility}}"/>
                             <TextBlock
                                 Text="{Binding Data.Feed.Value.Title}"
                                 ToolTip="{Binding Data.Feed.Value.Title}"
@@ -198,19 +200,19 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button 
+            <Button
                 x:Name="Settings"
                 Style="{StaticResource SettingsButtonStyle}"
                 ContextMenu="{StaticResource SettingsMenu}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <ei:ChangePropertyAction
-                            TargetObject="{Binding ContextMenu, ElementName=Settings}" 
+                            TargetObject="{Binding ContextMenu, ElementName=Settings}"
                             PropertyName="IsOpen"
                             Value="True"/>
                         <ei:ChangePropertyAction
-                            TargetObject="{Binding ContextMenu, ElementName=Settings}" 
-                            PropertyName="PlacementTarget" 
+                            TargetObject="{Binding ContextMenu, ElementName=Settings}"
+                            PropertyName="PlacementTarget"
                             Value="{Binding ElementName=Settings, Mode=OneWay}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -231,7 +233,7 @@
         <!-- Footer -->
         <StatusBar
             Style="{StaticResource FooterStyle}"
-            Grid.Row="1" 
+            Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="4">
             <StatusBarItem>
