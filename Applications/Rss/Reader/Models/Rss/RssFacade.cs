@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -32,7 +32,7 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// RSS フィードに関連する処理の窓口となるクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public sealed class RssFacade : IDisposable
     {
@@ -41,11 +41,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// RssFacade
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="settings">設定用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -55,6 +55,7 @@ namespace Cube.Net.App.Rss.Reader
             Settings.LoadOrDelete();
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
+            Settings.Saved += (s, e) => System.Diagnostics.Debug.WriteLine("******* Saved");
 
             Core.IO = Settings.IO;
             Core.FileName = Settings.Feed;
@@ -74,7 +75,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Data
-        /// 
+        ///
         /// <summary>
         /// バインド可能なデータ一覧を取得します。
         /// </summary>
@@ -85,7 +86,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Settings
-        /// 
+        ///
         /// <summary>
         /// ユーザ設定を取得します。
         /// </summary>
@@ -96,18 +97,18 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Property
-        /// 
+        ///
         /// <summary>
         /// 選択中の Web ページのプロパティを取得または設定します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private RssEntry Property { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
         /// IO
-        /// 
+        ///
         /// <summary>
         /// 入出力用オブジェクトを取得します。
         /// </summary>
@@ -118,7 +119,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Core
-        /// 
+        ///
         /// <summary>
         /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
         /// </summary>
@@ -137,7 +138,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// 初期処理を実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Setup()
         {
@@ -156,9 +157,9 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// 新規 URL を登録します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">URL</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public Task NewEntry(string src) => Core.Register(src.ToUri());
 
@@ -169,7 +170,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// 新しいカテゴリを生成します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void NewCategory() =>
             Select(Core.Create(Data.Entry.Value));
@@ -181,9 +182,9 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// 選択中の RSS エントリの内容を更新します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">選択中の RSS エントリ</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void UpdateEntry(IRssEntry src)
         {
@@ -201,20 +202,20 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// 選択中の RSS フィードの内容を更新します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">選択中の RSS フィード</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void UpdateFeed(RssFeed src) => Core.Update(src?.Uri);
 
         /* ----------------------------------------------------------------- */
         ///
         /// Move
-        /// 
+        ///
         /// <summary>
         /// 項目を移動します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">移動元の項目</param>
         /// <param name="dest">移動先のカテゴリ</param>
         /// <param name="index">カテゴリ中の挿入場所</param>
@@ -226,7 +227,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Remove
-        /// 
+        ///
         /// <summary>
         /// 現在選択中の RSS エントリを削除します。
         /// </summary>
@@ -240,7 +241,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Rename
-        /// 
+        ///
         /// <summary>
         /// 現在選択中の RSS エントリの名前を変更可能な状態に設定します。
         /// </summary>
@@ -251,7 +252,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// ReadAll
-        /// 
+        ///
         /// <summary>
         /// 現在選択中の RSS エントリ下の全ての記事を既読に設定します。
         /// </summary>
@@ -262,11 +263,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Reset
-        /// 
+        ///
         /// <summary>
         /// RSS フィードの内容をクリアし、再取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Reset()
         {
@@ -280,15 +281,15 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// RSS フィードを選択します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">選択項目</param>
-        /// 
+        ///
         /// <remarks>
         /// 未読アイテムがゼロの場合、選択項目から外れたタイミングで
         /// 全記事を削除しています。これは主にメモリ使用量の抑制を目的と
         /// しています。
         /// </remarks>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Select(IRssEntry src)
         {
@@ -312,13 +313,13 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Select
-        /// 
+        ///
         /// <summary>
         /// RSS フィード中の記事を選択します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">選択項目</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Select(RssItem src)
         {
@@ -331,35 +332,35 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Reschedule
-        /// 
+        ///
         /// <summary>
         /// RSS フィードのチェック方法を再設定します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">選択項目</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Reschedule(RssEntry src) => Core.Reschedule(src);
 
         /* ----------------------------------------------------------------- */
         ///
         /// Import
-        /// 
+        ///
         /// <summary>
         /// OPML 形式ファイルをインポートします。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Import(string path) => Core.Import(path);
 
         /* ----------------------------------------------------------------- */
         ///
         /// Export
-        /// 
+        ///
         /// <summary>
         /// OPML 形式でエクスポートします。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Export(string path) => Core.Export(path);
 
@@ -368,22 +369,22 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// ~RssFacade
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         ~RssFacade() { Dispose(false); }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを解放します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
@@ -394,11 +395,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを解放します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private void Dispose(bool disposing)
         {
@@ -423,7 +424,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// WhenReceived
-        /// 
+        ///
         /// <summary>
         /// 新着記事を受信した時に実行されるハンドラです。
         /// </summary>
@@ -442,7 +443,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// WhenSettingsChanged
-        /// 
+        ///
         /// <summary>
         /// 設定内容変更時に実行されるハンドラです。
         /// </summary>

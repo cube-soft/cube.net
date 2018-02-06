@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -38,11 +38,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// RssBindableData
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="root">ルートオブジェクト</param>
         /// <param name="settings">設定用オブジェクト</param>
         ///
@@ -60,7 +60,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Root
-        /// 
+        ///
         /// <summary>
         /// 登録されている RssEntry のルートにあたるオブジェクトを
         /// 取得します。
@@ -72,7 +72,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Settings
-        /// 
+        ///
         /// <summary>
         /// ユーザ設定を保持するオブジェクトを取得します。
         /// </summary>
@@ -83,7 +83,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Entry
-        /// 
+        ///
         /// <summary>
         /// 選択中の Web サイトを取得します。
         /// </summary>
@@ -94,7 +94,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Feed
-        /// 
+        ///
         /// <summary>
         /// 選択中の Web サイトの RSS フィードを取得します。
         /// </summary>
@@ -105,7 +105,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Article
-        /// 
+        ///
         /// <summary>
         /// 選択中の記事を取得します。
         /// </summary>
@@ -116,11 +116,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Uri
-        /// 
+        ///
         /// <summary>
         /// Web ブラウザに表示する URL を取得します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// このプロパティは通常時には使用されません。RSS フィードとは
         /// 関係のない Web ページを表示する際に設定されます。
@@ -132,7 +132,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Message
-        /// 
+        ///
         /// <summary>
         /// メッセージを取得します。
         /// </summary>

@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,7 +29,7 @@ namespace Cube.Net.App.Rss.Reader
     /// RssEntry オブジェクトのドラッグ&amp;ドロップを処理するための
     /// クラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class RssEntryDropTarget : IDropTarget
     {
@@ -38,11 +38,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// RssEntryDropTarget
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="callback">
         /// ドロップ時に実行されるコールバック関数
         /// </param>
@@ -61,11 +61,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// DragOver
-        /// 
+        ///
         /// <summary>
         /// ドラッグ状態でマウスオーバ時に実行されます。
         /// </summary>
-        /// 
+        ///
         /// <param name="e">ドロップ情報</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -74,7 +74,7 @@ namespace Cube.Net.App.Rss.Reader
             if (!CanDrop(e)) return;
 
             e.Effects           = DragDropEffects.Move;
-            e.DropTargetAdorner = e.TargetItem is RssCategory ?
+            e.DropTargetAdorner = e.Data is RssEntry && e.TargetItem is RssCategory ?
                                   DropTargetAdorners.Highlight :
                                   DropTargetAdorners.Insert;
         }
@@ -82,23 +82,16 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Drop
-        /// 
+        ///
         /// <summary>
         /// ドロップ時に実行されます。
         /// </summary>
-        /// 
+        ///
         /// <param name="e">ドロップ情報</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Drop(IDropInfo e)
-        {
-            var cvt   = e.TargetItem as IRssEntry;
-            var src   = e.Data as IRssEntry;
-            var dest  = cvt is RssEntry ? cvt.Parent : cvt;
-            var index = cvt is RssEntry ? e.InsertIndex : -1;
-
-            _callback(src, dest, index);
-        }
+        public void Drop(IDropInfo e) =>
+            _callback(e.Data as IRssEntry, e.TargetItem as IRssEntry, e.InsertIndex);
 
         #endregion
 
@@ -107,7 +100,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// CanDrop
-        /// 
+        ///
         /// <summary>
         /// ドロップ可能かどうかを判別します。
         /// </summary>
@@ -115,10 +108,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private bool CanDrop(IDropInfo e)
         {
-            var src  = e.Data as IRssEntry;
-            var dest = e.TargetItem as IRssEntry;
-
-            return src != dest && src.Parent != dest;
+            if (e.Data == e.TargetItem) return false;
+            if (e.Data is RssEntry src &&
+                e.TargetItem is RssCategory dest &&
+                src.Parent == dest) return false;
+            return true;
         }
 
         #endregion
