@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -34,22 +34,22 @@ namespace Cube.Xui
     /// <summary>
     /// コレクションを Binding 可能にするためのクラスです。
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// ObservableCollection(T) で発生する PropertyChanged および
     /// CollectionChanged イベントをコンストラクタで指定された同期
     /// コンテキストを用いて伝搬させます。
     /// </remarks>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public class BindableCollection<T> : ObservableCollection<T>
+    public class BindableCollection<T> : ObservableCollection<T>, IDisposable
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
         /// BindableCollection
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -60,32 +60,33 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// BindableCollection
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="collection">コピー元となるコレクション</param>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection(IEnumerable<T> collection)
-            : this(collection, SynchronizationContext.Current) { }
+        public BindableCollection(IEnumerable<T> collection) :
+            this(collection, SynchronizationContext.Current) { }
 
         /* ----------------------------------------------------------------- */
         ///
         /// BindableCollection
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="collection">コピー元となるコレクション</param>
         /// <param name="context">同期コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection(IEnumerable<T> collection, SynchronizationContext context)
-            : base(collection)
+        public BindableCollection(IEnumerable<T> collection, SynchronizationContext context) :
+            base(collection ?? new T[0])
         {
+            _dispose = new OnceAction<bool>(Dispose);
             _context = context;
         }
 
@@ -96,12 +97,12 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// IsSynchronous
-        /// 
+        ///
         /// <summary>
         /// UI スレッドに対して同期的にイベントを発生させるかどうかを
         /// 示す値を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// true の場合は Send メソッド、false の場合は Post メソッドを
         /// 用いてイベントを伝搬します。
@@ -113,12 +114,12 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// IsRedirected
-        /// 
+        ///
         /// <summary>
         /// 要素のイベントをリダイレクトするかどうかを示す値を取得または
         /// 設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// true に設定した場合、要素の PropertyChanged イベントが発生した
         /// 時に該当要素に対して NotifyCollectionChangedAction.Replace を
@@ -128,6 +129,54 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         public bool IsRedirected { get; set; } = true;
 
+        #region IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~BindableCollection
+        ///
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        ~BindableCollection() { _dispose.Invoke(false); }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            _dispose.Invoke(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        ///
+        /// <param name="disposing">
+        /// マネージオブジェクトを開放するかどうか
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing) UnsetHandler(this);
+        }
+
+        #endregion
+
         #endregion
 
         #region Implementations
@@ -135,7 +184,7 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// OnPropertyChanged
-        /// 
+        ///
         /// <summary>
         /// PropertyChanged イベントを発生させます。
         /// </summary>
@@ -154,7 +203,7 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// OnCollectionChanged
-        /// 
+        ///
         /// <summary>
         /// CollectionChanged イベントを発生させます。
         /// </summary>
@@ -170,18 +219,14 @@ namespace Cube.Xui
             else OnCollectionChangedCore(e);
         }
 
-        #endregion
-
-        #region Implementations
-
         /* ----------------------------------------------------------------- */
         ///
         /// OnCollectionChangedCore
-        /// 
+        ///
         /// <summary>
         /// CollectionChanged イベントを発生させます。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private void OnCollectionChangedCore(NotifyCollectionChangedEventArgs e)
         {
@@ -208,7 +253,7 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// SetHandler
-        /// 
+        ///
         /// <summary>
         /// 各項目に対してハンドラを設定します。
         /// </summary>
@@ -231,7 +276,7 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// UnsetHandler
-        /// 
+        ///
         /// <summary>
         /// 各項目からハンドラの設定を解除します。
         /// </summary>
@@ -248,7 +293,7 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// WhenMemberChanged
-        /// 
+        ///
         /// <summary>
         /// 要素のプロパティが変更された時に実行されるハンドラです。
         /// </summary>
@@ -271,6 +316,7 @@ namespace Cube.Xui
 
         #region Fields
         private SynchronizationContext _context = SynchronizationContext.Current;
+        private OnceAction<bool> _dispose;
         #endregion
     }
 }

@@ -205,7 +205,7 @@ namespace Cube.Net.App.Rss.Reader
                 Title  = (string)src.Attribute("title") ?? string.Empty,
             };
 
-            dest.Children = Convert(src, dest).ToBindable();
+            dest.Children = new BindableCollection<IRssEntry>(Convert(src, dest));
             return dest;
         }
 

@@ -704,7 +704,7 @@ namespace Cube.Net.App.Rss.Reader
         private void RegisterCore(RssEntry src)
         {
             if (_feeds.ContainsKey(src.Uri)) return;
-            src.Items = src.Items.ToBindable(_context);
+            src.Items = new BindableCollection<RssItem>(src.Items, _context);
 
             _feeds.Add(src);
             if (src.Parent == null) _tree.Add(src);

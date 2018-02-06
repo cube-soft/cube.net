@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -36,7 +37,7 @@ namespace Cube.Xui
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public class Bindable<T> : INotifyPropertyChanged
+    public class Bindable<T> : INotifyPropertyChanged, IDisposable
     {
         #region Constructors
 
@@ -214,6 +215,57 @@ namespace Cube.Xui
 
         #endregion
 
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~Bindable
+        ///
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        ~Bindable() { _dispose.Invoke(false); }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            _dispose.Invoke(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        ///
+        /// <param name="disposing">
+        /// マネージオブジェクトを開放するかどうか
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && Value is INotifyPropertyChanged e)
+            {
+                e.PropertyChanged -= WhenMemberChanged;
+            }
+        }
+
+        #endregion
+
         #region Implementations
 
         /* ----------------------------------------------------------------- */
@@ -234,6 +286,7 @@ namespace Cube.Xui
         #region Fields
         private T _value;
         private SynchronizationContext _context;
+        private OnceAction<bool> _dispose;
         #endregion
     }
 }

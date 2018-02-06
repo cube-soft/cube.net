@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -30,7 +30,7 @@ namespace Cube.Xui
     /// 関連付けられたオブジェクトの PropertyChanged イベント発生時に
     /// CanExecuteChanged イベントを発生させます。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class BindableCommand : RelayCommand, IDisposable
     {
@@ -39,11 +39,11 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// BindableCommand
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="execute">実行内容</param>
         /// <param name="canExecute">実行可能かどうか</param>
         /// <param name="obj">関連付けるオブジェクト</param>
@@ -65,11 +65,11 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// AssociatedObject
-        /// 
+        ///
         /// <summary>
         /// 関連付けられたオブジェクトを取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public INotifyPropertyChanged AssociatedObject { get; }
 
@@ -80,22 +80,22 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// ~BindableCommand
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         ~BindableCommand() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを開放します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
@@ -106,15 +106,15 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを開放します。
         /// </summary>
-        /// 
+        ///
         /// <param name="disposing">
         /// マネージオブジェクトを開放するかどうか
         /// </param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
@@ -131,12 +131,12 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// WhenChanged
-        /// 
+        ///
         /// <summary>
         /// 関連付けられたオブジェクトのプロパティが変更差た時に実行
         /// されるハンドラです。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         private void WhenChanged(object sender, PropertyChangedEventArgs e) =>
             RaiseCanExecuteChanged();

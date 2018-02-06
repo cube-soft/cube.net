@@ -114,7 +114,6 @@
     <Compile Include="Xui\Behaviors\WindowsFormsBehavior.cs" />
     <Compile Include="Xui\BindableCommand.cs" />
     <Compile Include="Xui\BindableCommandGeneric.cs" />
-    <Compile Include="Xui\BindableOperator.cs" />
     <Compile Include="Xui\Components\FileDialogMessage.cs" />
     <Compile Include="Xui\Components\Messenger.cs" />
     <Compile Include="Xui\Converters\BooleanConverter.cs" />
