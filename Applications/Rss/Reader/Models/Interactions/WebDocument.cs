@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -32,7 +32,7 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// WebBrowser のドキュメント内容と関連付けるための Behavior です。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class WebDocument : WindowsFormsBehavior<WebControl>
     {
@@ -43,7 +43,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Text
-        /// 
+        ///
         /// <summary>
         /// ドキュメント内容を取得または設定します。
         /// </summary>
@@ -54,7 +54,6 @@ namespace Cube.Net.App.Rss.Reader
             get => _shared as string;
             set
             {
-                if (_shared as string == value) return;
                 _shared = value;
                 if (Source != null)
                 {
@@ -67,7 +66,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// TextProperty
-        /// 
+        ///
         /// <summary>
         /// Text を保持するための DependencyProperty です。
         /// </summary>
@@ -91,11 +90,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Uri
-        /// 
+        ///
         /// <summary>
         /// Web ページの URL を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// URL 経由の Web ページの読み込みは時間を要するので、先に
         /// ローディングページを読み込みます。
@@ -107,7 +106,6 @@ namespace Cube.Net.App.Rss.Reader
             get => _shared as Uri;
             set
             {
-                if (_shared as Uri == value) return;
                 _shared = value;
                 if (value != null && Source != null)
                 {
@@ -122,7 +120,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// UriProperty
-        /// 
+        ///
         /// <summary>
         /// Uri を保持するための DependencyProperty です。
         /// </summary>
@@ -146,7 +144,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Hover
-        /// 
+        ///
         /// <summary>
         /// Hover 時に実行されるコマンドを取得または設定します。
         /// </summary>
@@ -161,7 +159,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// HoverProperty
-        /// 
+        ///
         /// <summary>
         /// Hover を保持するための DependencyProperty です。
         /// </summary>
@@ -184,7 +182,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// OnAttached
-        /// 
+        ///
         /// <summary>
         /// 要素へ接続された時に実行します。
         /// </summary>
@@ -206,7 +204,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// OnDetaching
-        /// 
+        ///
         /// <summary>
         /// 要素から解除された時に実行します。
         /// </summary>
@@ -245,7 +243,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// WhenDocumentCompleted
-        /// 
+        ///
         /// <summary>
         /// Web ドキュメントの読み込み完了時に実行されるハンドラです。
         /// </summary>
@@ -260,7 +258,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// WhenLoading
-        /// 
+        ///
         /// <summary>
         /// ローディング画面の読み込み完了時に実行されるハンドラです。
         /// </summary>
@@ -275,7 +273,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// WhenMouseOver
-        /// 
+        ///
         /// <summary>
         /// Web ドキュメントへのマウスオーバ時に実行されるハンドラです。
         /// </summary>
