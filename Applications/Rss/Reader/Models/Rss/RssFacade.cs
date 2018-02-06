@@ -55,7 +55,6 @@ namespace Cube.Net.App.Rss.Reader
             Settings.LoadOrDelete();
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
-            Settings.Saved += (s, e) => System.Diagnostics.Debug.WriteLine("******* Saved");
 
             Core.IO = Settings.IO;
             Core.FileName = Settings.Feed;
