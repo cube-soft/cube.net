@@ -32,6 +32,8 @@ namespace Cube.Xui.Converters
     /* --------------------------------------------------------------------- */
     public class Inverse : SimplexConverter
     {
+        #region Constructors
+
         /* ----------------------------------------------------------------- */
         ///
         /// Inverse
@@ -42,6 +44,8 @@ namespace Cube.Xui.Converters
         ///
         /* ----------------------------------------------------------------- */
         public Inverse() : base(e => !(bool)e) { }
+
+        #endregion
     }
 
     /* --------------------------------------------------------------------- */
@@ -55,6 +59,8 @@ namespace Cube.Xui.Converters
     /* --------------------------------------------------------------------- */
     public class BooleanToGeneric<T> : SimplexConverter
     {
+        #region Constructors
+
         /* ----------------------------------------------------------------- */
         ///
         /// BooleanToGeneric
@@ -119,6 +125,8 @@ namespace Cube.Xui.Converters
         public BooleanToGeneric(T positive, T negative,
             Func<object, Type, object, CultureInfo, bool> func) :
             base ((e, t, p, c) => func(e, t, p, c) ? positive : negative) { }
+
+        #endregion
     }
 
     /* --------------------------------------------------------------------- */
@@ -132,6 +140,8 @@ namespace Cube.Xui.Converters
     /* --------------------------------------------------------------------- */
     public class BooleanToInteger : BooleanToGeneric<int>
     {
+        #region Constructors
+
         /* ----------------------------------------------------------------- */
         ///
         /// BooleanToInteger
@@ -173,6 +183,8 @@ namespace Cube.Xui.Converters
         /* ----------------------------------------------------------------- */
         public BooleanToInteger(int negative, int positive, Func<object, bool> func) :
             base(positive, negative, func) { }
+
+        #endregion
     }
 
     /* --------------------------------------------------------------------- */
@@ -186,6 +198,8 @@ namespace Cube.Xui.Converters
     /* --------------------------------------------------------------------- */
     public class BooleanToVisibility : BooleanToGeneric<Visibility>
     {
+        #region Constructors
+
         /* ----------------------------------------------------------------- */
         ///
         /// BooleanToVisibility
@@ -210,7 +224,7 @@ namespace Cube.Xui.Converters
         ///
         /* ----------------------------------------------------------------- */
         public BooleanToVisibility(Func<object, bool> func) :
-            base(Visibility.Visible, Visibility.Collapsed, func) { }
+            this(Visibility.Visible, Visibility.Collapsed, func) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -227,5 +241,7 @@ namespace Cube.Xui.Converters
         /* ----------------------------------------------------------------- */
         public BooleanToVisibility(Visibility positive, Visibility negative, Func<object, bool> func) :
             base(positive, negative, func) { }
+
+        #endregion
     }
 }

@@ -4,10 +4,10 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:xt="clr-namespace:Cube.Xui.Triggers"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     mc:Ignorable="d"
-    
+
     FontFamily="Meiryo UI"
     Style="{StaticResource Dialog}"
     Title="CubeRSS Reader 設定"
@@ -28,16 +28,11 @@
         <BindingGroup Name="SourceBindings" NotifyOnValidationError="False"/>
     </Window.BindingGroup>
 
-    <i:Interaction.Triggers>
-        <xt:CloseTrigger Messenger="{Binding Messenger}">
-            <xt:CloseAction/>
-        </xt:CloseTrigger>
+    <i:Interaction.Behaviors>
+        <xb:CloseBehavior Messenger="{Binding Messenger}"/>
+        <xb:UpdateSourceBehavior Messenger="{Binding Messenger}"/>
+    </i:Interaction.Behaviors>
 
-        <xt:UpdateSourcesTrigger Messenger="{Binding Messenger}">
-            <xt:UpdateSourcesAction/>
-        </xt:UpdateSourcesTrigger>
-    </i:Interaction.Triggers>
-    
     <Grid Background="{StaticResource MainBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -131,7 +126,7 @@
                         <ColumnDefinition Width="12"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="18"/>
                         <RowDefinition Height="18"/>

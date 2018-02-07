@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -36,64 +36,64 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// DialogMessage
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
+        ///
+        /// <param name="content">メッセージ内容</param>
         ///
         /* ----------------------------------------------------------------- */
-        public DialogMessage(string text)
-            : this(text, AssemblyReader.Default.Title) { }
+        public DialogMessage(string content) :
+            this(content, AssemblyReader.Default.Title) { }
 
         /* ----------------------------------------------------------------- */
         ///
         /// DialogMessage
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
-        /// <param name="caption">タイトルキャプション</param>
+        ///
+        /// <param name="content">メッセージ内容</param>
+        /// <param name="title">タイトル</param>
         ///
         /* ----------------------------------------------------------------- */
-        public DialogMessage(string text, string caption)
-            : this(text, caption, null) { }
+        public DialogMessage(string content, string title) :
+            this(content, title, null) { }
 
         /* ----------------------------------------------------------------- */
         ///
         /// DialogMessage
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
+        ///
+        /// <param name="content">メッセージ内容</param>
         /// <param name="callback">コールバック用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public DialogMessage(string text, Action<MessageBoxResult> callback)
-            : this(text, AssemblyReader.Default.Title, callback) { }
+        public DialogMessage(string content, Action<DialogMessage> callback) :
+            this(content, AssemblyReader.Default.Title, callback) { }
 
         /* ----------------------------------------------------------------- */
         ///
         /// DialogMessage
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
-        /// <param name="text">メッセージ内容</param>
-        /// <param name="caption">タイトルキャプション</param>
+        ///
+        /// <param name="content">メッセージ内容</param>
+        /// <param name="title">タイトル</param>
         /// <param name="callback">コールバック用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public DialogMessage(string text, string caption, Action<MessageBoxResult> callback)
+        public DialogMessage(string content, string title, Action<DialogMessage> callback)
         {
-            Text     = text;
-            Caption  = caption;
+            Content  = content;
+            Title    = title;
             Callback = callback;
         }
 
@@ -104,40 +104,40 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// Callback
-        /// 
+        ///
         /// <summary>
         /// コールバック用オブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Action<MessageBoxResult> Callback { get; }
+        public Action<DialogMessage> Callback { get; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Text
-        /// 
+        /// Content
+        ///
         /// <summary>
         /// メッセージ内容を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Text { get; set; }
+        public string Content { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Caption
-        /// 
+        /// Title
+        ///
         /// <summary>
-        /// タイトルキャプションを取得または設定します。
+        /// タイトルを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Caption { get; set; }
+        public string Title { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Button
-        /// 
+        ///
         /// <summary>
         /// 表示ボタンを示す値を取得または設定します。
         /// </summary>
@@ -148,13 +148,25 @@ namespace Cube.Xui
         /* ----------------------------------------------------------------- */
         ///
         /// Image
-        /// 
+        ///
         /// <summary>
         /// 表示イメージを示す値を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public MessageBoxImage Image { get; set; } = MessageBoxImage.Error;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Result
+        ///
+        /// <summary>
+        /// メッセージボックス表示後のユーザの行動を示す値を取得または
+        /// 設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Result { get; set; } = true;
 
         #endregion
     }

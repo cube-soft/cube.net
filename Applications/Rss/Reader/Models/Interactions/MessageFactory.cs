@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,18 +35,18 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// RemoveWarning
-        /// 
+        ///
         /// <summary>
         /// 削除時の警告メッセージを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="name">削除名</param>
         /// <param name="e">コールバック関数</param>
-        /// 
+        ///
         /// <returns>DialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DialogMessage RemoveWarning(string name, Action<MessageBoxResult> e) =>
+        public static DialogMessage RemoveWarning(string name, Action<DialogMessage> e) =>
             new DialogMessage(
                 string.Format(Properties.Resources.MessageRemove, name),
                 Properties.Resources.TitleInformation,
@@ -59,17 +59,17 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// ImportWarning
-        /// 
+        ///
         /// <summary>
         /// インポート時の警告メッセージを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="e">コールバック関数</param>
-        /// 
+        ///
         /// <returns>DialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DialogMessage ImportWarning(Action<MessageBoxResult> e) =>
+        public static DialogMessage ImportWarning(Action<DialogMessage> e) =>
             new DialogMessage(
                 Properties.Resources.MessageImportWarning,
                 Properties.Resources.TitleWarning,
@@ -82,13 +82,13 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Import
-        /// 
+        ///
         /// <summary>
         /// インポート用メッセージを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="e">コールバック関数</param>
-        /// 
+        ///
         /// <returns>OpenFileDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
@@ -104,13 +104,13 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Export
-        /// 
+        ///
         /// <summary>
         /// エクスポート用メッセージを生成します。
         /// </summary>
-        /// 
+        ///
         /// <param name="e">コールバック関数</param>
-        /// 
+        ///
         /// <returns>SaveFileDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */

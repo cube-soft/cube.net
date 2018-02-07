@@ -9,7 +9,7 @@
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:wf="clr-namespace:Cube.Forms;assembly=Cube.Forms"
     xmlns:xc="clr-namespace:Cube.Xui.Converters"
-    xmlns:xt="clr-namespace:Cube.Xui.Triggers"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
 
     mc:Ignorable="d"
@@ -34,42 +34,20 @@
         <my:MainViewModel/>
     </Window.DataContext>
 
+    <i:Interaction.Behaviors>
+        <xb:CloseBehavior Messenger="{Binding Messenger}"/>
+        <xb:DialogBehavior Messenger="{Binding Messenger}"/>
+        <xb:OpenFileDialogBehavior Messenger="{Binding Messenger}"/>
+        <xb:SaveFileDialogBehavior Messenger="{Binding Messenger}"/>
+        <my:ShowRegisterWindowBehavior Messenger="{Binding Messenger}"/>
+        <my:ShowPropertyWindowBehavior Messenger="{Binding Messenger}"/>
+        <my:ShowSettingsWindowBehavior Messenger="{Binding Messenger}"/>
+    </i:Interaction.Behaviors>
+
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding Setup}"/>
         </i:EventTrigger>
-
-        <i:EventTrigger EventName="Closed">
-            <xt:DialogAction/>
-        </i:EventTrigger>
-
-        <xt:CloseTrigger Messenger="{Binding Messenger}">
-            <xt:CloseAction/>
-        </xt:CloseTrigger>
-
-        <xt:OpenFileDialogTrigger Messenger="{Binding Messenger}">
-            <xt:OpenFileDialogAction/>
-        </xt:OpenFileDialogTrigger>
-
-        <xt:SaveFileDialogTrigger Messenger="{Binding Messenger}">
-            <xt:SaveFileDialogAction/>
-        </xt:SaveFileDialogTrigger>
-
-        <xt:DialogTrigger Messenger="{Binding Messenger}">
-            <xt:DialogAction/>
-        </xt:DialogTrigger>
-
-        <my:RegisterTrigger>
-            <my:RegisterWindowAction/>
-        </my:RegisterTrigger>
-
-        <my:PropertyTrigger>
-            <my:PropertyWindowAction/>
-        </my:PropertyTrigger>
-
-        <my:SettingsTrigger>
-            <my:SettingsWindowAction/>
-        </my:SettingsTrigger>
     </i:Interaction.Triggers>
 
     <Grid x:Name="Root">

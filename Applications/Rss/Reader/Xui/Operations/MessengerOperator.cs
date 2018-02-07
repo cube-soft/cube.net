@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,20 +26,20 @@ namespace Cube.Xui
     /// <summary>
     /// Messenger の拡張用クラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public static class MessengerOperator
     {
         /* ----------------------------------------------------------------- */
         ///
         /// Send
-        /// 
+        ///
         /// <summary>
         /// 既定のメッセージを送信します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">Messenger オブジェクト</param>
-        /// 
+        ///
         /// <remarks>
         /// Messenger は型で判別しているため、不要な場合でもメッセージ
         /// オブジェクトを送信する必要がある。Send 拡張メソッドは、

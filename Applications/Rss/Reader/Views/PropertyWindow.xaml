@@ -6,10 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xc="clr-namespace:Cube.Xui.Converters"
-    xmlns:xt="clr-namespace:Cube.Xui.Triggers"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
     mc:Ignorable="d"
-    
+
     Style="{StaticResource Dialog}"
     FontFamily="Meiryo UI"
     Title="{Binding Entry.Value.Title, StringFormat={}{0} のプロパティ}"
@@ -24,17 +24,12 @@
     <Window.BindingGroup>
         <BindingGroup Name="SourceBindings" NotifyOnValidationError="False"/>
     </Window.BindingGroup>
-    
-    <i:Interaction.Triggers>
-        <xt:CloseTrigger Messenger="{Binding Messenger}">
-            <xt:CloseAction/>
-        </xt:CloseTrigger>
 
-        <xt:UpdateSourcesTrigger Messenger="{Binding Messenger}">
-            <xt:UpdateSourcesAction/>
-        </xt:UpdateSourcesTrigger>
-    </i:Interaction.Triggers>
-    
+    <i:Interaction.Behaviors>
+        <xb:CloseBehavior Messenger="{Binding Messenger}"/>
+        <xb:UpdateSourceBehavior Messenger="{Binding Messenger}"/>
+    </i:Interaction.Behaviors>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -64,7 +59,7 @@
                 VerticalAlignment="Center"
                 Grid.Row="0"
                 Grid.Column="0"/>
-            
+
             <TextBox
                 Text="{Binding Entry.Value.Title,
                     Mode=TwoWay,
@@ -125,13 +120,13 @@
                 Style="{StaticResource CopyableSummaryStyle}"
                 Grid.Row="4"
                 Grid.Column="1"/>
-            
+
             <TextBlock
                 Text="フィード URL"
                 Style="{StaticResource SummaryStyle}"
                 Grid.Row="5"
                 Grid.Column="0"/>
-            
+
             <TextBox
                 Text="{Binding Entry.Value.Uri, Converter={xc:ValueToString}}"
                 Style="{StaticResource CopyableSummaryStyle}"
@@ -143,7 +138,7 @@
                 Style="{StaticResource SummaryStyle}"
                 Grid.Row="6"
                 Grid.Column="0"/>
-            
+
             <TextBox
                 Text="{Binding Feed.Value.LastPublished, StringFormat=yyyy/MM/dd HH:mm:ss}"
                 ToolTip="最新記事が投稿された日時を表します"

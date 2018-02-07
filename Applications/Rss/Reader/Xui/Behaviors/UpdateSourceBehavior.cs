@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,56 +16,32 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Windows;
-using System.Windows.Interactivity;
 
-namespace Cube.Xui.Triggers
+namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// CloseMessage
+    /// UpdateSourceBehavior
     ///
     /// <summary>
-    /// ウィンドウを閉じることを示すメッセージクラスです。
+    /// Messenger 経由で UpdateSources を実行する Behavior です。
     /// </summary>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public class CloseMessage { }
-
-    /* --------------------------------------------------------------------- */
     ///
-    /// CloseTrigger
-    ///
-    /// <summary>
-    /// Messenger オブジェクト経由でウィンドウを閉じるための
-    /// Trigger クラスです。
-    /// </summary>
-    /// 
     /* --------------------------------------------------------------------- */
-    public class CloseTrigger : MessengerTrigger<CloseMessage> { }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// CloseAction
-    ///
-    /// <summary>
-    /// Window を閉じる TriggerAction です。
-    /// </summary>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public class CloseAction : TriggerAction<DependencyObject>
+    public class UpdateSourceBehavior : MessengerBehavior<UpdateSourcesMessage>
     {
         /* ----------------------------------------------------------------- */
         ///
         /// Invoke
-        /// 
+        ///
         /// <summary>
         /// 処理を実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        protected override void Invoke(object notused)
+        protected override void Invoke(UpdateSourcesMessage e)
         {
-            if (AssociatedObject is Window w) w.Close();
+            if (AssociatedObject is Window w) w.BindingGroup.UpdateSources();
         }
     }
 }

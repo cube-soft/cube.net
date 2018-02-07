@@ -5,9 +5,9 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:xt="clr-namespace:Cube.Xui.Triggers"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
     mc:Ignorable="d"
-        
+
     Style="{StaticResource Dialog}"
     Title="新しい Web サイトを登録"
     Height="210"
@@ -18,16 +18,11 @@
         <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
     </Window.Resources>
 
-    <i:Interaction.Triggers>
-        <xt:DialogTrigger Messenger="{Binding Messenger}">
-            <xt:DialogAction/>
-        </xt:DialogTrigger>
-        
-        <xt:CloseTrigger Messenger="{Binding Messenger}">
-            <xt:CloseAction/>
-        </xt:CloseTrigger>
-    </i:Interaction.Triggers>
-    
+    <i:Interaction.Behaviors>
+        <xb:CloseBehavior  Messenger="{Binding Messenger}"/>
+        <xb:DialogBehavior Messenger="{Binding Messenger}"/>
+    </i:Interaction.Behaviors>
+
     <Grid FocusManager.FocusedElement="{Binding ElementName=UrlTextBox}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -47,7 +42,7 @@
                 VerticalAlignment="Center"
                 Padding="3"/>
         </StackPanel>
-        
+
         <StackPanel
             Orientation="Horizontal"
             FlowDirection="RightToLeft"

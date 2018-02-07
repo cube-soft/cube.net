@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -42,10 +42,10 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="forward">変換関数</param>
         /// <param name="back">逆変換関数</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public DuplexConverter(Func<object, object> forward, Func<object, object> back) :
             this((x, _, __, ___) => forward(x), (x, _, __, ___) => back(x)) { }
@@ -57,10 +57,10 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="forward">変換関数</param>
         /// <param name="back">逆変換関数</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public DuplexConverter(
             Func<object, object, object> forward,
@@ -77,10 +77,10 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="forward">変換関数</param>
         /// <param name="back">逆変換関数</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public DuplexConverter(
             Func<object, Type, object, CultureInfo, object> forward,
@@ -101,7 +101,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// 変換処理を実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public object Convert(object value, Type target, object parameter, CultureInfo culture) =>
             _forward(value, target, parameter, culture);

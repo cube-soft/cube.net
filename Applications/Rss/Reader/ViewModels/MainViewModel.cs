@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -31,7 +31,7 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// メイン画面とモデルを関連付けるための ViewModel です。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class MainViewModel : CommonViewModel
     {
@@ -40,7 +40,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// MainViewModel
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -51,7 +51,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// MainViewModel
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -70,7 +70,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Data
-        /// 
+        ///
         /// <summary>
         /// バインド用データを取得します。
         /// </summary>
@@ -81,7 +81,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// DropTarget
-        /// 
+        ///
         /// <summary>
         /// ドラッグ&amp;ドロップ時の処理用オブジェクトを取得します。
         /// </summary>
@@ -92,7 +92,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Model
-        /// 
+        ///
         /// <summary>
         /// Model オブジェクトを取得します。
         /// </summary>
@@ -107,7 +107,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Setup
-        /// 
+        ///
         /// <summary>
         /// 初期処理を実行するコマンドです。
         /// </summary>
@@ -120,7 +120,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Property
-        /// 
+        ///
         /// <summary>
         /// RSS フィードのプロパティ画面表示時に実行されるコマンドです。
         /// </summary>
@@ -141,7 +141,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Settings
-        /// 
+        ///
         /// <summary>
         /// 設定画面表示時に実行されるコマンドです。
         /// </summary>
@@ -156,7 +156,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Import
-        /// 
+        ///
         /// <summary>
         /// RSS フィードをインポートするコマンドです。
         /// </summary>
@@ -164,15 +164,12 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Import => _import ?? (
             _import = new RelayCommand(() => Messenger.Send(
-                MessageFactory.ImportWarning(e0 =>
+                MessageFactory.ImportWarning(msg =>
                 {
-                    if (e0 == MessageBoxResult.Yes)
+                    if (msg.Result) Messenger.Send(MessageFactory.Import(e =>
                     {
-                        Messenger.Send(MessageFactory.Import(e1 =>
-                        {
-                            if (!e1.Cancel) Model.Import(e1.FileName);
-                        }));
-                    }
+                        if (e.Result) Model.Import(e.FileName);
+                    }));
                 }))
             )
         );
@@ -180,7 +177,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Export
-        /// 
+        ///
         /// <summary>
         /// 現在の RSS フィードをエクスポートするコマンドです。
         /// </summary>
@@ -190,7 +187,7 @@ namespace Cube.Net.App.Rss.Reader
             _export = new RelayCommand(() => Messenger.Send(
                 MessageFactory.Export(e =>
                 {
-                    if (!e.Cancel) Model.Export(e.FileName);
+                    if (e.Result) Model.Export(e.FileName);
                 }))
             )
         );
@@ -198,7 +195,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// NewEntry
-        /// 
+        ///
         /// <summary>
         /// 新規 URL を登録するコマンドです。
         /// </summary>
@@ -213,7 +210,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// NewCategory
-        /// 
+        ///
         /// <summary>
         /// 新しいカテゴリを追加するコマンドです。
         /// </summary>
@@ -226,7 +223,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Remove
-        /// 
+        ///
         /// <summary>
         /// フィード削除時に実行されるコマンドです。
         /// </summary>
@@ -236,7 +233,7 @@ namespace Cube.Net.App.Rss.Reader
             _remove = new RelayCommand(() => Messenger.Send(
                 MessageFactory.RemoveWarning(Data.Entry.Value?.Title, e =>
                 {
-                    if (e == MessageBoxResult.Yes) Model.Remove();
+                    if (e.Result) Model.Remove();
                 }))
             )
         );
@@ -244,7 +241,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Rename
-        /// 
+        ///
         /// <summary>
         /// 名前の変更時に実行されるコマンドです。
         /// </summary>
@@ -257,7 +254,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Update
-        /// 
+        ///
         /// <summary>
         /// RSS フィード更新時に実行されるコマンドです。
         /// </summary>
@@ -270,7 +267,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// UpdateOne
-        /// 
+        ///
         /// <summary>
         /// RSS フィード更新時に実行されるコマンドです。
         /// </summary>
@@ -283,7 +280,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// ReadAll
-        /// 
+        ///
         /// <summary>
         /// 全ての記事を既読に設定するコマンドです。
         /// </summary>
@@ -296,11 +293,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Reset
-        /// 
+        ///
         /// <summary>
         /// RSS フィードの内容をクリアし、再取得するコマンドです。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public ICommand Reset => _reset ?? (
             _reset = new RelayCommand(() => Model.Reset())
@@ -309,7 +306,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// SelectEntry
-        /// 
+        ///
         /// <summary>
         /// RssEntry を選択するコマンドです。
         /// </summary>
@@ -325,7 +322,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// SelectArticle
-        /// 
+        ///
         /// <summary>
         /// RssItem を選択するコマンドです。
         /// </summary>
@@ -341,7 +338,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Hover
-        /// 
+        ///
         /// <summary>
         /// マウスオーバ時に実行されるコマンドです。
         /// </summary>
@@ -357,7 +354,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Navigate
-        /// 
+        ///
         /// <summary>
         /// URL 先の Web ページを表示するコマンドです。
         /// </summary>
@@ -374,7 +371,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを開放します。
         /// </summary>

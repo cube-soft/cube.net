@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,15 +22,17 @@ namespace Cube.Xui.Converters
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ImageConversions
+    /// ImageOperator
     ///
     /// <summary>
-    /// BitmapImage オブジェクト関連する拡張用クラスです。
+    /// BitmapImage オブジェクトに関連する拡張用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class ImageOperations
+    public static class ImageOperator
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
         /// ToBitmapImage
@@ -39,7 +41,7 @@ namespace Cube.Xui.Converters
         /// System.Drawing.Image オブジェクトから BitmapImage オブジェクトに
         /// 変換します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public static BitmapImage ToBitmapImage(this System.Drawing.Image src)
         {
@@ -57,6 +59,8 @@ namespace Cube.Xui.Converters
                 return dest;
             }
         }
+
+        #endregion
     }
 
     /* --------------------------------------------------------------------- */
@@ -71,6 +75,8 @@ namespace Cube.Xui.Converters
     /* --------------------------------------------------------------------- */
     public class ImageConverter : SimplexConverter
     {
+        #region Constructors
+
         /* ----------------------------------------------------------------- */
         ///
         /// ImageValueConverter
@@ -78,7 +84,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public ImageConverter() : base(e =>
         {
@@ -87,5 +93,7 @@ namespace Cube.Xui.Converters
                       null;
             return src.ToBitmapImage();
         }) { }
+
+        #endregion
     }
 }

@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,32 +24,35 @@ namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// EditMode
+    /// EditBehavior
     ///
     /// <summary>
     /// TextBox の編集可能状態を切り替えるためのクラスです。
+    /// 編集専用の TextBox をあらかじめ用意して置き、通常時は
+    /// Visibility.Collapsed で非表示にします。そして、編集時のみ
+    /// Visibility.Visible に変更して TextBox を表示させます。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public class EditMode : Behavior<TextBox>
+    public class EditBehavior : Behavior<TextBox>
     {
         #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Value
-        /// 
+        /// Editing
+        ///
         /// <summary>
-        /// 編集可能かどうかを示す値を取得または設定します。
+        /// 編集状態かどうかを示す値を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Value
+        public bool Editing
         {
-            get => (bool)GetValue(ValueProperty);
+            get => (bool)GetValue(EditingProperty);
             set
             {
-                SetValue(ValueProperty, value);
+                SetValue(EditingProperty, value);
 
                 var control = AssociatedObject as TextBox;
                 if (control == null) return;
@@ -60,21 +63,21 @@ namespace Cube.Xui.Behaviors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ValueProperty
-        /// 
+        /// EditingProperty
+        ///
         /// <summary>
-        /// Editable を保持するための DependencyProperty です。
+        /// Editing を保持するための DependencyProperty です。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static readonly DependencyProperty ValueProperty =
+        public static readonly DependencyProperty EditingProperty =
             DependencyProperty.RegisterAttached(
-                nameof(Value),
+                nameof(Editing),
                 typeof(bool),
-                typeof(EditMode),
+                typeof(EditBehavior),
                 new PropertyMetadata(false, (s, e) =>
                 {
-                    if (s is EditMode em) em.Value = (bool)e.NewValue;
+                    if (s is EditBehavior em) em.Editing = (bool)e.NewValue;
                 })
             );
 
@@ -85,7 +88,7 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         ///
         /// OnAttached
-        /// 
+        ///
         /// <summary>
         /// 要素へ接続された時に実行します。
         /// </summary>
@@ -96,7 +99,7 @@ namespace Cube.Xui.Behaviors
             base.OnAttached();
             if (AssociatedObject is TextBox c)
             {
-                if (Value) Enable(c);
+                if (Editing) Enable(c);
                 else Disable(c);
 
                 c.LostFocus += WhenLostFocus;
@@ -107,7 +110,7 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         ///
         /// OnDetaching
-        /// 
+        ///
         /// <summary>
         /// 要素から解除された時に実行します。
         /// </summary>
@@ -126,18 +129,18 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         ///
         /// WhenLostFocus
-        /// 
+        ///
         /// <summary>
         /// フォーカスが外れた時に実行されるハンドラです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenLostFocus(object sender, RoutedEventArgs e) => Value = false;
+        private void WhenLostFocus(object sender, RoutedEventArgs e) => Editing = false;
 
         /* ----------------------------------------------------------------- */
         ///
         /// WhenKeyDown
-        /// 
+        ///
         /// <summary>
         /// キー押下時に実行されるハンドラです。
         /// </summary>
@@ -156,7 +159,7 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         ///
         /// Enable
-        /// 
+        ///
         /// <summary>
         /// 編集可能な状態に設定します。
         /// </summary>
@@ -172,7 +175,7 @@ namespace Cube.Xui.Behaviors
         /* ----------------------------------------------------------------- */
         ///
         /// Disable
-        /// 
+        ///
         /// <summary>
         /// 編集不可能な状態に設定します。
         /// </summary>

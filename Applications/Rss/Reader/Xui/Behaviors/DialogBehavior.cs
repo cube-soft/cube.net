@@ -15,22 +15,20 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
 using System.Windows;
-using System.Windows.Interactivity;
 
-namespace Cube.Xui.Triggers
+namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// DisposeAction
+    /// DialogBehavior
     ///
     /// <summary>
-    /// DataContext の開放処理を実行する TriggerAction です。
+    /// メッセージボックスを表示する Behavior です。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class DisposeAction : TriggerAction<FrameworkElement>
+    public class DialogBehavior : MessengerBehavior<DialogMessage>
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -41,10 +39,12 @@ namespace Cube.Xui.Triggers
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void Invoke(object notused)
+        protected override void Invoke(DialogMessage e)
         {
-            if (AssociatedObject.DataContext is IDisposable dc) dc.Dispose();
-            AssociatedObject.DataContext = null;
+            var dest = MessageBox.Show(e.Content, e.Title, e.Button, e.Image);
+            e.Result = dest == MessageBoxResult.OK ||
+                       dest == MessageBoxResult.Yes;
+            e.Callback?.Invoke(e);
         }
     }
 }

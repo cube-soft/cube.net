@@ -19,18 +19,18 @@ using System.Windows;
 using System.Windows.Interactivity;
 using GalaSoft.MvvmLight.Messaging;
 
-namespace Cube.Xui.Triggers
+namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MessengerTrigger(T)
+    /// MessengerBehavior(T)
     ///
     /// <summary>
-    /// Messenger オブジェクトに登録するための Trigger クラスです。
+    /// Messenger オブジェクトに登録するための Behavior クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class MessengerTrigger<T> : TriggerBase<DependencyObject>
+    public abstract class MessengerBehavior<T> : Behavior<DependencyObject>
     {
         #region Properties
 
@@ -53,7 +53,7 @@ namespace Cube.Xui.Triggers
 
                 _messenger = value;
                 if (_messenger == null) return;
-                _messenger.Register<T>(AssociatedObject, e => InvokeActions(e));
+                _messenger.Register<T>(AssociatedObject, e => Invoke(e));
             }
         }
 
@@ -70,12 +70,29 @@ namespace Cube.Xui.Triggers
             DependencyProperty.RegisterAttached(
                 nameof(Messenger),
                 typeof(IMessenger),
-                typeof(MessengerTrigger<T>),
+                typeof(MessengerBehavior<T>),
                 new PropertyMetadata((s, e) =>
                 {
-                    if (s is MessengerTrigger<T> t) t.Messenger = e.NewValue as IMessenger;
+                    if (s is MessengerBehavior<T> b) b.Messenger = e.NewValue as IMessenger;
                 })
             );
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Invoke
+        ///
+        /// <summary>
+        /// 処理を実行します。
+        /// </summary>
+        ///
+        /// <param name="e">パラメータ</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void Invoke(T e) { }
 
         #endregion
 
@@ -93,7 +110,7 @@ namespace Cube.Xui.Triggers
         protected override void OnAttached()
         {
             base.OnAttached();
-            Messenger.Register<T>(AssociatedObject, e => InvokeActions(e));
+            Messenger.Register<T>(AssociatedObject, e => Invoke(e));
         }
 
         /* ----------------------------------------------------------------- */

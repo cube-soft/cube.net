@@ -387,7 +387,7 @@ namespace Cube.Net.App.Rss.Reader
             Categories.Concat(new[] { new RssCategory
             {
                 Title    = string.Empty,
-                Children = new BindableCollection<IRssEntry>(Entries),
+                Children = Entries.Cast<IRssEntry>().ToBindable(),
             }})
         );
 
@@ -704,7 +704,7 @@ namespace Cube.Net.App.Rss.Reader
         private void RegisterCore(RssEntry src)
         {
             if (_feeds.ContainsKey(src.Uri)) return;
-            src.Items = new BindableCollection<RssItem>(src.Items, _context);
+            src.Items = src.Items.ToBindable(_context);
 
             _feeds.Add(src);
             if (src.Parent == null) _tree.Add(src);

@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,85 +15,43 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xui.Triggers;
+using Cube.Xui.Behaviors;
 
 namespace Cube.Net.App.Rss.Reader
 {
-    #region RegisterWindow
-
     /* --------------------------------------------------------------------- */
     ///
-    /// RegisterTrigger
+    /// ShowRegisterWindowBehavior
     ///
     /// <summary>
-    /// RegisterViewModel を介した MesengerTrigger です。
+    /// RegisterWindow を表示するための Behavior です。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public class RegisterTrigger : MessengerTrigger<RegisterViewModel> { }
+    public class ShowRegisterWindowBehavior :
+        ShowDialogBehavior<RegisterWindow, RegisterViewModel> { }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// RegisterWindowAction
+    /// ShowPropertyWindowBehavior
     ///
     /// <summary>
-    /// RegisterWindow を表示するための Action クラスです。
+    /// PropertyWindow を表示するための Behavior です。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public class RegisterWindowAction : ShowDialogAction<RegisterWindow> { }
-
-    #endregion
-
-    #region PropertyWindow
+    public class ShowPropertyWindowBehavior :
+        ShowDialogBehavior<PropertyWindow, PropertyViewModel> { }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// PropertyTrigger
+    /// ShowSettingsWindowAction
     ///
     /// <summary>
-    /// PropertyViewModel を介した MesengerTrigger です。
+    /// SettingsWindow を表示するための Behavior です。
     /// </summary>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public class PropertyTrigger : MessengerTrigger<PropertyViewModel> { }
-
-    /* --------------------------------------------------------------------- */
     ///
-    /// PropertyWindowAction
-    ///
-    /// <summary>
-    /// PropertyWindow を表示するための Action クラスです。
-    /// </summary>
-    /// 
     /* --------------------------------------------------------------------- */
-    public class PropertyWindowAction : ShowDialogAction<PropertyWindow> { }
-
-    #endregion
-
-    #region SettingsWindow
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// SettingsTrigger
-    ///
-    /// <summary>
-    /// SettingsViewModel を介した MesengerTrigger です。
-    /// </summary>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public class SettingsTrigger : MessengerTrigger<SettingsViewModel> { }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// SettingsWindowAction
-    ///
-    /// <summary>
-    /// SettingsWindow を表示するための Action クラスです。
-    /// </summary>
-    /// 
-    /* --------------------------------------------------------------------- */
-    public class SettingsWindowAction : ShowDialogAction<SettingsWindow> { }
-
-    #endregion
+    public class ShowSettingsWindowBehavior :
+        ShowDialogBehavior<SettingsWindow, SettingsViewModel> { }
 }

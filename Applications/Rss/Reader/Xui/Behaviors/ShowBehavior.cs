@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,65 +16,56 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Windows;
-using System.Windows.Interactivity;
 
-namespace Cube.Xui.Triggers
+namespace Cube.Xui.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ShowAction(TView)
+    /// ShowBehavior(TView, TViewModel)
     ///
     /// <summary>
-    /// Window を表示する TriggerAction です。
+    /// 新規ウィンドウを表示する Behavior です。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public class ShowAction<TView> : TriggerAction<DependencyObject>
+    public class ShowBehavior<TView, TViewModel> : MessengerBehavior<TViewModel>
         where TView : Window, new()
     {
         /* ----------------------------------------------------------------- */
         ///
         /// Invoke
-        /// 
+        ///
         /// <summary>
         /// 処理を実行します。
         /// </summary>
-        /// 
-        /// <param name="parameter">DataContext オブジェクト</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        protected override void Invoke(object parameter)
-            => new TView { DataContext = parameter }.Show();
+        protected override void Invoke(TViewModel e) =>
+            new TView { DataContext = e }.Show();
     }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// ShowDialogAction(TView)
+    /// ShowDialogBehavior(TView, TViewMode)
     ///
     /// <summary>
-    /// Window を表示する TriggerAction です。
+    /// 新規ウィンドウをモーダル表示する Behavior です。
     /// </summary>
-    /// 
-    /// <remarks>
-    /// Window.Show() の代わりに Window.ShowDialog() を実行します。
-    /// </remarks>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public class ShowDialogAction<TView> : TriggerAction<DependencyObject>
+    public class ShowDialogBehavior<TView, TViewModel> : MessengerBehavior<TViewModel>
         where TView : Window, new()
     {
         /* ----------------------------------------------------------------- */
         ///
         /// Invoke
-        /// 
+        ///
         /// <summary>
         /// 処理を実行します。
         /// </summary>
-        /// 
-        /// <param name="parameter">DataContext オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void Invoke(object parameter)
-            => new TView { DataContext = parameter }.ShowDialog();
+        protected override void Invoke(TViewModel e) =>
+            new TView { DataContext = e }.ShowDialog();
     }
 }

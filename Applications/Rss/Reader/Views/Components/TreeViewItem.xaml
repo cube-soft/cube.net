@@ -23,7 +23,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
     <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
         <Setter Property="IsExpanded" Value="{Binding Expanded, Mode=TwoWay}"/>
         <Setter Property="Template">
@@ -48,7 +48,7 @@
                         </Border>
                         <ItemsPresenter Name="ItemsHost" Grid.Row="1"/>
                     </Grid>
-                    
+
                     <ControlTemplate.Triggers>
                         <Trigger Property="TreeViewItem.IsExpanded">
                             <Setter TargetName="ItemsHost" Property="UIElement.Visibility" Value="{x:Static Visibility.Collapsed}"/>
@@ -73,14 +73,14 @@
     <!--
         ToolTip for RSS entry
     -->
-    
+
     <ToolTip x:Key="RssEntryToolTip">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding Title}"/>
             <TextBlock Text="{Binding Count, StringFormat=' ({0})'}"/>
         </StackPanel>
     </ToolTip>
-    
+
     <!--
         TreeViewItem for RssCategory
     -->
@@ -115,7 +115,7 @@
                 Visibility="Collapsed"
                 Grid.Column="1">
                 <i:Interaction.Behaviors>
-                    <xb:EditMode Value="{Binding Editing, Mode=TwoWay}"/>
+                    <xb:EditBehavior Editing="{Binding Editing, Mode=TwoWay}"/>
                 </i:Interaction.Behaviors>
             </TextBox>
 
@@ -128,7 +128,7 @@
             </i:Interaction.Triggers>
         </Grid>
     </ControlTemplate>
-    
+
     <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Children}">
         <CheckBox
             IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
@@ -150,7 +150,7 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
-    
+
     <ControlTemplate x:Key="RssEntryTemplate">
         <Border
             Style="{StaticResource RssEntryBorderStyle}"
@@ -182,7 +182,7 @@
                     Visibility="Collapsed"
                     Grid.Column="1">
                     <i:Interaction.Behaviors>
-                        <xb:EditMode Value="{Binding Editing, Mode=TwoWay}"/>
+                        <xb:EditBehavior Editing="{Binding Editing, Mode=TwoWay}"/>
                     </i:Interaction.Behaviors>
                 </TextBox>
 

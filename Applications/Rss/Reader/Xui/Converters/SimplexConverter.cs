@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -43,9 +43,9 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="func">変換関数</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public SimplexConverter(Func<object, object> func) :
             this((x, _, __, ___) => func(x)) { }
@@ -57,9 +57,9 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="func">変換関数</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public SimplexConverter(Func<object, object, object> func) :
             this((x, _, y, __) => func(x, y)) { }
@@ -71,9 +71,9 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="func">変換関数</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public SimplexConverter(Func<object, Type, object, CultureInfo, object> func)
         {
@@ -91,7 +91,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// 変換処理を実行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public object Convert(object value, Type target, object parameter, CultureInfo culture) =>
             _func(value, target, parameter, culture);
@@ -145,7 +145,7 @@ namespace Cube.Xui.Converters
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public ValueToString() : base (e => e?.ToString() ?? string.Empty) { }
     }

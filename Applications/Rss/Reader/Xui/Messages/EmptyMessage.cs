@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,54 +15,27 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Windows;
-using System.Windows.Interactivity;
-
-namespace Cube.Xui.Triggers
+namespace Cube.Xui
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// DialogTrigger
+    /// CloseMessage
     ///
     /// <summary>
-    /// メッセージボックスを表示するための Trigger クラスです。
+    /// ウィンドウを閉じることを示すメッセージです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public class DialogTrigger : MessengerTrigger<DialogMessage> { }
+    public class CloseMessage { }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// DialogAction
+    /// UpdateSources
     ///
     /// <summary>
-    /// メッセージボックスを表示するための Action クラスです。
+    /// UpdateSources を実行する事を表すメッセージです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
-    public class DialogAction : TriggerAction<DependencyObject>
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Invoke
-        /// 
-        /// <summary>
-        /// メッセージボックスを表示します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void Invoke(object parameter)
-        {
-            if (parameter is DialogMessage msg)
-            {
-                var result = MessageBox.Show(
-                    msg.Text,
-                    msg.Caption,
-                    msg.Button,
-                    msg.Image
-                );
-                msg.Callback?.Invoke(result);
-            }
-        }
-    }
+    public class UpdateSourcesMessage { }
 }
