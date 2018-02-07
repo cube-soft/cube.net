@@ -81,6 +81,7 @@ namespace Cube.Xui
         {
             _value   = value;
             _context = context;
+            _dispose = new OnceAction<bool>(Dispose);
         }
 
         #endregion

@@ -55,7 +55,21 @@ namespace Cube.Xui
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection() : base() { }
+        public BindableCollection() : this(new T[0]) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// BindableCollection
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /// <param name="context">同期コンテキスト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public BindableCollection(SynchronizationContext context) :
+            this(new T[0], context) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -315,7 +329,7 @@ namespace Cube.Xui
         #endregion
 
         #region Fields
-        private SynchronizationContext _context = SynchronizationContext.Current;
+        private SynchronizationContext _context;
         private OnceAction<bool> _dispose;
         #endregion
     }
