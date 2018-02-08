@@ -309,32 +309,10 @@ namespace Cube.Net.Rss
         /// <returns>削除が成功したかどうか</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Remove(Uri key) => Remove(key, false);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Remove
-        ///
-        /// <summary>
-        /// 指定したキーを持つ要素を削除します。
-        /// </summary>
-        ///
-        /// <param name="key">キー</param>
-        /// <param name="deleteCache">
-        /// キャッシュファイルを削除するかどうか
-        /// </param>
-        ///
-        /// <returns>削除が成功したかどうか</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool Remove(Uri key, bool deleteCache)
+        public bool Remove(Uri key)
         {
             var result = _inner.Remove(key);
-            if (result)
-            {
-                _otm.Remove(key);
-                if (deleteCache) DeleteCache(key);
-            }
+            if (result) _otm.Remove(key);
             return result;
         }
 
@@ -355,25 +333,6 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Remove
-        ///
-        /// <summary>
-        /// 指定した要素を削除します。
-        /// </summary>
-        ///
-        /// <param name="item">要素</param>
-        /// <param name="deleteCache">
-        /// キャッシュファイルを削除するかどうか
-        /// </param>
-        ///
-        /// <returns>削除が成功したかどうか</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool Remove(KeyValuePair<Uri, RssFeed> item, bool deleteCache) =>
-            Remove(item.Key, deleteCache);
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Clear
         ///
         /// <summary>
@@ -381,28 +340,9 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Clear() => Clear(false);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Clear
-        ///
-        /// <summary>
-        /// 全ての項目を削除します。
-        /// </summary>
-        ///
-        /// <param name="deleteCache">
-        /// キャッシュファイルを削除するかどうか
-        /// </param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Clear(bool deleteCache)
+        public void Clear()
         {
             _otm.Clear();
-            if (deleteCache)
-            {
-                foreach (var uri in _inner.Keys) DeleteCache(uri);
-            }
             _inner.Clear();
         }
 
