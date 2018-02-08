@@ -15,8 +15,9 @@ before_build:
     - nuget sources add -name Cube.FileSystem -source https://ci.appveyor.com/nuget/cube.filesystem
     - nuget sources add -name Cube.Images -source https://ci.appveyor.com/nuget/cube.images
     - nuget sources add -name Cube.Forms -source https://ci.appveyor.com/nuget/cube.forms
+    - nuget sources add -name Cube.Xui -source https://ci.appveyor.com/nuget/cube.xui
     - nuget restore Cube.Net.Rss.sln
-build: 
+build:
     parallel: true
     project: Cube.Net.Rss.sln
     publish_nuget: true
@@ -31,4 +32,3 @@ after_test:
     - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
     - pip install codecov
     - codecov -f CoverResult.xml
-    
