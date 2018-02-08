@@ -8,8 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:wf="clr-namespace:Cube.Forms;assembly=Cube.Forms"
-    xmlns:xc="clr-namespace:Cube.Xui.Converters"
-    xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
+    xmlns:xc="clr-namespace:Cube.Xui.Converters;assembly=Cube.Xui"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
 
     mc:Ignorable="d"

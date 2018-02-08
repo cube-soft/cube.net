@@ -3,8 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:s="clr-namespace:System;assembly=mscorlib"
-    xmlns:xu="clr-namespace:Cube.Xui"
-    xmlns:xb="clr-namespace:Cube.Xui.Behaviors"
+    xmlns:xu="clr-namespace:Cube.Xui;assembly=Cube.Xui"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
 
     <ResourceDictionary.MergedDictionaries>

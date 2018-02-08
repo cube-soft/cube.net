@@ -52,6 +52,9 @@
     <Reference Include="Cube.Images">
       <HintPath>..\..\..\..\packages\Cube.Images.1.7.0\lib\net45\Cube.Images.dll</HintPath>
     </Reference>
+    <Reference Include="Cube.Xui">
+      <HintPath>..\..\..\..\packages\Cube.Xui.1.7.0\lib\net45\Cube.Xui.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\..\..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -110,29 +113,6 @@
     <Compile Include="ViewModels\PropertyViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="Xui\Behaviors\CloseBehavior.cs" />
-    <Compile Include="Xui\Behaviors\DialogBehavior.cs" />
-    <Compile Include="Xui\Behaviors\FileDialogBehavior.cs" />
-    <Compile Include="Xui\Behaviors\MessengerBehavior.cs" />
-    <Compile Include="Xui\Behaviors\EditBehavior.cs" />
-    <Compile Include="Xui\Behaviors\ShowBehavior.cs" />
-    <Compile Include="Xui\Behaviors\UpdateSourceBehavior.cs" />
-    <Compile Include="Xui\Behaviors\WindowsFormsBehavior.cs" />
-    <Compile Include="Xui\BindableCommand.cs" />
-    <Compile Include="Xui\BindableCommandGeneric.cs" />
-    <Compile Include="Xui\BindableOperator.cs" />
-    <Compile Include="Xui\Messages\EmptyMessage.cs" />
-    <Compile Include="Xui\Messages\FileDialogMessage.cs" />
-    <Compile Include="Xui\Operations\MessengerOperator.cs" />
-    <Compile Include="Xui\Converters\BooleanConverter.cs" />
-    <Compile Include="Xui\Converters\DuplexConverter.cs" />
-    <Compile Include="Xui\Converters\ImageConverter.cs" />
-    <Compile Include="Xui\Converters\SimplexConverter.cs" />
-    <Compile Include="Xui\Triggers\DisposeAction.cs" />
-    <Compile Include="Xui\Triggers\MessengerTrigger.cs" />
-    <Compile Include="Xui\Bindable.cs" />
-    <Compile Include="Xui\BindableCollection.cs" />
-    <Compile Include="Xui\Messages\DialogMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

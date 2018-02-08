@@ -36,6 +36,9 @@
     <Reference Include="Cube.FileSystem">
       <HintPath>..\..\..\..\packages\Cube.FileSystem.1.7.0\lib\net45\Cube.FileSystem.dll</HintPath>
     </Reference>
+    <Reference Include="Cube.Xui">
+      <HintPath>..\..\..\..\packages\Cube.Xui.1.7.0\lib\net45\Cube.Xui.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\..\..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
