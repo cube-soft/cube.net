@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Details\FileHelper.cs" />
     <Compile Include="Details\ViewModelHelper.cs" />
+    <Compile Include="Interactions\DuplexConverterTest.cs" />
     <Compile Include="Interactions\SimplexConverterTest.cs" />
     <Compile Include="Models\RssOpmlTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

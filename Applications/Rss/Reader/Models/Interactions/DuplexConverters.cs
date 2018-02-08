@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -38,10 +38,10 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public MinuteConverter() : base(
-            e => ((TimeSpan?)e)?.TotalMinutes ?? 0,
+            e => (int)(((TimeSpan?)e)?.TotalMinutes ?? 0.0),
             e => TimeSpan.FromMinutes(int.Parse(e as string))
         ) { }
     }
@@ -64,10 +64,10 @@ namespace Cube.Net.App.Rss.Reader
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public HourConverter() : base(
-            e => ((TimeSpan?)e)?.TotalHours ?? 0,
+            e => (int)(((TimeSpan?)e)?.TotalHours ?? 0.0),
             e => TimeSpan.FromHours(int.Parse(e as string))
         ) { }
     }
