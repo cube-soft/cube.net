@@ -39,24 +39,6 @@ namespace Cube.Net.App.Rss.Reader
     {
         #region Methods
 
-        #region Load
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Load
-        ///
-        /// <summary>
-        /// OPML ファイルを読み込みます。
-        /// </summary>
-        ///
-        /// <param name="path">ファイルのパス</param>
-        ///
-        /// <returns>変換オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static IEnumerable<IRssEntry> Load(string path) =>
-            Load(path, new Operator());
-
         /* ----------------------------------------------------------------- */
         ///
         /// Load
@@ -79,25 +61,6 @@ namespace Cube.Net.App.Rss.Reader
                 return Convert(body, null);
             }
         }
-
-        #endregion
-
-        #region Save
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Save
-        ///
-        /// <summary>
-        /// OPML ファイルに保存します。
-        /// </summary>
-        ///
-        /// <param name="src">保存元データ</param>
-        /// <param name="path">ファイルのパス</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static void Save(IEnumerable<IRssEntry> src, string path) =>
-            Save(src, path, new Operator());
 
         /* ----------------------------------------------------------------- */
         ///
@@ -128,8 +91,6 @@ namespace Cube.Net.App.Rss.Reader
 
             using (var ss = io.Create(path)) doc.Save(ss);
         }
-
-        #endregion
 
         #endregion
 

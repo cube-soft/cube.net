@@ -333,7 +333,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Import(string path)
         {
-            var dest = RssOpml.Load(path);
+            var dest = RssOpml.Load(path, Settings.IO);
             if (dest.Count() <= 0) return;
 
             try
