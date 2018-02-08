@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -40,7 +40,7 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// Select
-        /// 
+        ///
         /// <summary>
         /// RSS フィードから新着記事を選択するテストを実行します。
         /// </summary>
@@ -50,6 +50,7 @@ namespace Cube.Net.App.Rss.Tests
         public async Task Select()
         {
             var vm = new MainViewModel(new SettingsFolder(Results, IO));
+            vm.Setup.Execute(null);
 
             var entry = vm.Data.Root.OfType<RssCategory>().First().Entries.First();
             Assert.That(entry.Uri, Is.EqualTo(new Uri("https://blog.cube-soft.jp/?feed=rss2")));
