@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -40,7 +40,7 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// Load
-        /// 
+        ///
         /// <summary>
         /// JSON ファイルをロードするテストを実行します。
         /// </summary>
@@ -69,7 +69,7 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// Export
-        /// 
+        ///
         /// <summary>
         /// OPML 形式でエクスポートするテストを実行します。
         /// </summary>
@@ -82,9 +82,8 @@ namespace Cube.Net.App.Rss.Tests
             {
                 var dest = Result("Export.opml");
                 src.Load();
-                src.Export(dest);
-
-                Assert.That(IO.Exists(dest), Is.True);
+                RssOpml.Save(src, dest, src.IO);
+                Assert.That(IO.Get(dest).Length, Is.AtLeast(1));
             }
         }
 
@@ -95,7 +94,7 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// CreateJson
-        /// 
+        ///
         /// <summary>
         /// JSON ファイルをコピーします。
         /// </summary>

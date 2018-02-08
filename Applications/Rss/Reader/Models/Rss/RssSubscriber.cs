@@ -24,8 +24,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cube.FileSystem;
 using Cube.Net.Rss;
-using Cube.Log;
-using Cube.Settings;
 using Cube.Tasks;
 using Cube.Xui;
 
@@ -59,17 +57,21 @@ namespace Cube.Net.App.Rss.Reader
             _dispose = new OnceAction<bool>(Dispose);
 
             _tree.IsSynchronous = true;
-            _tree.CollectionChanged += (s, e) => OnCollectionChanged(e);
+            _tree.CollectionChanged += (s, e) =>
+            {
+                AutoSaveCore();
+                CollectionChanged?.Invoke(this, e);
+            };
 
             _monitors[0] = new RssMonitor() { Interval = TimeSpan.FromHours(1) };
-            _monitors[0].Subscribe(OnReceived);
+            _monitors[0].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
 
             _monitors[1] = new RssMonitor() { Interval = TimeSpan.FromHours(24) };
-            _monitors[1].Subscribe(OnReceived);
+            _monitors[1].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
 
             _autosaver.AutoReset = false;
             _autosaver.Interval = 1000.0;
-            _autosaver.Elapsed += WhenSaved;
+            _autosaver.Elapsed += WhenAutoSaved;
         }
 
         #endregion
@@ -144,8 +146,6 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Events
 
-        #region CollectionChanged
-
         /* ----------------------------------------------------------------- */
         ///
         /// CollectionChanged
@@ -159,25 +159,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnCollectionChanged
-        ///
-        /// <summary>
-        /// CollectionChanged イベントを発生させます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            AutoSaveCore();
-            CollectionChanged?.Invoke(this, e);
-        }
-
-        #endregion
-
-        #region Received
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Received
         ///
         /// <summary>
@@ -186,34 +167,6 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public event ValueEventHandler<RssFeed> Received;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnReceived
-        ///
-        /// <summary>
-        /// Received イベントを発生させます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void OnReceived(RssFeed src)
-        {
-            var dest = Find<RssFeed>(src.Uri);
-            if (dest == null) return;
-
-            src.Items = src.Items.Shrink(dest.LastChecked).ToList();
-            foreach (var item in src.Items) dest.Items.Insert(0, item);
-
-            dest.Description   = src.Description;
-            dest.Link          = src.Link;
-            dest.LastChecked   = src.LastChecked;
-            dest.LastPublished = src.LastPublished;
-
-            if (dest is RssEntry re) re.Count = re.UnreadItems.Count();
-            Received?.Invoke(this, ValueEventArgs.Create(src));
-        }
-
-        #endregion
 
         #endregion
 
@@ -270,7 +223,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Register
+        /// RegisterAsync
         ///
         /// <summary>
         /// 新しい RSS フィード URL を非同期で登録します。
@@ -279,16 +232,66 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="uri">URL オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public async Task Register(Uri uri)
+        public async Task RegisterAsync(Uri uri)
         {
-            Suspend();
             var rss = await _client.GetAsync(uri).ConfigureAwait(false);
             if (rss == null) throw Properties.Resources.ErrorFeedNotFound.ToException();
             if (_feeds.ContainsKey(rss.Uri)) throw Properties.Resources.ErrorFeedAlreadyExists.ToException();
 
-            var dest = new RssEntry(rss);
-            RegisterCore(dest);
-            Start();
+            AddCore(new RssEntry(rss));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Add
+        ///
+        /// <summary>
+        /// 新しい RSS エントリ一覧を追加します。
+        /// </summary>
+        ///
+        /// <param name="src">RSS エントリ一覧</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Add(IEnumerable<IRssEntry> src)
+        {
+            System.Diagnostics.Debug.Assert(src != null);
+
+            foreach (var item in src)
+            {
+                if (item is RssCategory rc) AddCore(rc);
+                else if (item is RssEntry re) AddCore(re);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Remove
+        ///
+        /// <summary>
+        /// RSS エントリを削除します。
+        /// </summary>
+        ///
+        /// <param name="src">削除する RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Remove(IRssEntry src)
+        {
+            if (src is RssCategory rc) RemoveCore(rc);
+            else if (src is RssEntry re) RemoveCore(re);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Clear
+        ///
+        /// <summary>
+        /// 全ての項目を削除します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Clear()
+        {
+            foreach (var e in _tree.ToArray()) Remove(e);
         }
 
         /* ----------------------------------------------------------------- */
@@ -320,38 +323,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Remove
-        ///
-        /// <summary>
-        /// RSS エントリを削除します。
-        /// </summary>
-        ///
-        /// <param name="src">削除する RSS フィード</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Remove(IRssEntry src)
-        {
-            if (src is RssCategory rc) RemoveCore(rc);
-            else if (src is RssEntry re) RemoveCore(re);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Clear
-        ///
-        /// <summary>
-        /// 全ての項目を削除します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Clear()
-        {
-            Suspend();
-            foreach (var e in _tree.ToArray()) Remove(e);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Load
         ///
         /// <summary>
@@ -359,20 +330,15 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Load()
-        {
-            Clear();
-            foreach (var rc in LoadCore())
+        public void Load() => Add(RssOperator.Load(FileName, IO).SelectMany(e =>
+            !string.IsNullOrEmpty(e.Title) ?
+            new[] { e as IRssEntry } :
+            e.Entries.Select(re =>
             {
-                if (!string.IsNullOrEmpty(rc.Title)) RegisterCore(rc);
-                else foreach (var re in rc.Entries)
-                {
-                    re.Parent = null;
-                    RegisterCore(re);
-                }
-            }
-            Start();
-        }
+                re.Parent = null;
+                return re as IRssEntry;
+            })
+        ));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -383,47 +349,11 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Save() => SaveCore(
-            Categories.Concat(new[] { new RssCategory
-            {
-                Title    = string.Empty,
-                Children = Entries.Cast<IRssEntry>().ToBindable(),
-            }})
-        );
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Import
-        ///
-        /// <summary>
-        /// OPML 形式ファイルをインポートします。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Import(string path)
+        public void Save() => Categories.Concat(new[] { new RssCategory
         {
-            var dest = RssOpml.Load(path);
-            if (dest.Count() <= 0) return;
-
-            Clear();
-            foreach (var item in dest)
-            {
-                if (item is RssCategory rc) RegisterCore(rc);
-                else if (item is RssEntry re) RegisterCore(re);
-            }
-            Start();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Export
-        ///
-        /// <summary>
-        /// OPML 形式でエクスポートします。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Export(string path) => RssOpml.Save(this, path, IO);
+            Title    = string.Empty,
+            Children = Entries.Cast<IRssEntry>().ToBindable(),
+        }}).Save(FileName, IO);
 
         #endregion
 
@@ -442,6 +372,20 @@ namespace Cube.Net.App.Rss.Reader
         {
             _monitors[0].Start(TimeSpan.FromSeconds(3));
             _monitors[1].Start(TimeSpan.FromMinutes(1));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Stop
+        ///
+        /// <summary>
+        /// 監視を停止します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Stop()
+        {
+            foreach (var mon in _monitors) mon.Stop();
         }
 
         /* ----------------------------------------------------------------- */
@@ -514,25 +458,9 @@ namespace Cube.Net.App.Rss.Reader
             if (dest != null)
             {
                 dest.Items.Clear();
-                dest.LastChecked = DateTime.MinValue;
+                dest.LastChecked = null;
                 Update(uri);
             }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Reschedule
-        ///
-        /// <summary>
-        /// RSS フィードのチェック方法を再設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Reschedule()
-        {
-            var now = DateTime.Now;
-            _monitors[0].Reschedule(_feeds.Values, e => e.IsHighFrequency(now));
-            _monitors[1].Reschedule(_feeds.Values, e => e.IsLowFrequency(now));
         }
 
         /* ----------------------------------------------------------------- */
@@ -674,17 +602,17 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RegisterCore
+        /// AddCore
         ///
         /// <summary>
-        /// カテゴリおよびカテゴリ中の RSS エントリを全て登録します。
+        /// カテゴリおよびカテゴリ中の RSS エントリを全て追加します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void RegisterCore(RssCategory src)
+        private void AddCore(RssCategory src)
         {
-            foreach (var re in src.Entries) RegisterCore(re);
-            foreach (var rc in src.Categories) RegisterCore(rc);
+            foreach (var re in src.Entries) AddCore(re);
+            foreach (var rc in src.Categories) AddCore(rc);
 
             src.Children.CollectionChanged -= WhenChildrenChanged;
             src.Children.CollectionChanged += WhenChildrenChanged;
@@ -694,14 +622,14 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RegisterCore
+        /// AddCore
         ///
         /// <summary>
-        /// RSS エントリを登録します。
+        /// RSS エントリを追加します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void RegisterCore(RssEntry src)
+        private void AddCore(RssEntry src)
         {
             if (_feeds.ContainsKey(src.Uri)) return;
             src.Items = src.Items.ToBindable(_context);
@@ -757,57 +685,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LoadCore
-        ///
-        /// <summary>
-        /// 設定ファイルからカテゴリおよび RSS エントリ情報を読み込みます。
-        /// </summary>
-        ///
-        /// <remarks>
-        /// TODO: エラー時に元ファイルの削除およびバックアップ領域からの
-        /// 復旧処理を追加。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        private IEnumerable<RssCategory> LoadCore()
-        {
-            if (IO.Exists(FileName))
-            {
-                try
-                {
-                    using (var ss = IO.OpenRead(FileName))
-                    {
-                        return SettingsType.Json
-                                           .Load<List<RssCategory.Json>>(ss)
-                                           .Select(e => e.Convert(null));
-                    }
-                }
-                catch (Exception err) { this.LogWarn(err.ToString(), err); }
-            }
-            return new RssCategory[0];
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SaveCore
-        ///
-        /// <summary>
-        /// カテゴリおよび RSS エントリ情報を設定ファイルに保存します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void SaveCore(IEnumerable<RssCategory> src)
-        {
-            try
-            {
-                var json = src.Select(e => new RssCategory.Json(e));
-                using (var ss = IO.Create(FileName)) SettingsType.Json.Save(ss, json);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// AutoSaveCore
         ///
         /// <summary>
@@ -822,30 +699,11 @@ namespace Cube.Net.App.Rss.Reader
             _autosaver.Start();
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenChildrenChanged
-        ///
-        /// <summary>
-        /// RssCategory.Children が変更時に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenChildrenChanged(object s,
-            NotifyCollectionChangedEventArgs e) => AutoSaveCore();
+        #endregion
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenSaved
-        ///
-        /// <summary>
-        /// 自動保存時に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenSaved(object sender, System.Timers.ElapsedEventArgs e) =>
-            Task.Run(() => Save()).Forget();
-
+        #region Handlers
+        private void WhenChildrenChanged(object s, EventArgs e) => AutoSaveCore();
+        private void WhenAutoSaved(object s, EventArgs e) => Task.Run(() => Save()).Forget();
         #endregion
 
         #region Fields

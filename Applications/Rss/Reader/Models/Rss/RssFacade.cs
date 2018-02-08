@@ -20,7 +20,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Cube.Conversions;
-using Cube.FileSystem;
 using Cube.Net.Rss;
 
 namespace Cube.Net.App.Rss.Reader
@@ -106,17 +105,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// IO
-        ///
-        /// <summary>
-        /// 入出力用オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private Operator IO => Settings.IO;
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Core
         ///
         /// <summary>
@@ -147,6 +135,7 @@ namespace Cube.Net.App.Rss.Reader
                 Select(entry);
                 entry.Parent.Expand();
             }
+            Core.Start();
         }
 
         /* ----------------------------------------------------------------- */
@@ -160,7 +149,12 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">URL</param>
         ///
         /* ----------------------------------------------------------------- */
-        public Task NewEntry(string src) => Core.Register(src.ToUri());
+        public async Task NewEntry(string src)
+        {
+            Core.Suspend();
+            try { await Core.RegisterAsync(src.ToUri()); }
+            finally { Core.Start(); }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -350,7 +344,19 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Import(string path) => Core.Import(path);
+        public void Import(string path)
+        {
+            var dest = RssOpml.Load(path);
+            if (dest.Count() <= 0) return;
+
+            try
+            {
+                Core.Stop();
+                Core.Clear();
+                Core.Add(dest);
+            }
+            finally { Core.Start(); }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -361,7 +367,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Export(string path) => Core.Export(path);
+        public void Export(string path) => RssOpml.Save(Core, path, Settings.IO);
 
         #region IDisposable
 
@@ -431,12 +437,25 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void WhenReceived(object sender, ValueEventArgs<RssFeed> e)
         {
+            var src  = e.Value;
+            var dest = Core.Find<RssFeed>(src.Uri);
+            if (src == null || dest == null) return;
+
+            src.Items = src.Items.Shrink(dest.LastChecked).ToList();
+            foreach (var item in src.Items) dest.Items.Insert(0, item);
+
+            dest.Description   = src.Description;
+            dest.Link          = src.Link;
+            dest.LastChecked   = src.LastChecked;
+            dest.LastPublished = src.LastPublished;
+
+            if (dest is RssEntry re) re.Count = re.UnreadItems.Count();
             if (!Settings.Value.EnableMonitorMessage) return;
 
             Data.Message.Value =
-                e.Value.Items.Count > 0 ?
-                string.Format(Properties.Resources.MessageReceived, e.Value.Items.Count, e.Value.Title) :
-                string.Format(Properties.Resources.MessageNoReceived, e.Value.Title);
+                src.Items.Count > 0 ?
+                string.Format(Properties.Resources.MessageReceived, src.Items.Count, src.Title) :
+                string.Format(Properties.Resources.MessageNoReceived, src.Title);
         }
 
         /* ----------------------------------------------------------------- */
