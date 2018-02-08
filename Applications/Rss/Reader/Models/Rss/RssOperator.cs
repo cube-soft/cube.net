@@ -54,7 +54,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static IEnumerable<RssCategory> Load(string src, Operator io)
         {
-            if (io.Get(src).Length > 0)
+            var info = io.Get(src);
+            if (info.Exists && info.Length > 0)
             {
                 try
                 {
