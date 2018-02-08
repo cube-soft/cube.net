@@ -39,6 +39,26 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// DefaultProperties
+        ///
+        /// <summary>
+        /// MainViewModel のプロパティの初期値を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void DefaultProperties()
+        {
+            var vm = new MainViewModel();
+            Assert.That(vm.Data.Article.HasValue, Is.False);
+            Assert.That(vm.Data.Entry.HasValue,   Is.False);
+            Assert.That(vm.Data.Feed.HasValue,    Is.False);
+            Assert.That(vm.Data.Message.HasValue, Is.False);
+            Assert.That(vm.Data.User.HasValue,    Is.True);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Select
         ///
         /// <summary>
@@ -47,26 +67,58 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task Select()
+        public void Select()
         {
-            var vm = new MainViewModel(new SettingsFolder(Results, IO));
-            vm.Setup.Execute(null);
+            var vm = Create();
+            vm.SelectEntry.Execute(vm.Data.Root.OfType<RssCategory>().First().Entries.First());
 
-            var entry = vm.Data.Root.OfType<RssCategory>().First().Entries.First();
-            Assert.That(entry.Uri, Is.EqualTo(new Uri("https://blog.cube-soft.jp/?feed=rss2")));
-            vm.SelectEntry.Execute(entry);
+            var feed = vm.Data.Feed.Value;
+            Assert.That(feed.Items.Count(), Is.EqualTo(10));
+            Assert.That(feed.UnreadItems.Count(), Is.EqualTo(9));
 
-            Assert.That(vm.Data.Feed.Value.Items.Count(), Is.EqualTo(0));
-            for (var i = 0; i < 100; i++)
-            {
-                if (vm.Data.Feed.Value.UnreadItems.Count() > 0) break;
-                await Task.Delay(50);
-            }
-            Assert.That(vm.Data.Feed.Value.UnreadItems.Count(), Is.GreaterThan(1), "Timeout");
-
-            vm.SelectArticle.Execute(vm.Data.Feed.Value.UnreadItems.First());
-
+            vm.SelectArticle.Execute(feed.UnreadItems.First());
             Assert.That(vm.Data.Article.Value, Is.Not.Null);
+            Assert.That(feed.UnreadItems.Count(), Is.EqualTo(8));
+        }
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Setup
+        ///
+        /// <summary>
+        /// テスト直前に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [SetUp]
+        public void Setup()
+        {
+            var cache = "Cache";
+            foreach (var file in IO.GetFiles(Example(cache)))
+            {
+                var info = IO.Get(file);
+                IO.Copy(file, Result($@"{cache}\{info.Name}"), true);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        ///
+        /// <summary>
+        /// ViewModel オブジェクトを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private MainViewModel Create()
+        {
+            var dest = new MainViewModel(new SettingsFolder(Results, IO));
+            dest.Setup.Execute(null);
+            return dest;
         }
 
         #endregion

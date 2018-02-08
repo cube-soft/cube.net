@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,11 +22,11 @@ namespace Cube.Net.App.Rss.Tests
     /* --------------------------------------------------------------------- */
     ///
     /// ViewModelHelper
-    /// 
+    ///
     /// <summary>
     /// ViewModel をテストするための補助クラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     class ViewModelHelper : FileHelper
     {
@@ -39,7 +39,7 @@ namespace Cube.Net.App.Rss.Tests
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected ViewModelHelper() : this("Sample.json") { }
 
@@ -50,7 +50,7 @@ namespace Cube.Net.App.Rss.Tests
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="json">RSS フィード用ファイル</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -63,7 +63,7 @@ namespace Cube.Net.App.Rss.Tests
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="json">RSS フィード用ファイル</param>
         /// <param name="io">ファイル操作用オブジェクト</param>
         ///
