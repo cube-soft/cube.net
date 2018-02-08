@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -32,7 +32,7 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// 登録サイトが属するカテゴリ情報を保持するクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class RssCategory : ObservableProperty, IRssEntry
     {
@@ -41,7 +41,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// RssCategory
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -60,7 +60,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Parent
-        /// 
+        ///
         /// <summary>
         /// 親要素を取得または設定します。
         /// </summary>
@@ -75,7 +75,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Title
-        /// 
+        ///
         /// <summary>
         /// タイトルを取得または設定します。
         /// </summary>
@@ -90,7 +90,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Count
-        /// 
+        ///
         /// <summary>
         /// 未読記事数を取得または設定します。
         /// </summary>
@@ -111,7 +111,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Expanded
-        /// 
+        ///
         /// <summary>
         /// 子要素が表示状態かどうかを示す値を取得または設定します。
         /// </summary>
@@ -126,7 +126,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Editing
-        /// 
+        ///
         /// <summary>
         /// ユーザによる編集中かどうかを示す値を取得または設定します。
         /// </summary>
@@ -141,7 +141,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Categories
-        /// 
+        ///
         /// <summary>
         /// サブカテゴリ一覧を取得または設定します。
         /// </summary>
@@ -152,7 +152,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Entries
-        /// 
+        ///
         /// <summary>
         /// エントリ一覧を取得または設定します。
         /// </summary>
@@ -163,7 +163,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Items
-        /// 
+        ///
         /// <summary>
         /// 子要素一覧を取得します。
         /// </summary>
@@ -179,7 +179,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// ~RssCategory
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
@@ -190,7 +190,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを開放します。
         /// </summary>
@@ -205,11 +205,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを開放します。
         /// </summary>
-        /// 
+        ///
         /// <param name="disposing">
         /// マネージオブジェクトを開放するかどうか
         /// </param>
@@ -227,7 +227,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// OnPropertyChanged
-        /// 
+        ///
         /// <summary>
         /// プロパティ変更時に実行されます。
         /// </summary>
@@ -246,7 +246,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// WhenChildrenChanged
-        /// 
+        ///
         /// <summary>
         /// 子要素の変更時に実行されるハンドラです。
         /// </summary>
@@ -260,7 +260,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// RssEntry.Json
-        /// 
+        ///
         /// <summary>
         /// JSON 解析用クラスです。
         /// </summary>

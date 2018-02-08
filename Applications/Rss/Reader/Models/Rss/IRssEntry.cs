@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,14 +27,16 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// RSS のエントリおよびカテゴリを表すインターフェースです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public interface IRssEntry : INotifyPropertyChanged, IDisposable
     {
+        #region Properties
+
         /* ----------------------------------------------------------------- */
         ///
         /// Parent
-        /// 
+        ///
         /// <summary>
         /// 親要素を取得または設定します。
         /// </summary>
@@ -45,7 +47,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Title
-        /// 
+        ///
         /// <summary>
         /// タイトルを取得または設定します。
         /// </summary>
@@ -56,7 +58,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Count
-        /// 
+        ///
         /// <summary>
         /// 未読記事数を取得します。
         /// </summary>
@@ -67,7 +69,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Expanded
-        /// 
+        ///
         /// <summary>
         /// 子要素が表示状態かどうかを示す値を取得または設定します。
         /// </summary>
@@ -78,13 +80,15 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Editing
-        /// 
+        ///
         /// <summary>
         /// ユーザによる編集中かどうかを示す値を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         bool Editing { get; set; }
+
+        #endregion
     }
 
 }

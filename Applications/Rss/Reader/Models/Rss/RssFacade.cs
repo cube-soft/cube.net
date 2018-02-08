@@ -324,19 +324,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Reschedule
-        ///
-        /// <summary>
-        /// RSS フィードのチェック方法を再設定します。
-        /// </summary>
-        ///
-        /// <param name="src">選択項目</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Reschedule(RssEntry src) => Core.Reschedule(src);
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Import
         ///
         /// <summary>
@@ -368,6 +355,19 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Export(string path) => RssOpml.Save(Core, path, Settings.IO);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reschedule
+        ///
+        /// <summary>
+        /// RSS フィードのチェック方法を再設定します。
+        /// </summary>
+        ///
+        /// <param name="src">選択項目</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Reschedule(RssEntry src) => Core.Reschedule(src);
 
         #region IDisposable
 
