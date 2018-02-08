@@ -16,9 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Cube.Settings;
 using System.Globalization;
 using System.Windows;
 using Cube.Net.Rss;
