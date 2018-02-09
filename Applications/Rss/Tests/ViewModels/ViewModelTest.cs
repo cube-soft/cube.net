@@ -17,8 +17,10 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Cube.Net.App.Rss.Reader;
+using Cube.Xui;
 using NUnit.Framework;
 
 namespace Cube.Net.App.Rss.Tests
@@ -115,10 +117,10 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var mock = new MockMessagReceiver(vm.Messenger);
-                var src  = vm.Data.Root.OfType<RssCategory>().First();
+                var src = vm.Data.Root.OfType<RssCategory>().First();
 
                 vm.Stop.Execute(null);
+                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e));
                 vm.SelectEntry.Execute(src.Entries.First());
 
                 Assert.That(src.Entries.Count, Is.EqualTo(1));
@@ -154,6 +156,26 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(entry.Count, Is.AtLeast(1));
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_NewEntry_Error
+        ///
+        /// <summary>
+        /// 新しい RSS エントリの登録に失敗する時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_NewEntry_Error() => Assert.DoesNotThrow(() =>
+        {
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+                vm.Messenger.Register<RegisterViewModel>(this, e => RegisterError(e).Wait());
+                vm.NewEntry.Execute(null);
+            }
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -278,6 +300,31 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// RegisterError
+        ///
+        /// <summary>
+        /// 無効な URL を登録しようとします。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task RegisterError(RegisterViewModel vm)
+        {
+            var cts = new CancellationTokenSource();
+
+            vm.Url.Value = "error";
+            vm.Messenger.Register<DialogMessage>(this, e =>
+            {
+                e.Result = true;
+                cts.Cancel();
+            });
+            vm.Execute.Execute(null);
+
+            try { await Task.Delay(1000, cts.Token).ConfigureAwait(false); }
+            catch (TaskCanceledException /* err */) { /* OK */ }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// PropertyCommand
         ///
         /// <summary>
@@ -323,6 +370,24 @@ namespace Cube.Net.App.Rss.Tests
             src.LowInterval          = TimeSpan.FromHours(12);
 
             vm.Apply.Execute(null);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DialogMessageCommand
+        ///
+        /// <summary>
+        /// メッセージボックスを表示します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void DialogMessageCommand(DialogMessage e)
+        {
+            Assert.That(e.Content, Is.Not.Null.And.Not.Empty);
+            Assert.That(e.Title,   Is.Not.Null.And.Not.Empty);
+
+            e.Result = true;
+            e.Callback(e);
         }
 
         #endregion
