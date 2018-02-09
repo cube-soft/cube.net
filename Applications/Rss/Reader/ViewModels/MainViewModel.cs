@@ -129,12 +129,12 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand Property => _property ?? (
             _property = new BindableCommand(
                 () => Messenger.Send(new PropertyViewModel(
-                    Data.Entry.Value as RssEntry,
-                    Data.Feed.Value,
+                    Data.Current.Value as RssEntry,
+                    Data.LastEntry.Value,
                     e => Model.Reschedule(e)
                 )),
-                () => Data.Entry.Value is RssEntry && Data.Feed.Value != null,
-                Data.Entry
+                () => Data.Current.Value is RssEntry && Data.LastEntry.Value != null,
+                Data.Current
             )
         );
 
@@ -231,7 +231,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Remove => _remove ?? (
             _remove = new RelayCommand(() => Messenger.Send(
-                MessageFactory.RemoveWarning(Data.Entry.Value?.Title, e =>
+                MessageFactory.RemoveWarning(Data.Current.Value?.Title, e =>
                 {
                     if (e.Result) Model.Remove();
                 }))
@@ -261,7 +261,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Update => _update ?? (
-            _update = new RelayCommand(() => Model.UpdateEntry(Data.Entry.Value))
+            _update = new RelayCommand(() => Model.UpdateEntry(Data.Current.Value))
         );
 
         /* ----------------------------------------------------------------- */
@@ -274,7 +274,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand UpdateOne => _updateOne ?? (
-            _updateOne = new RelayCommand(() => Model.UpdateFeed(Data.Feed.Value))
+            _updateOne = new RelayCommand(() => Model.UpdateFeed(Data.LastEntry.Value))
         );
 
         /* ----------------------------------------------------------------- */

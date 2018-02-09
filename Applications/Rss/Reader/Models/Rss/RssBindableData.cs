@@ -82,25 +82,32 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Entry
+        /// Current
         ///
         /// <summary>
-        /// 選択中の Web サイトを取得します。
+        /// 選択中のカテゴリまたは RSS エントリを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<IRssEntry> Entry { get; } = new Bindable<IRssEntry>();
+        public Bindable<IRssEntry> Current { get; } = new Bindable<IRssEntry>();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Feed
+        /// LastEntry
         ///
         /// <summary>
-        /// 選択中の Web サイトの RSS フィードを取得します。
+        /// 最後に選択した RSS エントリを取得します。
         /// </summary>
         ///
+        /// <remarks>
+        /// RSS エントリを選択中の場合、Current と LastEntry は同じ値に
+        /// なります。カテゴリを選択中の場合、Current は該当カテゴリの
+        /// 値を LastEntry は直前まで選択されていた RssEntry の値を保持
+        /// します。
+        /// </remarks>
+        ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssEntry> Feed { get; } = new Bindable<RssEntry>();
+        public Bindable<RssEntry> LastEntry { get; } = new Bindable<RssEntry>();
 
         /* ----------------------------------------------------------------- */
         ///

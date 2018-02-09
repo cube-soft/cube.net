@@ -51,8 +51,8 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new MainViewModel();
             Assert.That(vm.Data.Article.HasValue, Is.False);
-            Assert.That(vm.Data.Entry.HasValue,   Is.False);
-            Assert.That(vm.Data.Feed.HasValue,    Is.False);
+            Assert.That(vm.Data.Current.HasValue,   Is.False);
+            Assert.That(vm.Data.LastEntry.HasValue,    Is.False);
             Assert.That(vm.Data.Message.HasValue, Is.False);
             Assert.That(vm.Data.User.HasValue,    Is.True);
         }
@@ -72,7 +72,7 @@ namespace Cube.Net.App.Rss.Tests
             var vm = Create();
             vm.SelectEntry.Execute(vm.Data.Root.OfType<RssCategory>().First().Entries.First());
 
-            var feed = vm.Data.Feed.Value;
+            var feed = vm.Data.LastEntry.Value;
             Assert.That(feed.Items.Count(), Is.EqualTo(10));
             Assert.That(feed.UnreadItems.Count(), Is.EqualTo(9));
 

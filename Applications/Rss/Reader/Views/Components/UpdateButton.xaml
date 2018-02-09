@@ -8,12 +8,12 @@
         <Setter Property="Margin" Value="0,2,0,0"/>
         <Setter Property="ToolTip" Value="最新の情報に更新"/>
     </Style>
-    
+
     <ControlTemplate x:Key="UpdateButtonTemplate" TargetType="Button">
         <Border BorderThickness="1" CornerRadius="2">
             <StackPanel Orientation="Horizontal">
                 <TextBlock
-                    Text="{Binding Data.Feed.Value, Converter={my:LastCheckedToString}}"
+                    Text="{Binding Data.LastEntry.Value, Converter={my:LastCheckedToString}}"
                     Foreground="{StaticResource GrayTextBrush}"
                     FontFamily="Meiryo"
                     FontSize="10"

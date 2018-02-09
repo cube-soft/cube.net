@@ -114,12 +114,12 @@
                 Command="{Binding UpdateOne}"
                 Style="{StaticResource UpdateButtonStyle}"
                 Template="{StaticResource UpdateButtonTemplate}"
-                Visibility="{Binding Data.Feed.Value, Converter={my:LastCheckedToVisibility}}">
+                Visibility="{Binding Data.LastEntry.Value, Converter={my:LastCheckedToVisibility}}">
             </Button>
 
             <Button
                 Command="{Binding Navigate}"
-                CommandParameter="{Binding Data.Feed.Value.Link}"
+                CommandParameter="{Binding Data.LastEntry.Value.Link}"
                 Grid.Row="1">
                 <Button.Template>
                     <ControlTemplate>
@@ -129,10 +129,10 @@
                                 Style="{StaticResource SymbolStyle}"
                                 Margin="0,0,6,3"
                                 VerticalAlignment="Center"
-                                Visibility="{Binding Data.Feed.HasValue, Converter={xc:BooleanToVisibility}}"/>
+                                Visibility="{Binding Data.LastEntry.HasValue, Converter={xc:BooleanToVisibility}}"/>
                             <TextBlock
-                                Text="{Binding Data.Feed.Value.Title}"
-                                ToolTip="{Binding Data.Feed.Value.Title}"
+                                Text="{Binding Data.LastEntry.Value.Title}"
+                                ToolTip="{Binding Data.LastEntry.Value.Title}"
                                 Style="{StaticResource RssTitleStyle}"/>
                         </StackPanel>
                     </ControlTemplate>
@@ -141,7 +141,7 @@
                     <i:EventTrigger EventName="MouseEnter">
                         <i:InvokeCommandAction
                             Command="{Binding Hover}"
-                            CommandParameter="{Binding Data.Feed.Value.Link}"/>
+                            CommandParameter="{Binding Data.LastEntry.Value.Link}"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeave">
                         <i:InvokeCommandAction
@@ -153,7 +153,7 @@
 
             <ListView
                 x:Name="RssFeeds"
-                ItemsSource="{Binding Data.Feed.Value.SafeItems}"
+                ItemsSource="{Binding Data.LastEntry.Value.SafeItems}"
                 ItemContainerStyle="{StaticResource RssItemStyle}"
                 ItemTemplate="{StaticResource RssItemTemplate}"
                 Style="{StaticResource RssFeedsStyle}"

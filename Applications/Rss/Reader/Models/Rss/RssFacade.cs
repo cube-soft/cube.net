@@ -166,7 +166,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void NewCategory() =>
-            Select(Core.Create(Data.Entry.Value));
+            Select(Core.Create(Data.Current.Value));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -228,7 +228,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Remove()
         {
-            if (Data.Entry.Value != null) Core.Remove(Data.Entry.Value);
+            if (Data.Current.Value != null) Core.Remove(Data.Current.Value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -240,7 +240,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Rename() => Data.Entry.Value.Editing = true;
+        public void Rename() => Data.Current.Value.Editing = true;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -251,7 +251,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void ReadAll() => Data.Entry.Value?.Read();
+        public void ReadAll() => Data.Current.Value?.Read();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -264,7 +264,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Reset()
         {
-            if (Data.Entry.Value is RssEntry entry) Core.Reset(entry.Uri);
+            if (Data.Current.Value is RssEntry entry) Core.Reset(entry.Uri);
         }
 
         /* ----------------------------------------------------------------- */
@@ -288,15 +288,15 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (src == null) return;
 
-            Data.Entry.Value = src;
+            Data.Current.Value = src;
 
             if (src is RssEntry current && current != Property)
             {
                 current.Selected = true;
                 Property = current;
-                Data.Feed.Value = current;
+                Data.LastEntry.Value = current;
 
-                var items = Data.Feed.Value?.Items;
+                var items = Data.LastEntry.Value?.Items;
                 var first = items?.Count > 0 ? items[0] : null;
                 Select(first);
                 Settings.Value.Start = current.Uri;
@@ -319,7 +319,7 @@ namespace Cube.Net.App.Rss.Reader
             if (src == null) return;
             if (Property.SkipContent) Data.Uri.Value = src.Link;
             else Data.Article.Value = src;
-            if (Data.Feed.Value is RssEntry entry) entry.Read(src);
+            if (Data.LastEntry.Value is RssEntry entry) entry.Read(src);
         }
 
         /* ----------------------------------------------------------------- */
