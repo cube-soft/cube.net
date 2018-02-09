@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -33,7 +33,7 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// 設定画面とモデルを関連付けるためのクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class SettingsViewModel : CommonViewModel
     {
@@ -42,7 +42,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// SettingsViewModel
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -50,8 +50,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public SettingsViewModel(SettingsFolder settings) : base(new Messenger())
         {
-            Settings = settings;
-            Data = new Bindable<Settings>(settings.Value);
+            Model = settings;
+            Data  = new Bindable<Settings>(settings.Value);
         }
 
         #endregion
@@ -61,7 +61,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Data
-        /// 
+        ///
         /// <summary>
         /// ユーザ設定を取得します。
         /// </summary>
@@ -72,7 +72,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Logo
-        /// 
+        ///
         /// <summary>
         /// アプリケーションのロゴ画像を取得します。
         /// </summary>
@@ -85,29 +85,29 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Product
-        /// 
+        ///
         /// <summary>
         /// アプリケーション名を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Product => Settings.Product;
+        public string Product => Model.Product;
 
         /* ----------------------------------------------------------------- */
         ///
         /// Version
-        /// 
+        ///
         /// <summary>
         /// バージョンを表す文字列を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Version => $"Version {Settings.Version.ToString(true)}";
+        public string Version => $"Version {Model.Version.ToString(true)}";
 
         /* ----------------------------------------------------------------- */
         ///
         /// Windows
-        /// 
+        ///
         /// <summary>
         /// Windows のバージョンを表す文字列を取得します。
         /// </summary>
@@ -118,7 +118,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Framework
-        /// 
+        ///
         /// <summary>
         /// .NET Framework のバージョンを表す文字列を取得します。
         /// </summary>
@@ -129,7 +129,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Copyright
-        /// 
+        ///
         /// <summary>
         /// コピーライト表記を取得します。
         /// </summary>
@@ -139,14 +139,14 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
-        /// 
+        /// Model
+        ///
         /// <summary>
         /// ユーザ設定を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private SettingsFolder Settings { get; }
+        private SettingsFolder Model { get; }
 
         #endregion
 
@@ -155,7 +155,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Apply
-        /// 
+        ///
         /// <summary>
         /// 内容を適用するコマンドです。
         /// </summary>

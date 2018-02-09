@@ -37,8 +37,6 @@ namespace Cube.Net.App.Rss.Tests
     {
         #region Tests
 
-        #region MainViewModel
-
         /* ----------------------------------------------------------------- */
         ///
         /// VM_Default
@@ -129,10 +127,6 @@ namespace Cube.Net.App.Rss.Tests
             }
         }
 
-        #endregion
-
-        #region RegisterViewModel
-
         /* ----------------------------------------------------------------- */
         ///
         /// VM_NewEntry
@@ -161,10 +155,6 @@ namespace Cube.Net.App.Rss.Tests
             }
         }
 
-        #endregion
-
-        #region PropertyViewModel
-
         /* ----------------------------------------------------------------- */
         ///
         /// VM_Property
@@ -179,11 +169,8 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var src = vm.Data.Root.OfType<RssCategory>().First();
-
                 vm.Stop.Execute(null);
                 vm.Messenger.Register<PropertyViewModel>(this, e => PropertyCommand(e));
-                vm.SelectEntry.Execute(src.Entries.First());
                 vm.Property.Execute(null);
 
                 var dest = vm.Data.Current.Value as RssEntry;
@@ -193,7 +180,32 @@ namespace Cube.Net.App.Rss.Tests
             }
         }
 
-        #endregion
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Settings
+        ///
+        /// <summary>
+        /// ユーザ設定を編集するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Settings()
+        {
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+                vm.Messenger.Register<SettingsViewModel>(this, e => SettingsCommand(e));
+                vm.Settings.Execute(null);
+
+                var dest = vm.Data.User.Value;
+                Assert.That(dest.CheckUpdate,          Is.False);
+                Assert.That(dest.EnableMonitorMessage, Is.False);
+                Assert.That(dest.LightMode,            Is.True);
+                Assert.That(dest.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
+                Assert.That(dest.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
+            }
+        }
 
         #endregion
 
@@ -281,6 +293,34 @@ namespace Cube.Net.App.Rss.Tests
             var dest = vm.Entry.Value;
             dest.Title = nameof(PropertyCommand);
             dest.Frequency = RssCheckFrequency.None;
+
+            vm.Apply.Execute(null);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SettingsCommand
+        ///
+        /// <summary>
+        /// Settings コマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void SettingsCommand(SettingsViewModel vm)
+        {
+            Assert.That(vm.Logo,      Is.Not.Null);
+            Assert.That(vm.Copyright, Does.StartWith("Copyright"));
+            Assert.That(vm.Framework, Does.StartWith("Microsoft .NET Framework"));
+            Assert.That(vm.Product,   Does.StartWith("Cube"));
+            Assert.That(vm.Version,   Does.StartWith("Version"));
+            Assert.That(vm.Windows,   Does.StartWith("Microsoft Windows"));
+
+            var src = vm.Data.Value;
+            src.CheckUpdate          = false;
+            src.EnableMonitorMessage = false;
+            src.LightMode            = true;
+            src.HighInterval         = TimeSpan.FromHours(2);
+            src.LowInterval          = TimeSpan.FromHours(12);
 
             vm.Apply.Execute(null);
         }
