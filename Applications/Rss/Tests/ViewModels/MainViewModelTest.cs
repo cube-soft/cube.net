@@ -39,7 +39,7 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DefaultProperties
+        /// VM_Default
         ///
         /// <summary>
         /// MainViewModel のプロパティの初期値を確認します。
@@ -47,19 +47,19 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void DefaultProperties()
+        public void VM_Default()
         {
             var vm = new MainViewModel();
-            Assert.That(vm.Data.Article.HasValue, Is.False);
+            Assert.That(vm.Data.Article.HasValue,   Is.False);
             Assert.That(vm.Data.Current.HasValue,   Is.False);
-            Assert.That(vm.Data.LastEntry.HasValue,    Is.False);
-            Assert.That(vm.Data.Message.HasValue, Is.False);
-            Assert.That(vm.Data.User.HasValue,    Is.True);
+            Assert.That(vm.Data.LastEntry.HasValue, Is.False);
+            Assert.That(vm.Data.Message.HasValue,   Is.False);
+            Assert.That(vm.Data.User.HasValue,      Is.True);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Select
+        /// VM_Select
         ///
         /// <summary>
         /// RSS フィードから新着記事を選択するテストを実行します。
@@ -67,18 +67,47 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Select()
+        public void VM_Select()
         {
-            var vm = Create();
-            vm.SelectEntry.Execute(vm.Data.Root.OfType<RssCategory>().First().Entries.First());
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+                vm.SelectEntry.Execute(vm.Data.Root.OfType<RssCategory>().First().Entries.First());
 
-            var feed = vm.Data.LastEntry.Value;
-            Assert.That(feed.Items.Count(), Is.EqualTo(10));
-            Assert.That(feed.UnreadItems.Count(), Is.EqualTo(9));
+                var feed = vm.Data.LastEntry.Value;
+                Assert.That(feed.Items.Count(), Is.EqualTo(10));
+                Assert.That(feed.UnreadItems.Count(), Is.EqualTo(9));
 
-            vm.SelectArticle.Execute(feed.UnreadItems.First());
-            Assert.That(vm.Data.Article.Value, Is.Not.Null);
-            Assert.That(feed.UnreadItems.Count(), Is.EqualTo(8));
+                vm.SelectArticle.Execute(feed.UnreadItems.First());
+                Assert.That(vm.Data.Article.Value, Is.Not.Null);
+                Assert.That(feed.UnreadItems.Count(), Is.EqualTo(8));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Remove
+        ///
+        /// <summary>
+        /// RSS エントリを削除するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Remove()
+        {
+            using (var vm = Create())
+            {
+                var mock = new MockMessagReceiver(vm.Messenger);
+                var src  = vm.Data.Root.OfType<RssCategory>().First();
+
+                vm.Stop.Execute(null);
+                vm.SelectEntry.Execute(src.Entries.First());
+
+                Assert.That(src.Entries.Count, Is.EqualTo(1));
+                vm.Remove.Execute(null);
+                Assert.That(src.Entries.Count, Is.EqualTo(0));
+            }
         }
 
         #endregion

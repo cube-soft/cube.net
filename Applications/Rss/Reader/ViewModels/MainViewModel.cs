@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using Cube.Net.Rss;
@@ -33,7 +32,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class MainViewModel : CommonViewModel
+    public sealed class MainViewModel : CommonViewModel
     {
         #region Constructors
 
@@ -59,7 +58,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public MainViewModel(SettingsFolder settings) : base()
         {
-            Model = new RssFacade(settings);
+            Model      = new RssFacade(settings);
             DropTarget = new RssEntryDropTarget((s, d, i) => Model.Move(s, d, i));
         }
 
@@ -98,7 +97,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected RssFacade Model { get; }
+        private RssFacade Model { get; }
 
         #endregion
 
@@ -364,6 +363,19 @@ namespace Cube.Net.App.Rss.Reader
             _navigate = new RelayCommand<Uri>(e => Data.Uri.Value = e)
         );
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Navigate
+        ///
+        /// <summary>
+        /// URL 先の Web ページを表示するコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Stop => _stop ?? (
+            _stop = new RelayCommand(() => Model.Stop())
+        );
+
         #endregion
 
         #region Implementations
@@ -403,6 +415,7 @@ namespace Cube.Net.App.Rss.Reader
         private ICommand _selectArticle;
         private ICommand _hover;
         private ICommand _navigate;
+        private ICommand _stop;
         #endregion
     }
 }
