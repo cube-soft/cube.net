@@ -33,7 +33,7 @@ namespace Cube.Net.App.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class ViewModelTest : ViewModelHelper
+    class ViewModelTest : FileHelper
     {
         #region Tests
 
@@ -87,7 +87,7 @@ namespace Cube.Net.App.Rss.Tests
                 vm.SelectEntry.Execute(src.Entries.First());
 
                 var dest = vm.Data.LastEntry.Value;
-                Assert.That(dest.Title, Is.EqualTo("CubeSoft Blog"));
+                Assert.That(dest.Title,               Is.EqualTo("CubeSoft Blog"));
                 Assert.That(dest.Items.Count(),       Is.EqualTo(10));
                 Assert.That(dest.Count,               Is.EqualTo(9), nameof(RssEntry));
                 Assert.That(dest.UnreadItems.Count(), Is.EqualTo(9));
@@ -211,6 +211,9 @@ namespace Cube.Net.App.Rss.Tests
         [SetUp]
         public void Setup()
         {
+            IO.Copy(Example("Sample.json"), Result("Feeds.json"), true);
+            IO.Delete(Result("Settings.json"));
+
             var cache = "Cache";
             foreach (var file in IO.GetFiles(Example(cache)))
             {
