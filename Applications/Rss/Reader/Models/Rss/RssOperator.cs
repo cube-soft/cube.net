@@ -135,7 +135,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (src != null && item != null && item.Status != RssItemStatus.Read)
             {
-                src.Count = Math.Max(src.Count - 1, 0);
+                src.Count = Math.Max(src.UnreadItems.Count() - 1, 0);
                 item.Status = RssItemStatus.Read;
             }
         }

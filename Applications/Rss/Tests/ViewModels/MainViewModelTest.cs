@@ -71,16 +71,21 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
+                var src = vm.Data.Root.OfType<RssCategory>().First();
                 vm.Stop.Execute(null);
-                vm.SelectEntry.Execute(vm.Data.Root.OfType<RssCategory>().First().Entries.First());
+                vm.SelectEntry.Execute(src.Entries.First());
 
                 var feed = vm.Data.LastEntry.Value;
                 Assert.That(feed.Items.Count(), Is.EqualTo(10));
+                Assert.That(feed.Count, Is.EqualTo(9), nameof(RssEntry));
                 Assert.That(feed.UnreadItems.Count(), Is.EqualTo(9));
+                Assert.That(src.Count, Is.EqualTo(9), nameof(RssCategory));
 
                 vm.SelectArticle.Execute(feed.UnreadItems.First());
                 Assert.That(vm.Data.Article.Value, Is.Not.Null);
+                Assert.That(feed.Count, Is.EqualTo(8), nameof(RssEntry));
                 Assert.That(feed.UnreadItems.Count(), Is.EqualTo(8));
+                Assert.That(src.Count, Is.EqualTo(8), nameof(RssCategory));
             }
         }
 
