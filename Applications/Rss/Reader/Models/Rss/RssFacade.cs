@@ -94,17 +94,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Property
-        ///
-        /// <summary>
-        /// 選択中の Web ページのプロパティを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private RssEntry Property { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Core
         ///
         /// <summary>
@@ -277,12 +266,6 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /// <param name="src">選択項目</param>
         ///
-        /// <remarks>
-        /// 未読アイテムがゼロの場合、選択項目から外れたタイミングで
-        /// 全記事を削除しています。これは主にメモリ使用量の抑制を目的と
-        /// しています。
-        /// </remarks>
-        ///
         /* ----------------------------------------------------------------- */
         public void Select(IRssEntry src)
         {
@@ -290,15 +273,11 @@ namespace Cube.Net.App.Rss.Reader
 
             Data.Current.Value = src;
 
-            if (src is RssEntry current && current != Property)
+            if (src is RssEntry current && current != Data.LastEntry.Value)
             {
                 current.Selected = true;
-                Property = current;
                 Data.LastEntry.Value = current;
-
-                var items = Data.LastEntry.Value?.Items;
-                var first = items?.Count > 0 ? items[0] : null;
-                Select(first);
+                Select(current.Items.FirstOrDefault());
                 Settings.Value.Start = current.Uri;
             }
         }
@@ -317,9 +296,13 @@ namespace Cube.Net.App.Rss.Reader
         public void Select(RssItem src)
         {
             if (src == null) return;
-            if (Property.SkipContent) Data.Uri.Value = src.Link;
+
+            System.Diagnostics.Debug.Assert(Data.LastEntry.HasValue);
+            var entry = Data.LastEntry.Value;
+
+            if (entry.SkipContent) Data.Uri.Value = src.Link;
             else Data.Article.Value = src;
-            if (Data.LastEntry.Value is RssEntry entry) entry.Read(src);
+            entry.Read(src);
         }
 
         /* ----------------------------------------------------------------- */
