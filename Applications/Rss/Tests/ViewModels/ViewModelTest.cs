@@ -25,17 +25,19 @@ namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MainViewModelTest
+    /// ViewModelTest
     ///
     /// <summary>
-    /// MainViewModel のテスト用クラスです。
+    /// MainViewModel および関連する ViewModel のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class MainViewModelTest : ViewModelHelper
+    class ViewModelTest : ViewModelHelper
     {
         #region Tests
+
+        #region MainViewModel
 
         /* ----------------------------------------------------------------- */
         ///
@@ -117,6 +119,40 @@ namespace Cube.Net.App.Rss.Tests
 
         #endregion
 
+        #region RegisterViewModel
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_NewEntry
+        ///
+        /// <summary>
+        /// 新しい RSS エントリを登録するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_NewEntry()
+        {
+            using (var vm = Create())
+            {
+                var src = new Uri("http://clown.hatenablog.jp/feed");
+                vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
+                vm.NewEntry.Execute(null);
+
+                var entry = vm.Data.Root
+                              .OfType<RssEntry>()
+                              .FirstOrDefault(e => e.Uri == src);
+
+                Assert.That(entry.Title, Is.EqualTo("Life like a clown"));
+                Assert.That(entry.Link,  Is.EqualTo(new Uri("http://clown.hatenablog.jp/")));
+                Assert.That(entry.Count, Is.AtLeast(1));
+            }
+        }
+
+        #endregion
+
+        #endregion
+
         #region Helper methods
 
         /* ----------------------------------------------------------------- */
@@ -153,6 +189,32 @@ namespace Cube.Net.App.Rss.Tests
             var dest = new MainViewModel(new SettingsFolder(Results, IO));
             dest.Setup.Execute(null);
             return dest;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RegisterCommand
+        ///
+        /// <summary>
+        /// Add コマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task RegisterCommand(RegisterViewModel vm, Uri src)
+        {
+            Assert.That(vm.Execute.CanExecute(null), Is.False);
+            vm.Url.Value = src.ToString();
+            Assert.That(vm.Execute.CanExecute(null), Is.True);
+
+            Assert.That(vm.Busy.Value, Is.False);
+            vm.Execute.Execute(null);
+            Assert.That(vm.Busy.Value, Is.True);
+
+            for (var i = 0; i < 100 && vm.Busy.Value; ++i)
+            {
+                await Task.Delay(50).ConfigureAwait(false);
+            }
+            Assert.That(vm.Busy.Value, Is.False);
         }
 
         #endregion

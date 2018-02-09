@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -30,7 +30,7 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// 新規 URL の登録画面とモデルを関連付けるための ViewModel です。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class RegisterViewModel : CommonViewModel
     {
@@ -39,7 +39,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// RegisterViewModel
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -48,9 +48,6 @@ namespace Cube.Net.App.Rss.Reader
         public RegisterViewModel(Func<string, Task> callback) : base(new Messenger())
         {
             _callback = callback;
-
-            Url.PropertyChanged  += (s, e) => Execute.RaiseCanExecuteChanged();
-            Busy.PropertyChanged += (s, e) => Execute.RaiseCanExecuteChanged();
         }
 
         #endregion
@@ -60,7 +57,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Busy
-        /// 
+        ///
         /// <summary>
         /// 処理中かどうかを示す値を取得または設定します。
         /// </summary>
@@ -71,7 +68,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Url
-        /// 
+        ///
         /// <summary>
         /// 追加するフィードの URL を取得または設定します。
         /// </summary>
@@ -86,14 +83,14 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Execute
-        /// 
+        ///
         /// <summary>
         /// 新しい RSS フィードを登録するコマンドを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public RelayCommand Execute =>
-            _execute = _execute ?? new RelayCommand(
+            _execute = _execute ?? new BindableCommand(
                 async () =>
                 {
                     try
@@ -105,7 +102,8 @@ namespace Cube.Net.App.Rss.Reader
                     catch (Exception err) { Send(err); }
                     finally { Busy.Value = false; }
                 },
-                () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value
+                () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value,
+                Busy, Url
             );
 
         #endregion
