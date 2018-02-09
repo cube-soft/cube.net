@@ -52,11 +52,13 @@ namespace Cube.Net.App.Rss.Tests
         public void VM_Default()
         {
             var vm = new MainViewModel();
+
             Assert.That(vm.Data.Article.HasValue,   Is.False);
             Assert.That(vm.Data.Current.HasValue,   Is.False);
             Assert.That(vm.Data.LastEntry.HasValue, Is.False);
             Assert.That(vm.Data.Message.HasValue,   Is.False);
             Assert.That(vm.Data.User.HasValue,      Is.True);
+            Assert.That(vm.DropTarget,              Is.Not.Null);
         }
 
         /* ----------------------------------------------------------------- */
@@ -88,6 +90,8 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(feed.Count, Is.EqualTo(8), nameof(RssEntry));
                 Assert.That(feed.UnreadItems.Count(), Is.EqualTo(8));
                 Assert.That(src.Count, Is.EqualTo(8), nameof(RssCategory));
+
+                vm.Close.Execute(null);
             }
         }
 
@@ -146,6 +150,38 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(entry.Title, Is.EqualTo("Life like a clown"));
                 Assert.That(entry.Link,  Is.EqualTo(new Uri("http://clown.hatenablog.jp/")));
                 Assert.That(entry.Count, Is.AtLeast(1));
+            }
+        }
+
+        #endregion
+
+        #region PropertyViewModel
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Property
+        ///
+        /// <summary>
+        /// RSS エントリの情報を編集するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Property()
+        {
+            using (var vm = Create())
+            {
+                var src = vm.Data.Root.OfType<RssCategory>().First();
+
+                vm.Stop.Execute(null);
+                vm.Messenger.Register<PropertyViewModel>(this, e => PropertyCommand(e));
+                vm.SelectEntry.Execute(src.Entries.First());
+                vm.Property.Execute(null);
+
+                var dest = vm.Data.Current.Value as RssEntry;
+                Assert.That(dest, Is.Not.Null);
+                Assert.That(dest.Title, Is.EqualTo(nameof(PropertyCommand)));
+                Assert.That(dest.Frequency, Is.EqualTo(RssCheckFrequency.None));
             }
         }
 
@@ -215,6 +251,27 @@ namespace Cube.Net.App.Rss.Tests
                 await Task.Delay(50).ConfigureAwait(false);
             }
             Assert.That(vm.Busy.Value, Is.False);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PropertyCommand
+        ///
+        /// <summary>
+        /// Property コマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void PropertyCommand(PropertyViewModel vm)
+        {
+            Assert.That(vm.Entry.HasValue, Is.True);
+            Assert.That(vm.Frequencies.Count(), Is.EqualTo(4));
+
+            var dest = vm.Entry.Value;
+            dest.Title = nameof(PropertyCommand);
+            dest.Frequency = RssCheckFrequency.None;
+
+            vm.Apply.Execute(null);
         }
 
         #endregion

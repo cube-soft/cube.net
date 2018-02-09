@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,7 +23,6 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Cube.Net.Rss;
 using Cube.Xui;
-using Cube.Xui.Triggers;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -34,7 +33,7 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// RSS フィードのプロパティ画面とモデルを関連付けるためのクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class PropertyViewModel : CommonViewModel
     {
@@ -43,22 +42,20 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// PropertyViewModel
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="entry">RssEntry オブジェクト</param>
-        /// <param name="feed">RssFeed オブジェクト</param>
         /// <param name="callback">コールバック関数</param>
         ///
         /* ----------------------------------------------------------------- */
-        public PropertyViewModel(RssEntry entry, RssFeed feed, Action<RssEntry> callback) :
+        public PropertyViewModel(RssEntry entry, Action<RssEntry> callback) :
             base(new Messenger())
         {
-            System.Diagnostics.Debug.Assert(entry != null && feed != null);
+            System.Diagnostics.Debug.Assert(entry != null);
             Entry     = new Bindable<RssEntry>(entry);
-            Feed      = new Bindable<RssFeed>(feed);
             _callback = callback;
         }
 
@@ -69,7 +66,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Entry
-        /// 
+        ///
         /// <summary>
         /// 対象となる RssEntry オブジェクトを取得します。
         /// </summary>
@@ -79,19 +76,8 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Feed
-        /// 
-        /// <summary>
-        /// 対象となる RssFeed オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Bindable<RssFeed> Feed { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Frequencies
-        /// 
+        ///
         /// <summary>
         /// 更新頻度を表すオブジェクト一覧を取得します。
         /// </summary>
@@ -107,7 +93,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Apply
-        /// 
+        ///
         /// <summary>
         /// 内容を適用するコマンドです。
         /// </summary>

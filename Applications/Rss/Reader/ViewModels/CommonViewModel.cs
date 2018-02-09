@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,7 +21,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Cube.Xui;
-using Cube.Xui.Triggers;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -32,7 +31,7 @@ namespace Cube.Net.App.Rss.Reader
     /// <summary>
     /// ViewModel の既定となるクラスです。一般的なコマンドを実装します。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public abstract class CommonViewModel : ViewModelBase, IDisposable
     {
@@ -41,7 +40,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// MainViewModel
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -52,11 +51,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// MainViewModel
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="messenger">メッセージ伝搬用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -72,7 +71,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Messenger
-        /// 
+        ///
         /// <summary>
         /// Messenger オブジェクトを取得します。
         /// </summary>
@@ -87,7 +86,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Close
-        /// 
+        ///
         /// <summary>
         /// 画面を閉じるコマンドです。
         /// </summary>
@@ -105,11 +104,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Send
-        /// 
+        ///
         /// <summary>
         /// メッセージを表示します。
         /// </summary>
-        /// 
+        ///
         /// <param name="message">メッセージ</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -118,11 +117,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Send
-        /// 
+        ///
         /// <summary>
         /// メッセージを表示します。
         /// </summary>
-        /// 
+        ///
         /// <param name="message">メッセージ</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -131,11 +130,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Send
-        /// 
+        ///
         /// <summary>
         /// エラーメッセージを表示します。
         /// </summary>
-        /// 
+        ///
         /// <param name="err">例外オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -157,22 +156,22 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// ~CommonViewModel
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         ~CommonViewModel() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを開放します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
@@ -183,15 +182,15 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
-        /// 
+        ///
         /// <summary>
         /// リソースを開放します。
         /// </summary>
-        /// 
+        ///
         /// <param name="disposing">
         /// マネージオブジェクトを開放するかどうか
         /// </param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing) { }
 

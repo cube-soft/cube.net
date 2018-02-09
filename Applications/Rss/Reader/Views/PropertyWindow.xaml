@@ -116,7 +116,7 @@
                 Grid.Column="0"/>
 
             <TextBox
-                Text="{Binding Feed.Value.Link, Converter={xc:ValueToString}}"
+                Text="{Binding Entry.Value.Link, Converter={xc:ValueToString}}"
                 Style="{StaticResource CopyableSummaryStyle}"
                 Grid.Row="4"
                 Grid.Column="1"/>
@@ -140,7 +140,7 @@
                 Grid.Column="0"/>
 
             <TextBox
-                Text="{Binding Feed.Value.LastPublished, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                Text="{Binding Entry.Value.LastPublished, StringFormat=yyyy/MM/dd HH:mm:ss}"
                 ToolTip="最新記事が投稿された日時を表します"
                 Style="{StaticResource CopyableSummaryStyle}"
                 Grid.Row="6"
@@ -153,7 +153,7 @@
                 Grid.Column="0"/>
 
             <TextBox
-                Text="{Binding Feed.Value.LastChecked, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                Text="{Binding Entry.Value.LastChecked, StringFormat=yyyy/MM/dd HH:mm:ss}"
                 ToolTip="CubeRSS Reader が最後にチェックした日時を表します"
                 Style="{StaticResource CopyableSummaryStyle}"
                 Grid.Row="7"

@@ -129,10 +129,9 @@ namespace Cube.Net.App.Rss.Reader
             _property = new BindableCommand(
                 () => Messenger.Send(new PropertyViewModel(
                     Data.Current.Value as RssEntry,
-                    Data.LastEntry.Value,
                     e => Model.Reschedule(e)
                 )),
-                () => Data.Current.Value is RssEntry && Data.LastEntry.Value != null,
+                () => Data.Current.Value is RssEntry,
                 Data.Current
             )
         );
