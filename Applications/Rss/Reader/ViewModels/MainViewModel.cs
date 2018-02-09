@@ -259,33 +259,20 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Update => _update ?? (
-            _update = new RelayCommand(() => Model.UpdateEntry(Data.Current.Value))
+            _update = new RelayCommand(() => Model.Update(Data.Current.Value))
         );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UpdateOne
+        /// Read
         ///
         /// <summary>
-        /// RSS フィード更新時に実行されるコマンドです。
+        /// 選択中の RSS エントリの全記事を既読に設定するコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand UpdateOne => _updateOne ?? (
-            _updateOne = new RelayCommand(() => Model.UpdateFeed(Data.LastEntry.Value))
-        );
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ReadAll
-        ///
-        /// <summary>
-        /// 全ての記事を既読に設定するコマンドです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ICommand ReadAll => _readAll ?? (
-            _readAll = new RelayCommand(() => Model.ReadAll())
+        public ICommand Read => _read ?? (
+            _read = new RelayCommand(() => Model.Read())
         );
 
         /* ----------------------------------------------------------------- */
@@ -298,7 +285,11 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Reset => _reset ?? (
-            _reset = new RelayCommand(() => Model.Reset())
+            _reset = new BindableCommand(
+                () => Model.Reset(),
+                () => Data.Current.Value is RssEntry,
+                Data.Current
+            )
         );
 
         /* ----------------------------------------------------------------- */
@@ -405,8 +396,7 @@ namespace Cube.Net.App.Rss.Reader
         private ICommand _newEntry;
         private ICommand _newCategory;
         private ICommand _update;
-        private ICommand _updateOne;
-        private ICommand _readAll;
+        private ICommand _read;
         private ICommand _reset;
         private ICommand _remove;
         private ICommand _rename;

@@ -1,14 +1,14 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+
     <!--
         EntryMenu
     -->
-    
+
     <ContextMenu x:Key="RssEntryMenu">
         <MenuItem Command="{Binding Update}"      Header="最新の情報に更新"/>
-        <MenuItem Command="{Binding ReadAll}"     Header="全ての記事を既読に設定"/>
+        <MenuItem Command="{Binding Read}"        Header="全ての記事を既読に設定"/>
         <MenuItem Command="{Binding Reset}"       Header="キャッシュをクリアして更新"/>
         <Separator/>
         <MenuItem Command="{Binding NewCategory}" Header="新しいフォルダーを追加"/>

@@ -111,7 +111,7 @@
             </Grid.RowDefinitions>
 
             <Button
-                Command="{Binding UpdateOne}"
+                Command="{Binding Update}"
                 Style="{StaticResource UpdateButtonStyle}"
                 Template="{StaticResource UpdateButtonTemplate}"
                 Visibility="{Binding Data.LastEntry.Value, Converter={my:LastCheckedToVisibility}}">

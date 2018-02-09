@@ -118,7 +118,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Setup()
         {
-            var entry = Core.Find<RssEntry>(Settings.Value.Start);
+            var entry = Core.Find(Settings.Value.Start) ??
+                        Core.Flatten<RssEntry>().FirstOrDefault();
             if (entry != null)
             {
                 Select(entry);
@@ -159,36 +160,24 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UpdateEntry
+        /// Update
         ///
         /// <summary>
         /// 選択中の RSS エントリの内容を更新します。
+        /// カテゴリが指定された場合、カテゴリ中の全 RSS エントリの内容を
+        /// 更新します。
         /// </summary>
         ///
         /// <param name="src">選択中の RSS エントリ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void UpdateEntry(IRssEntry src)
+        public void Update(IRssEntry src)
         {
-            if (src is RssEntry entry) Core.Update(entry.Uri);
-            else if (src is RssCategory category)
-            {
-                Core.Update(category.Entries.Select(e => e.Uri));
-            }
+            if (src is RssEntry re) Core.Update(re.Uri);
+            else if (src is RssCategory rc) Core.Update(
+                rc.Children.Flatten<RssEntry>().Select(e => e.Uri).ToArray()
+            );
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// UpdateFeed
-        ///
-        /// <summary>
-        /// 選択中の RSS フィードの内容を更新します。
-        /// </summary>
-        ///
-        /// <param name="src">選択中の RSS フィード</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void UpdateFeed(RssFeed src) => Core.Update(src?.Uri);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -233,14 +222,14 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ReadAll
+        /// Read
         ///
         /// <summary>
-        /// 現在選択中の RSS エントリ下の全ての記事を既読に設定します。
+        /// 現在選択中の RSS エントリの全記事を既読に設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void ReadAll() => Data.Current.Value?.Read();
+        public void Read() => Data.Current.Value?.Read();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -432,18 +421,18 @@ namespace Cube.Net.App.Rss.Reader
         private void WhenReceived(object sender, ValueEventArgs<RssFeed> e)
         {
             var src  = e.Value;
-            var dest = Core.Find<RssFeed>(src.Uri);
+            var dest = Core.Find(src.Uri);
             if (src == null || dest == null) return;
 
             src.Items = src.Items.Shrink(dest.LastChecked).ToList();
             foreach (var item in src.Items) dest.Items.Insert(0, item);
 
             dest.Description   = src.Description;
+            dest.Count         = dest.UnreadItems.Count();
             dest.Link          = src.Link;
             dest.LastChecked   = src.LastChecked;
             dest.LastPublished = src.LastPublished;
 
-            if (dest is RssEntry re) re.Count = re.UnreadItems.Count();
             if (!Settings.Value.EnableMonitorMessage) return;
 
             Data.Message.Value =

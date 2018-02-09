@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cube.Collections;
 using Cube.FileSystem;
 using Cube.Log;
 using Cube.Net.Rss;
@@ -200,6 +201,39 @@ namespace Cube.Net.App.Rss.Reader
                 src = category.Parent;
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Flatten
+        ///
+        /// <summary>
+        /// 木構造の RSS エントリ一覧を一次元配列に変換します。
+        /// </summary>
+        ///
+        /// <param name="src">木構造の RSS エントリ一覧</param>
+        ///
+        /// <returns>変換結果</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static IEnumerable<IRssEntry> Flatten(this IEnumerable<IRssEntry> src) =>
+            src.Flatten(e => (e is RssCategory c) ? c.Children : null);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Flatten
+        ///
+        /// <summary>
+        /// 木構造の RSS エントリ一覧を一次元配列に変換します。
+        /// </summary>
+        ///
+        /// <param name="src">木構造の RSS エントリ一覧</param>
+        ///
+        /// <returns>変換結果</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<IRssEntry> src) =>
+            src.Flatten().OfType<T>();
+
 
         /* ----------------------------------------------------------------- */
         ///

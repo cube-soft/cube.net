@@ -281,10 +281,10 @@ namespace Cube.Net.Rss
         /// メソッドを通じて結果が通知されます。
         /// </summary>
         ///
-        /// <param name="uri">対象とするフィード URL</param>
+        /// <param name="uris">対象とするフィード URL 一覧</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Update(Uri uri) => Update(new[] { uri });
+        public void Update(params Uri[] uris) => Update((IEnumerable<Uri>)uris);
 
         /* ----------------------------------------------------------------- */
         ///

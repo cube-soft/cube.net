@@ -187,8 +187,8 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>対応するオブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public T Find<T>(Uri uri) where T : class =>
-            uri != null && _feeds.ContainsKey(uri) ? _feeds[uri] as T : null;
+        public RssEntry Find(Uri uri) =>
+            uri != null && _feeds.ContainsKey(uri) ? _feeds[uri] as RssEntry : null;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -410,28 +410,10 @@ namespace Cube.Net.App.Rss.Reader
         /// RSS フィードの内容を更新します。
         /// </summary>
         ///
-        /// <param name="uri">対象とするフィード URL</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Update(Uri uri)
-        {
-            var mon = _monitors[0].Contains(uri) ? _monitors[0] :
-                      _monitors[1].Contains(uri) ? _monitors[1] : null;
-            mon?.Update(uri);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Update
-        ///
-        /// <summary>
-        /// RSS フィードの内容を更新します。
-        /// </summary>
-        ///
         /// <param name="uris">対象とするフィード URL 一覧</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Update(IEnumerable<Uri> uris)
+        public void Update(params Uri[] uris)
         {
             var m0 = uris.Where(e => _monitors[0].Contains(e));
             if (m0.Count() > 0) _monitors[0].Update(m0);
@@ -453,14 +435,14 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Reset(Uri uri)
         {
+            var dest = Find(uri);
+            if (dest == null) return;
+
             _feeds.DeleteCache(uri);
-            var dest = Find<RssFeed>(uri);
-            if (dest != null)
-            {
-                dest.Items.Clear();
-                dest.LastChecked = null;
-                Update(uri);
-            }
+            dest.Items.Clear();
+            dest.Count = 0;
+            dest.LastChecked = null;
+            Update(uri);
         }
 
         /* ----------------------------------------------------------------- */
