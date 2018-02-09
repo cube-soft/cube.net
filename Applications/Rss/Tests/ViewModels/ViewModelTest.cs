@@ -75,21 +75,29 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var src = vm.Data.Root.OfType<RssCategory>().First();
                 vm.Stop.Execute(null);
+
+                var first = vm.Data.LastEntry.Value;
+                Assert.That(first.Title,               Is.EqualTo("The GitHub Blog"));
+                Assert.That(first.Items.Count(),       Is.EqualTo(15));
+                Assert.That(first.Count,               Is.EqualTo(14));
+                Assert.That(first.UnreadItems.Count(), Is.EqualTo(14));
+
+                var src = vm.Data.Root.OfType<RssCategory>().First();
                 vm.SelectEntry.Execute(src.Entries.First());
 
-                var feed = vm.Data.LastEntry.Value;
-                Assert.That(feed.Items.Count(), Is.EqualTo(10));
-                Assert.That(feed.Count, Is.EqualTo(9), nameof(RssEntry));
-                Assert.That(feed.UnreadItems.Count(), Is.EqualTo(9));
-                Assert.That(src.Count, Is.EqualTo(9), nameof(RssCategory));
+                var dest = vm.Data.LastEntry.Value;
+                Assert.That(dest.Title, Is.EqualTo("CubeSoft Blog"));
+                Assert.That(dest.Items.Count(),       Is.EqualTo(10));
+                Assert.That(dest.Count,               Is.EqualTo(9), nameof(RssEntry));
+                Assert.That(dest.UnreadItems.Count(), Is.EqualTo(9));
+                Assert.That(src.Count,                Is.EqualTo(9), nameof(RssCategory));
 
-                vm.SelectArticle.Execute(feed.UnreadItems.First());
-                Assert.That(vm.Data.Article.Value, Is.Not.Null);
-                Assert.That(feed.Count, Is.EqualTo(8), nameof(RssEntry));
-                Assert.That(feed.UnreadItems.Count(), Is.EqualTo(8));
-                Assert.That(src.Count, Is.EqualTo(8), nameof(RssCategory));
+                vm.SelectArticle.Execute(dest.UnreadItems.First());
+                Assert.That(vm.Data.Article.Value,    Is.Not.Null);
+                Assert.That(dest.Count,               Is.EqualTo(8), nameof(RssEntry));
+                Assert.That(dest.UnreadItems.Count(), Is.EqualTo(8));
+                Assert.That(src.Count,                Is.EqualTo(8), nameof(RssCategory));
 
                 vm.Close.Execute(null);
             }

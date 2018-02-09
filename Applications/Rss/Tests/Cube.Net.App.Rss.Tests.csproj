@@ -81,6 +81,9 @@
     <Compile Include="ViewModels\ViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Examples\Cache\7ae34cce28b4272e1170fb1e4c2c87ad">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Examples\Cache\872e24035276c7104afd116c2052172b">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
