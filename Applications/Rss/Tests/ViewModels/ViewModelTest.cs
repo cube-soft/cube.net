@@ -291,9 +291,9 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                vm.Stop.Execute(null);
-
                 var src = vm.Data.Root.OfType<RssCategory>().First();
+
+                vm.Stop.Execute(null);
                 vm.SelectEntry.Execute(src.Entries.First());
                 vm.NewCategory.Execute(null);
 
@@ -304,6 +304,31 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
                 Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
                 Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Hover
+        ///
+        /// <summary>
+        /// Hover コマンドのテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Hover()
+        {
+            using (var vm = Create())
+            {
+                var message = nameof(VM_Hover);
+
+                vm.Stop.Execute(null);
+                Assert.That(vm.Data.Message.HasValue, Is.False);
+                Assert.That(vm.Hover.CanExecute(null), Is.False);
+                Assert.That(vm.Hover.CanExecute(message), Is.True);
+                vm.Hover.Execute(message);
+                Assert.That(vm.Data.Message.Value, Is.EqualTo(message));
             }
         }
 
