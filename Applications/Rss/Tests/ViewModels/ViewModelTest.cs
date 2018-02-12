@@ -144,13 +144,29 @@ namespace Cube.Net.App.Rss.Tests
             using (var vm = Create())
             {
                 vm.Stop.Execute(null);
-
-                var src = vm.Data.Root.OfType<RssCategory>().First();
-                vm.SelectEntry.Execute(src.Entries.First());
                 vm.Rename.Execute(null);
+                Assert.That(vm.Data.LastEntry.Value.Editing, Is.True);
+            }
+        }
 
-                var dest = vm.Data.LastEntry.Value;
-                Assert.That(dest.Editing, Is.True);
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Read
+        ///
+        /// <summary>
+        /// RSS エントリの名前を変更するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Read()
+        {
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+                Assert.That(vm.Data.LastEntry.Value.Count, Is.EqualTo(14));
+                vm.Read.Execute(null);
+                Assert.That(vm.Data.LastEntry.Value.Count, Is.EqualTo(0));
             }
         }
 

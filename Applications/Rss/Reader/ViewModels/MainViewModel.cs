@@ -251,19 +251,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Update
-        ///
-        /// <summary>
-        /// RSS フィード更新時に実行されるコマンドです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ICommand Update => _update ?? (
-            _update = new RelayCommand(() => Model.Update(Data.Current.Value))
-        );
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Read
         ///
         /// <summary>
@@ -273,6 +260,19 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Read => _read ?? (
             _read = new RelayCommand(() => Model.Read())
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// RSS フィード更新時に実行されるコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand Update => _update ?? (
+            _update = new RelayCommand(() => Model.Update(Data.Current.Value))
         );
 
         /* ----------------------------------------------------------------- */
