@@ -179,6 +179,36 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// VM_NewCategor
+        ///
+        /// <summary>
+        /// 新しいカテゴリを追加するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_NewCategory()
+        {
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+
+                var src = vm.Data.Root.OfType<RssCategory>().First();
+                vm.SelectEntry.Execute(src.Entries.First());
+                vm.NewCategory.Execute(null);
+
+                var dest = vm.Data.Current.Value as RssCategory;
+                Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
+                Assert.That(dest.Parent,         Is.EqualTo(src));
+                Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
+                Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
+                Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
+                Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// VM_Property
         ///
         /// <summary>
