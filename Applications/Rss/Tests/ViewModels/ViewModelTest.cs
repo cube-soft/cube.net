@@ -131,6 +131,31 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// VM_Rename
+        ///
+        /// <summary>
+        /// RSS エントリの名前を変更するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Rename()
+        {
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+
+                var src = vm.Data.Root.OfType<RssCategory>().First();
+                vm.SelectEntry.Execute(src.Entries.First());
+                vm.Rename.Execute(null);
+
+                var dest = vm.Data.LastEntry.Value;
+                Assert.That(dest.Editing, Is.True);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// VM_NewEntry
         ///
         /// <summary>
