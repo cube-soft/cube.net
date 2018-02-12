@@ -23,7 +23,7 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssEntryDropTarget
+    /// RssDropTarget
     ///
     /// <summary>
     /// RssEntry オブジェクトのドラッグ&amp;ドロップを処理するための
@@ -31,13 +31,13 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssEntryDropTarget : IDropTarget
+    public class RssDropTarget : IDropTarget
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssEntryDropTarget
+        /// RssDropTarget
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -48,7 +48,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntryDropTarget(Action<IRssEntry, IRssEntry, int> callback)
+        public RssDropTarget(Action<IRssEntry, IRssEntry, int> callback)
         {
             System.Diagnostics.Debug.Assert(callback != null);
             _callback = callback;

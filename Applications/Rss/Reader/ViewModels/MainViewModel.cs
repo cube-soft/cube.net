@@ -60,7 +60,7 @@ namespace Cube.Net.App.Rss.Reader
         public MainViewModel(SettingsFolder settings) : base(new Messenger())
         {
             Model      = new RssFacade(settings);
-            DropTarget = new RssEntryDropTarget((s, d, i) => Model.Move(s, d, i));
+            DropTarget = new RssDropTarget((s, d, i) => Model.Move(s, d, i));
         }
 
         #endregion
@@ -87,7 +87,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntryDropTarget DropTarget { get; }
+        public RssDropTarget DropTarget { get; }
 
         /* ----------------------------------------------------------------- */
         ///
