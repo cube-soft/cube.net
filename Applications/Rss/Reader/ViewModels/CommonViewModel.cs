@@ -140,9 +140,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected void Send(Exception err)
         {
-            var user = err.GetType() == typeof(ArgumentException);
-            var msg = user ? err.Message : $"{err.Message} ({err.GetType().Name})";
-            var ss = new System.Text.StringBuilder();
+            var msg = $"{err.Message} ({err.GetType().Name})";
+            var ss  = new System.Text.StringBuilder();
 
             ss.AppendLine(Properties.Resources.ErrorUnexpected);
             ss.AppendLine();
