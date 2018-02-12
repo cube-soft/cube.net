@@ -45,17 +45,6 @@ namespace Cube.Net.App.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /* ----------------------------------------------------------------- */
-        public CommonViewModel() : this(GalaSoft.MvvmLight.Messaging.Messenger.Default) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// MainViewModel
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
         /// <param name="messenger">メッセージ伝搬用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
