@@ -120,7 +120,7 @@ namespace Cube.Net.App.Rss.Tests
                 var src = vm.Data.Root.OfType<RssCategory>().First();
 
                 vm.Stop.Execute(null);
-                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e));
+                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
                 vm.SelectEntry.Execute(src.Entries.First());
 
                 Assert.That(src.Entries.Count, Is.EqualTo(1));
@@ -357,6 +357,86 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// VM_Import
+        ///
+        /// <summary>
+        /// Import コマンドのテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Import()
+        {
+            using (var vm = Create())
+            {
+                var src = Example("Sample.opml");
+                vm.Stop.Execute(null);
+                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+                vm.Messenger.Register<OpenFileDialogMessage>(this, e => ImportCommand(e, src, true));
+                vm.Import.Execute(null);
+
+                var dest = vm.Data.Root.Flatten();
+                Assert.That(dest.Count(), Is.EqualTo(8));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Import_Cancel
+        ///
+        /// <summary>
+        /// Import コマンドをキャンセルした時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Import_Cancel()
+        {
+            using (var vm = Create())
+            {
+                var src = Example("Sample.opml");
+                vm.Stop.Execute(null);
+                var count = vm.Data.Root.Flatten().Count();
+
+                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+                vm.Messenger.Register<OpenFileDialogMessage>(this, e => ImportCommand(e, src, false));
+                vm.Import.Execute(null);
+
+                var dest = vm.Data.Root.Flatten();
+                Assert.That(dest.Count(), Is.EqualTo(count));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Import_Warning_Cancel
+        ///
+        /// <summary>
+        /// Import コマンドの警告メッセージ表示時にキャンセルした時の
+        /// 挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Import_Warning_Cancel()
+        {
+            using (var vm = Create())
+            {
+                var src = Example("Sample.opml");
+                vm.Stop.Execute(null);
+                var count = vm.Data.Root.Flatten().Count();
+
+                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, false));
+                vm.Messenger.Register<OpenFileDialogMessage>(this, e => ImportCommand(e, src, true));
+                vm.Import.Execute(null);
+
+                var dest = vm.Data.Root.Flatten();
+                Assert.That(dest.Count(), Is.EqualTo(count));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// VM_Export
         ///
         /// <summary>
@@ -370,6 +450,7 @@ namespace Cube.Net.App.Rss.Tests
             using (var vm = Create())
             {
                 var dest = Result($"{nameof(VM_Export)}.opml");
+                vm.Stop.Execute(null);
                 vm.Messenger.Register<SaveFileDialogMessage>(this, e => ExportCommand(e, dest, true));
                 vm.Export.Execute(null);
 
@@ -631,6 +712,22 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// ImportCommand
+        ///
+        /// <summary>
+        /// Import コマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void ImportCommand(OpenFileDialogMessage e, string src, bool result)
+        {
+            e.FileName = src;
+            e.Result   = result;
+            e.Callback(e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// DialogMessageCommand
         ///
         /// <summary>
@@ -638,12 +735,12 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void DialogMessageCommand(DialogMessage e)
+        private void DialogMessageCommand(DialogMessage e, bool result)
         {
             Assert.That(e.Content, Is.Not.Null.And.Not.Empty);
             Assert.That(e.Title,   Is.Not.Null.And.Not.Empty);
 
-            e.Result = true;
+            e.Result = result;
             e.Callback(e);
         }
 
