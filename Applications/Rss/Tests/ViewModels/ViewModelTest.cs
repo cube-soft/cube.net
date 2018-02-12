@@ -193,19 +193,39 @@ namespace Cube.Net.App.Rss.Tests
                 var count = dest.Count;
                 Assert.That(count, Is.EqualTo(9));
                 Assert.That(vm.Data.Message.HasValue, Is.False);
-
                 vm.Update.Execute(null);
-
-                Task.Run(async () =>
-                {
-                    for (var i = 0; i < 100; ++i)
-                    {
-                        if (vm.Data.Message.HasValue) break;
-                        await Task.Delay(50);
-                    }
-                }).Wait();
-
+                WaitMessage(vm);
                 Assert.That(dest.Count, Is.AtLeast(count));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Update
+        ///
+        /// <summary>
+        /// RSS エントリを更新するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Reset()
+        {
+            using (var vm = Create())
+            {
+                var src = vm.Data.Root.OfType<RssCategory>().First();
+                vm.Stop.Execute(null);
+                vm.SelectEntry.Execute(src);
+                Assert.That(vm.Reset.CanExecute(null), Is.False);
+
+                var dest = src.Entries.First();
+                vm.SelectEntry.Execute(dest);
+                Assert.That(vm.Reset.CanExecute(null), Is.True);
+
+                vm.Reset.Execute(null);
+                Assert.That(dest.Count, Is.EqualTo(0));
+                WaitMessage(vm);
+                Assert.That(dest.Count, Is.AtLeast(1));
             }
         }
 
@@ -381,6 +401,24 @@ namespace Cube.Net.App.Rss.Tests
             dest.Setup.Execute(null);
             return dest;
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// AwaitMessage
+        ///
+        /// <summary>
+        /// メッセージを受信するまで待機します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WaitMessage(MainViewModel vm) => Task.Run(async () =>
+        {
+            for (var i = 0; i < 100; ++i)
+            {
+                if (vm.Data.Message.HasValue) return;
+                await Task.Delay(50);
+            }
+        }).Wait();
 
         /* ----------------------------------------------------------------- */
         ///
