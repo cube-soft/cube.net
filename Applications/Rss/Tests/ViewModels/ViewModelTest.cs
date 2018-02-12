@@ -172,6 +172,45 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// VM_Update
+        ///
+        /// <summary>
+        /// RSS エントリを更新するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Update()
+        {
+            using (var vm = Create())
+            {
+                var src  = vm.Data.Root.OfType<RssCategory>().First();
+                var dest = src.Entries.First();
+
+                vm.Stop.Execute(null);
+                vm.SelectEntry.Execute(dest);
+
+                var count = dest.Count;
+                Assert.That(count, Is.EqualTo(9));
+                Assert.That(vm.Data.Message.HasValue, Is.False);
+
+                vm.Update.Execute(null);
+
+                Task.Run(async () =>
+                {
+                    for (var i = 0; i < 100; ++i)
+                    {
+                        if (vm.Data.Message.HasValue) break;
+                        await Task.Delay(50);
+                    }
+                }).Wait();
+
+                Assert.That(dest.Count, Is.AtLeast(count));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// VM_NewEntry
         ///
         /// <summary>
