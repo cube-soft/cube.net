@@ -66,27 +66,6 @@ namespace Cube.Net.App.Rss.Tests
             }
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Export
-        ///
-        /// <summary>
-        /// OPML 形式でエクスポートするテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Export()
-        {
-            using (var src = new RssSubscriber { FileName = CreateJson() })
-            {
-                var dest = Result("Export.opml");
-                src.Load();
-                RssOpml.Save(src, dest, src.IO);
-                Assert.That(IO.Get(dest).Length, Is.AtLeast(1));
-            }
-        }
-
         #endregion
 
         #region Helpers
