@@ -334,6 +334,29 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// VM_Navigate
+        ///
+        /// <summary>
+        /// Navigate コマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Navigate()
+        {
+            using (var vm = Create())
+            {
+                var uri = new Uri("http://www.example.com/");
+
+                vm.Stop.Execute(null);
+                Assert.That(vm.Data.Uri.HasValue, Is.False);
+                vm.Navigate.Execute(uri);
+                Assert.That(vm.Data.Uri.Value, Is.EqualTo(uri));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// VM_Property
         ///
         /// <summary>
