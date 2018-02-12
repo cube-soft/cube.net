@@ -369,11 +369,13 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var path = Result($"{nameof(VM_Export)}.opml");
-                ExportCommand(vm, path);
-                var dest = IO.Get(path);
-                Assert.That(dest.Exists, Is.True);
-                Assert.That(dest.Length, Is.AtLeast(1));
+                var dest = Result($"{nameof(VM_Export)}.opml");
+                vm.Messenger.Register<SaveFileDialogMessage>(this, e => ExportCommand(e, dest, true));
+                vm.Export.Execute(null);
+
+                var info = IO.Get(dest);
+                Assert.That(info.Exists, Is.True);
+                Assert.That(info.Length, Is.AtLeast(1));
             }
         }
 
@@ -392,7 +394,8 @@ namespace Cube.Net.App.Rss.Tests
             using (var vm = Create())
             {
                 var dest = Result($"{nameof(VM_Export_Cancel)}.opml");
-                ExportCancel(vm, dest);
+                vm.Messenger.Register<SaveFileDialogMessage>(this, e => ExportCommand(e, dest, false));
+                vm.Export.Execute(null);
                 Assert.That(IO.Exists(dest), Is.False);
             }
         }
@@ -510,46 +513,6 @@ namespace Cube.Net.App.Rss.Tests
             }
         }).Wait();
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ExportCommand
-        ///
-        /// <summary>
-        /// Export コマンドを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void ExportCommand(MainViewModel vm, string dest)
-        {
-            vm.Messenger.Register<SaveFileDialogMessage>(this, e =>
-            {
-                e.FileName = dest;
-                e.Result   = true;
-                e.Callback(e);
-            });
-            vm.Export.Execute(null);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ExportCancel
-        ///
-        /// <summary>
-        /// Export コマンドをキャンセルします。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void ExportCancel(MainViewModel vm, string dest)
-        {
-            vm.Messenger.Register<SaveFileDialogMessage>(this, e =>
-            {
-                e.FileName = dest;
-                e.Result   = false;
-                e.Callback(e);
-            });
-            vm.Export.Execute(null);
-        }
-
        /* ----------------------------------------------------------------- */
        ///
        /// RegisterCommand
@@ -648,6 +611,22 @@ namespace Cube.Net.App.Rss.Tests
             src.LowInterval          = TimeSpan.FromHours(12);
 
             vm.Apply.Execute(null);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ExportCommand
+        ///
+        /// <summary>
+        /// Export コマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void ExportCommand(SaveFileDialogMessage e, string dest, bool result)
+        {
+            e.FileName = dest;
+            e.Result   = result;
+            e.Callback(e);
         }
 
         /* ----------------------------------------------------------------- */
