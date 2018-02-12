@@ -199,7 +199,7 @@
             <WindowsFormsHost Grid.Row="1">
                 <wf:WebControl/>
                 <i:Interaction.Behaviors>
-                    <my:WebDocument
+                    <my:WebBehavior
                         Text="{Binding Data.Article.Value, Converter={my:ArticleConverter}, Mode=OneWay}"
                         Uri="{Binding Data.Uri.Value, Mode=OneWay}"
                         Hover="{Binding Hover}"/>

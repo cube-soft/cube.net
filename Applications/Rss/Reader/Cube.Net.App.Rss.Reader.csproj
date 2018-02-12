@@ -97,7 +97,7 @@
     <Compile Include="Models\Interactions\MessageFactory.cs" />
     <Compile Include="Models\Interactions\SimplexConverters.cs" />
     <Compile Include="Models\Interactions\Triggers.cs" />
-    <Compile Include="Models\Interactions\WebDocument.cs" />
+    <Compile Include="Models\Interactions\WebBehavior.cs" />
     <Compile Include="Models\Rss\IRssEntry.cs" />
     <Compile Include="Models\Rss\RssBindableData.cs" />
     <Compile Include="Models\Rss\RssCategory.cs" />

@@ -27,14 +27,14 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// WebDocument
+    /// WebBehavior
     ///
     /// <summary>
     /// WebBrowser のドキュメント内容と関連付けるための Behavior です。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class WebDocument : WindowsFormsBehavior<WebControl>
+    public class WebBehavior : WindowsFormsBehavior<WebControl>
     {
         #region Properties
 
@@ -76,10 +76,10 @@ namespace Cube.Net.App.Rss.Reader
             DependencyProperty.RegisterAttached(
                 nameof(Text),
                 typeof(string),
-                typeof(WebDocument),
+                typeof(WebBehavior),
                 new PropertyMetadata((s, e) =>
                 {
-                    if (s is WebDocument d) d.Text = e.NewValue as string;
+                    if (s is WebBehavior d) d.Text = e.NewValue as string;
                 })
             );
 
@@ -130,10 +130,10 @@ namespace Cube.Net.App.Rss.Reader
             DependencyProperty.RegisterAttached(
                 nameof(Uri),
                 typeof(Uri),
-                typeof(WebDocument),
+                typeof(WebBehavior),
                 new PropertyMetadata((s, e) =>
                 {
-                    if (s is WebDocument d) d.Uri = e.NewValue as Uri;
+                    if (s is WebBehavior d) d.Uri = e.NewValue as Uri;
                 })
             );
 
@@ -169,7 +169,7 @@ namespace Cube.Net.App.Rss.Reader
             DependencyProperty.RegisterAttached(
                 nameof(Hover),
                 typeof(ICommand),
-                typeof(WebDocument),
+                typeof(WebBehavior),
                 new PropertyMetadata(null)
             );
 
