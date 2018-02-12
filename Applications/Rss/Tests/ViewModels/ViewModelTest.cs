@@ -337,7 +337,7 @@ namespace Cube.Net.App.Rss.Tests
         /// VM_Navigate
         ///
         /// <summary>
-        /// Navigate コマンドを実行します。
+        /// Navigate コマンドのテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -352,6 +352,48 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(vm.Data.Uri.HasValue, Is.False);
                 vm.Navigate.Execute(uri);
                 Assert.That(vm.Data.Uri.Value, Is.EqualTo(uri));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Export
+        ///
+        /// <summary>
+        /// Export コマンドのテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Export()
+        {
+            using (var vm = Create())
+            {
+                var path = Result($"{nameof(VM_Export)}.opml");
+                ExportCommand(vm, path);
+                var dest = IO.Get(path);
+                Assert.That(dest.Exists, Is.True);
+                Assert.That(dest.Length, Is.AtLeast(1));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Export_Cancel
+        ///
+        /// <summary>
+        /// Export コマンドをキャンセルした時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Export_Cancel()
+        {
+            using (var vm = Create())
+            {
+                var dest = Result($"{nameof(VM_Export_Cancel)}.opml");
+                ExportCancel(vm, dest);
+                Assert.That(IO.Exists(dest), Is.False);
             }
         }
 
@@ -470,12 +512,52 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RegisterCommand
+        /// ExportCommand
         ///
         /// <summary>
-        /// Add コマンドを実行します。
+        /// Export コマンドを実行します。
         /// </summary>
         ///
+        /* ----------------------------------------------------------------- */
+        private void ExportCommand(MainViewModel vm, string dest)
+        {
+            vm.Messenger.Register<SaveFileDialogMessage>(this, e =>
+            {
+                e.FileName = dest;
+                e.Result   = true;
+                e.Callback(e);
+            });
+            vm.Export.Execute(null);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ExportCancel
+        ///
+        /// <summary>
+        /// Export コマンドをキャンセルします。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void ExportCancel(MainViewModel vm, string dest)
+        {
+            vm.Messenger.Register<SaveFileDialogMessage>(this, e =>
+            {
+                e.FileName = dest;
+                e.Result   = false;
+                e.Callback(e);
+            });
+            vm.Export.Execute(null);
+        }
+
+       /* ----------------------------------------------------------------- */
+       ///
+       /// RegisterCommand
+       ///
+       /// <summary>
+       /// Add コマンドを実行します。
+       /// </summary>
+       ///
         /* ----------------------------------------------------------------- */
         private async Task RegisterCommand(RegisterViewModel vm, Uri src)
         {
