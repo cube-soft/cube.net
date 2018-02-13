@@ -50,7 +50,7 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid x:Name="Root">
+    <Grid x:Name="Root" UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.5*" MinWidth="50"/>
             <ColumnDefinition Width="Auto"/>
