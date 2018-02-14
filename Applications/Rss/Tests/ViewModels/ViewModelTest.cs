@@ -86,12 +86,20 @@ namespace Cube.Net.App.Rss.Tests
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 vm.SelectEntry.Execute(src.Entries.First());
 
-                var dest = vm.Data.LastEntry.Value;
+                var dest = vm.Data.Current.Value as RssEntry;
                 Assert.That(dest.Title,               Is.EqualTo("CubeSoft Blog"));
-                Assert.That(dest.Items.Count(),       Is.EqualTo(10));
+                Assert.That(dest.Selected,            Is.True);
+                Assert.That(dest.SafeItems.Count(),   Is.EqualTo(10));
                 Assert.That(dest.Count,               Is.EqualTo(9), nameof(RssEntry));
                 Assert.That(dest.UnreadItems.Count(), Is.EqualTo(9));
                 Assert.That(src.Count,                Is.EqualTo(9), nameof(RssCategory));
+
+                vm.SelectEntry.Execute(src);
+                var category = vm.Data.Current.Value as RssCategory;
+                Assert.That(category.Title,           Is.EqualTo("キューブ・ソフト"));
+                Assert.That(category.Count,           Is.EqualTo(9));
+                Assert.That(vm.Data.LastEntry.Value,  Is.EqualTo(dest));
+                Assert.That(dest.Selected,            Is.True);
 
                 vm.SelectArticle.Execute(dest.UnreadItems.First());
                 Assert.That(vm.Data.Article.Value,    Is.Not.Null);
@@ -243,9 +251,13 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var src = new Uri("http://clown.hatenablog.jp/feed");
+                var count = vm.Data.Root.Flatten().Count();
+                var src   = new Uri("http://clown.hatenablog.jp/feed");
+
                 vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
                 vm.NewEntry.Execute(null);
+
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count + 1));
 
                 var entry = vm.Data.Root
                               .OfType<RssEntry>()
@@ -267,15 +279,44 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_NewEntry_Error() => Assert.DoesNotThrow(() =>
+        public void VM_NewEntry_Error()
         {
             using (var vm = Create())
             {
+                var count = vm.Data.Root.Flatten().Count();
+
                 vm.Stop.Execute(null);
                 vm.Messenger.Register<RegisterViewModel>(this, e => RegisterError(e).Wait());
                 vm.NewEntry.Execute(null);
+
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
             }
-        });
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_NewEntry_Exists
+        ///
+        /// <summary>
+        /// 既に存在する RSS エントリの登録を試みた時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_NewEntry_Exists()
+        {
+            using (var vm = Create())
+            {
+                var count = vm.Data.Root.Flatten().Count();
+                var src   = new Uri("https://blog.cube-soft.jp/");
+
+                vm.Stop.Execute(null);
+                vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
+                vm.NewEntry.Execute(null);
+
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///

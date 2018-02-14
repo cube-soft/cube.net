@@ -16,9 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Cube.Settings;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
 

@@ -47,10 +47,12 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void LoadJson()
+        public void Load()
         {
             using (var src = new RssSubscriber { FileName = CreateJson() })
             {
+                Assert.That(src.CacheDirectory, Is.Null);
+
                 var count = 0;
                 src.CollectionChanged += (s, e) => count++;
                 src.Load();
@@ -66,9 +68,50 @@ namespace Cube.Net.App.Rss.Tests
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Find
+        ///
+        /// <summary>
+        /// Find メソッドの挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Find()
+        {
+            using (var src = new RssSubscriber { FileName = CreateJson() })
+            {
+                src.Load();
+
+                Assert.That(src.Find(new Uri("https://github.com/blog.atom")), Is.Not.Null);
+                Assert.That(src.Find(new Uri("http://www.example.com/")), Is.Null);
+                Assert.That(src.Find(default(Uri)), Is.Null);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset_NotFound
+        ///
+        /// <summary>
+        /// 無効な URL を対象に Reset を実行した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Reset_NotFound() => Assert.DoesNotThrow(() =>
+        {
+            using (var src = new RssSubscriber { FileName = CreateJson() })
+            {
+                src.Load();
+                src.Reset(new Uri("http://www.example.com/"));
+            }
+        });
+
         #endregion
 
-        #region Helpers
+        #region Helper methods
 
         /* ----------------------------------------------------------------- */
         ///
