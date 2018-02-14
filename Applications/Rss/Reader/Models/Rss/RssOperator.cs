@@ -286,17 +286,14 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>メッセージ</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static string ToMessage(this RssCheckFrequency src)
-        {
-            switch (src)
+        public static string ToMessage(this RssCheckFrequency src) =>
+            new Dictionary<RssCheckFrequency, string>
             {
-                case RssCheckFrequency.Auto: return Properties.Resources.MessageAutoFrequency;
-                case RssCheckFrequency.High: return Properties.Resources.MessageHighFrequency;
-                case RssCheckFrequency.Low:  return Properties.Resources.MessageLowFrequency;
-                case RssCheckFrequency.None: return Properties.Resources.MessageNoneFrequency;
-            }
-            return string.Empty;
-        }
+                { RssCheckFrequency.Auto, Properties.Resources.MessageAutoFrequency },
+                { RssCheckFrequency.High, Properties.Resources.MessageHighFrequency },
+                { RssCheckFrequency.Low,  Properties.Resources.MessageLowFrequency  },
+                { RssCheckFrequency.None, Properties.Resources.MessageNoneFrequency },
+            }[src];
 
         /* ----------------------------------------------------------------- */
         ///

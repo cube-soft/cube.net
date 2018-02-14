@@ -294,7 +294,8 @@ namespace Cube.Net.App.Rss.Reader
 
             private void Add(RssCategory dest, IEnumerable<IRssEntry> items)
             {
-                if (dest == null || items == null) return;
+                System.Diagnostics.Debug.Assert(dest != null);
+                if (items == null) return;
                 foreach (var item in items) dest.Children.Add(item);
             }
         }
