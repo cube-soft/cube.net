@@ -424,6 +424,7 @@ namespace Cube.Net.App.Rss.Reader
             var dest = Core.Find(src.Uri);
             if (src == null || dest == null) return;
 
+            if (dest != Data.LastEntry.Value) dest.Shrink();
             src.Items = src.Items.Shrink(dest.LastChecked).ToList();
             foreach (var item in src.Items) dest.Items.Insert(0, item);
 
