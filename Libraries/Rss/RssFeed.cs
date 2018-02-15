@@ -181,7 +181,7 @@ namespace Cube.Net.Rss
         [DataMember]
         public IList<RssItem> Items
         {
-            get => _items = _items ?? new List<RssItem>();
+            get => _items ?? (_items = new List<RssItem>());
             set => SetProperty(ref _items, value);
         }
 
@@ -197,6 +197,21 @@ namespace Cube.Net.Rss
         public IEnumerable<RssItem> UnreadItems =>
             Items.Where(e => e.Status == RssItemStatus.Unread);
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Error
+        ///
+        /// <summary>
+        /// 操作時に発生したエラーを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Exception Error
+        {
+            get => _error;
+            set => SetProperty(ref _error, value);
+        }
+
         #endregion
 
         #region Fields
@@ -208,6 +223,7 @@ namespace Cube.Net.Rss
         private DateTime? _lastChecked = null;
         private DateTime? _lastPublished = null;
         private IList<RssItem> _items = null;
+        private Exception _error = null;
         #endregion
     }
 }

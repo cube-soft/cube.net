@@ -85,7 +85,7 @@ namespace Cube.Net.Tests
                         if (++count >= 2) cts.Cancel();
                     });
                     mon.Start();
-                    WaitAsync(cts.Token).Wait();
+                    Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
                     mon.Stop();
                 }
 
@@ -107,6 +107,36 @@ namespace Cube.Net.Tests
 
             Assert.That(IO.Get(Result(files[0])).Length, Is.GreaterThan(0), files[0]);
             Assert.That(IO.Get(Result(files[1])).Length, Is.GreaterThan(0), files[1]);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor_Error
+        ///
+        /// <summary>
+        /// RSS の取得に失敗した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Monitor_Error()
+        {
+            var src  = new Uri("http://www.cube-soft.jp/");
+            var dest = default(RssFeed);
+
+            using (var mon = new RssMonitor { RetryCount = 0 })
+            {
+                var cts = new CancellationTokenSource();
+
+                mon.Register(src);
+                mon.Subscribe(e => { dest = e; cts.Cancel(); });
+                mon.Start();
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                mon.Stop();
+            }
+
+            Assert.That(dest.Uri,   Is.EqualTo(src));
+            Assert.That(dest.Error, Is.Not.Null);
         }
 
         /* ----------------------------------------------------------------- */
@@ -133,14 +163,10 @@ namespace Cube.Net.Tests
                 var cts = new CancellationTokenSource();
 
                 mon.Register(src[0]);
-                mon.Subscribe(e =>
-                {
-                    dest.Add(e.Uri, e);
-                    cts.Cancel();
-                });
+                mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
                 mon.Update(src[1]);
                 mon.Update(src[0]);
-                WaitAsync(cts.Token).Wait();
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
             }
 
             Assert.That(dest.ContainsKey(src[0]), Is.True);

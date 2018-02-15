@@ -266,8 +266,7 @@ namespace Cube.Net.Rss
         /// <returns>登録解除用オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<RssFeed> action) =>
-            SubscribeAsync(e =>
+        public IDisposable Subscribe(Action<RssFeed> action) => SubscribeAsync(e =>
         {
             action(e);
             return Task.FromResult(0);
@@ -360,6 +359,29 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
+        /// PublishErrorAsync
+        ///
+        /// <summary>
+        /// エラー内容を非同期で通知します。
+        /// </summary>
+        ///
+        /// <param name="errors">エラー一覧</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task PublishErrorAsync(IDictionary<Uri, Exception> errors)
+        {
+            foreach (var kv in errors)
+            {
+                await PublishAsync(new RssFeed
+                {
+                    Uri   = kv.Key,
+                    Error = kv.Value,
+                });
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// UpdateAsync
         ///
         /// <summary>
@@ -404,7 +426,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task RunAsync(IList<Uri> src, IList<Uri> errors)
+        private async Task RunAsync(IList<Uri> src, IDictionary<Uri, Exception> errors)
         {
             foreach (var uri in src.ToArray())
             {
@@ -413,11 +435,7 @@ namespace Cube.Net.Rss
                     if (State != TimerState.Run) return;
                     await UpdateAsync(uri);
                 }
-                catch (Exception err)
-                {
-                    this.LogWarn(err.ToString(), err);
-                    errors.Add(uri);
-                }
+                catch (Exception err) { errors.Add(uri, err); }
             }
         }
 
@@ -435,7 +453,7 @@ namespace Cube.Net.Rss
             if (State != TimerState.Run) return;
 
             var src    = Feeds.OrderBy(e => e.Value).Select(e => e.Key).ToList();
-            var errors = new List<Uri>();
+            var errors = new Dictionary<Uri, Exception>();
             await RunAsync(src, errors);
 
             for (var i = 0; i < RetryCount && errors.Count > 0; ++i)
@@ -444,10 +462,12 @@ namespace Cube.Net.Rss
                 await Task.Delay(RetryInterval);
                 if (State != TimerState.Run) return;
 
-                var retry = errors.ToList();
+                var retry = errors.Keys.ToList();
                 errors.Clear();
                 await RunAsync(retry, errors);
             }
+
+            await PublishErrorAsync(errors);
         }
 
         #endregion
