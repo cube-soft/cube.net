@@ -612,7 +612,10 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         private MainViewModel Create()
         {
-            var dest = new MainViewModel(new SettingsFolder(Results, IO));
+            var settings = new SettingsFolder(Results, IO);
+            settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
+
+            var dest = new MainViewModel(settings);
             dest.Setup.Execute(null);
             return dest;
         }

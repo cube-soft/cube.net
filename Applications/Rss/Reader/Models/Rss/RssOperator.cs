@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Cube.Collections;
 using Cube.FileSystem;
 using Cube.Log;
@@ -156,7 +155,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static void Update(this RssEntry dest, RssFeed src)
         {
-            if (src.Error != null) return;
+            if (src.Error != null)
+            {
+                src.Title = dest.Title;
+                return;
+            }
 
             src.Items = src.Items.Shrink(dest.LastChecked).ToList();
             foreach (var item in src.Items) dest.Items.Insert(0, item);
@@ -314,7 +317,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public static string ToMessage(this RssFeed src) =>
-            src.Error != null   ? $"{Properties.Resources.ErrorFeed} ({src.Uri})" :
+            src.Error != null   ? string.Format(Properties.Resources.ErrorFeed, src.Title) :
             src.Items.Count > 0 ? string.Format(Properties.Resources.MessageReceived, src.Items.Count, src.Title) :
                                   string.Format(Properties.Resources.MessageNoReceived, src.Title);
 
@@ -339,21 +342,6 @@ namespace Cube.Net.App.Rss.Reader
                 { RssCheckFrequency.Low,  Properties.Resources.MessageLowFrequency  },
                 { RssCheckFrequency.None, Properties.Resources.MessageNoneFrequency },
             }[src];
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ToException
-        ///
-        /// <summary>
-        /// 例外オブジェクトに変換します。
-        /// </summary>
-        ///
-        /// <param name="src">メッセージ</param>
-        ///
-        /// <returns>例外オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static Exception ToException(this string src) => new ArgumentException(src);
 
         #endregion
 

@@ -61,7 +61,7 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
-        ///   フィード取得中にエラーが発生しました。 に類似しているローカライズされた文字列を検索します。
+        ///   RSS フィード取得中にエラーが発生しました ({0}) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ErrorFeed {
             get {
@@ -72,9 +72,9 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         /// <summary>
         ///   URL は既に登録されています。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string ErrorFeedAlreadyExists {
+        internal static string ErrorFeedExists {
             get {
-                return ResourceManager.GetString("ErrorFeedAlreadyExists", resourceCulture);
+                return ResourceManager.GetString("ErrorFeedExists", resourceCulture);
             }
         }
         

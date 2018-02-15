@@ -130,7 +130,9 @@ namespace Cube.Net.App.Rss.Reader
                 Select(entry);
                 entry.Parent.Expand();
             }
-            Core.Start();
+
+            Debug.Assert(Settings.Value.InitialDelay.HasValue);
+            Core.Start(Settings.Value.InitialDelay.Value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -148,7 +150,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             Core.Suspend();
             try { await Core.RegisterAsync(src.ToUri()); }
-            finally { Core.Start(); }
+            finally { Core.Start(TimeSpan.Zero); }
         }
 
         /* ----------------------------------------------------------------- */
@@ -320,7 +322,7 @@ namespace Cube.Net.App.Rss.Reader
                 Core.Clear();
                 Core.Add(dest);
             }
-            finally { Core.Start(); }
+            finally { Core.Start(TimeSpan.Zero); }
         }
 
         /* ----------------------------------------------------------------- */

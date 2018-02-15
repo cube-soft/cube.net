@@ -184,6 +184,21 @@ namespace Cube.Net.App.Rss.Reader
             set => SetProperty(ref _lowInterval, value);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// InitialDelay
+        ///
+        /// <summary>
+        /// モニタの初期遅延時間を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public TimeSpan? InitialDelay
+        {
+            get => _initialDelay ?? (_initialDelay = TimeSpan.FromSeconds(3));
+            set => SetProperty(ref _initialDelay, value);
+        }
+
         #endregion
 
         #region Fields
@@ -196,6 +211,7 @@ namespace Cube.Net.App.Rss.Reader
         private DateTime? _lastCheckUpdate = null;
         private TimeSpan? _highInterval = TimeSpan.FromHours(1);
         private TimeSpan? _lowInterval = TimeSpan.FromHours(24);
+        private TimeSpan? _initialDelay = null;
         #endregion
     }
 

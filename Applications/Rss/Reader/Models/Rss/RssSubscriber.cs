@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -235,8 +236,8 @@ namespace Cube.Net.App.Rss.Reader
         public async Task RegisterAsync(Uri uri)
         {
             var rss = await _client.GetAsync(uri).ConfigureAwait(false);
-            if (rss == null) throw Properties.Resources.ErrorFeedNotFound.ToException();
-            if (_feeds.ContainsKey(rss.Uri)) throw Properties.Resources.ErrorFeedAlreadyExists.ToException();
+            if (rss == null) throw Error(Properties.Resources.ErrorFeedNotFound);
+            if (_feeds.ContainsKey(rss.Uri)) throw Error(Properties.Resources.ErrorFeedExists);
 
             AddCore(new RssEntry(rss));
         }
@@ -254,7 +255,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Add(IEnumerable<IRssEntry> src)
         {
-            System.Diagnostics.Debug.Assert(src != null);
+            Debug.Assert(src != null);
 
             foreach (var item in src)
             {
@@ -367,11 +368,13 @@ namespace Cube.Net.App.Rss.Reader
         /// 監視を開始します。
         /// </summary>
         ///
+        /// <param name="delay">初期遅延時間</param>
+        ///
         /* ----------------------------------------------------------------- */
-        public void Start()
+        public void Start(TimeSpan delay)
         {
-            _monitors[0].Start(TimeSpan.FromSeconds(3));
-            _monitors[1].Start(TimeSpan.FromMinutes(1));
+            _monitors[0].Start(delay);
+            _monitors[1].Start(TimeSpan.FromSeconds(delay.TotalSeconds * 20));
         }
 
         /* ----------------------------------------------------------------- */
@@ -680,6 +683,17 @@ namespace Cube.Net.App.Rss.Reader
             _autosaver.Interval = 1000.0;
             _autosaver.Start();
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Error
+        ///
+        /// <summary>
+        /// 例外オブジェクトに変換します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Exception Error(string src) => new ArgumentException(src);
 
         #endregion
 

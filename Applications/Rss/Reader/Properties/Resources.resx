@@ -117,14 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ErrorFeedAlreadyExists" xml:space="preserve">
+  <data name="ErrorFeedExists" xml:space="preserve">
     <value>URL は既に登録されています。</value>
   </data>
   <data name="ErrorFeedNotFound" xml:space="preserve">
     <value>RSS または Atom フィードが見つかりません。</value>
   </data>
   <data name="ErrorFeed" xml:space="preserve">
-    <value>フィード取得中にエラーが発生しました。</value>
+    <value>RSS フィード取得中にエラーが発生しました ({0})</value>
   </data>
   <data name="MessageAutoFrequency" xml:space="preserve">
     <value>自動</value>
