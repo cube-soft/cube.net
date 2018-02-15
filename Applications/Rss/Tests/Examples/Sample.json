@@ -6,6 +6,7 @@
             {
                 "Uri": "https:\/\/blog.cube-soft.jp\/?feed=rss2",
                 "Link": "https:\/\/blog.cube-soft.jp\/",
+				"Count": 10,
                 "Title": "CubeSoft Blog"
             }
         ]
@@ -71,6 +72,7 @@
             {
                 "Uri": "https:\/\/github.com\/blog.atom",
                 "Link": "https:\/\/github.com\/blog",
+				"Count": 15,
                 "Title": "The GitHub Blog"
             },
             {

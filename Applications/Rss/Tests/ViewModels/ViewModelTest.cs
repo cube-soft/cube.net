@@ -162,7 +162,7 @@ namespace Cube.Net.App.Rss.Tests
         /// VM_Read
         ///
         /// <summary>
-        /// RSS エントリの名前を変更するテストを実行します。
+        /// RSS エントリの全記事を既読設定にするテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -175,6 +175,34 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(vm.Data.LastEntry.Value.Count, Is.EqualTo(14));
                 vm.Read.Execute(null);
                 Assert.That(vm.Data.LastEntry.Value.Count, Is.EqualTo(0));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Read
+        ///
+        /// <summary>
+        /// カテゴリ中の全記事を既読設定にするテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Read_Category()
+        {
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+
+                var src = vm.Data.Root.OfType<RssCategory>().First();
+                Assert.That(src.Count, Is.EqualTo(10));
+
+                vm.SelectEntry.Execute(src);
+                Assert.That(vm.Data.Current.Value,   Is.EqualTo(src));
+                Assert.That(vm.Data.LastEntry.Value, Is.Not.EqualTo(src));
+
+                vm.Read.Execute(null);
+                Assert.That(src.Count, Is.EqualTo(0));
             }
         }
 
