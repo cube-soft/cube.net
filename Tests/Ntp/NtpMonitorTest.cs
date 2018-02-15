@@ -64,7 +64,7 @@ namespace Cube.Net.Tests
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start();
                 mon.Start(); // ignore
-                WaitAsync(cts.Token).Wait();
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
                 mon.Stop();
                 mon.Stop(); // ignore
 
@@ -146,7 +146,7 @@ namespace Cube.Net.Tests
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start(mon.Interval);
                 mon.Reset();
-                WaitAsync(cts.Token).Wait();
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
                 mon.Stop();
 
                 Assert.That(count, Is.EqualTo(1));

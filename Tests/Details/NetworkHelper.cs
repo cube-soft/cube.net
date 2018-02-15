@@ -58,17 +58,18 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WaitAsync
+        /// Wait
         ///
         /// <summary>
         /// 一定時間待機します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected async Task WaitAsync(CancellationToken token)
+        protected async Task<bool> Wait(CancellationToken token)
         {
             try { await Task.Delay(10000, token).ConfigureAwait(false); }
-            catch (TaskCanceledException /* err */) { /* OK */ }
+            catch (TaskCanceledException /* err */) { return true; /* OK */ }
+            return false; /* Timeout */
         }
     }
 }

@@ -76,7 +76,7 @@ namespace Cube.Net.Tests.Http
 
                 mon.Start();
                 mon.Start(); // ignore
-                WaitAsync(cts.Token).Wait();
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
                 mon.Stop();
                 mon.Stop(); // ignore
 
@@ -196,7 +196,7 @@ namespace Cube.Net.Tests.Http
                 Assert.That(count, Is.EqualTo(0));
 
                 power.Mode = PowerModes.Resume;
-                WaitAsync(cts.Token).Wait();
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
                 mon.Stop();
                 Assert.That(count, Is.EqualTo(1));
             }
@@ -226,7 +226,7 @@ namespace Cube.Net.Tests.Http
                 mon.Reset();
                 mon.Start(mon.Interval);
                 mon.Reset();
-                WaitAsync(cts.Token).Wait();
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
                 mon.Stop();
                 Assert.That(count, Is.EqualTo(1));
             }
