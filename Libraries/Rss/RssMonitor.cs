@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Cube.Net.Http;
@@ -370,11 +371,9 @@ namespace Cube.Net.Rss
         {
             if (!Contains(uri)) return;
 
-            var sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
+            var time = Stopwatch.StartNew();
             var dest = await GetAsync(uri).ConfigureAwait(false);
-            sw.Stop();
-            this.LogDebug($"Url:{uri}\tTime:{sw.Elapsed}");
+            this.LogDebug($"{uri} ({time.Elapsed})");
 
             Feeds[uri] = dest.LastChecked;
             await PublishAsync(dest);

@@ -17,9 +17,11 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Cube.Conversions;
+using Cube.Log;
 using Cube.Net.Rss;
 
 namespace Cube.Net.App.Rss.Reader
@@ -61,7 +63,10 @@ namespace Cube.Net.App.Rss.Reader
             Core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
             Core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
             Core.Received += WhenReceived;
+
+            var time = Stopwatch.StartNew();
             Core.Load();
+            this.LogDebug($"Load ({time.Elapsed})");
 
             Data = new RssBindableData(Core, Settings.Value);
         }
