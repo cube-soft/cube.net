@@ -123,7 +123,7 @@
   <data name="ErrorFeedNotFound" xml:space="preserve">
     <value>RSS または Atom フィードが見つかりません。</value>
   </data>
-  <data name="ErrorUnexpected" xml:space="preserve">
+  <data name="ErrorFeed" xml:space="preserve">
     <value>フィード取得中にエラーが発生しました。</value>
   </data>
   <data name="MessageAutoFrequency" xml:space="preserve">

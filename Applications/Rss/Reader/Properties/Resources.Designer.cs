@@ -61,6 +61,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   フィード取得中にエラーが発生しました。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ErrorFeed {
+            get {
+                return ResourceManager.GetString("ErrorFeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   URL は既に登録されています。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ErrorFeedAlreadyExists {
@@ -75,15 +84,6 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         internal static string ErrorFeedNotFound {
             get {
                 return ResourceManager.GetString("ErrorFeedNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   フィード取得中にエラーが発生しました。 に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string ErrorUnexpected {
-            get {
-                return ResourceManager.GetString("ErrorUnexpected", resourceCulture);
             }
         }
         
@@ -129,7 +129,7 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         ///&lt;body&gt;
         ///&lt;div class=&quot;container&quot;&gt;
         ///&lt;div class=&quot;box&quot;&gt;
-        ///&lt;img src=&quot;data:image/gif;base64,R0lGOD [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///&lt;img s [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Loading {
             get {

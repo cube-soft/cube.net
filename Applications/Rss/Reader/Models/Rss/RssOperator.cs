@@ -144,6 +144,32 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Update
+        ///
+        /// <summary>
+        /// RSS の内容を更新します。
+        /// </summary>
+        ///
+        /// <param name="dest">更新先オブジェクト</param>
+        /// <param name="src">更新内容</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static void Update(this RssEntry dest, RssFeed src)
+        {
+            if (src.Error != null) return;
+
+            src.Items = src.Items.Shrink(dest.LastChecked).ToList();
+            foreach (var item in src.Items) dest.Items.Insert(0, item);
+
+            dest.Description   = src.Description;
+            dest.Count         = dest.UnreadItems.Count();
+            dest.Link          = src.Link;
+            dest.LastChecked   = src.LastChecked;
+            dest.LastPublished = src.LastPublished;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Shrink
         ///
         /// <summary>
@@ -273,6 +299,24 @@ namespace Cube.Net.App.Rss.Reader
             src.Frequency == RssCheckFrequency.Low ||
             src.Frequency == RssCheckFrequency.Auto &&
             src.LastChecked.HasValue && now - src.LastPublished > _border;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ToMessage
+        ///
+        /// <summary>
+        /// RSS フィードの結果を伝えるメッセージを取得します
+        /// </summary>
+        ///
+        /// <param name="src">RSS フィード</param>
+        ///
+        /// <returns>メッセージ</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string ToMessage(this RssFeed src) =>
+            src.Error != null   ? $"{Properties.Resources.ErrorFeed} ({src.Uri})" :
+            src.Items.Count > 0 ? string.Format(Properties.Resources.MessageReceived, src.Items.Count, src.Title) :
+                                  string.Format(Properties.Resources.MessageNoReceived, src.Title);
 
         /* ----------------------------------------------------------------- */
         ///

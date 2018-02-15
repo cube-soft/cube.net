@@ -132,7 +132,7 @@ namespace Cube.Net.App.Rss.Reader
             var msg = $"{err.Message} ({err.GetType().Name})";
             var ss  = new System.Text.StringBuilder();
 
-            ss.AppendLine(Properties.Resources.ErrorUnexpected);
+            ss.AppendLine(Properties.Resources.ErrorFeed);
             ss.AppendLine();
             ss.AppendLine(msg);
 

@@ -160,8 +160,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void NewCategory() =>
-            Select(Core.Create(Data.Current.Value));
+        public void NewCategory() => Select(Core.Create(Data.Current.Value));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -291,7 +290,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (src == null) return;
 
-            System.Diagnostics.Debug.Assert(Data.LastEntry.HasValue);
+            Debug.Assert(Data.LastEntry.HasValue);
             var entry = Data.LastEntry.Value;
 
             if (entry.SkipContent) Data.Uri.Value = src.Link;
@@ -310,7 +309,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Import(string path)
         {
+            var time = Stopwatch.StartNew();
             var dest = RssOpml.Load(path, Settings.IO);
+            this.LogDebug($"Import ({time.Elapsed})");
             if (dest.Count() <= 0) return;
 
             try
@@ -427,24 +428,13 @@ namespace Cube.Net.App.Rss.Reader
         {
             var src  = e.Value;
             var dest = Core.Find(src.Uri);
+
             if (src == null || dest == null) return;
-
             if (dest != Data.LastEntry.Value) dest.Shrink();
-            src.Items = src.Items.Shrink(dest.LastChecked).ToList();
-            foreach (var item in src.Items) dest.Items.Insert(0, item);
 
-            dest.Description   = src.Description;
-            dest.Count         = dest.UnreadItems.Count();
-            dest.Link          = src.Link;
-            dest.LastChecked   = src.LastChecked;
-            dest.LastPublished = src.LastPublished;
+            dest.Update(src);
 
-            if (!Settings.Value.EnableMonitorMessage) return;
-
-            Data.Message.Value =
-                src.Items.Count > 0 ?
-                string.Format(Properties.Resources.MessageReceived, src.Items.Count, src.Title) :
-                string.Format(Properties.Resources.MessageNoReceived, src.Title);
+            if (Settings.Value.EnableMonitorMessage) Data.Message.Value = src.ToMessage();
         }
 
         /* ----------------------------------------------------------------- */
