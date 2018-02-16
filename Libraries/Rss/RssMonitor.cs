@@ -393,9 +393,9 @@ namespace Cube.Net.Rss
         {
             if (!Contains(uri)) return;
 
-            var time = Stopwatch.StartNew();
+            var sw   = Stopwatch.StartNew();
             var dest = await GetAsync(uri).ConfigureAwait(false);
-            this.LogDebug($"{uri} ({time.Elapsed})");
+            this.LogDebug($"{uri} ({sw.Elapsed})");
 
             Feeds[uri] = dest.LastChecked;
             await PublishAsync(dest);

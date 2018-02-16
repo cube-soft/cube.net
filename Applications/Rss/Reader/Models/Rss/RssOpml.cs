@@ -21,6 +21,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Cube.Conversions;
 using Cube.FileSystem;
+using Cube.FileSystem.Files;
 using Cube.Xui;
 using Cube.Xml;
 
@@ -53,14 +54,14 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<IRssEntry> Load(string path, Operator io)
-        {
-            using (var ss = io.OpenRead(path))
+        public static IEnumerable<IRssEntry> Load(string path, Operator io) => io.Load(
+            path,
+            e =>
             {
-                var body = XDocument.Load(ss).Root.GetElement("body");
+                var body = XDocument.Load(e).Root.GetElement("body");
                 return Convert(body, null);
             }
-        }
+        );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -75,22 +76,24 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="io">入出力用のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static void Save(IEnumerable<IRssEntry> src, string path, Operator io)
-        {
-            var doc = new XDocument(
-                new XDeclaration("1.0", "utf-8", "true"),
-                new XElement("opml",
-                    new XAttribute("version", "1.0"),
-                    new XElement("head",
-                        new XElement("title", "CubeRSS Reader subscriptions"),
-                        new XElement("dateCreated", DateTime.Now.ToUniversalTime().ToString("r"))
-                    ),
-                    CreateBody(src)
-                )
-            );
-
-            using (var ss = io.Create(path)) doc.Save(ss);
-        }
+        public static void Save(IEnumerable<IRssEntry> src, string path, Operator io) => io.Save(
+            path,
+            e =>
+            {
+                var doc = new XDocument(
+                    new XDeclaration("1.0", "utf-8", "true"),
+                    new XElement("opml",
+                        new XAttribute("version", "1.0"),
+                        new XElement("head",
+                            new XElement("title", "CubeRSS Reader subscriptions"),
+                            new XElement("dateCreated", DateTime.Now.ToUniversalTime().ToString("r"))
+                        ),
+                        CreateBody(src)
+                    )
+                );
+                doc.Save(e);
+            }
+        );
 
         #endregion
 

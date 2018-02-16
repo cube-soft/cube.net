@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cube.Collections;
 using Cube.FileSystem;
+using Cube.FileSystem.Files;
 using Cube.Log;
 using Cube.Net.Rss;
 using Cube.Settings;
@@ -53,24 +54,14 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>RSS エントリ情報</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<RssCategory> Load(string src, Operator io)
-        {
-            var info = io.Get(src);
-            if (info.Exists && info.Length > 0)
-            {
-                try
-                {
-                    using (var ss = io.OpenRead(src))
-                    {
-                        return SettingsType.Json
-                                           .Load<List<RssCategory.Json>>(ss)
-                                           .Select(e => e.Convert(null));
-                    }
-                }
-                catch (Exception e) { LogOperator.Warn(typeof(RssOperator), e.ToString(), e); }
-            }
-            return new RssCategory[0];
-        }
+        public static IEnumerable<RssCategory> Load(string src, Operator io) =>
+            io.Load(
+                src,
+                ss => SettingsType.Json
+                    .Load<List<RssCategory.Json>>(ss)
+                    .Select(e => e.Convert(null)),
+                new RssCategory[0]
+            );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -85,23 +76,11 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static void Save(this IEnumerable<RssCategory> src, string dest, Operator io)
-        {
-            try
-            {
-                var json = src.Select(e => new RssCategory.Json(e));
-                using (var ms = new System.IO.MemoryStream())
-                {
-                    SettingsType.Json.Save(ms, json);
-                    using (var ss = io.Create(dest))
-                    {
-                        ms.Position = 0;
-                        ms.CopyTo(ss);
-                    }
-                }
-            }
-            catch (Exception e) { LogOperator.Warn(typeof(RssOperator), e.ToString(), e); }
-        }
+        public static void Save(this IEnumerable<RssCategory> src, string dest, Operator io) =>
+            io.Save(
+                dest,
+                ms => SettingsType.Json.Save(ms, src.Select(e => new RssCategory.Json(e)))
+            );
 
         /* ----------------------------------------------------------------- */
         ///
@@ -157,6 +136,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (src.Error != null)
             {
+                dest.LogDebug($"{dest.Uri} ({src.Error.GetType().Name})");
                 src.Title = dest.Title;
                 return;
             }

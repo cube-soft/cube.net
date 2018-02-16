@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using Cube.FileSystem;
+using Cube.FileSystem.Files;
 using Cube.Settings;
 using Cube.Log;
 
@@ -191,11 +192,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Save()
         {
-            foreach (var uri in _otm)
-            {
-                try { Save(uri); }
-                catch (Exception err) { this.LogWarn(err.ToString(), err); }
-            }
+            foreach (var uri in _otm) this.LogWarn(() => Save(uri));
             _otm.Clear();
         }
 
@@ -544,18 +541,10 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFeed Load(Uri uri)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(Directory)) return default(RssFeed);
-                var cache = CacheName(uri);
-                if (!IO.Exists(cache)) return default(RssFeed);
-                using (var s = IO.OpenRead(cache)) return SettingsType.Json.Load<RssFeed>(s);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
-            return default(RssFeed);
-        }
+        private RssFeed Load(Uri uri) =>
+            !string.IsNullOrEmpty(Directory) ?
+            IO.Load(CacheName(uri), e => SettingsType.Json.Load<RssFeed>(e)) :
+            default(RssFeed);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -574,7 +563,7 @@ namespace Cube.Net.Rss
             if (feed == null || !feed.LastChecked.HasValue) return;
 
             if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            using (var s = IO.Create(CacheName(uri))) SettingsType.Json.Save(s, new RssFeed(feed));
+            IO.Save(CacheName(uri), e => SettingsType.Json.Save(e, new RssFeed(feed)));
 
             feed.Items.Clear();
         }

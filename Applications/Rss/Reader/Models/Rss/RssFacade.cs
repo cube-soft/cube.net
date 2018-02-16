@@ -52,8 +52,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssFacade(SettingsFolder settings)
         {
+            this.LogWarn(() => settings.Load());
+
             Settings = settings;
-            Settings.LoadOrDelete();
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
 
@@ -64,10 +65,7 @@ namespace Cube.Net.App.Rss.Reader
             Core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
             Core.Received += WhenReceived;
 
-            var time = Stopwatch.StartNew();
-            Core.Load();
-            this.LogDebug($"Load ({time.Elapsed})");
-
+            this.LogDebug("Load", () => Core.Load());
             Data = new RssBindableData(Core, Settings.Value);
         }
 
@@ -311,9 +309,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Import(string path)
         {
-            var time = Stopwatch.StartNew();
-            var dest = RssOpml.Load(path, Settings.IO);
-            this.LogDebug($"Import ({time.Elapsed})");
+            var dest = this.LogDebug("Import", () => RssOpml.Load(path, Settings.IO));
             if (dest.Count() <= 0) return;
 
             try
