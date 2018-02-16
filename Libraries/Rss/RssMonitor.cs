@@ -412,8 +412,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private async Task<RssFeed> GetAsync(Uri uri)
         {
-            try { if (_http.Timeout != Timeout) _http.Timeout = Timeout; }
-            catch (Exception /* err */) { this.LogWarn("Timeout cannot be applied"); }
+            this.LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
             return await _http.GetAsync(uri);
         }
 

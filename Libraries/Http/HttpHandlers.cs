@@ -145,7 +145,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetConnectionClose(HttpRequestHeaders headers) => Log(() =>
+        private void SetConnectionClose(HttpRequestHeaders headers) => this.LogWarn(() =>
         {
             if (headers.ConnectionClose.HasValue &&
                 headers.ConnectionClose == ConnectionClose) return;
@@ -161,7 +161,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetUserAgent(HttpRequestHeaders headers) => Log(() =>
+        private void SetUserAgent(HttpRequestHeaders headers) => this.LogWarn(() =>
         {
             if (string.IsNullOrEmpty(UserAgent)) return;
             headers.UserAgent.ParseAdd(UserAgent);
@@ -176,7 +176,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetEntityTag(HttpRequestHeaders headers) => Log(() =>
+        private void SetEntityTag(HttpRequestHeaders headers) => this.LogWarn(() =>
         {
             if (!UseEntityTag || string.IsNullOrEmpty(EntityTag)) return;
             var etag = EntityTagHeaderValue.Parse(EntityTag);
@@ -194,21 +194,6 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private void GetEntityTag(HttpResponseHeaders headers) =>
             EntityTag = headers?.ETag?.Tag ?? string.Empty;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Log
-        ///
-        /// <summary>
-        /// 例外発生時にログに出力します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Log(Action action)
-        {
-            try { action(); }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
-        }
 
         #endregion
     }

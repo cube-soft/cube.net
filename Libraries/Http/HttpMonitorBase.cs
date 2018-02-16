@@ -173,8 +173,7 @@ namespace Cube.Net.Http
         protected async Task PublishAsync(Uri uri)
         {
             var option = HttpCompletionOption.ResponseContentRead;
-            try { if (_http.Timeout != Timeout) _http.Timeout = Timeout; }
-            catch (Exception /* err */) { this.LogWarn("SetTimeout"); }
+            this.LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
 
             using (var msg = await _http.GetAsync(uri, option))
             {
