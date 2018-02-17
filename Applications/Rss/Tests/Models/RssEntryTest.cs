@@ -16,7 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Linq;
+using Cube.Net.Rss;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
 
@@ -50,6 +50,41 @@ namespace Cube.Net.App.Rss.Tests.Models
             Assert.That(dest.Expanded, Is.False);
             dest.Expanded = true;
             Assert.That(dest.Expanded, Is.False);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Entry_Update_Error
+        ///
+        /// <summary>
+        /// Error プロパティを持つ RssFeed オブジェクトで Update を
+        /// 実行した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Entry_Update_Error()
+        {
+            var dest = new RssEntry
+            {
+                Uri       = new Uri("https://blog.cube-soft.jp/?feed=rss2"),
+                Link      = new Uri("https://blog.cube-soft.jp/"),
+                Count     = 0,
+                Frequency = RssCheckFrequency.High,
+                Title     = "CubeSoft Blog",
+            };
+
+            var src = new RssFeed
+            {
+                Uri         = new Uri("https://blog.cube-soft.jp/?feed=rss2"),
+                Error       = new ArgumentException("Test"),
+                LastChecked = DateTime.Now,
+            };
+
+            dest.Update(src);
+
+            Assert.That(dest.LastChecked.HasValue, Is.True);
+            Assert.That(src.Title, Is.EqualTo(dest.Title));
         }
 
         /* ----------------------------------------------------------------- */

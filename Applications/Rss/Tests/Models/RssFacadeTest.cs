@@ -38,6 +38,32 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Setup_Empty
+        ///
+        /// <summary>
+        /// Feeds.json が見つからない場合の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Setup_Empty()
+        {
+            IO.Delete(Result("Feeds.json"));
+
+            using (var m = Create())
+            {
+                m.Stop();
+                Assert.That(m.Data.Root.Count(),       Is.EqualTo(0));
+                Assert.That(m.Data.Current.HasValue,   Is.False, nameof(m.Data.Current));
+                Assert.That(m.Data.LastEntry.HasValue, Is.False, nameof(m.Data.LastEntry));
+                Assert.That(m.Data.Article.HasValue,   Is.False, nameof(m.Data.Article));
+                Assert.That(m.Data.Uri.HasValue,       Is.False, nameof(m.Data.Uri));
+                Assert.That(m.Data.Message.HasValue,   Is.False, nameof(m.Data.Message));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Move
         ///
         /// <summary>

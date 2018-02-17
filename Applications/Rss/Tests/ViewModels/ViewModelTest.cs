@@ -86,6 +86,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(first.UnreadItems.Count(), Is.EqualTo(14));
 
                 var src = vm.Data.Root.OfType<RssCategory>().First();
+                src.Entries.First().SkipContent = true;
                 vm.SelectEntry.Execute(src.Entries.First());
 
                 var dest = vm.Data.Current.Value as RssEntry;
