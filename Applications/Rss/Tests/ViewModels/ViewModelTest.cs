@@ -156,15 +156,46 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var src = vm.Data.Root.OfType<RssCategory>().First();
+                var src   = vm.Data.Root.OfType<RssCategory>().First();
+                var entry = src.Entries.First();
+                var cache = Result(@"Cache\872e24035276c7104afd116c2052172b");
 
                 vm.Stop.Execute(null);
                 vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
-                vm.SelectEntry.Execute(src.Entries.First());
+                vm.SelectEntry.Execute(entry);
 
+                Assert.That(entry.Title,       Is.EqualTo("CubeSoft Blog"));
                 Assert.That(src.Entries.Count, Is.EqualTo(1));
+                Assert.That(IO.Exists(cache),  Is.True);
                 vm.Remove.Execute(null);
                 Assert.That(src.Entries.Count, Is.EqualTo(0));
+                Assert.That(IO.Exists(cache),  Is.False);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Remove_Category
+        ///
+        /// <summary>
+        /// カテゴリ中の全 RSS エントリを削除するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Remove_Category()
+        {
+            using (var vm = Create())
+            {
+                var src = vm.Data.Root.OfType<RssCategory>().First(e => e.Title == "Microsoft");
+
+                vm.Stop.Execute(null);
+                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+                vm.SelectEntry.Execute(src);
+
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
+                vm.Remove.Execute(null);
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(4));
             }
         }
 

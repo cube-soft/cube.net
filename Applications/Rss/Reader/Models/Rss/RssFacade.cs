@@ -177,10 +177,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Update(IRssEntry src)
         {
-            if (src is RssEntry re) Core.Update(re.Uri);
-            else if (src is RssCategory rc) Core.Update(
-                rc.Children.Flatten<RssEntry>().Select(e => e.Uri).ToArray()
-            );
+            if (src is RssCategory rc) Core.Update(rc.Children.Flatten<RssEntry>().ToArray());
+            else if (src is RssEntry re) Core.Update(re);
         }
 
         /* ----------------------------------------------------------------- */
@@ -208,7 +206,11 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Remove() => Core.Remove(Data.Current.Value);
+        public void Remove()
+        {
+            if (Data.Current.Value is RssEntry re) Core.DeleteCache(re);
+            Core.Remove(Data.Current.Value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -243,7 +245,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Reset()
         {
-            if (Data.Current.Value is RssEntry entry) Core.Reset(entry.Uri);
+            if (Data.Current.Value is RssEntry entry) Core.Reset(entry);
         }
 
         /* ----------------------------------------------------------------- */

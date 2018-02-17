@@ -297,6 +297,17 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// DeleteCache
+        ///
+        /// <summary>
+        /// キャッシュファイルを削除します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void DeleteCache(RssEntry src) => _feeds.DeleteCache(src.Uri);
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Move
         ///
         /// <summary>
@@ -443,11 +454,13 @@ namespace Cube.Net.App.Rss.Reader
         /// RSS フィードの内容を更新します。
         /// </summary>
         ///
-        /// <param name="uris">対象とするフィード URL 一覧</param>
+        /// <param name="src">対象とする RSS エントリ一覧</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Update(params Uri[] uris)
+        public void Update(params RssEntry[] src)
         {
+            var uris = src.Select(e => e.Uri);
+
             var m0 = uris.Where(e => _monitors[0].Contains(e));
             if (m0.Count() > 0) _monitors[0].Update(m0);
 
@@ -463,19 +476,16 @@ namespace Cube.Net.App.Rss.Reader
         /// RSS フィードの内容をクリアし、再取得します。
         /// </summary>
         ///
-        /// <param name="uri">対象とするフィード URL</param>
+        /// <param name="src">対象とする RSS エントリ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Reset(Uri uri)
+        public void Reset(RssEntry src)
         {
-            var dest = Find(uri);
-            if (dest == null) return;
-
-            _feeds.DeleteCache(uri);
-            dest.Items.Clear();
-            dest.Count = 0;
-            dest.LastChecked = null;
-            Update(uri);
+            DeleteCache(src);
+            src.Items.Clear();
+            src.Count = 0;
+            src.LastChecked = null;
+            Update(src);
         }
 
         /* ----------------------------------------------------------------- */

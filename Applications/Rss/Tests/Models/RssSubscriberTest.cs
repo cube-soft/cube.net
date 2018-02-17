@@ -90,25 +90,6 @@ namespace Cube.Net.App.Rss.Tests
             }
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Reset_NotFound
-        ///
-        /// <summary>
-        /// 無効な URL を対象に Reset を実行した時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Reset_NotFound() => Assert.DoesNotThrow(() =>
-        {
-            using (var src = new RssSubscriber { FileName = CreateJson() })
-            {
-                src.Load();
-                src.Reset(new Uri("http://www.example.com/"));
-            }
-        });
-
         #endregion
 
         #region Helper methods
