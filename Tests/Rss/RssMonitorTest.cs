@@ -135,8 +135,13 @@ namespace Cube.Net.Tests
                 mon.Stop();
             }
 
-            Assert.That(dest.Uri,   Is.EqualTo(src));
-            Assert.That(dest.Error, Is.Not.Null);
+            Assert.That(dest.Title,                  Is.Empty);
+            Assert.That(dest.Uri,                    Is.EqualTo(src));
+            Assert.That(dest.Link,                   Is.Null);
+            Assert.That(dest.Items.Count,            Is.EqualTo(0));
+            Assert.That(dest.Error,                  Is.Not.Null);
+            Assert.That(dest.LastChecked.HasValue,   Is.True);
+            Assert.That(dest.LastPublished.HasValue, Is.False);
         }
 
         /* ----------------------------------------------------------------- */

@@ -374,8 +374,9 @@ namespace Cube.Net.Rss
             {
                 await PublishAsync(new RssFeed
                 {
-                    Uri   = kv.Key,
-                    Error = kv.Value,
+                    Uri         = kv.Key,
+                    LastChecked = DateTime.Now,
+                    Error       = kv.Value,
                 });
             }
         }

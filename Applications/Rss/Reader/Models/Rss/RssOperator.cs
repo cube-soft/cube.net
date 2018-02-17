@@ -113,7 +113,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static void Read(this RssEntry src, RssItem item)
         {
-            if (src != null && item != null && item.Status != RssItemStatus.Read)
+            if (item != null && item.Status != RssItemStatus.Read)
             {
                 src.Count = Math.Max(src.UnreadItems.Count() - 1, 0);
                 item.Status = RssItemStatus.Read;
@@ -134,6 +134,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static void Update(this RssEntry dest, RssFeed src)
         {
+            var threshold = dest.LastChecked;
+            dest.LastChecked = src.LastChecked;
+
             if (src.Error != null)
             {
                 dest.LogDebug($"{dest.Uri} ({src.Error.GetType().Name})");
@@ -141,13 +144,12 @@ namespace Cube.Net.App.Rss.Reader
                 return;
             }
 
-            src.Items = src.Items.Shrink(dest.LastChecked).ToList();
+            src.Items = src.Items.Shrink(threshold).ToList();
             foreach (var item in src.Items) dest.Items.Insert(0, item);
 
             dest.Description   = src.Description;
             dest.Count         = dest.UnreadItems.Count();
             dest.Link          = src.Link;
-            dest.LastChecked   = src.LastChecked;
             dest.LastPublished = src.LastPublished;
         }
 
@@ -185,7 +187,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static void Shrink(this RssEntry src)
         {
-            if (src == null || src.Items.Count <= 0) return;
             for (var i = src.Items.Count - 1; i >= 0; --i)
             {
                 if (src.Items[i].Status == RssItemStatus.Read) src.Items.RemoveAt(i);
