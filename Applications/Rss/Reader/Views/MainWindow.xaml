@@ -14,7 +14,7 @@
 
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
-    Title="{Binding Data.Article.Value, Converter={my:TitleConverter}}"
+    Title="{Binding Data.Content.Value, Converter={my:TitleConverter}}"
     Width="{Binding Data.User.Value.Width, Mode=TwoWay}"
     Height="{Binding Data.User.Value.Height, Mode=TwoWay}">
 
@@ -200,8 +200,7 @@
                 <wf:WebControl/>
                 <i:Interaction.Behaviors>
                     <my:WebBehavior
-                        Text="{Binding Data.Article.Value, Converter={my:ArticleConverter}, Mode=OneWay}"
-                        Uri="{Binding Data.Uri.Value, Mode=OneWay}"
+                        Content="{Binding Data.Content.Value, Mode=OneWay}"
                         Hover="{Binding Hover}"/>
                 </i:Interaction.Behaviors>
             </WindowsFormsHost>

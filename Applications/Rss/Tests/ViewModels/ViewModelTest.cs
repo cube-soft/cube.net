@@ -19,6 +19,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Cube.Net.Rss;
 using Cube.Net.App.Rss.Reader;
 using Cube.Xui;
 using NUnit.Framework;
@@ -53,7 +54,7 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new MainViewModel();
 
-            Assert.That(vm.Data.Article.HasValue,      Is.False);
+            Assert.That(vm.Data.Content.HasValue,      Is.False);
             Assert.That(vm.Data.Current.HasValue,      Is.False);
             Assert.That(vm.Data.LastEntry.HasValue,    Is.False);
             Assert.That(vm.Data.Message.HasValue,      Is.False);
@@ -105,7 +106,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(dest.Selected,            Is.True);
 
                 vm.SelectArticle.Execute(dest.UnreadItems.First());
-                Assert.That(vm.Data.Article.Value,    Is.Not.Null);
+                Assert.That(vm.Data.Content.HasValue, Is.True);
                 Assert.That(dest.Count,               Is.EqualTo(8), nameof(RssEntry));
                 Assert.That(dest.UnreadItems.Count(), Is.EqualTo(8));
                 Assert.That(src.Count,                Is.EqualTo(8), nameof(RssCategory));
@@ -473,9 +474,9 @@ namespace Cube.Net.App.Rss.Tests
                 var uri = new Uri("http://www.example.com/");
 
                 vm.Stop.Execute(null);
-                Assert.That(vm.Data.Uri.HasValue, Is.False);
+                Assert.That(vm.Data.Content.Value, Is.TypeOf<RssItem>());
                 vm.Navigate.Execute(uri);
-                Assert.That(vm.Data.Uri.Value, Is.EqualTo(uri));
+                Assert.That(vm.Data.Content.Value, Is.EqualTo(uri));
             }
         }
 

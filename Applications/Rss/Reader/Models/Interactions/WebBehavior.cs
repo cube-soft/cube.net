@@ -21,6 +21,7 @@ using System.Windows.Input;
 using System.Windows.Forms;
 using Cube.Forms;
 using Cube.Log;
+using Cube.Net.Rss;
 using Cube.Xui.Behaviors;
 
 namespace Cube.Net.App.Rss.Reader
@@ -38,102 +39,62 @@ namespace Cube.Net.App.Rss.Reader
     {
         #region Properties
 
-        #region Text
+        #region Content
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Text
+        /// Content
         ///
         /// <summary>
-        /// ドキュメント内容を取得または設定します。
+        /// 表示内容を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Text
+        public object Content
         {
-            get => _shared as string;
+            get => _content;
             set
             {
-                _shared = value;
-                if (Source != null)
-                {
-                    Source.DocumentCompleted -= WhenLoading;
-                    Source.DocumentText = value;
-                }
-            }
-        }
+                _content = value;
+                Source.DocumentCompleted -= WhenLoading;
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// TextProperty
-        ///
-        /// <summary>
-        /// Text を保持するための DependencyProperty です。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.RegisterAttached(
-                nameof(Text),
-                typeof(string),
-                typeof(WebBehavior),
-                new PropertyMetadata((s, e) =>
-                {
-                    if (s is WebBehavior d) d.Text = e.NewValue as string;
-                })
-            );
-
-        #endregion
-
-        #region Uri
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Uri
-        ///
-        /// <summary>
-        /// Web ページの URL を取得または設定します。
-        /// </summary>
-        ///
-        /// <remarks>
-        /// URL 経由の Web ページの読み込みは時間を要するので、先に
-        /// ローディングページを読み込みます。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Uri Uri
-        {
-            get => _shared as Uri;
-            set
-            {
-                _shared = value;
-                if (value != null && Source != null)
+                if (value is Uri uri)
                 {
                     if (Source.IsBusy) Source.Stop();
-                    Source.DocumentCompleted -= WhenLoading;
                     Source.DocumentCompleted += WhenLoading;
                     Source.DocumentText = Properties.Resources.Loading;
                 }
+                else if (value is RssItem src)
+                {
+                    Source.DocumentText = string.Format(
+                        Properties.Resources.Skeleton,
+                        Properties.Resources.SkeletonStyle,
+                        src.Link,
+                        src.Title,
+                        src.PublishTime,
+                        !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
+                    );
+                }
             }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UriProperty
+        /// ContentProperty
         ///
         /// <summary>
-        /// Uri を保持するための DependencyProperty です。
+        /// 表示内容を保持するための DependencyProperty です。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static readonly DependencyProperty UriProperty =
+        public static readonly DependencyProperty ContentProperty =
             DependencyProperty.RegisterAttached(
-                nameof(Uri),
-                typeof(Uri),
+                nameof(Content),
+                typeof(object),
                 typeof(WebBehavior),
                 new PropertyMetadata((s, e) =>
                 {
-                    if (s is WebBehavior d) d.Uri = e.NewValue as Uri;
+                    if (s is WebBehavior wb) wb.Content = e.NewValue;
                 })
             );
 
@@ -264,7 +225,7 @@ namespace Cube.Net.App.Rss.Reader
         private void WhenLoading(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             Source.DocumentCompleted -= WhenLoading;
-            Source.Navigate(Uri);
+            if (Content is Uri uri) Source.Navigate(uri);
         }
 
         /* ----------------------------------------------------------------- */
@@ -292,7 +253,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private object _shared;
+        private object _content;
         #endregion
     }
 }

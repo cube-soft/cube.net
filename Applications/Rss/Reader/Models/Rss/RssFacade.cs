@@ -287,9 +287,7 @@ namespace Cube.Net.App.Rss.Reader
 
             Debug.Assert(Data.LastEntry.HasValue);
             var entry = Data.LastEntry.Value;
-
-            if (entry.SkipContent) Data.Uri.Value = src.Link;
-            else Data.Article.Value = src;
+            Data.Content.Value = entry.SkipContent ? src.Link as object : src;
             entry.Read(src);
         }
 
@@ -395,8 +393,6 @@ namespace Cube.Net.App.Rss.Reader
 
             if (disposing)
             {
-                var value = Data.Article.Value;
-                if (value != null) value.Status = RssItemStatus.Read;
                 Core.Dispose();
                 Settings.Dispose();
             }

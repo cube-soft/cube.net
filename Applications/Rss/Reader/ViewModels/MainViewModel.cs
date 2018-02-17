@@ -351,7 +351,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Navigate => _navigate ?? (
-            _navigate = new RelayCommand<Uri>(e => Data.Uri.Value = e)
+            _navigate = new RelayCommand<Uri>(e => Data.Content.Value = e)
         );
 
         /* ----------------------------------------------------------------- */

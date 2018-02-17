@@ -76,45 +76,6 @@ namespace Cube.Net.App.Rss.Tests.Ineractions
 
         #endregion
 
-        #region ArticleConverter
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Convert_Article
-        ///
-        /// <summary>
-        /// 記事内容の変換テストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Convert_Article() => Assert.That(
-            Convert<string>(new ArticleConverter(), new RssItem
-            {
-                Title       = "ArticleTest",
-                Link        = new Uri("http://www.example.com/"),
-                PublishTime = new DateTime(2018, 2, 8),
-            }),
-            Is.Not.Null.And.Not.Empty
-        );
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Convert_Article_Null
-        ///
-        /// <summary>
-        /// 記事内容の変換時に null が指定された時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Convert_Article_Null() => Assert.That(
-            Convert<string>(new ArticleConverter(), null),
-            Is.Empty
-        );
-
-        #endregion
-
         #region ExpandConverter
 
         /* ----------------------------------------------------------------- */
