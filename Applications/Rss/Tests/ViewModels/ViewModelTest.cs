@@ -222,17 +222,42 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var src  = vm.Data.Root.OfType<RssCategory>().First();
-                var dest = src.Entries.First();
-
                 vm.Stop.Execute(null);
-                vm.SelectEntry.Execute(dest);
 
+                var dest  = vm.Data.LastEntry.Value;
                 var count = dest.Count;
-                Assert.That(count, Is.EqualTo(9));
+                Assert.That(count, Is.EqualTo(14));
                 Assert.That(vm.Data.Message.HasValue, Is.False);
                 vm.Update.Execute(null);
-                WaitMessage(vm);
+                Assert.That(WaitMessage(vm).Result, Is.True, "Timeout");
+                Assert.That(dest.Count, Is.AtLeast(count));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Update_Category
+        ///
+        /// <summary>
+        /// カテゴリ中の全 RSS エントリを更新するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Update_Category()
+        {
+            using (var vm = Create())
+            {
+                var src = vm.Data.Root.OfType<RssCategory>().First();
+                vm.Stop.Execute(null);
+                vm.SelectEntry.Execute(src);
+
+                var dest  = vm.Data.Current.Value;
+                var count = dest.Count;
+                Assert.That(count, Is.EqualTo(10));
+                Assert.That(vm.Data.Message.HasValue, Is.False);
+                vm.Update.Execute(null);
+                Assert.That(WaitMessage(vm).Result, Is.True, "Timeout");
                 Assert.That(dest.Count, Is.AtLeast(count));
             }
         }
@@ -262,7 +287,7 @@ namespace Cube.Net.App.Rss.Tests
 
                 vm.Reset.Execute(null);
                 Assert.That(dest.Count, Is.EqualTo(0));
-                WaitMessage(vm);
+                Assert.That(WaitMessage(vm).Result, Is.True, "Timeout");
                 Assert.That(dest.Count, Is.AtLeast(1));
             }
         }
@@ -659,14 +684,15 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WaitMessage(MainViewModel vm) => Task.Run(async () =>
+        private async Task<bool> WaitMessage(MainViewModel vm)
         {
             for (var i = 0; i < 100; ++i)
             {
-                if (vm.Data.Message.HasValue) return;
+                if (vm.Data.Message.HasValue) return true;
                 await Task.Delay(50);
             }
-        }).Wait();
+            return false;
+        }
 
        /* ----------------------------------------------------------------- */
        ///
