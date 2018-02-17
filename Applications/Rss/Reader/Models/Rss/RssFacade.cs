@@ -208,10 +208,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Remove()
-        {
-            if (Data.Current.Value != null) Core.Remove(Data.Current.Value);
-        }
+        public void Remove() => Core.Remove(Data.Current.Value);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -262,8 +259,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Select(IRssEntry src)
         {
-            if (src == null) return;
-
             Data.Current.Value = src;
 
             if (src is RssEntry current && current != Data.LastEntry.Value)
