@@ -115,6 +115,33 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// VM_Select_Empty
+        ///
+        /// <summary>
+        /// 新着記事のない RSS フィードを選択した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Select_Empty()
+        {
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+
+                var src = vm.Data.Root.First(e => e.Title == "Microsoft") as RssCategory;
+                vm.SelectEntry.Execute(src);
+                vm.SelectEntry.Execute(src.Entries.First());
+
+                var dest = vm.Data.LastEntry.Value;
+                Assert.That(dest.Title, Is.EqualTo("Official Microsoft Blog"));
+                Assert.That(dest.Count, Is.EqualTo(0));
+                Assert.That(dest.Items.Count, Is.EqualTo(0));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// VM_Remove
         ///
         /// <summary>
