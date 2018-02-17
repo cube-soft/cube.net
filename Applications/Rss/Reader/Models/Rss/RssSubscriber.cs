@@ -283,20 +283,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Clear
-        ///
-        /// <summary>
-        /// 全ての項目を削除します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Clear()
-        {
-            foreach (var e in _tree.ToArray()) Remove(e);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// DeleteCache
         ///
         /// <summary>
@@ -733,7 +719,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Exception Error(string src) => new ArgumentException(src);
+        private Exception Error(string src) => new ArgumentException(src);
 
         #endregion
 
