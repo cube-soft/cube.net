@@ -321,12 +321,12 @@ namespace Cube.Net.App.Rss.Reader
     public enum RssCheckFrequency
     {
         /// <summary>自動</summary>
-        Auto,
+        Auto = 0,
         /// <summary>高頻度</summary>
-        High,
+        High = 1,
         /// <summary>低頻度</summary>
-        Low,
+        Low = 2,
         /// <summary>チェックしない</summary>
-        None,
+        None = -1,
     }
 }
