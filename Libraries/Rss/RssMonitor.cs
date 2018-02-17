@@ -305,7 +305,7 @@ namespace Cube.Net.Rss
             foreach (var uri in uris)
             {
                 try { await UpdateAsync(uri); }
-                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+                catch (Exception e) { await PublishErrorAsync(uri, e); }
             }
             if (State == TimerState.Suspend) Start();
         }).Forget();
@@ -365,7 +365,17 @@ namespace Cube.Net.Rss
         /// エラー内容を非同期で通知します。
         /// </summary>
         ///
-        /// <param name="errors">エラー一覧</param>
+        /* ----------------------------------------------------------------- */
+        private Task PublishErrorAsync(Uri uri, Exception error) =>
+            PublishErrorAsync(new Dictionary<Uri, Exception> { { uri, error } });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PublishErrorAsync
+        ///
+        /// <summary>
+        /// エラー内容を非同期で通知します。
+        /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         private async Task PublishErrorAsync(IDictionary<Uri, Exception> errors)
