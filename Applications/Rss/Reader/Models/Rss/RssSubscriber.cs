@@ -356,6 +356,36 @@ namespace Cube.Net.App.Rss.Reader
             Children = Entries.Cast<IRssEntry>().ToBindable(),
         }}).Save(FileName, IO);
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Import
+        ///
+        /// <summary>
+        /// OPML 形式ファイルをインポートします。
+        /// </summary>
+        ///
+        /// <param name="path">読み込むファイルのパス</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Import(string path)
+        {
+            var dest = RssOpml.Load(path, _feeds, IO);
+            if (dest.Count() > 0) Add(dest);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Export
+        ///
+        /// <summary>
+        /// OPML 形式でエクスポートします。
+        /// </summary>
+        ///
+        /// <param name="path">保存先のパス</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Export(string path) => RssOpml.Save(this, path, IO);
+
         #endregion
 
         #region Monitor

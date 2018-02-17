@@ -20,13 +20,7 @@
                 "Categories": null,
                 "Entries": [
                     {
-                        "Uri": "https:\/\/blogs.windows.com\/feed",
-                        "Link": "https:\/\/blogs.windows.com\/",
-                        "Frequency": 0,
-                        "Title": "Windows Blog"
-                    },
-                    {
-                        "Uri": "https:\/\/blogs.windows.com\/buildingapps\/feed",
+                        "Uri": "https:\/\/blogs.windows.com\/buildingapps\/feed\/",
                         "Link": "https:\/\/blogs.windows.com\/buildingapps",
                         "Frequency": 0,
                         "Title": "Building Apps for Windows"
@@ -42,29 +36,23 @@
                         "Link": "https:\/\/blogs.msdn.microsoft.com\/visualstudio",
                         "Frequency": 2,
                         "Title": "The Visual Studio Blog"
-                    },
-                    {
-                        "Uri": "https:\/\/blogs.msdn.microsoft.com\/dotnet\/feed",
-                        "Link": "https:\/\/blogs.msdn.microsoft.com\/dotnet",
-                        "Frequency": 2,
-                        "Title": ".NET Blog"
                     }
                 ]
             }
         ],
         "Entries": [
             {
-                "Uri": "https:\/\/blogs.microsoft.com\/feed",
+                "Uri": "https:\/\/blogs.microsoft.com\/feed\/",
                 "Link": "https:\/\/blogs.microsoft.com\/",
                 "Title": "Official Microsoft Blog"
             },
             {
-                "Uri": "https:\/\/blogs.microsoft.com\/on-the-issues\/feed",
+                "Uri": "https:\/\/blogs.microsoft.com\/on-the-issues\/feed\/",
                 "Link": "https:\/\/blogs.microsoft.com\/on-the-issues",
                 "Title": "Microsoft on the Issues"
             },
             {
-                "Uri": "https:\/\/blogs.microsoft.com\/iot\/feed",
+                "Uri": "https:\/\/blogs.microsoft.com\/iot\/feed\/",
                 "Link": "https:\/\/blogs.microsoft.com\/iot",
                 "Title": "Internet of Things"
             }

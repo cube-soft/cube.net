@@ -163,12 +163,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Import => _import ?? (
             _import = new RelayCommand(() => Messenger.Send(
-                MessageFactory.ImportWarning(msg =>
+                MessageFactory.Import(e =>
                 {
-                    if (msg.Result) Messenger.Send(MessageFactory.Import(e =>
-                    {
-                        if (e.Result) Model.Import(e.FileName);
-                    }));
+                    if (e.Result) Model.Import(e.FileName);
                 }))
             )
         );

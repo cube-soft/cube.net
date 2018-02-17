@@ -22,6 +22,7 @@ using System.Xml.Linq;
 using Cube.Conversions;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
+using Cube.Net.Rss;
 using Cube.Xui;
 using Cube.Xml;
 
@@ -49,17 +50,19 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /// <param name="path">ファイルのパス</param>
+        /// <param name="filter">フィルタリング用オブジェクト</param>
         /// <param name="io">入出力用のオブジェクト</param>
         ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<IRssEntry> Load(string path, Operator io) => io.Load(
+        public static IEnumerable<IRssEntry> Load(string path,
+            IDictionary<Uri, RssFeed> filter, Operator io) => io.Load(
             path,
             e =>
             {
                 var body = XDocument.Load(e).Root.GetElement("body");
-                return Convert(body, null);
+                return Convert(body, null, filter);
             },
             new IRssEntry[0]
         );
@@ -111,18 +114,13 @@ namespace Cube.Net.App.Rss.Reader
         /// 変換します。
         /// </summary>
         ///
-        /// <param name="src">XElement オブジェクト</param>
-        /// <param name="parent">親要素</param>
-        ///
-        /// <returns>変換オブジェクト</returns>
-        ///
         /* ----------------------------------------------------------------- */
-        private static IEnumerable<IRssEntry> Convert(XElement src, IRssEntry parent) =>
-            src.GetElements("outline").Select(
-                e => e.Attribute("xmlUrl") != null ?
-                ToEntry(e, parent) :
-                ToCategory(e, parent)
-            );
+        private static IEnumerable<IRssEntry> Convert(XElement src,
+            IRssEntry parent, IDictionary<Uri, RssFeed> filter) =>
+            src.GetElements("outline")
+               .Select(e => IsEntry(e) ? ToEntry(e, parent) : ToCategory(e, parent, filter))
+               .Where(e => e is RssCategory rc && rc.Children.Count > 0 ||
+                           e is RssEntry re && !filter.ContainsKey(re.Uri));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -132,11 +130,6 @@ namespace Cube.Net.App.Rss.Reader
         /// XElement オブジェクトを解析し、RssEntry オブジェクトに
         /// 変換します。
         /// </summary>
-        ///
-        /// <param name="src">XElement オブジェクト</param>
-        /// <param name="parent">親要素</param>
-        ///
-        /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
         private static IRssEntry ToEntry(XElement src, IRssEntry parent) => new RssEntry
@@ -156,13 +149,9 @@ namespace Cube.Net.App.Rss.Reader
         /// 変換します。
         /// </summary>
         ///
-        /// <param name="src">XElement オブジェクト</param>
-        /// <param name="parent">親要素</param>
-        ///
-        /// <returns>変換オブジェクト</returns>
-        ///
         /* ----------------------------------------------------------------- */
-        private static IRssEntry ToCategory(XElement src, IRssEntry parent)
+        private static IRssEntry ToCategory(XElement src, IRssEntry parent,
+            IDictionary<Uri, RssFeed> filter)
         {
             var dest = new RssCategory
             {
@@ -170,9 +159,20 @@ namespace Cube.Net.App.Rss.Reader
                 Title  = (string)src.Attribute("title"),
             };
 
-            dest.Children = Convert(src, dest).ToBindable();
+            dest.Children = Convert(src, dest, filter).ToBindable();
             return dest;
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsEntry
+        ///
+        /// <summary>
+        /// RssEntry を表す XElement かどうかを判別します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static bool IsEntry(XElement src) => src.Attribute("xmlUrl") != null;
 
         #endregion
 

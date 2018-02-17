@@ -184,17 +184,6 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
-        ///   購読中の Web サイトは全て削除され、インポートされた情報で上書きされます。エクスポート機能を利用するなどして、あらかじめバックアップを取得して下さい。
-        ///
-        ///インポートを実行しますか？ に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string MessageImportWarning {
-            get {
-                return ResourceManager.GetString("MessageImportWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   最終チェック に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageLastChecked {

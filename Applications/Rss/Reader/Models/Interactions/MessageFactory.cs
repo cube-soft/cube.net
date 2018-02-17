@@ -58,29 +58,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ImportWarning
-        ///
-        /// <summary>
-        /// インポート時の警告メッセージを生成します。
-        /// </summary>
-        ///
-        /// <param name="e">コールバック関数</param>
-        ///
-        /// <returns>DialogMessage オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static DialogMessage ImportWarning(Action<DialogMessage> e) =>
-            new DialogMessage(
-                Properties.Resources.MessageImportWarning,
-                Properties.Resources.TitleWarning,
-                e
-            ) {
-                Button = MessageBoxButton.YesNo,
-                Image  = MessageBoxImage.Warning,
-            };
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Import
         ///
         /// <summary>

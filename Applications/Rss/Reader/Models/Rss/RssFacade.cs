@@ -302,14 +302,10 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Import(string path)
         {
-            var dest = this.LogDebug("Import", () => RssOpml.Load(path, Settings.IO));
-            if (dest.Count() <= 0) return;
-
             try
             {
                 Core.Stop();
-                Core.Clear();
-                Core.Add(dest);
+                this.LogDebug("Import", () => Core.Import(path));
             }
             finally { Core.Start(TimeSpan.Zero); }
         }
@@ -322,8 +318,10 @@ namespace Cube.Net.App.Rss.Reader
         /// OPML 形式でエクスポートします。
         /// </summary>
         ///
+        /// <param name="path">保存先のパス</param>
+        ///
         /* ----------------------------------------------------------------- */
-        public void Export(string path) => RssOpml.Save(Core, path, Settings.IO);
+        public void Export(string path) => Core.Export(path);
 
         /* ----------------------------------------------------------------- */
         ///

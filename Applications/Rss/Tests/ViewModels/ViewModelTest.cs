@@ -496,12 +496,13 @@ namespace Cube.Net.App.Rss.Tests
             {
                 var src = Example("Sample.opml");
                 vm.Stop.Execute(null);
-                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+                var count = vm.Data.Root.Flatten().Count();
+
                 vm.Messenger.Register<OpenFileDialogMessage>(this, e => ImportCommand(e, src, true));
                 vm.Import.Execute(null);
 
                 var dest = vm.Data.Root.Flatten();
-                Assert.That(dest.Count(), Is.EqualTo(8));
+                Assert.That(dest.Count(), Is.EqualTo(count + 4));
             }
         }
 
@@ -523,36 +524,7 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Stop.Execute(null);
                 var count = vm.Data.Root.Flatten().Count();
 
-                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
                 vm.Messenger.Register<OpenFileDialogMessage>(this, e => ImportCommand(e, src, false));
-                vm.Import.Execute(null);
-
-                var dest = vm.Data.Root.Flatten();
-                Assert.That(dest.Count(), Is.EqualTo(count));
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_Import_Warning_Cancel
-        ///
-        /// <summary>
-        /// Import コマンドの警告メッセージ表示時にキャンセルした時の
-        /// 挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Import_Warning_Cancel()
-        {
-            using (var vm = Create())
-            {
-                var src = Example("Sample.opml");
-                vm.Stop.Execute(null);
-                var count = vm.Data.Root.Flatten().Count();
-
-                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, false));
-                vm.Messenger.Register<OpenFileDialogMessage>(this, e => ImportCommand(e, src, true));
                 vm.Import.Execute(null);
 
                 var dest = vm.Data.Root.Flatten();

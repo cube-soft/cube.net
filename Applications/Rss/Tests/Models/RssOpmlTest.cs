@@ -16,7 +16,9 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Cube.Net.Rss;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
 
@@ -46,7 +48,12 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void LoadOpml()
         {
-            var dest = RssOpml.Load(Example("Sample.opml"), IO).ToList();
+            var filter = new Dictionary<Uri, RssFeed>
+            {
+                { new Uri("https://blogs.msdn.microsoft.com/dotnet/feed/"), new RssFeed() },
+            };
+
+            var dest = RssOpml.Load(Example("Sample.opml"), filter, IO).ToList();
             Assert.That(dest.Count, Is.EqualTo(1));
 
             var root = dest[0] as RssCategory;
@@ -73,7 +80,7 @@ namespace Cube.Net.App.Rss.Tests
             var s2 = root.Children[2] as RssCategory;
             Assert.That(s2.Parent, Is.EqualTo(root), s2.Title);
             Assert.That(s2.Title,  Is.EqualTo("Microsoft"));
-            Assert.That(s2.Children.Count, Is.EqualTo(3));
+            Assert.That(s2.Children.Count, Is.EqualTo(2));
 
             var s20 = s2.Children[0] as RssEntry;
             Assert.That(s20.Parent, Is.EqualTo(s2), s20.Title);
@@ -86,12 +93,6 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(s21.Title,  Is.EqualTo("Windows Blog"));
             Assert.That(s21.Uri,    Is.EqualTo(new Uri("https://blogs.windows.com/feed/")));
             Assert.That(s21.Link,   Is.EqualTo(new Uri("https://blogs.windows.com/")));
-
-            var s22 = s2.Children[2] as RssEntry;
-            Assert.That(s22.Parent, Is.EqualTo(s2), s22.Title);
-            Assert.That(s22.Title,  Is.EqualTo(".NET Blog"));
-            Assert.That(s22.Uri,    Is.EqualTo(new Uri("https://blogs.msdn.microsoft.com/dotnet/feed/")));
-            Assert.That(s22.Link,   Is.EqualTo(new Uri("https://blogs.msdn.microsoft.com/dotnet/")));
         }
     }
 }
