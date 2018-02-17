@@ -141,9 +141,9 @@ namespace Cube.Net.App.Rss.Reader
         private static IRssEntry ToEntry(XElement src, IRssEntry parent) => new RssEntry
         {
             Parent = parent,
-            Title  = (string)src.Attribute("title") ?? string.Empty,
-            Uri    = src.Attribute("xmlUrl")?.Value.ToUri(),
-            Link   = src.Attribute("htmlUrl")?.Value.ToUri(),
+            Title  = (string)src.Attribute("title"),
+            Uri    = src.Attribute("xmlUrl").Value.ToUri(),
+            Link   = src.Attribute("htmlUrl").Value.ToUri(),
         } as IRssEntry;
 
         /* ----------------------------------------------------------------- */
@@ -166,7 +166,7 @@ namespace Cube.Net.App.Rss.Reader
             var dest = new RssCategory
             {
                 Parent = parent,
-                Title  = (string)src.Attribute("title") ?? string.Empty,
+                Title  = (string)src.Attribute("title"),
             };
 
             dest.Children = Convert(src, dest).ToBindable();
@@ -250,10 +250,7 @@ namespace Cube.Net.App.Rss.Reader
         private static XElement FromCategory(RssCategory src)
         {
             var dest = new XElement("outline", new XAttribute("title", src.Title));
-            if (src.Children.Count > 0)
-            {
-                foreach (var item in ConvertBack(src.Children)) dest.Add(item);
-            }
+            foreach (var item in ConvertBack(src.Children)) dest.Add(item);
             return dest;
         }
 
