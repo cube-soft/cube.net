@@ -34,6 +34,13 @@
         <my:MainViewModel/>
     </Window.DataContext>
 
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+N" Command="{Binding NewEntry}"/>
+        <KeyBinding Gesture="Ctrl+D" Command="{Binding Remove}"/>
+        <KeyBinding Gesture="Delete" Command="{Binding Remove}"/>
+        <KeyBinding Gesture="F2" Command="{Binding Rename}"/>
+    </Window.InputBindings>
+
     <i:Interaction.Behaviors>
         <xb:CloseBehavior Messenger="{Binding Messenger}"/>
         <xb:DialogBehavior Messenger="{Binding Messenger}"/>

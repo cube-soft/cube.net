@@ -226,11 +226,15 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Remove => _remove ?? (
-            _remove = new RelayCommand(() => Messenger.Send(
-                MessageFactory.RemoveWarning(Data.Current.Value?.Title, e =>
-                {
-                    if (e.Result) Model.Remove();
-                }))
+            _remove = new BindableCommand(
+                () => Messenger.Send(
+                    MessageFactory.RemoveWarning(Data.Current.Value.Title, e =>
+                    {
+                        if (e.Result) Model.Remove();
+                    })
+                ),
+                () => Data.Current.HasValue,
+                Data.Current
             )
         );
 
@@ -244,7 +248,11 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Rename => _rename ?? (
-            _rename = new RelayCommand(() => Model.Rename())
+            _rename = new BindableCommand(
+                () => Model.Rename(),
+                () => Data.Current.HasValue,
+                Data.Current
+            )
         );
 
         /* ----------------------------------------------------------------- */
@@ -353,10 +361,10 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Navigate
+        /// Stop
         ///
         /// <summary>
-        /// URL 先の Web ページを表示するコマンドです。
+        /// RSS フィードの定期取得を停止するコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -366,7 +374,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
-        #region Implementations
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
