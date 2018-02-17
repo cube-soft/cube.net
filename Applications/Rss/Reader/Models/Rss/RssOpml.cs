@@ -60,7 +60,8 @@ namespace Cube.Net.App.Rss.Reader
             {
                 var body = XDocument.Load(e).Root.GetElement("body");
                 return Convert(body, null);
-            }
+            },
+            new IRssEntry[0]
         );
 
         /* ----------------------------------------------------------------- */

@@ -65,6 +65,26 @@ namespace Cube.Net.App.Rss.Tests
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Import_Error
+        ///
+        /// <summary>
+        /// Import に失敗した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Import_Error()
+        {
+            using (var m = Create())
+            {
+                m.Stop();
+                m.Import("NotFound.opml");
+                Assert.That(m.Data.Root.Count(), Is.AtLeast(1));
+            }
+        }
+
         #endregion
 
         #region Helper methods

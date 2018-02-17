@@ -230,7 +230,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Read() => Data.Current.Value?.Read();
+        public void Read() => Data.Current.Value.Read();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -422,7 +422,8 @@ namespace Cube.Net.App.Rss.Reader
             var src  = e.Value;
             var dest = Core.Find(src.Uri);
 
-            if (src == null || dest == null) return;
+            Debug.Assert(src != null);
+            if (dest == null) return;
             if (dest != Data.LastEntry.Value) dest.Shrink();
 
             dest.Update(src);
