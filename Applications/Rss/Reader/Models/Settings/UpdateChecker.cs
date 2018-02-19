@@ -56,7 +56,7 @@ namespace Cube.Net.App.Rss.Reader
             _timer.Interval = TimeSpan.FromDays(1);
             _timer.Subscribe(WhenTick);
 
-            if (settings.Value.CheckUpdate) _timer.Start();
+            if (settings.Value.CheckUpdate) Start();
         }
 
         #endregion
