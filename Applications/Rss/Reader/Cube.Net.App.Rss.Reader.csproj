@@ -110,6 +110,7 @@
     <Compile Include="Models\Rss\RssFacade.cs" />
     <Compile Include="Models\Rss\RssSubscriber.cs" />
     <Compile Include="Models\Settings\Settings.cs" />
+    <Compile Include="Models\Settings\UpdateChecker.cs" />
     <Compile Include="ViewModels\CommonViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PropertyViewModel.cs" />

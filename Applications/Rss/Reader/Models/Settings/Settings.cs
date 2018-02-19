@@ -315,5 +315,35 @@ namespace Cube.Net.App.Rss.Reader
         public string Feed => IO.Combine(Root, "Feeds.json");
 
         #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnLoaded
+        ///
+        /// <summary>
+        /// 設定の読み込み時に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnLoaded(ValueChangedEventArgs<Settings> e)
+        {
+            this.LogWarn(() =>
+            {
+                var name = $@"SOFTWARE\{Company}\{Product}";
+                using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false))
+                {
+                    if (key == null) return;
+                    var dest = key.GetValue("LastCheckUpdate") as string;
+                    if (string.IsNullOrEmpty(dest)) return;
+                    e.NewValue.LastCheckUpdate = DateTime.Parse(dest).ToLocalTime();
+                }
+            });
+
+            base.OnLoaded(e);
+        }
+
+        #endregion
     }
 }

@@ -453,6 +453,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private bool _disposed = false;
+        private WakeableTimer _update = new WakeableTimer();
         #endregion
     }
 }
