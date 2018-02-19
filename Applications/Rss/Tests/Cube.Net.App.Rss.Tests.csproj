@@ -92,6 +92,9 @@
     <None Include="Examples\Cache\872e24035276c7104afd116c2052172b">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Examples\Default.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Examples\Sample.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
