@@ -59,11 +59,11 @@
 
     <Grid x:Name="Root" UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*" MinWidth="50"/>
+            <ColumnDefinition Width="250" MinWidth="50"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="0.5*" MinWidth="50"/>
+            <ColumnDefinition Width="300" MinWidth="50"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"    MinWidth="50"/>
+            <ColumnDefinition Width="*"   MinWidth="50"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
