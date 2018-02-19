@@ -618,19 +618,22 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Property()
+        [TestCase(RssCheckFrequency.Auto)]
+        [TestCase(RssCheckFrequency.High)]
+        [TestCase(RssCheckFrequency.Low)]
+        [TestCase(RssCheckFrequency.None)]
+        public void VM_Property(RssCheckFrequency src)
         {
             using (var vm = Create())
             {
                 vm.Stop.Execute(null);
-                vm.Messenger.Register<PropertyViewModel>(this, e => PropertyCommand(e));
+                vm.Messenger.Register<PropertyViewModel>(this, e => PropertyCommand(e, src));
                 vm.Property.Execute(null);
 
                 var dest = vm.Data.Current.Value as RssEntry;
                 Assert.That(dest, Is.Not.Null);
                 Assert.That(dest.Title, Is.EqualTo(nameof(PropertyCommand)));
-                Assert.That(dest.Frequency, Is.EqualTo(RssCheckFrequency.None));
+                Assert.That(dest.Frequency, Is.EqualTo(src));
             }
         }
 
@@ -700,11 +703,12 @@ namespace Cube.Net.App.Rss.Tests
         private MainViewModel Create()
         {
             var settings = new SettingsFolder(Results, IO);
+            var dest = new MainViewModel(settings);
+
             settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
             settings.Value.Width        = 1024;
             settings.Value.Height       = 768;
 
-            var dest = new MainViewModel(settings);
             dest.Setup.Execute(null);
             return dest;
         }
@@ -788,14 +792,14 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void PropertyCommand(PropertyViewModel vm)
+        private void PropertyCommand(PropertyViewModel vm, RssCheckFrequency value)
         {
             Assert.That(vm.Entry.HasValue, Is.True);
             Assert.That(vm.Frequencies.Count(), Is.EqualTo(4));
 
             var dest = vm.Entry.Value;
             dest.Title = nameof(PropertyCommand);
-            dest.Frequency = RssCheckFrequency.None;
+            dest.Frequency = value;
 
             vm.Apply.Execute(null);
         }

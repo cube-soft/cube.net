@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
 
@@ -92,6 +93,32 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// CheckUpdate
+        ///
+        /// <summary>
+        /// アップデート確認の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void CheckUpdate()
+        {
+            using (var m = Create())
+            {
+                m.Stop();
+
+                Assert.That(m.Data.User.Value.CheckUpdate, Is.True);
+                Task.Delay(150).Wait();
+                m.Data.User.Value.CheckUpdate = false;
+                Assert.That(m.Data.User.Value.CheckUpdate, Is.False);
+                Assert.That(m.Data.User.Value.LastCheckUpdate.HasValue, Is.True);
+                m.Data.User.Value.CheckUpdate = true;
+                Assert.That(m.Data.User.Value.CheckUpdate, Is.True);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Import_Error
         ///
         /// <summary>
@@ -149,10 +176,10 @@ namespace Cube.Net.App.Rss.Tests
         private RssFacade Create()
         {
             var settings = new SettingsFolder(Results, IO);
-            settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
-            settings.Value.CheckUpdate  = false;
-
             var dest = new RssFacade(settings);
+
+            settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
+
             dest.Setup();
             return dest;
         }
