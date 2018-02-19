@@ -327,16 +327,24 @@ namespace Cube.Net.App.Rss.Reader
         /// 設定ファイルを読み込みます。
         /// </summary>
         ///
+        /// <remarks>
+        /// ロード成功時にバックアップファイルを非同期で生成します。
+        /// </remarks>
+        ///
         /* ----------------------------------------------------------------- */
-        public void Load() => Add(RssOperator.Load(FileName, IO).SelectMany(e =>
-            !string.IsNullOrEmpty(e.Title) ?
-            new[] { e as IRssEntry } :
-            e.Entries.Select(re =>
-            {
-                re.Parent = null;
-                return re as IRssEntry;
-            })
-        ));
+        public void Load() {
+            Add(RssOperator.Load(FileName, IO).SelectMany(e =>
+                !string.IsNullOrEmpty(e.Title) ?
+                new[] { e as IRssEntry } :
+                e.Entries.Select(re =>
+                {
+                    re.Parent = null;
+                    return re as IRssEntry;
+                })
+            ));
+
+            if (_feeds.Count > 0) Task.Run(() => RssOperator.Backup(FileName, IO)).Forget();
+        }
 
         /* ----------------------------------------------------------------- */
         ///

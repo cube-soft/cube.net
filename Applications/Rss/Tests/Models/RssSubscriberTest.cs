@@ -70,6 +70,25 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Load_NotFound
+        ///
+        /// <summary>
+        /// 存在しない JSON ファイルをロードした時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Load_NotFound()
+        {
+            using (var src = new RssSubscriber { FileName = "NotFound.json" })
+            {
+                src.Load();
+                Assert.That(src.Count, Is.EqualTo(0));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Find
         ///
         /// <summary>
