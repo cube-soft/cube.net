@@ -57,13 +57,13 @@ namespace Cube.Net.App.Rss.Reader
             var info = io.Get(src);
             var dir  = io.Combine(info.DirectoryName, "Backup");
             var dest = io.Combine(dir, $"{DateTime.Now.ToString("yyyyMMdd")}{info.Extension}");
-            if (io.Exists(dest)) return;
 
+            if (io.Exists(dest)) return;
             io.Copy(src, dest, true);
+
             foreach (var f in io.GetFiles(dir).OrderByDescending(e => e).Skip(30))
             {
-                try { io.Delete(f); }
-                catch (Exception err) { LogOperator.Warn(typeof(RssOperator), $"{f} ({err.Message})"); }
+                LogOperator.Warn(typeof(RssOperator), () => io.Delete(f));
             }
         }
 
