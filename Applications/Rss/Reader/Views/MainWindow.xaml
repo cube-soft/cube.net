@@ -165,6 +165,9 @@
                 ItemTemplate="{StaticResource RssItemTemplate}"
                 Style="{StaticResource RssFeedsStyle}"
                 Grid.Row="2">
+                <i:Interaction.Behaviors>
+                    <my:ScrollToTopBehavior Messenger="{Binding Messenger}"/>
+                </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction

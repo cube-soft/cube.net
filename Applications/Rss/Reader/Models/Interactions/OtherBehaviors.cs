@@ -15,6 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System.Windows.Controls;
+using System.Windows.Media;
 using Cube.Xui.Behaviors;
 
 namespace Cube.Net.App.Rss.Reader
@@ -54,4 +56,42 @@ namespace Cube.Net.App.Rss.Reader
     /* --------------------------------------------------------------------- */
     public class ShowSettingsWindowBehavior :
         ShowDialogBehavior<SettingsWindow, SettingsViewModel> { }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ScrollToTopMessage
+    ///
+    /// <summary>
+    /// 最上部までスクロールさせるためのメッセージです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class ScrollToTopMessage { }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ScrollToTopBehavior
+    ///
+    /// <summary>
+    /// 最上部までスクロールさせるための Behavior です。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class ScrollToTopBehavior : MessengerBehavior<ScrollToTopMessage>
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Invoke
+        ///
+        /// <summary>
+        /// 処理を実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void Invoke(ScrollToTopMessage e)
+        {
+            var outer = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+            if (outer.Child is ScrollViewer inner) inner.ScrollToTop();
+        }
+    }
 }

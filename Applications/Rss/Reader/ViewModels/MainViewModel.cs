@@ -309,7 +309,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand SelectEntry => _selectEntry ?? (
             _selectEntry = new RelayCommand<object>(
-                e => Model.Select(e as IRssEntry),
+                e =>
+                {
+                    Model.Select(e as IRssEntry);
+                    if (e is RssEntry) Messenger.Send<ScrollToTopMessage>();
+                },
                 e => e is IRssEntry
             )
         );
