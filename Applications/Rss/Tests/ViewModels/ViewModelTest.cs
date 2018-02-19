@@ -678,7 +678,7 @@ namespace Cube.Net.App.Rss.Tests
         public void Setup()
         {
             IO.Copy(Example("Sample.json"), Result("Feeds.json"), true);
-            IO.Delete(Result("Settings.json"));
+            IO.Copy(Example("Settings.json"), Result("Settings.json"), true);
 
             var cache = "Cache";
             foreach (var file in IO.GetFiles(Example(cache)))
