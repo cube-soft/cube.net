@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Web;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Forms;
@@ -70,9 +71,9 @@ namespace Cube.Net.App.Rss.Reader
                         Properties.Resources.Skeleton,
                         Properties.Resources.SkeletonStyle,
                         src.Link,
-                        src.Title,
+                        HttpUtility.HtmlEncode(src.Title),
                         src.PublishTime,
-                        !string.IsNullOrEmpty(src.Content) ? src.Content : src.Summary
+                        !string.IsNullOrEmpty(src.Content) ? src.Content : HttpUtility.HtmlEncode(src.Summary)
                     );
                 }
             }

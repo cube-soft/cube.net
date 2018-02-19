@@ -15,8 +15,12 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
+using Cube.Forms.Processes;
 using Cube.Log;
 
 namespace Cube.Net.App.Rss.Reader
@@ -32,17 +36,21 @@ namespace Cube.Net.App.Rss.Reader
     /* --------------------------------------------------------------------- */
     public partial class App : Application
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
-        /// Application_Startup
+        /// OnStartup
         ///
         /// <summary>
-        /// 起動時に実行されるハンドラです。
+        /// 起動時に実行されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void Application_Startup(object sender, StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
+            if (!Activate()) return;
+
             LogOperator.Configure();
             LogOperator.ObserveTaskException();
             LogOperator.Info(GetType(), Assembly.GetExecutingAssembly());
@@ -51,6 +59,56 @@ namespace Cube.Net.App.Rss.Reader
             BrowserSettings.Version = BrowserVersion.Latest;
             BrowserSettings.MaxConnections = 10;
             BrowserSettings.NavigationSounds = false;
+
+            base.OnStartup(e);
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnStartup
+        ///
+        /// <summary>
+        /// 終了時に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnExit(ExitEventArgs e)
+        {
+            if (_mutex != null) _mutex.ReleaseMutex();
+            base.OnExit(e);
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Activate
+        ///
+        /// <summary>
+        /// アクティブ化を実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private bool Activate()
+        {
+            var name = AssemblyReader.Default.Product;
+            _mutex = new Mutex(true, name, out bool dest);
+            if (!dest)
+            {
+                _mutex = null;
+                var id = Process.GetCurrentProcess().Id;
+                Process.GetProcessesByName(name).FirstOrDefault(p => p.Id != id).Activate();
+                Current.Shutdown();
+            }
+            return dest;
+        }
+
+        #endregion
+
+        #region Fields
+        private Mutex _mutex;
+        #endregion
     }
 }
