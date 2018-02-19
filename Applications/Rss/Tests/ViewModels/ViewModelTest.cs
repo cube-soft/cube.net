@@ -60,8 +60,8 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(vm.Data.Message.HasValue,      Is.False);
             Assert.That(vm.DropTarget,                 Is.Not.Null);
             Assert.That(vm.Data.User.HasValue,         Is.True);
-            Assert.That(vm.Data.User.Value.Width,      Is.EqualTo(1060));
-            Assert.That(vm.Data.User.Value.Height,     Is.EqualTo(630));
+            Assert.That(vm.Data.User.Value.Width,      Is.EqualTo(1100));
+            Assert.That(vm.Data.User.Value.Height,     Is.EqualTo(650));
         }
 
         /* ----------------------------------------------------------------- */

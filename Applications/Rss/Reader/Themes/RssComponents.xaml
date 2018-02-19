@@ -5,7 +5,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
     </ResourceDictionary.MergedDictionaries>
-    
+
     <!--
         Grids for MainWindow
     -->
@@ -21,7 +21,7 @@
     <Style x:Key="RightSideStyle" TargetType="Grid">
         <Setter Property="Background" Value="White"/>
     </Style>
-    
+
     <!--
         Buttons
     -->

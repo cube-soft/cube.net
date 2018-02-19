@@ -203,8 +203,8 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private Uri _feedUri;
-        private int _width = 1060;
-        private int _height = 630;
+        private int _width = 1100;
+        private int _height = 650;
         private bool _lightMode = false;
         private bool _enableMonitorMessage = true;
         private bool _checkUpdate = true;

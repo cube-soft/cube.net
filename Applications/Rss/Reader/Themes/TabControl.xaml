@@ -13,7 +13,7 @@
                             <RowDefinition Height="1"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        
+
                         <TabPanel
                             IsItemsHost="True"
                             Grid.Row="0"

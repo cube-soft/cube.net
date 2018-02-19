@@ -12,7 +12,7 @@ body {
 
 img {
     max-width       : 100%;
-	height			: auto !important;
+    height			: auto !important;
 }
 
 a, a:visited {
@@ -20,7 +20,7 @@ a, a:visited {
 }
 
 .cuberss-container {
-    margin          : 0 48px;
+    margin          : 0 30px;
 }
 
 .cuberss-title {
