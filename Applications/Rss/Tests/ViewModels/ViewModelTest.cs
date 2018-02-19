@@ -60,8 +60,8 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(vm.Data.Message.HasValue,      Is.False);
             Assert.That(vm.DropTarget,                 Is.Not.Null);
             Assert.That(vm.Data.User.HasValue,         Is.True);
-            Assert.That(vm.Data.User.Value.Width,      Is.EqualTo(1100));
-            Assert.That(vm.Data.User.Value.Height,     Is.EqualTo(650));
+            Assert.That(vm.Data.User.Value.Width,      Is.AtLeast(1));
+            Assert.That(vm.Data.User.Value.Height,     Is.AtLeast(1));
         }
 
         /* ----------------------------------------------------------------- */
@@ -701,6 +701,8 @@ namespace Cube.Net.App.Rss.Tests
         {
             var settings = new SettingsFolder(Results, IO);
             settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
+            settings.Value.Width        = 1024;
+            settings.Value.Height       = 768;
 
             var dest = new MainViewModel(settings);
             dest.Setup.Execute(null);

@@ -58,15 +58,17 @@ namespace Cube.Net.App.Rss.Reader
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
 
-            Core.IO = Settings.IO;
-            Core.FileName = Settings.Feed;
-            Core.CacheDirectory = Settings.Cache;
-            Core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
-            Core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
-            Core.Received += WhenReceived;
+            _core.IO = Settings.IO;
+            _core.FileName = Settings.Feed;
+            _core.CacheDirectory = Settings.Cache;
+            _core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
+            _core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
+            _core.Received += WhenReceived;
 
-            this.LogDebug("Load", () => Core.Load());
-            Data = new RssBindableData(Core, Settings.Value);
+            _checker = new UpdateChecker(Settings);
+
+            this.LogDebug("Load", () => _core.Load());
+            Data = new RssBindableData(_core, Settings.Value);
         }
 
         #endregion
@@ -95,17 +97,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public SettingsFolder Settings { get; }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Core
-        ///
-        /// <summary>
-        /// RSS フィード購読サイトおよびカテゴリ一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private RssSubscriber Core { get; } = new RssSubscriber();
-
         #endregion
 
         #region Methods
@@ -121,8 +112,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Setup()
         {
-            var entry = Core.Find(Settings.Value.Start) ??
-                        Core.Flatten<RssEntry>().FirstOrDefault();
+            var entry = _core.Find(Settings.Value.Start) ??
+                        _core.Flatten<RssEntry>().FirstOrDefault();
             if (entry != null)
             {
                 Select(entry);
@@ -130,7 +121,7 @@ namespace Cube.Net.App.Rss.Reader
             }
 
             Debug.Assert(Settings.Value.InitialDelay.HasValue);
-            Core.Start(Settings.Value.InitialDelay.Value);
+            _core.Start(Settings.Value.InitialDelay.Value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -146,9 +137,9 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public async Task NewEntry(string src)
         {
-            Core.Suspend();
-            try { await Core.RegisterAsync(src.ToUri()); }
-            finally { Core.Start(TimeSpan.Zero); }
+            _core.Suspend();
+            try { await _core.RegisterAsync(src.ToUri()); }
+            finally { _core.Start(TimeSpan.Zero); }
         }
 
         /* ----------------------------------------------------------------- */
@@ -160,7 +151,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void NewCategory() => Select(Core.Create(Data.Current.Value));
+        public void NewCategory() => Select(_core.Create(Data.Current.Value));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -177,8 +168,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Update(IRssEntry src)
         {
-            if (src is RssCategory rc) Core.Update(rc.Children.Flatten<RssEntry>().ToArray());
-            else if (src is RssEntry re) Core.Update(re);
+            if (src is RssCategory rc) _core.Update(rc.Children.Flatten<RssEntry>().ToArray());
+            else if (src is RssEntry re) _core.Update(re);
         }
 
         /* ----------------------------------------------------------------- */
@@ -195,7 +186,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Move(IRssEntry src, IRssEntry dest, int index) =>
-            Core.Move(src, dest, index);
+            _core.Move(src, dest, index);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -208,8 +199,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Remove()
         {
-            if (Data.Current.Value is RssEntry re) Core.DeleteCache(re);
-            Core.Remove(Data.Current.Value);
+            if (Data.Current.Value is RssEntry re) _core.DeleteCache(re);
+            _core.Remove(Data.Current.Value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -245,7 +236,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Reset()
         {
-            if (Data.Current.Value is RssEntry entry) Core.Reset(entry);
+            if (Data.Current.Value is RssEntry entry) _core.Reset(entry);
         }
 
         /* ----------------------------------------------------------------- */
@@ -306,10 +297,10 @@ namespace Cube.Net.App.Rss.Reader
         {
             try
             {
-                Core.Stop();
-                this.LogDebug("Import", () => Core.Import(path));
+                _core.Stop();
+                this.LogDebug("Import", () => _core.Import(path));
             }
-            finally { Core.Start(TimeSpan.Zero); }
+            finally { _core.Start(TimeSpan.Zero); }
         }
 
         /* ----------------------------------------------------------------- */
@@ -323,7 +314,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="path">保存先のパス</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Export(string path) => Core.Export(path);
+        public void Export(string path) => _core.Export(path);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -336,7 +327,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">選択項目</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Reschedule(RssEntry src) => Core.Reschedule(src);
+        public void Reschedule(RssEntry src) => _core.Reschedule(src);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -347,7 +338,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Stop() => Core.Stop();
+        public void Stop() => _core.Stop();
 
         #region IDisposable
 
@@ -393,7 +384,7 @@ namespace Cube.Net.App.Rss.Reader
 
             if (disposing)
             {
-                Core.Dispose();
+                _core.Dispose();
                 Settings.Dispose();
             }
         }
@@ -416,7 +407,7 @@ namespace Cube.Net.App.Rss.Reader
         private void WhenReceived(object sender, ValueEventArgs<RssFeed> e)
         {
             var src  = e.Value;
-            var dest = Core.Find(src.Uri);
+            var dest = _core.Find(src.Uri);
 
             Debug.Assert(src != null);
             if (dest == null) return;
@@ -441,10 +432,14 @@ namespace Cube.Net.App.Rss.Reader
             switch (e.PropertyName)
             {
                 case nameof(Settings.Value.HighInterval):
-                    Core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
+                    _core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
                     break;
                 case nameof(Settings.Value.LowInterval):
-                    Core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
+                    _core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
+                    break;
+                case nameof(Settings.Value.CheckUpdate):
+                    if (Settings.Value.CheckUpdate) _checker.Start();
+                    else _checker.Stop();
                     break;
             }
         }
@@ -453,7 +448,8 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private bool _disposed = false;
-        private WakeableTimer _update = new WakeableTimer();
+        private readonly RssSubscriber _core = new RssSubscriber();
+        private readonly UpdateChecker _checker;
         #endregion
     }
 }

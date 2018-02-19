@@ -53,13 +53,10 @@ namespace Cube.Net.App.Rss.Reader
             FileName = io.Combine(dir, "UpdateChecker.exe");
             Settings = settings;
 
-            var time     = settings.Value.LastCheckUpdate ?? DateTime.MinValue;
-            var past     = DateTime.Now - time;
-            var interval = TimeSpan.FromDays(1);
-
-            _timer.Interval = interval;
+            _timer.Interval = TimeSpan.FromDays(1);
             _timer.Subscribe(WhenTick);
-            _timer.Start(past < interval ? interval - past : TimeSpan.FromMilliseconds(100));
+
+            if (settings.Value.CheckUpdate) _timer.Start();
         }
 
         #endregion
@@ -90,6 +87,40 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Start
+        ///
+        /// <summary>
+        /// 定期実行を開始します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Start()
+        {
+            var time  = Settings.Value.LastCheckUpdate ?? DateTime.MinValue;
+            var past  = DateTime.Now - time;
+            var delta = past < _timer.Interval ?
+                        _timer.Interval - past :
+                        TimeSpan.FromMilliseconds(100);
+            _timer.Start(delta);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Stop
+        ///
+        /// <summary>
+        /// 定期実行を停止します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Stop() => _timer.Stop();
+
+        #endregion
+
         #region Implementations
 
         /* ----------------------------------------------------------------- */
@@ -104,7 +135,7 @@ namespace Cube.Net.App.Rss.Reader
         private void WhenTick()
         {
             try { Process.Start(FileName, Settings.Product); }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            catch (Exception err) { this.LogWarn($"{FileName} ({err.Message})"); }
             finally { Settings.Value.LastCheckUpdate = DateTime.Now; }
         }
 
