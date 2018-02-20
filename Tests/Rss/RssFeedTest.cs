@@ -269,6 +269,13 @@ namespace Cube.Net.Tests
                     Description = "",
                     Link        = new Uri("http://example.org/"),
                 }).Returns(1);
+
+                yield return new TestCaseData("SampleAtom-02.xml", new RssFeed
+                {
+                    Title       = "カラパイア",
+                    Description = "",
+                    Link        = new Uri("http://karapaia.com/"),
+                }).Returns(5);
             }
         }
 

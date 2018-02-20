@@ -93,6 +93,9 @@
     <None Include="Examples\SampleAtom-01.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Examples\SampleAtom-02.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Examples\SampleRss091.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

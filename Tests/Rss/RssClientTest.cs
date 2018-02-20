@@ -42,18 +42,27 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void GetAsync()
+        [TestCase("https://blog.cube-soft.jp/?feed=rss2")]
+        public void GetAsync(string src)
         {
             var http = new RssClient();
             var now  = DateTime.Now;
-            var rss  = http.GetAsync(new Uri("https://blog.cube-soft.jp/?feed=rss2")).Result;
+            var rss  = http.GetAsync(new Uri(src)).Result;
 
             Assert.That(rss, Is.Not.Null);
-            Assert.That(rss.Title.Contains("CubeSoft"), Is.True);
-            Assert.That(rss.Link, Is.EqualTo(new Uri("https://blog.cube-soft.jp/")));
-            Assert.That(rss.Items.Count, Is.GreaterThan(0));
-            Assert.That(rss.LastChecked, Is.GreaterThanOrEqualTo(now));
+            Assert.That(rss.Title.Length, Is.AtLeast(1), nameof(rss.Title));
+            Assert.That(rss.Uri, Is.Not.Null, nameof(rss.Uri));
+            Assert.That(rss.Link, Is.Not.Null, nameof(rss.Link));
+            Assert.That(rss.Items.Count, Is.AtLeast(1), nameof(rss.Items));
+            Assert.That(rss.LastChecked, Is.GreaterThanOrEqualTo(now), nameof(rss.LastChecked));
+            Assert.That(rss.LastPublished.HasValue, Is.True, nameof(rss.LastPublished));
+
+            var item = rss.Items[0];
+
+            Assert.That(item.Title.Length, Is.AtLeast(1), nameof(item.Title));
+            Assert.That(item.Link, Is.Not.Null, nameof(item.Link));
+            Assert.That(item.PublishTime.HasValue, Is.True, nameof(item.PublishTime));
+            Assert.That(item.Status, Is.EqualTo(RssItemStatus.Unread));
         }
 
         /* ----------------------------------------------------------------- */
@@ -66,7 +75,6 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [TestCase("https://blog.cube-soft.jp/", ExpectedResult = "https://blog.cube-soft.jp/?feed=rss2")]
-        [TestCase("https://www.asahi.com/",     ExpectedResult = "http://www3.asahi.com/rss/index.rdf")]
         public string GetAsync_Redirect(string src)
         {
             var uri  = default(Uri);
