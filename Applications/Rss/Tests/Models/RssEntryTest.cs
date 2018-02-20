@@ -48,6 +48,7 @@ namespace Cube.Net.App.Rss.Tests.Models
         public void Entry_Expanded()
         {
             var dest = new RssEntry(new SynchronizationContext());
+            Assert.That(dest.Context,  Is.Not.Null);
             Assert.That(dest.Expanded, Is.False);
             dest.Expanded = true;
             Assert.That(dest.Expanded, Is.False);
