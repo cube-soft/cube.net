@@ -101,6 +101,50 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
+        #region EnableNewWindow
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// EnableNewWindow
+        ///
+        /// <summary>
+        /// 新しいウィンドウをで開くを有効するかどうかを示す値を取得または
+        /// 設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool EnableNewWindow
+        {
+            get => _enableNewWindow;
+            set
+            {
+                if (_enableNewWindow == value) return;
+                _enableNewWindow = value;
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// EnableNewWindowProperty
+        ///
+        /// <summary>
+        /// EnableNewWindow を保持するための DependencyProperty です。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static readonly DependencyProperty EnableNewWindowProperty =
+            DependencyProperty.RegisterAttached(
+                nameof(EnableNewWindow),
+                typeof(bool),
+                typeof(WebBehavior),
+                new PropertyMetadata((s, e) =>
+                {
+                    if (s is WebBehavior wb) wb.EnableNewWindow = (bool)e.NewValue;
+                })
+            );
+
+        #endregion
+
         #region Hover
 
         /* ----------------------------------------------------------------- */
@@ -196,7 +240,8 @@ namespace Cube.Net.App.Rss.Reader
         {
             e.Cancel = true;
             var uri = new Uri(e.Url);
-            System.Diagnostics.Process.Start(uri.ToString());
+            if (EnableNewWindow) System.Diagnostics.Process.Start(uri.ToString());
+            else Content = uri;
         });
 
         /* ----------------------------------------------------------------- */
@@ -255,6 +300,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private object _content;
+        private bool _enableNewWindow;
         #endregion
     }
 }

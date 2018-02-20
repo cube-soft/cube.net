@@ -54,14 +54,15 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new MainViewModel();
 
-            Assert.That(vm.Data.Content.HasValue,      Is.False);
-            Assert.That(vm.Data.Current.HasValue,      Is.False);
-            Assert.That(vm.Data.LastEntry.HasValue,    Is.False);
-            Assert.That(vm.Data.Message.HasValue,      Is.False);
-            Assert.That(vm.DropTarget,                 Is.Not.Null);
-            Assert.That(vm.Data.User.HasValue,         Is.True);
-            Assert.That(vm.Data.User.Value.Width,      Is.AtLeast(1));
-            Assert.That(vm.Data.User.Value.Height,     Is.AtLeast(1));
+            Assert.That(vm.Data.Content.HasValue,           Is.False);
+            Assert.That(vm.Data.Current.HasValue,           Is.False);
+            Assert.That(vm.Data.LastEntry.HasValue,         Is.False);
+            Assert.That(vm.Data.Message.HasValue,           Is.False);
+            Assert.That(vm.DropTarget,                      Is.Not.Null);
+            Assert.That(vm.Data.User.HasValue,              Is.True);
+            Assert.That(vm.Data.User.Value.Width,           Is.AtLeast(1));
+            Assert.That(vm.Data.User.Value.Height,          Is.AtLeast(1));
+            Assert.That(vm.Data.User.Value.EnableNewWindow, Is.False);
         }
 
         /* ----------------------------------------------------------------- */

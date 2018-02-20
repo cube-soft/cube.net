@@ -54,6 +54,7 @@
                         <RowDefinition Height="25"/>
                         <RowDefinition Height="25"/>
                         <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock
@@ -104,17 +105,24 @@
                         Grid.Column="1"/>
 
                     <CheckBox
+                        Content="新しいウィンドウを有効にする"
+                        IsChecked="{Binding Data.Value.EnableNewWindow, UpdateSourceTrigger=Explicit}"
+                        VerticalAlignment="Center"
+                        Grid.Row="4"
+                        Grid.Column="1"/>
+
+                    <CheckBox
                         Content="記事の取得状況をステータスバーに表示する"
                         IsChecked="{Binding Data.Value.EnableMonitorMessage, UpdateSourceTrigger=Explicit}"
                         VerticalAlignment="Center"
-                        Grid.Row="4"
+                        Grid.Row="5"
                         Grid.Column="1"/>
 
                     <CheckBox
                         Content="ソフトウェアのアップデートを確認する"
                         IsChecked="{Binding Data.Value.CheckUpdate, UpdateSourceTrigger=Explicit}"
                         VerticalAlignment="Center"
-                        Grid.Row="5"
+                        Grid.Row="6"
                         Grid.Column="1"/>
                 </Grid>
             </TabItem>

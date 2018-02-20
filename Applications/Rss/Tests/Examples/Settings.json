@@ -1,5 +1,6 @@
 {
     "CheckUpdate": true,
+    "EnableNewWindow": true,
     "EnableMonitorMessage": true,
     "Height": 650,
     "HighInterval": "PT1H",

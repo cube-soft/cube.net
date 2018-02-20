@@ -104,6 +104,23 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// EnableNewWindow
+        ///
+        /// <summary>
+        /// 新しいウィンドウで開くを有効にするかどうかを示す値を取得
+        /// または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public bool EnableNewWindow
+        {
+            get => _enableNewWindow;
+            set => SetProperty(ref _enableNewWindow, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// EnableMonitorMessage
         ///
         /// <summary>
@@ -205,6 +222,7 @@ namespace Cube.Net.App.Rss.Reader
         private int _width = 1100;
         private int _height = 650;
         private bool _lightMode = false;
+        private bool _enableNewWindow = false;
         private bool _enableMonitorMessage = true;
         private bool _checkUpdate = true;
         private DateTime? _lastCheckUpdate = null;
