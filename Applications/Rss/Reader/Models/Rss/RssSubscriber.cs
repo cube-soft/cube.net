@@ -57,7 +57,6 @@ namespace Cube.Net.App.Rss.Reader
         {
             _dispose = new OnceAction<bool>(Dispose);
 
-            _tree.IsSynchronous = true;
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();
