@@ -163,7 +163,6 @@ namespace Cube.Net.Tests
             {
                 new Uri("https://blog.cube-soft.jp/?feed=rss2"),
                 new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
-                new Uri("https://www.cube-soft.jp/")
             };
 
             using (var mon = Create())
