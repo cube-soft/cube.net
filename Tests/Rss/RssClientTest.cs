@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using Cube.Net.Http;
 using Cube.Net.Rss;
 using NUnit.Framework;
 
@@ -33,6 +34,8 @@ namespace Cube.Net.Tests
     [TestFixture]
     class RssClientTest
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync
@@ -45,9 +48,9 @@ namespace Cube.Net.Tests
         [TestCase("https://blog.cube-soft.jp/?feed=rss2")]
         public void GetAsync(string src)
         {
-            var http = new RssClient();
-            var now  = DateTime.Now;
-            var rss  = http.GetAsync(new Uri(src)).Result;
+            var http  = Create();
+            var now   = DateTime.Now;
+            var rss   = http.GetAsync(new Uri(src)).Result;
 
             Assert.That(rss, Is.Not.Null);
             Assert.That(rss.Title.Length, Is.AtLeast(1), nameof(rss.Title));
@@ -78,7 +81,7 @@ namespace Cube.Net.Tests
         public string GetAsync_Redirect(string src)
         {
             var uri  = default(Uri);
-            var http = new RssClient();
+            var http = Create();
             http.Redirected += (s, e) => uri = e.NewValue;
 
             var rss = http.GetAsync(new Uri(src)).Result;
@@ -97,7 +100,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         [Test]
         public void GetAsync_Recirect_NoHandlers() => Assert.That(
-            new RssClient().GetAsync(new Uri("https://blog.cube-soft.jp/")).Result,
+            Create().GetAsync(new Uri("https://blog.cube-soft.jp/")).Result,
             Is.Not.Null
         );
 
@@ -113,8 +116,30 @@ namespace Cube.Net.Tests
         [TestCase("http://www.cube-soft.jp/")]
         [TestCase("http://www.cube-soft.jp/404.html")]
         public void GetAsync_NotFound(string src) => Assert.That(
-            new RssClient().GetAsync(new Uri(src)).Result,
+            Create().GetAsync(new Uri(src)).Result,
             Is.Null
         );
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        ///
+        /// <summary>
+        /// RssClient オブジェクトを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private RssClient Create()
+        {
+            var name = AssemblyReader.Default.Product;
+            var ver  = AssemblyReader.Default.Version;
+            return new RssClient(new HeaderHandler { UserAgent = $"{name}/{ver}" });
+        }
+
+        #endregion
     }
 }

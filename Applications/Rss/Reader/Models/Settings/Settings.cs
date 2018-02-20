@@ -313,6 +313,26 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public string Feed => IO.Combine(Root, "Feeds.json");
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UserAgent
+        ///
+        /// <summary>
+        /// ユーザエージェントを表す文字列を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string UserAgent
+        {
+            get
+            {
+                var app = $"{Product}/{Version.Number}";
+                var win = Environment.OSVersion.VersionString;
+                var net = $".NET {Environment.Version}";
+                return $"{app} ({win}; {net})";
+            }
+        }
+
         #endregion
 
         #region Implementations

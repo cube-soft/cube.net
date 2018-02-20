@@ -124,6 +124,21 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// UserAgent
+        ///
+        /// <summary>
+        /// User-Agent を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string UserAgent
+        {
+            get => _monitors.First().UserAgent;
+            set { foreach (var mon in _monitors) mon.UserAgent = value; }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Categories
         ///
         /// <summary>

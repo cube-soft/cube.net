@@ -53,6 +53,7 @@ namespace Cube.Net.App.Rss.Reader
         public RssFacade(SettingsFolder settings)
         {
             this.LogWarn(() => settings.Load());
+            this.LogInfo($"User-Agent:{settings.UserAgent}");
 
             Settings = settings;
             Settings.PropertyChanged += WhenSettingsChanged;
@@ -61,6 +62,7 @@ namespace Cube.Net.App.Rss.Reader
             _core.IO = Settings.IO;
             _core.FileName = Settings.Feed;
             _core.CacheDirectory = Settings.Cache;
+            _core.UserAgent = Settings.UserAgent;
             _core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
             _core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
             _core.Received += WhenReceived;

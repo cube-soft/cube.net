@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Cube.Net.Rss;
 using NUnit.Framework;
 
@@ -36,6 +35,8 @@ namespace Cube.Net.Tests
     [TestFixture]
     class RssMonitorTest : FileHelper
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// Monitor_RssCacheDictionary
@@ -66,7 +67,7 @@ namespace Cube.Net.Tests
                 src.Directory = Results;
                 foreach (var uri in uris) src.Add(uri, default(RssFeed));
 
-                using (var mon = new RssMonitor())
+                using (var mon = Create())
                 {
                     var count = 0;
                     var cts   = new CancellationTokenSource();
@@ -124,10 +125,11 @@ namespace Cube.Net.Tests
             var src  = new Uri("http://www.cube-soft.jp/");
             var dest = default(RssFeed);
 
-            using (var mon = new RssMonitor { RetryCount = 0 })
+            using (var mon = Create())
             {
                 var cts = new CancellationTokenSource();
 
+                mon.RetryCount = 0;
                 mon.Register(src);
                 mon.Subscribe(e => { dest = e; cts.Cancel(); });
                 mon.Start();
@@ -163,7 +165,7 @@ namespace Cube.Net.Tests
                 new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
             };
 
-            using (var mon = new RssMonitor())
+            using (var mon = Create())
             {
                 var cts = new CancellationTokenSource();
 
@@ -196,7 +198,7 @@ namespace Cube.Net.Tests
                 new Uri("http://www.example.com/rss2"),
             };
 
-            using (var mon = new RssMonitor())
+            using (var mon = Create())
             {
                 mon.Register(uris[0]);
                 Assert.That(mon.Contains(uris[0]), Is.True);
@@ -211,5 +213,27 @@ namespace Cube.Net.Tests
                 Assert.That(mon.Contains(uris[1]), Is.False);
             }
         }
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        ///
+        /// <summary>
+        /// RssMonitor オブジェクトを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private RssMonitor Create()
+        {
+            var name = AssemblyReader.Default.Product;
+            var ver  = AssemblyReader.Default.Version;
+            return new RssMonitor { UserAgent = $"{name}/{ver}" };
+        }
+
+        #endregion
     }
 }
