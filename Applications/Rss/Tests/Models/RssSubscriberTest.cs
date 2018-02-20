@@ -18,6 +18,7 @@
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
 
@@ -49,7 +50,7 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Load()
         {
-            using (var src = new RssSubscriber { FileName = CreateJson() })
+            using (var src = Create())
             {
                 Assert.That(src.CacheDirectory, Is.Null);
 
@@ -99,13 +100,51 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Find()
         {
-            using (var src = new RssSubscriber { FileName = CreateJson() })
+            using (var src = Create())
             {
                 src.Load();
 
                 Assert.That(src.Find(new Uri("https://github.com/blog.atom")), Is.Not.Null);
                 Assert.That(src.Find(new Uri("http://www.example.com/")), Is.Null);
                 Assert.That(src.Find(default(Uri)), Is.Null);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update_Frequency
+        ///
+        /// <summary>
+        /// RssCheckFrequency の値に関わらず Update が成功する事を
+        /// 確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TestCase(RssCheckFrequency.Auto)]
+        [TestCase(RssCheckFrequency.High)]
+        [TestCase(RssCheckFrequency.Low)]
+        [TestCase(RssCheckFrequency.None)]
+        public void Update_Frequency(RssCheckFrequency value)
+        {
+            var uri = new Uri("https://blog.cube-soft.jp/?feed=rss2");
+
+            using (var src = Create())
+            {
+                src.Load();
+                var dest = src.Find(uri);
+                src.Received += (s, e) =>
+                {
+                    Assert.That(e.Value.Uri, Is.EqualTo(uri));
+                    dest.Count = e.Value.UnreadItems.Count();
+                };
+                dest.Frequency = value;
+                dest.Count = 0; // hack for tests.
+                src.Reschedule(dest);
+
+                Assert.That(dest.Count, Is.EqualTo(0));
+                src.Update(dest);
+                Assert.That(Wait(dest).Result, Is.True, "Timeout");
+                Assert.That(dest.Count, Is.AtLeast(1));
             }
         }
 
@@ -122,12 +161,32 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private string CreateJson([CallerMemberName] string filename = null)
+        private RssSubscriber Create([CallerMemberName] string filename = null)
         {
             var dest = Result(filename + ".json");
             IO.Copy(Example("Sample.json"), dest, true);
-            return dest;
+            return new RssSubscriber { FileName = dest };
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Wait
+        ///
+        /// <summary>
+        /// 新着記事を受信するまで待機します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task<bool> Wait(RssEntry src)
+        {
+            for (var i = 0; i < 100; ++i)
+            {
+                if (src.Count > 0) return true;
+                await Task.Delay(50);
+            }
+            return false;
+        }
+
 
         #endregion
     }

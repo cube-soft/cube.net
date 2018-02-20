@@ -71,6 +71,9 @@ namespace Cube.Net.App.Rss.Reader
             _monitors[1] = new RssMonitor() { Interval = TimeSpan.FromHours(24) };
             _monitors[1].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
 
+            _monitors[2] = new RssMonitor(); // for RssCheckFrequency.None
+            _monitors[2].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
+
             _autosaver.AutoReset = false;
             _autosaver.Interval = 1000.0;
             _autosaver.Elapsed += WhenAutoSaved;
@@ -422,6 +425,11 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /// <param name="delay">初期遅延時間</param>
         ///
+        /// <remarks>
+        /// _monitors[2] は RssCheckFrequency.None のエントリが Update
+        /// 実行時にのみ使用されるため Start メソッドでは起動しません。
+        /// </remarks>
+        ///
         /* ----------------------------------------------------------------- */
         public void Start(TimeSpan delay)
         {
@@ -477,6 +485,9 @@ namespace Cube.Net.App.Rss.Reader
 
             var m1 = uris.Where(e => _monitors[1].Contains(e));
             if (m1.Count() > 0) _monitors[1].Update(m1);
+
+            var m2 = uris.Where(e => _monitors[2].Contains(e));
+            if (m2.Count() > 0) _monitors[2].Update(m2);
         }
 
         /* ----------------------------------------------------------------- */
@@ -514,7 +525,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             var now  = DateTime.Now;
             var dest = src.IsHighFrequency(now) ? _monitors[0] :
-                       src.IsLowFrequency(now)  ? _monitors[1] : null;
+                       src.IsLowFrequency(now)  ? _monitors[1] : _monitors[2];
 
             foreach (var mon in _monitors)
             {
@@ -524,7 +535,7 @@ namespace Cube.Net.App.Rss.Reader
                 break;
             }
 
-            dest?.Register(src.Uri, src.LastChecked);
+            dest.Register(src.Uri, src.LastChecked);
         }
 
         /* ----------------------------------------------------------------- */
@@ -757,7 +768,7 @@ namespace Cube.Net.App.Rss.Reader
         private OnceAction<bool> _dispose;
         private BindableCollection<IRssEntry> _tree = new BindableCollection<IRssEntry>();
         private RssCacheDictionary _feeds = new RssCacheDictionary();
-        private RssMonitor[] _monitors = new RssMonitor[2];
+        private RssMonitor[] _monitors = new RssMonitor[3];
         private RssClient _client = new RssClient();
         private SynchronizationContext _context = SynchronizationContext.Current;
         private System.Timers.Timer _autosaver = new System.Timers.Timer();

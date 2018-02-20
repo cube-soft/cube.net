@@ -44,16 +44,19 @@
             {
                 "Uri": "https:\/\/blogs.microsoft.com\/feed\/",
                 "Link": "https:\/\/blogs.microsoft.com\/",
+                "Frequency":  1,
                 "Title": "Official Microsoft Blog"
             },
             {
                 "Uri": "https:\/\/blogs.microsoft.com\/on-the-issues\/feed\/",
                 "Link": "https:\/\/blogs.microsoft.com\/on-the-issues",
+                "Frequency":  2,
                 "Title": "Microsoft on the Issues"
             },
             {
                 "Uri": "https:\/\/blogs.microsoft.com\/iot\/feed\/",
                 "Link": "https:\/\/blogs.microsoft.com\/iot",
+                "Frequency":  -1,
                 "Title": "Internet of Things"
             }
         ]
