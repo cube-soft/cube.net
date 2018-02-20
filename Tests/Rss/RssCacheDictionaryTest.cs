@@ -32,7 +32,7 @@ namespace Cube.Net.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssCacheDictionaryTest
+    class RssCacheDictionaryTest : FileHelper
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -47,6 +47,7 @@ namespace Cube.Net.Tests
         public void Properties_Default()
         {
             var src = new RssCacheDictionary();
+            src.Clear();
 
             Assert.That(src.Count,        Is.EqualTo(0));
             Assert.That(src.IsReadOnly,   Is.False);
@@ -98,6 +99,37 @@ namespace Cube.Net.Tests
 
             src.Capacity = 0;
             Assert.That(src.Capacity, Is.EqualTo(1));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Stash
+        ///
+        /// <summary>
+        /// Stash のテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Stash()
+        {
+            var cache = Result("Cache");
+
+            using (var src = new RssCacheDictionary { Directory = cache })
+            {
+                src.Capacity = 3;
+
+                src.Add(new RssFeed { Uri = new Uri("http://www.example.com/"),  Title = "Ex1", LastChecked = DateTime.Now });
+                src.Add(new RssFeed { Uri = new Uri("http://www.example.jp"),    Title = "Ex2", LastChecked = DateTime.Now });
+                src.Add(new RssFeed { Uri = new Uri("http://www.example.net"),   Title = "Ex3", LastChecked = DateTime.Now });
+                src.Add(new RssFeed { Uri = new Uri("http://www.example.org/"),  Title = "Ex4", LastChecked = DateTime.Now });
+                src.Add(new RssFeed { Uri = new Uri("http://www.example.co.jp"), Title = "Ex5", LastChecked = DateTime.Now });
+                src.Add(new RssFeed { Uri = new Uri("http://www.example.ne.jp"), Title = "Ex6", LastChecked = DateTime.Now });
+
+                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(3));
+            }
+
+            Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(6));
         }
     }
 }

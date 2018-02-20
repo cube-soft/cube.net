@@ -163,6 +163,7 @@ namespace Cube.Net.Tests
             {
                 new Uri("https://blog.cube-soft.jp/?feed=rss2"),
                 new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
+                new Uri("https://www.cube-soft.jp/")
             };
 
             using (var mon = Create())
@@ -178,6 +179,34 @@ namespace Cube.Net.Tests
 
             Assert.That(dest.ContainsKey(src[0]), Is.True);
             Assert.That(dest.ContainsKey(src[1]), Is.False);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update_Error
+        ///
+        /// <summary>
+        /// Update 失敗時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Update_Error()
+        {
+            var dest = new Dictionary<Uri, RssFeed>();
+            var src  = new Uri("https://wwww.cube-soft.jp/");
+
+            using (var mon = Create())
+            {
+                var cts = new CancellationTokenSource();
+                mon.Register(src);
+                mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
+                mon.Update(src);
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+            }
+
+            Assert.That(dest.ContainsKey(src), Is.True);
+            Assert.That(dest[src].Error,       Is.Not.Null);
         }
 
         /* ----------------------------------------------------------------- */
