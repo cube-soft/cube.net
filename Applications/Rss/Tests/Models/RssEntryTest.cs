@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Threading;
 using Cube.Net.Rss;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
@@ -46,7 +47,7 @@ namespace Cube.Net.App.Rss.Tests.Models
         [Test]
         public void Entry_Expanded()
         {
-            var dest = new RssEntry();
+            var dest = new RssEntry(new SynchronizationContext());
             Assert.That(dest.Expanded, Is.False);
             dest.Expanded = true;
             Assert.That(dest.Expanded, Is.False);
@@ -65,7 +66,7 @@ namespace Cube.Net.App.Rss.Tests.Models
         [Test]
         public void Entry_Update_Error()
         {
-            var dest = new RssEntry
+            var dest = new RssEntry(new SynchronizationContext())
             {
                 Uri       = new Uri("https://blog.cube-soft.jp/?feed=rss2"),
                 Link      = new Uri("https://blog.cube-soft.jp/"),
@@ -98,6 +99,6 @@ namespace Cube.Net.App.Rss.Tests.Models
         /* ----------------------------------------------------------------- */
         [Test]
         public void Category_Count() =>
-            Assert.That(new RssCategory().Count, Is.EqualTo(0));
+            Assert.That(new RssCategory(new SynchronizationContext()).Count, Is.EqualTo(0));
     }
 }

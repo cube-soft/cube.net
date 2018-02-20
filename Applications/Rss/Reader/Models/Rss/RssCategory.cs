@@ -21,6 +21,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
 using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
@@ -46,10 +47,14 @@ namespace Cube.Net.App.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
+        /// <param name="context">同期用コンテキスト</param>
+        ///
         /* ----------------------------------------------------------------- */
-        public RssCategory()
+        public RssCategory(SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
+            Context = context;
+            Children = new BindableCollection<IRssEntry>(context);
             Children.CollectionChanged += WhenChildrenChanged;
         }
 
@@ -169,8 +174,18 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection<IRssEntry> Children { get; set; } =
-            new BindableCollection<IRssEntry>();
+        public BindableCollection<IRssEntry> Children { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Context
+        ///
+        /// <summary>
+        /// 同期用コンテキストを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SynchronizationContext Context { get; }
 
         #endregion
 
@@ -280,14 +295,14 @@ namespace Cube.Net.App.Rss.Reader
                 Categories = src.Categories?.Select(e => new Json(e));
             }
 
-            public RssCategory Convert(RssCategory src)
+            public RssCategory Convert(RssCategory src, SynchronizationContext context)
             {
-                var dest = new RssCategory
+                var dest = new RssCategory(context)
                 {
                     Title  = Title,
                     Parent = src,
                 };
-                Add(dest, Categories?.Select(e => e.Convert(dest)));
+                Add(dest, Categories?.Select(e => e.Convert(dest, context)));
                 Add(dest, Entries.Select(e => e.Convert(dest)));
                 return dest;
             }

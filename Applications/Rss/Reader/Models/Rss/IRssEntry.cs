@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.ComponentModel;
+using System.Threading;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -87,6 +88,17 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         bool Editing { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Context
+        ///
+        /// <summary>
+        /// 同期用コンテキストを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        SynchronizationContext Context { get; }
 
         #endregion
     }

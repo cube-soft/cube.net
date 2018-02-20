@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
 using Cube.Net.Rss;
 
 namespace Cube.Net.App.Rss.Reader
@@ -44,10 +45,13 @@ namespace Cube.Net.App.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
+        /// <param name="context">同期用コンテキスト</param>
+        ///
         /* ----------------------------------------------------------------- */
-        public RssEntry()
+        public RssEntry(SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
+            Context  = context;
         }
 
         /* ----------------------------------------------------------------- */
@@ -59,9 +63,10 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /// <param name="cp">コピー元オブジェクト</param>
+        /// <param name="context">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(RssFeed cp) : this()
+        public RssEntry(RssFeed cp, SynchronizationContext context) : this(context)
         {
             Title         = cp.Title;
             Uri           = cp.Uri;
@@ -206,6 +211,17 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public IEnumerable<RssItem> SafeItems => Items.Where(e => true);
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Context
+        ///
+        /// <summary>
+        /// 同期用コンテキストを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SynchronizationContext Context { get; }
+
         #endregion
 
         #region Methods
@@ -284,7 +300,7 @@ namespace Cube.Net.App.Rss.Reader
                 SkipContent = src.SkipContent;
             }
 
-            public RssEntry Convert(RssCategory src) => new RssEntry
+            public RssEntry Convert(RssCategory src) => new RssEntry(src.Context)
             {
                 Title       = Title,
                 Uri         = Uri,

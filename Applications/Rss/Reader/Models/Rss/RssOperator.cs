@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cube.Collections;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
@@ -76,17 +77,19 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /// <param name="src">ファイルのパス</param>
+        /// <param name="context">同期用コンテキスト</param>
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /// <returns>RSS エントリ情報</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<RssCategory> Load(string src, Operator io) =>
+        public static IEnumerable<RssCategory> Load(string src,
+            SynchronizationContext context, Operator io) =>
             io.Load(
                 src,
                 ss => SettingsType.Json
                     .Load<List<RssCategory.Json>>(ss)
-                    .Select(e => e.Convert(null)),
+                    .Select(e => e.Convert(null, context)),
                 new RssCategory[0]
             );
 

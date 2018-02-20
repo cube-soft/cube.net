@@ -57,6 +57,8 @@ namespace Cube.Net.App.Rss.Reader
         {
             _dispose = new OnceAction<bool>(Dispose);
 
+            _feeds.Capacity = 1000;
+
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();
@@ -206,7 +208,7 @@ namespace Cube.Net.App.Rss.Reader
         public RssCategory Create(IRssEntry src)
         {
             var parent = src is RssCategory rc ? rc : src?.Parent as RssCategory;
-            var dest   = new RssCategory
+            var dest   = new RssCategory(_context)
             {
                 Title   = Properties.Resources.MessageNewCategory,
                 Parent  = parent,
@@ -238,7 +240,7 @@ namespace Cube.Net.App.Rss.Reader
             if (rss == null) throw Error(Properties.Resources.ErrorFeedNotFound);
             if (_feeds.ContainsKey(rss.Uri)) throw Error(Properties.Resources.ErrorFeedExists);
 
-            AddCore(new RssEntry(rss));
+            AddCore(new RssEntry(rss, _context));
         }
 
         /* ----------------------------------------------------------------- */
@@ -332,7 +334,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Load() {
-            Add(RssOperator.Load(FileName, IO).SelectMany(e =>
+            Add(RssOperator.Load(FileName, _context, IO).SelectMany(e =>
                 !string.IsNullOrEmpty(e.Title) ?
                 new[] { e as IRssEntry } :
                 e.Entries.Select(re =>
@@ -354,11 +356,12 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Save() => Categories.Concat(new[] { new RssCategory
+        public void Save()
         {
-            Title    = string.Empty,
-            Children = Entries.Cast<IRssEntry>().ToBindable(),
-        }}).Save(FileName, IO);
+            var empty = new RssCategory(_context) { Title = string.Empty };
+            foreach (var entry in Entries) empty.Children.Add(entry);
+            Categories.Concat(new[] { empty }).Save(FileName, IO);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -373,7 +376,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Import(string path)
         {
-            var dest = RssOpml.Load(path, _feeds, IO);
+            var dest = new RssOpml(_context, IO).Load(path, _feeds);
             if (dest.Count() > 0) Add(dest);
         }
 
@@ -388,7 +391,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="path">保存先のパス</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Export(string path) => RssOpml.Save(this, path, IO);
+        public void Export(string path) => new RssOpml(_context, IO).Save(this, path);
 
         #endregion
 

@@ -16,10 +16,12 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Cube.Net.Rss;
+using Cube.Tasks;
 using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
@@ -114,7 +116,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Setup => _setup ?? (
-            _setup = new RelayCommand(() => Model.Setup())
+            _setup = new RelayCommand(() => Task.Run(() => Model.Setup()).Forget())
         );
 
         /* ----------------------------------------------------------------- */

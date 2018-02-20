@@ -58,7 +58,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(m.Data.Current.HasValue,   Is.False, nameof(m.Data.Current));
                 Assert.That(m.Data.LastEntry.HasValue, Is.False, nameof(m.Data.LastEntry));
                 Assert.That(m.Data.Content.HasValue,   Is.False, nameof(m.Data.Content));
-                Assert.That(m.Data.Message.HasValue,   Is.False, nameof(m.Data.Message));
+                Assert.That(m.Data.Message.Value,      Is.Empty, nameof(m.Data.Message));
             }
         }
 

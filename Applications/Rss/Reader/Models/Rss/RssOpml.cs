@@ -18,12 +18,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 using Cube.Conversions;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
 using Cube.Net.Rss;
-using Cube.Xui;
 using Cube.Xml;
 
 namespace Cube.Net.App.Rss.Reader
@@ -37,8 +37,58 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class RssOpml
+    public class RssOpml
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssOpml
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /// <param name="context">同期用コンテキスト</param>
+        /// <param name="io">入出力用のオブジェクト</param>
+        ///
+        /// <returns>変換オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssOpml(SynchronizationContext context, Operator io)
+        {
+            Context = context;
+            IO      = io;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Context
+        ///
+        /// <summary>
+        /// 同期用コンテキストを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SynchronizationContext Context { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IO
+        ///
+        /// <summary>
+        /// 入出力用オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Operator IO { get; }
+
+        #endregion
+
         #region Methods
 
         /* ----------------------------------------------------------------- */
@@ -51,13 +101,12 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /// <param name="path">ファイルのパス</param>
         /// <param name="filter">フィルタリング用オブジェクト</param>
-        /// <param name="io">入出力用のオブジェクト</param>
         ///
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<IRssEntry> Load(string path,
-            IDictionary<Uri, RssFeed> filter, Operator io) => io.Load(
+        public IEnumerable<IRssEntry> Load(string path,
+            IDictionary<Uri, RssFeed> filter) => IO.Load(
             path,
             e =>
             {
@@ -77,10 +126,9 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /// <param name="src">保存元データ</param>
         /// <param name="path">ファイルのパス</param>
-        /// <param name="io">入出力用のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static void Save(IEnumerable<IRssEntry> src, string path, Operator io) => io.Save(
+        public void Save(IEnumerable<IRssEntry> src, string path) => IO.Save(
             path,
             e =>
             {
@@ -115,7 +163,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static IEnumerable<IRssEntry> Convert(XElement src,
+        private IEnumerable<IRssEntry> Convert(XElement src,
             IRssEntry parent, IDictionary<Uri, RssFeed> filter) =>
             src.GetElements("outline")
                .Select(e => IsEntry(e) ? ToEntry(e, parent) : ToCategory(e, parent, filter))
@@ -132,7 +180,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static IRssEntry ToEntry(XElement src, IRssEntry parent) => new RssEntry
+        private IRssEntry ToEntry(XElement src, IRssEntry parent) => new RssEntry(Context)
         {
             Parent = parent,
             Title  = (string)src.Attribute("title"),
@@ -150,16 +198,15 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static IRssEntry ToCategory(XElement src, IRssEntry parent,
-            IDictionary<Uri, RssFeed> filter)
+        private IRssEntry ToCategory(XElement src, IRssEntry parent, IDictionary<Uri, RssFeed> filter)
         {
-            var dest = new RssCategory
+            var dest = new RssCategory(Context)
             {
                 Parent = parent,
                 Title  = (string)src.Attribute("title"),
             };
 
-            dest.Children = Convert(src, dest, filter).ToBindable();
+            foreach (var item in Convert(src, dest, filter)) dest.Children.Add(item);
             return dest;
         }
 

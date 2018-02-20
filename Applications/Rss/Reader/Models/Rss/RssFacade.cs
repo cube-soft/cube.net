@@ -67,7 +67,6 @@ namespace Cube.Net.App.Rss.Reader
 
             _checker = new UpdateChecker(Settings);
 
-            this.LogDebug("Load", () => _core.Load());
             Data = new RssBindableData(_core, Settings.Value);
         }
 
@@ -112,6 +111,10 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Setup()
         {
+            Data.Message.Value = Properties.Resources.MessageLoading;
+
+            this.LogDebug("Load", () => _core.Load());
+
             var entry = _core.Find(Settings.Value.Start) ??
                         _core.Flatten<RssEntry>().FirstOrDefault();
             if (entry != null)
@@ -122,6 +125,8 @@ namespace Cube.Net.App.Rss.Reader
 
             Debug.Assert(Settings.Value.InitialDelay.HasValue);
             _core.Start(Settings.Value.InitialDelay.Value);
+
+            Data.Message.Value = string.Empty;
         }
 
         /* ----------------------------------------------------------------- */

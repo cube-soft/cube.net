@@ -182,4 +182,7 @@
   <data name="Loading" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Assets\Loading.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
+  <data name="MessageLoading" xml:space="preserve">
+    <value>データを読み込んでいます...</value>
+  </data>
 </root>

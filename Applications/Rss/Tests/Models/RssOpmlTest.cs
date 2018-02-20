@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cube.Net.Rss;
 using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
@@ -53,7 +54,8 @@ namespace Cube.Net.App.Rss.Tests
                 { new Uri("https://blogs.msdn.microsoft.com/dotnet/feed/"), new RssFeed() },
             };
 
-            var dest = RssOpml.Load(Example("Sample.opml"), filter, IO).ToList();
+            var ctx  = new SynchronizationContext();
+            var dest = new RssOpml(ctx, IO).Load(Example("Sample.opml"), filter).ToList();
             Assert.That(dest.Count, Is.EqualTo(1));
 
             var root = dest[0] as RssCategory;

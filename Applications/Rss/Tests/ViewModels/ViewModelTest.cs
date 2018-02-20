@@ -287,9 +287,9 @@ namespace Cube.Net.App.Rss.Tests
                 var dest  = vm.Data.LastEntry.Value;
                 var count = dest.Count;
                 Assert.That(count, Is.EqualTo(14));
-                Assert.That(vm.Data.Message.HasValue, Is.False);
+                Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
                 vm.Update.Execute(null);
-                Assert.That(WaitMessage(vm).Result, Is.True, "Timeout");
+                Assert.That(Wait(vm).Result, Is.True, "Timeout");
                 Assert.That(dest.Count, Is.AtLeast(count));
             }
         }
@@ -315,9 +315,9 @@ namespace Cube.Net.App.Rss.Tests
                 var dest  = vm.Data.Current.Value;
                 var count = dest.Count;
                 Assert.That(count, Is.EqualTo(10));
-                Assert.That(vm.Data.Message.HasValue, Is.False);
+                Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
                 vm.Update.Execute(null);
-                Assert.That(WaitMessage(vm).Result, Is.True, "Timeout");
+                Assert.That(Wait(vm).Result, Is.True, "Timeout");
                 Assert.That(dest.Count, Is.AtLeast(count));
             }
         }
@@ -347,7 +347,7 @@ namespace Cube.Net.App.Rss.Tests
 
                 vm.Reset.Execute(null);
                 Assert.That(dest.Count, Is.EqualTo(0));
-                Assert.That(WaitMessage(vm).Result, Is.True, "Timeout");
+                Assert.That(Wait(vm).Result, Is.True, "Timeout");
                 Assert.That(dest.Count, Is.AtLeast(1));
             }
         }
@@ -480,7 +480,7 @@ namespace Cube.Net.App.Rss.Tests
                 var message = nameof(VM_Hover);
 
                 vm.Stop.Execute(null);
-                Assert.That(vm.Data.Message.HasValue, Is.False);
+                Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
                 Assert.That(vm.Hover.CanExecute(null), Is.False);
                 Assert.That(vm.Hover.CanExecute(message), Is.True);
                 vm.Hover.Execute(message);
@@ -709,24 +709,26 @@ namespace Cube.Net.App.Rss.Tests
             settings.Value.Width        = 1024;
             settings.Value.Height       = 768;
 
+            dest.Data.Message.Value = "Test";
             dest.Setup.Execute(null);
+            Assert.That(Wait(dest, true).Result, Is.True, "Timeout");
             return dest;
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// AwaitMessage
+        /// Wait
         ///
         /// <summary>
         /// メッセージを受信するまで待機します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task<bool> WaitMessage(MainViewModel vm)
+        private async Task<bool> Wait(MainViewModel vm, bool empty = false)
         {
             for (var i = 0; i < 100; ++i)
             {
-                if (vm.Data.Message.HasValue) return true;
+                if (string.IsNullOrEmpty(vm.Data.Message.Value) == empty) return true;
                 await Task.Delay(50);
             }
             return false;

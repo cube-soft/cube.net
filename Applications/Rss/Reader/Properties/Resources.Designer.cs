@@ -129,7 +129,7 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         ///&lt;body&gt;
         ///&lt;div class=&quot;container&quot;&gt;
         ///&lt;div class=&quot;box&quot;&gt;
-        ///&lt;img s [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///&lt;img src=&quot;data:image/gif;base64,R0lGOD [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Loading {
             get {
@@ -189,6 +189,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         internal static string MessageLastChecked {
             get {
                 return ResourceManager.GetString("MessageLastChecked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   データを読み込んでいます... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageLoading {
+            get {
+                return ResourceManager.GetString("MessageLoading", resourceCulture);
             }
         }
         
@@ -289,6 +298,7 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         ///
         ///img {
         ///    max-width       : 100%;
+        ///    height			: auto !important;
         ///}
         ///
         ///a, a:visited {
@@ -296,13 +306,12 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         ///}
         ///
         ///.cuberss-container {
-        ///    margin          : 0 48px;
+        ///    margin          : 0 30px;
         ///}
         ///
         ///.cuberss-title {
         ///    margin          : 0;
-        ///    padding         : 0;
-        ///    font-s [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///    [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string SkeletonStyle {
             get {
