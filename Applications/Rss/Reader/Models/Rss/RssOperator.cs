@@ -293,7 +293,7 @@ namespace Cube.Net.App.Rss.Reader
         public static bool IsHighFrequency(this RssEntry src, DateTime now) =>
             src.Frequency == RssCheckFrequency.High ||
             src.Frequency == RssCheckFrequency.Auto &&
-            (!src.LastChecked.HasValue || now - src.LastPublished <= _border);
+            (!src.LastChecked.HasValue || now - src.LastPublished <= TimeSpan.FromDays(30));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -385,10 +385,6 @@ namespace Cube.Net.App.Rss.Reader
             src.Count = 0;
         }
 
-        #endregion
-
-        #region Fields
-        private static readonly TimeSpan _border = TimeSpan.FromDays(30);
         #endregion
     }
 }

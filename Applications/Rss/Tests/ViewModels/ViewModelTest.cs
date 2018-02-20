@@ -156,20 +156,27 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var src   = vm.Data.Root.OfType<RssCategory>().First();
-                var entry = src.Entries.First();
-                var cache = Result(@"Cache\872e24035276c7104afd116c2052172b");
-
                 vm.Stop.Execute(null);
                 vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
-                vm.SelectEntry.Execute(entry);
 
-                Assert.That(entry.Title,       Is.EqualTo("CubeSoft Blog"));
+                var e0 = vm.Data.Current.Value;
+                var c0 = Result(@"Cache\7ae34cce28b4272e1170fb1e4c2c87ad");
+                Assert.That(IO.Exists(c0), Is.True);
+                Assert.That(e0.Title,      Is.EqualTo("The GitHub Blog"));
+                vm.Remove.Execute(null);
+                Assert.That(IO.Exists(c0), Is.False);
+
+                var src = vm.Data.Root.OfType<RssCategory>().First();
+                var e1 = src.Entries.First();
+                var c1 = Result(@"Cache\872e24035276c7104afd116c2052172b");
+                vm.SelectEntry.Execute(e1);
+
+                Assert.That(e1.Title,          Is.EqualTo("CubeSoft Blog"));
                 Assert.That(src.Entries.Count, Is.EqualTo(1));
-                Assert.That(IO.Exists(cache),  Is.True);
+                Assert.That(IO.Exists(c1),     Is.True);
                 vm.Remove.Execute(null);
                 Assert.That(src.Entries.Count, Is.EqualTo(0));
-                Assert.That(IO.Exists(cache),  Is.False);
+                Assert.That(IO.Exists(c1),     Is.False);
             }
         }
 
@@ -456,6 +463,33 @@ namespace Cube.Net.App.Rss.Tests
                 var dest = vm.Data.Current.Value as RssCategory;
                 Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
                 Assert.That(dest.Parent,         Is.EqualTo(src));
+                Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
+                Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
+                Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
+                Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_NewCategory_Root
+        ///
+        /// <summary>
+        /// ルートに新しいカテゴリを追加するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_NewCategory_Root()
+        {
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+                vm.NewCategory.Execute(null);
+
+                var dest = vm.Data.Current.Value as RssCategory;
+                Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
+                Assert.That(dest.Parent,         Is.Null);
                 Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
                 Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
                 Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));

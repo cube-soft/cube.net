@@ -52,7 +52,8 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var src = Create())
             {
-                Assert.That(src.CacheDirectory, Is.Null);
+                Assert.That(src.CacheDirectory, Is.Null, nameof(src.CacheDirectory));
+                Assert.That(src.UserAgent,      Is.Null, nameof(src.UserAgent));
 
                 var count = 0;
                 src.CollectionChanged += (s, e) => count++;
@@ -86,6 +87,39 @@ namespace Cube.Net.App.Rss.Tests
                 src.Load();
                 Assert.That(src.Count, Is.EqualTo(0));
             }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Backup_Delete
+        ///
+        /// <summary>
+        /// 規定数を超えたバックアップファイルを削除するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Backup_Delete()
+        {
+            for (var d = new DateTime(2001, 1, 1); d.Month < 2; d = d.AddDays(1))
+            {
+                var backup = Result($@"Backup\{d.ToString("yyyyMMdd")}.json");
+                IO.Copy(Example("Sample.json"), backup, true);
+            }
+
+            var failed = Result(@"Backup\20010101.json");
+
+            using (var _ = IO.OpenRead(failed))
+            using (var src = Create())
+            {
+                src.Load();
+                Task.Delay(200).Wait();
+            }
+
+            Assert.That(IO.GetFiles(Result("Backup")).Length, Is.EqualTo(31));
+            Assert.That(IO.Exists(failed), Is.True); // delete failed
+            Assert.That(IO.Exists(Result(@"Backup\20010102.json")), Is.False);
+            Assert.That(IO.Exists(Result(@"Backup\20010103.json")), Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -141,6 +175,9 @@ namespace Cube.Net.App.Rss.Tests
                 dest.Count = 0; // hack for tests.
                 src.Reschedule(dest);
 
+                var asm = AssemblyReader.Default;
+                src.UserAgent = $"{asm.Product}/{asm.Version}";
+
                 Assert.That(dest.Count, Is.EqualTo(0));
                 src.Update(dest);
                 Assert.That(Wait(dest).Result, Is.True, "Timeout");
@@ -154,10 +191,10 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// CreateJson
+        /// Create
         ///
         /// <summary>
-        /// JSON ファイルをコピーします。
+        /// RssSubscriber オブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
