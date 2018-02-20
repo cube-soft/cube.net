@@ -138,22 +138,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LastCheckUpdate
-        ///
-        /// <summary>
-        /// ソフトウェアの最終アップデート確認日時を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public DateTime? LastCheckUpdate
-        {
-            get => _lastCheckUpdate;
-            set => SetProperty(ref _lastCheckUpdate, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// HighInterval
         ///
         /// <summary>
@@ -182,6 +166,21 @@ namespace Cube.Net.App.Rss.Reader
         {
             get => _lowInterval;
             set => SetProperty(ref _lowInterval, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LastCheckUpdate
+        ///
+        /// <summary>
+        /// ソフトウェアの最終アップデート確認日時を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public DateTime? LastCheckUpdate
+        {
+            get => _lastCheckUpdate;
+            set => SetProperty(ref _lastCheckUpdate, value);
         }
 
         /* ----------------------------------------------------------------- */
