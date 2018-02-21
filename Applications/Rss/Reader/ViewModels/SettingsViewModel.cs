@@ -15,14 +15,13 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Xui;
+using Cube.Xui.Converters;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using Cube.Xui;
-using Cube.Xui.Converters;
-using Cube.Xui.Triggers;
 
 namespace Cube.Net.App.Rss.Reader
 {

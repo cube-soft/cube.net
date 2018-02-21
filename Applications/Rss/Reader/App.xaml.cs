@@ -15,13 +15,13 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Forms.Processes;
+using Cube.Log;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
-using Cube.Forms.Processes;
-using Cube.Log;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -65,7 +65,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnStartup
+        /// OnExit
         ///
         /// <summary>
         /// 終了時に実行されます。

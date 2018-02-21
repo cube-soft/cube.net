@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Reflection;
 using Cube.FileSystem;
+using System.Reflection;
 
 namespace Cube.Net.Tests
 {

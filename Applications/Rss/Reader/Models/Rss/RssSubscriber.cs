@@ -15,18 +15,17 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Cube.FileSystem;
 using Cube.Net.Rss;
 using Cube.Tasks;
 using Cube.Xui;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -46,7 +45,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssSubscription
+        /// RssSubscriber
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -274,8 +273,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Add(IEnumerable<IRssEntry> src)
         {
-            Debug.Assert(src != null);
-
             foreach (var item in src)
             {
                 if (item is RssCategory rc) AddCore(rc);

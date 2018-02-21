@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Net.NetworkInformation;
 using NUnit.Framework;
+using System.Net.NetworkInformation;
 
 namespace Cube.Net.Tests
 {

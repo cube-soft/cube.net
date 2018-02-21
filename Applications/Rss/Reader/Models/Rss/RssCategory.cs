@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Xui;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -22,7 +23,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
-using Cube.Xui;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -31,7 +31,7 @@ namespace Cube.Net.App.Rss.Reader
     /// RssCategory
     ///
     /// <summary>
-    /// 登録サイトが属するカテゴリ情報を保持するクラスです。
+    /// RSS エントリが属するカテゴリ情報を保持するクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */

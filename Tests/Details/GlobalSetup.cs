@@ -15,9 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Reflection;
 using Cube.Log;
 using NUnit.Framework;
+using System.Reflection;
 
 namespace Cube.Net.Tests
 {

@@ -15,10 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Net.Http;
+using NUnit.Framework;
 using System;
 using System.IO;
-using NUnit.Framework;
-using Cube.Net.Http;
 
 namespace Cube.Net.Tests
 {

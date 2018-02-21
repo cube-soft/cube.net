@@ -15,9 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Log;
 using System;
 using System.Diagnostics;
-using Cube.Log;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -26,7 +26,7 @@ namespace Cube.Net.App.Rss.Reader
     /// UpdateChecker
     ///
     /// <summary>
-    /// RSS フィードに関連する処理の窓口となるクラスです。
+    /// アップデートの確認を行うためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */

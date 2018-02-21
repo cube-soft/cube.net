@@ -15,9 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Xui.Behaviors;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Cube.Xui.Behaviors;
 
 namespace Cube.Net.App.Rss.Reader
 {

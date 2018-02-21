@@ -15,11 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Threading.Tasks;
+using Cube.Xui;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using Cube.Xui;
+using System;
+using System.Threading.Tasks;
 
 namespace Cube.Net.App.Rss.Reader
 {

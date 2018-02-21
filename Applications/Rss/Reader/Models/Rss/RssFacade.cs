@@ -15,14 +15,14 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Conversions;
+using Cube.Log;
+using Cube.Net.Rss;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Cube.Conversions;
-using Cube.Log;
-using Cube.Net.Rss;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -52,6 +52,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssFacade(SettingsFolder settings)
         {
+            _dispose = new OnceAction<bool>(Dispose);
+
             this.LogWarn(() => settings.Load());
             this.LogInfo($"User-Agent:{settings.UserAgent}");
 
@@ -358,7 +360,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        ~RssFacade() { Dispose(false); }
+        ~RssFacade() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -371,7 +373,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Dispose()
         {
-            Dispose(true);
+            _dispose.Invoke(true);
             GC.SuppressFinalize(this);
         }
 
@@ -386,9 +388,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Dispose(bool disposing)
         {
-            if (_disposed) return;
-            _disposed = true;
-
             if (disposing)
             {
                 _core.Dispose();
@@ -454,7 +453,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private bool _disposed = false;
+        private OnceAction<bool> _dispose;
         private readonly RssSubscriber _core = new RssSubscriber();
         private readonly UpdateChecker _checker;
         #endregion

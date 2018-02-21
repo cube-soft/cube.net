@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Cube.Net.UrlMon
 {

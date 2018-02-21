@@ -15,10 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Windows;
 using Cube.Net.Rss;
 using Cube.Xui.Converters;
+using System.Windows;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -174,10 +173,11 @@ namespace Cube.Net.App.Rss.Reader
             e is RssFeed src && src.LastChecked.HasValue ?
             string.Format("{0} {1}",
                 Properties.Resources.MessageLastChecked,
-                src.LastChecked?.ToString("yyyy/MM/dd HH:mm:ss")
+                src.LastChecked.Value.ToString("yyyy/MM/dd HH:mm:ss")
             ) :
             string.Empty
-        ) { }
+        )
+        { }
     }
 
     /* --------------------------------------------------------------------- */

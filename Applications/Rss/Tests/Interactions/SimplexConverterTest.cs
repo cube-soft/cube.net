@@ -15,13 +15,13 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Net.App.Rss.Reader;
+using Cube.Net.Rss;
+using Cube.Xui.Converters;
+using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.Windows;
-using Cube.Net.Rss;
-using Cube.Net.App.Rss.Reader;
-using Cube.Xui.Converters;
-using NUnit.Framework;
 
 namespace Cube.Net.App.Rss.Tests.Ineractions
 {

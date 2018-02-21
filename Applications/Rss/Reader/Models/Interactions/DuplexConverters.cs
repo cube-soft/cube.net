@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
 using Cube.Xui.Converters;
+using System;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -25,7 +25,7 @@ namespace Cube.Net.App.Rss.Reader
     /// MinuteConverter
     ///
     /// <summary>
-    /// 秒単位の値を分単位に変換するためのクラスです。
+    /// TimeSpan オブジェクトを分単位に変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -51,7 +51,7 @@ namespace Cube.Net.App.Rss.Reader
     /// HourConverter
     ///
     /// <summary>
-    /// 秒単位の値を時間単位に変換するためのクラスです。
+    /// TimeSpan オブジェクトを時間単位に変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */

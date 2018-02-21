@@ -15,15 +15,15 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Web;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Forms;
 using Cube.Forms;
 using Cube.Log;
 using Cube.Net.Rss;
 using Cube.Xui.Behaviors;
+using System;
+using System.Web;
+using System.Windows;
+using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -32,7 +32,7 @@ namespace Cube.Net.App.Rss.Reader
     /// WebBehavior
     ///
     /// <summary>
-    /// WebBrowser のドキュメント内容と関連付けるための Behavior です。
+    /// WebControl を拡張するための Behavior です。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */

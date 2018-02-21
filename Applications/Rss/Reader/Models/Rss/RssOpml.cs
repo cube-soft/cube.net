@@ -15,16 +15,16 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Xml.Linq;
 using Cube.Conversions;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
 using Cube.Net.Rss;
 using Cube.Xml;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Xml.Linq;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -51,8 +51,6 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /// <param name="context">同期用コンテキスト</param>
         /// <param name="io">入出力用のオブジェクト</param>
-        ///
-        /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
         public RssOpml(SynchronizationContext context, Operator io)

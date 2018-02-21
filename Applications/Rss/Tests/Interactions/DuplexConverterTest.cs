@@ -15,11 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Globalization;
 using Cube.Net.App.Rss.Reader;
 using Cube.Xui.Converters;
 using NUnit.Framework;
+using System;
+using System.Globalization;
 
 namespace Cube.Net.App.Rss.Tests.Interactions
 {

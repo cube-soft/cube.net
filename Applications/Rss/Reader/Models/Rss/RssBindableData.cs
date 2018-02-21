@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Collections.Generic;
 using Cube.Xui;
+using System.Collections.Generic;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -69,7 +69,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
+        /// User
         ///
         /// <summary>
         /// ユーザ設定を保持するオブジェクトを取得します。

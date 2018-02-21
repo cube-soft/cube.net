@@ -15,12 +15,12 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Tasks;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using Cube.Tasks;
 
 namespace Cube.Net.Ntp
 {

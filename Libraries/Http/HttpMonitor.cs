@@ -15,10 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Log;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Cube.Log;
 
 namespace Cube.Net.Http
 {
