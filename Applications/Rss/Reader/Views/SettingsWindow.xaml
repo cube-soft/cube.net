@@ -20,6 +20,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Themes/TabControl.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/Buttons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>

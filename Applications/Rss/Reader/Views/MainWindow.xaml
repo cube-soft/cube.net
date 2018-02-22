@@ -27,7 +27,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/ContextMenu.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/ListViewItem.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/TreeViewItem.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/UpdateButton.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/Buttons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -103,8 +103,11 @@
 
         <!-- NewEntry (Register) -->
         <Button
+            Content="&#xe906;"
             Command="{Binding NewEntry}"
-            Style="{StaticResource NewEntryButtonStyle}"
+            FontFamily="{StaticResource SymbolFont}"
+            Style="{StaticResource AccentButtonStyle}"
+            ToolTip="新しい Web サイトを登録"
             Grid.Row="1">
         </Button>
         <!-- NewEntry (Register) -->
@@ -122,7 +125,6 @@
             <Button
                 Command="{Binding Update}"
                 Style="{StaticResource UpdateButtonStyle}"
-                Template="{StaticResource UpdateButtonTemplate}"
                 Visibility="{Binding Data.LastEntry.Value, Converter={my:LastCheckedToVisibility}}">
             </Button>
 
@@ -192,18 +194,14 @@
 
             <Button
                 x:Name="Settings"
-                Style="{StaticResource SettingsButtonStyle}"
-                ContextMenu="{StaticResource SettingsMenu}">
+                Content="&#xe905;"
+                Style="{StaticResource MenuButtonStyle}"
+                ContextMenu="{StaticResource SettingsMenu}"
+                ContextMenuService.IsEnabled="False"
+                HorizontalAlignment="Right">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
-                        <ei:ChangePropertyAction
-                            TargetName="{Binding ContextMenu, ElementName=Settings}"
-                            PropertyName="IsOpen"
-                            Value="True"/>
-                        <ei:ChangePropertyAction
-                            TargetName="{Binding ContextMenu, ElementName=Settings}"
-                            PropertyName="PlacementTarget"
-                            Value="{Binding ElementName=Settings, Mode=OneWay}"/>
+                        <my:ContextMenuAction/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>

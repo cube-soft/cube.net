@@ -115,6 +115,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Interactions\ContextMenuAction.cs" />
     <Compile Include="Models\Interactions\DuplexConverters.cs" />
     <Compile Include="Models\Interactions\MessageFactory.cs" />
     <Compile Include="Models\Interactions\SimplexConverters.cs" />
@@ -162,7 +163,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\UpdateButton.xaml">
+    <Page Include="Views\Components\Buttons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
