@@ -3,8 +3,8 @@ CubeRSS Reader
 
 Copyright (c) 2010 CubeSoft Inc.
 
-support@cube-soft.jp
-http://www.cube-soft.jp/
+* support@cube-soft.jp
+* http://www.cube-soft.jp/
 
 ## はじめに
 
@@ -17,9 +17,9 @@ CubeRSS Reader を使用するためには、Microsoft .NET Framework 3.5 以上
 インストールされている必要があります（4.5.2 以上を推奨）。
 .NET Framework は、以下のURL からダウンロードして下さい。
 
-* Microsoft .NET Framework 3.5
+* Microsoft .NET Framework 3.5  
   http://www.microsoft.com/ja-jp/download/details.aspx?id=22
-* Microsoft .NET Framework 4.5.2
+* Microsoft .NET Framework 4.5.2  
   https://www.microsoft.com/ja-JP/download/details.aspx?id=42643
 
 ## 利用ライブラリ
@@ -50,5 +50,5 @@ CubeRSS Reader は、以下のライブラリを利用しています。
 
 ## バージョン履歴
 
-* 2018/02/06 version 0.1.0β
+* 2018/02/23 version 0.1.0β
     - 最初の公開バージョン
