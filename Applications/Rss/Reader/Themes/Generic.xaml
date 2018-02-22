@@ -96,8 +96,86 @@
     </Style>
 
     <Style TargetType="{x:Type MenuItem}">
-        <Setter Property="FontFamily" Value="Meiyor UI"/>
+        <Setter Property="FontFamily" Value="Meiyou UI"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Margin" Value="0,1,0,1"/>
+    </Style>
+
+    <!--
+        Some customized styles
+    -->
+
+    <Style x:Key="FooterStyle" TargetType="{x:Type StatusBar}">
+        <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="Padding" Value="8,0,0,0"/>
+    </Style>
+
+    <Style x:Key="FooterButtonsStyle" TargetType="{x:Type StackPanel}">
+        <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
+        <Setter Property="FlowDirection" Value="RightToLeft"/>
+        <Setter Property="Orientation" Value="Horizontal"/>
+    </Style>
+
+    <Style x:Key="ShadowStyle" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="#FFE6E6E6"/>
+        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+    </Style>
+
+    <Style x:Key="SymbolStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource SymbolTextBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolFont}"/>
+        <Setter Property="FontSize" Value="16"/>
+    </Style>
+
+    <Style x:Key="SummaryStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="TextTrimming" Value="WordEllipsis"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="CopyableSummaryStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="InputStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="InputNumberStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource InputStyle}">
+        <Setter Property="TextAlignment" Value="Right"/>
+    </Style>
+
+    <Style x:Key="SplitterStyle" TargetType="{x:Type GridSplitter}">
+        <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="ResizeBehavior" Value="BasedOnAlignment"/>
+        <Setter Property="ResizeDirection" Value="Columns"/>
+        <Setter Property="Width" Value="20"/>
+    </Style>
+
+    <!--
+        Grids for MainWindow
+    -->
+
+    <Style x:Key="LeftSideStyle" TargetType="Grid">
+        <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
+    </Style>
+
+    <Style x:Key="MiddleSideStyle" TargetType="Grid">
+        <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
+    </Style>
+
+    <Style x:Key="RightSideStyle" TargetType="Grid">
+        <Setter Property="Background" Value="White"/>
     </Style>
 </ResourceDictionary>

@@ -18,9 +18,8 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Themes/TabControl.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/Buttons.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/Button.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/TabControl.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>

@@ -23,11 +23,10 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Themes/RssComponents.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/Button.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/ContextMenu.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/ListViewItem.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/TreeViewItem.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/Buttons.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/ListView.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/TreeView.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>

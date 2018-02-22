@@ -7,13 +7,32 @@
     xmlns:xt="clr-namespace:Cube.Xui.Triggers;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
 
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/Themes/RssComponents.xaml"/>
-    </ResourceDictionary.MergedDictionaries>
+    <Style x:Key="RssEntriesStyle" TargetType="TreeView">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+    </Style>
 
-    <!--
-        Customize for TreeViewItem
-    -->
+    <Style x:Key="RssEntryStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="0,2,0,2"/>
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+
+    <Style x:Key="RssCategoryStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource RssEntryStyle}">
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <Style x:Key="RssEditEntryStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="0,2,0,2"/>
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+
     <Style x:Key="TreeViewItemStyle" TargetType="{x:Type Border}">
         <Setter Property="Margin" Value="12,0,0,0"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
