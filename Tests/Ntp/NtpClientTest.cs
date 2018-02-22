@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,10 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using NUnit.Framework;
 
 namespace Cube.Net.Tests
 {
@@ -34,10 +34,12 @@ namespace Cube.Net.Tests
     [TestFixture]
     class NtpClientTest : NetworkHelper
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// Properties_Default
-        /// 
+        ///
         /// <summary>
         /// 各種プロパティの初期値を確認します。
         /// </summary>
@@ -58,7 +60,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync
-        /// 
+        ///
         /// <summary>
         /// 非同期で NTP サーバと通信するテストを実行します。
         /// </summary>
@@ -91,7 +93,7 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync_TestCases
-        /// 
+        ///
         /// <summary>
         /// GetAsync のテスト用データを取得します。
         /// </summary>
@@ -120,15 +122,14 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// NotFound_Throws
-        /// 
+        ///
         /// <summary>
         /// 存在しない NTP サーバを指定した時のテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void NotFound_Throws()
-            => Assert.That(
+        public void NotFound_Throws() => Assert.That(
             () => new Ntp.NtpClient("404.not.found"),
             Throws.TypeOf<System.Net.Sockets.SocketException>()
         );
@@ -136,25 +137,29 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// Timeout_Throws
-        /// 
+        ///
         /// <summary>
         /// タイムアウト処理のテストを行います。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        [Ignore("NUnit for .NET 3.5 does not support async/await")]
-        public void Timeout_Throws()
-            => Assert.That(async () =>
+        public void Timeout_Throws() => Assert.That(
+            () =>
             {
                 using (var client = new Ntp.NtpClient())
                 {
                     client.Timeout = TimeSpan.FromMilliseconds(1);
-                    var result = await client.GetAsync();
+                    var result = client.GetAsync().Result;
                     Assert.Fail("never reached");
                 }
             },
-            Throws.TypeOf<TimeoutException>()
+            Throws.TypeOf<AggregateException>()
+                  .And
+                  .InnerException
+                  .TypeOf<TimeoutException>()
         );
+
+        #endregion
     }
 }

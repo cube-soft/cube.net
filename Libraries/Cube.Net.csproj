@@ -37,8 +37,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\Cube.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
@@ -49,7 +47,10 @@
       <HintPath>..\..\packages\Cube.Backwards.1.4.0\lib\net35\Cube.Backwards.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.Net35.1.5.2\lib\net35\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.Net35.1.7.0\lib\net35\Cube.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Cube.FileSystem">
+      <HintPath>..\..\packages\Cube.FileSystem.Net35.1.7.0\lib\net35\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
@@ -62,6 +63,9 @@
     </Reference>
     <Reference Include="System.Net.Http">
       <HintPath>..\..\lib\net35\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="SgmlReaderDll">
+      <HintPath>..\..\packages\SgmlReader.1.8.11\lib\2.0\SgmlReaderDll.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -80,18 +84,30 @@
     <Compile Include="Http\HttpClientFactory.cs" />
     <Compile Include="Http\HttpHandlers.cs" />
     <Compile Include="Http\HttpMonitor.cs" />
-    <Compile Include="Http\HttpOperations.cs" />
+    <Compile Include="Http\HttpMonitorBase.cs" />
+    <Compile Include="Http\HttpOperator.cs" />
     <Compile Include="Http\HttpValueContent.cs" />
+    <Compile Include="NativeMethods\UrlMon.cs" />
     <Compile Include="Ntp\NtpClient.cs" />
     <Compile Include="Ntp\NtpParameters.cs" />
     <Compile Include="Ntp\NtpMonitor.cs" />
     <Compile Include="Ntp\NtpPacket.cs" />
-    <Compile Include="Rss\RssConverter.cs" />
+    <Compile Include="Rss\Details\AtomParser.cs" />
+    <Compile Include="Rss\Details\Rss100Parser.cs" />
+    <Compile Include="Rss\Details\Rss200Parser.cs" />
+    <Compile Include="Rss\Details\RssParseOptions.cs" />
+    <Compile Include="Rss\Details\RssOperator.cs" />
+    <Compile Include="Rss\RssCacheDictionary.cs" />
+    <Compile Include="Rss\RssClient.cs" />
     <Compile Include="Rss\RssFeed.cs" />
+    <Compile Include="Rss\RssItem.cs" />
     <Compile Include="Rss\RssMonitor.cs" />
     <Compile Include="Rss\RssParser.cs" />
+    <Compile Include="Rss\RssVersion.cs" />
+    <Compile Include="BrowserSettings.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="NetworkAwareTimer.cs" />
+    <Compile Include="NetworkMonitorBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -99,11 +115,4 @@
     <None Include="Packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

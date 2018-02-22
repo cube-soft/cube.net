@@ -1,0 +1,206 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:s="clr-namespace:System;assembly=mscorlib"
+    xmlns:xu="clr-namespace:Cube.Xui;assembly=Cube.Xui"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
+    xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Themes/RssComponents.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--
+        Customize for TreeViewItem
+    -->
+    <Style x:Key="TreeViewItemStyle" TargetType="{x:Type Border}">
+        <Setter Property="Margin" Value="12,0,0,0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource HoverBackgroundBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+        <Setter Property="IsExpanded" Value="{Binding Expanded, Mode=TwoWay}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TreeViewItem">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border
+                            x:Name="Bd"
+                            Style="{StaticResource TreeViewItemStyle}">
+                            <ContentPresenter
+                                x:Name="PART_Header"
+                                Content="{TemplateBinding HeaderedContentControl.Header}"
+                                ContentTemplate="{TemplateBinding HeaderedContentControl.HeaderTemplate}"
+                                ContentStringFormat="{TemplateBinding HeaderedItemsControl.HeaderStringFormat}"
+                                ContentSource="Header"
+                                HorizontalAlignment="Stretch"
+                                SnapsToDevicePixels="True"/>
+                        </Border>
+                        <ItemsPresenter Name="ItemsHost" Grid.Row="1"/>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="TreeViewItem.IsExpanded">
+                            <Setter TargetName="ItemsHost" Property="UIElement.Visibility" Value="{x:Static Visibility.Collapsed}"/>
+                            <Trigger.Value>
+                                <s:Boolean>False</s:Boolean>
+                            </Trigger.Value>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel IsItemsHost="True" Margin="20,0,0,0"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        ToolTip for RSS entry
+    -->
+
+    <ToolTip x:Key="RssEntryToolTip">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Title}"/>
+            <TextBlock Text="{Binding Count, StringFormat=' ({0})'}"/>
+        </StackPanel>
+    </ToolTip>
+
+    <!--
+        TreeViewItem for RssCategory
+    -->
+
+    <ControlTemplate x:Key="RssCategoryTemplate">
+        <Grid
+            Cursor="Hand" Margin="8,2,8,2"
+            ToolTip="{StaticResource RssEntryToolTip}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Text="{Binding Expanded, Converter={my:ExpandConverter}}"
+                Style="{StaticResource SymbolStyle}"
+                Margin="0,4,6,0"
+                Grid.Column="0"/>
+            <TextBlock
+                Text="{Binding Title}"
+                Style="{StaticResource RssCategoryStyle}"
+                Grid.Column="1"/>
+            <TextBlock
+                Text="{Binding Count, StringFormat=({0})}"
+                Style="{StaticResource RssCategoryStyle}"
+                Grid.Column="2"/>
+
+            <TextBox
+                Text="{Binding Title, UpdateSourceTrigger=LostFocus}"
+                Style="{StaticResource RssEditEntryStyle}"
+                Visibility="Collapsed"
+                Grid.Column="1">
+                <i:Interaction.Behaviors>
+                    <xb:EditBehavior Editing="{Binding Editing, Mode=TwoWay}"/>
+                </i:Interaction.Behaviors>
+            </TextBox>
+
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDown">
+                    <i:InvokeCommandAction
+                        Command="{Binding DataContext.SelectEntry, ElementName=Root}"
+                        CommandParameter="{Binding}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Grid>
+    </ControlTemplate>
+
+    <HierarchicalDataTemplate DataType="{x:Type my:RssCategory}" ItemsSource="{Binding Children}">
+        <CheckBox
+            IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
+            Template="{StaticResource RssCategoryTemplate}"/>
+    </HierarchicalDataTemplate>
+
+    <!--
+        TreeViewItem for RssEntry
+    -->
+
+    <Style x:Key="RssEntryBorderStyle" TargetType="{x:Type Border}">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="8,0,8,0"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Selected}" Value="True">
+                <Setter Property="Background" Value="{StaticResource HoverBackgroundBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="{StaticResource HoverBorderBrush}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <ControlTemplate x:Key="RssEntryTemplate">
+        <Border
+            Style="{StaticResource RssEntryBorderStyle}"
+            ToolTip="{StaticResource RssEntryToolTip}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Text="&#xe903;"
+                    Style="{StaticResource SymbolStyle}"
+                    Margin="0,4,6,0"
+                    Grid.Column="0"/>
+                <TextBlock
+                    Text="{Binding Title}"
+                    Style="{StaticResource RssEntryStyle}"
+                    Grid.Column="1"/>
+                <TextBlock
+                    Text="{Binding Count, StringFormat=({0})}"
+                    Style="{StaticResource RssEntryStyle}"
+                    Grid.Column="2"/>
+
+                <TextBox
+                    Text="{Binding Title, UpdateSourceTrigger=LostFocus}"
+                    Style="{StaticResource RssEditEntryStyle}"
+                    Visibility="Collapsed"
+                    Grid.Column="1">
+                    <i:Interaction.Behaviors>
+                        <xb:EditBehavior Editing="{Binding Editing, Mode=TwoWay}"/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <i:InvokeCommandAction
+                        Command="{Binding DataContext.SelectEntry, ElementName=Root}"
+                        CommandParameter="{Binding}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Grid>
+        </Border>
+    </ControlTemplate>
+
+    <HierarchicalDataTemplate DataType="{x:Type my:RssEntry}">
+        <RadioButton
+            GroupName="RssEntryGroup"
+            IsChecked="{Binding Selected}"
+            Template="{StaticResource RssEntryTemplate}"/>
+    </HierarchicalDataTemplate>
+</ResourceDictionary>

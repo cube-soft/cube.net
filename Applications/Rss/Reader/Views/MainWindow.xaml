@@ -1,0 +1,233 @@
+﻿<Window
+    x:Class="Cube.Net.App.Rss.Reader.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dd="urn:gong-wpf-dragdrop"
+    xmlns:wf="clr-namespace:Cube.Forms;assembly=Cube.Forms"
+    xmlns:xc="clr-namespace:Cube.Xui.Converters;assembly=Cube.Xui"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
+    xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
+
+    mc:Ignorable="d"
+    FontFamily="Meiryo UI"
+    Title="{Binding Data.Content.Value, Converter={my:TitleConverter}}"
+    Width="{Binding Data.User.Value.Width, Mode=TwoWay}"
+    Height="{Binding Data.User.Value.Height, Mode=TwoWay}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Themes/RssComponents.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/ContextMenu.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/ListViewItem.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/TreeViewItem.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/UpdateButton.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <my:MainViewModel/>
+    </Window.DataContext>
+
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+N" Command="{Binding NewEntry}"/>
+        <KeyBinding Gesture="Ctrl+D" Command="{Binding Remove}"/>
+        <KeyBinding Gesture="Delete" Command="{Binding Remove}"/>
+        <KeyBinding Gesture="F2" Command="{Binding Rename}"/>
+    </Window.InputBindings>
+
+    <i:Interaction.Behaviors>
+        <xb:CloseBehavior Messenger="{Binding Messenger}"/>
+        <xb:DialogBehavior Messenger="{Binding Messenger}"/>
+        <xb:OpenFileDialogBehavior Messenger="{Binding Messenger}"/>
+        <xb:SaveFileDialogBehavior Messenger="{Binding Messenger}"/>
+        <my:ShowRegisterWindowBehavior Messenger="{Binding Messenger}"/>
+        <my:ShowPropertyWindowBehavior Messenger="{Binding Messenger}"/>
+        <my:ShowSettingsWindowBehavior Messenger="{Binding Messenger}"/>
+    </i:Interaction.Behaviors>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Setup}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid x:Name="Root" UseLayoutRounding="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230" MinWidth="50"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="270" MinWidth="50"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"   MinWidth="50"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <!-- LeftSide (RssEntries) -->
+        <Grid Style="{StaticResource LeftSideStyle}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TreeView
+                x:Name="RssEntries"
+                Style="{StaticResource RssEntriesStyle}"
+                ItemsSource="{Binding Data.Root}"
+                ContextMenu="{StaticResource RssEntryMenu}"
+                dd:DragDrop.IsDragSource="True"
+                dd:DragDrop.IsDropTarget="True"
+                dd:DragDrop.DropHandler="{Binding DropTarget}"
+                Grid.Row="1">
+
+                <TreeView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel
+                            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource
+                            AncestorType=ContentPresenter, AncestorLevel=1}}"/>
+                    </ItemsPanelTemplate>
+                </TreeView.ItemsPanel>
+            </TreeView>
+        </Grid>
+        <!-- LeftSide (RssEntries) -->
+
+        <!-- NewEntry (Register) -->
+        <Button
+            Command="{Binding NewEntry}"
+            Style="{StaticResource NewEntryButtonStyle}"
+            Grid.Row="1">
+        </Button>
+        <!-- NewEntry (Register) -->
+
+        <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="1"/>
+
+        <!-- MiddleSide (RssFeeds) -->
+        <Grid Style="{StaticResource MiddleSideStyle}" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button
+                Command="{Binding Update}"
+                Style="{StaticResource UpdateButtonStyle}"
+                Template="{StaticResource UpdateButtonTemplate}"
+                Visibility="{Binding Data.LastEntry.Value, Converter={my:LastCheckedToVisibility}}">
+            </Button>
+
+            <Button
+                Command="{Binding Navigate}"
+                CommandParameter="{Binding Data.LastEntry.Value.Link}"
+                Grid.Row="1">
+                <Button.Template>
+                    <ControlTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Text="&#xe903;"
+                                Style="{StaticResource SymbolStyle}"
+                                Margin="0,0,6,3"
+                                VerticalAlignment="Center"
+                                Visibility="{Binding Data.LastEntry.HasValue, Converter={xc:BooleanToVisibility}}"/>
+                            <TextBlock
+                                Text="{Binding Data.LastEntry.Value.Title}"
+                                ToolTip="{Binding Data.LastEntry.Value.Title}"
+                                Style="{StaticResource RssTitleStyle}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Button.Template>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <i:InvokeCommandAction
+                            Command="{Binding Hover}"
+                            CommandParameter="{Binding Data.LastEntry.Value.Link}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseLeave">
+                        <i:InvokeCommandAction
+                            Command="{Binding Hover}"
+                            CommandParameter=""/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+
+            <ListView
+                x:Name="RssFeeds"
+                ItemsSource="{Binding Data.LastEntry.Value.SafeItems}"
+                ItemContainerStyle="{StaticResource RssItemStyle}"
+                ItemTemplate="{StaticResource RssItemTemplate}"
+                Style="{StaticResource RssFeedsStyle}"
+                Grid.Row="2">
+                <i:Interaction.Behaviors>
+                    <my:ScrollToTopBehavior Messenger="{Binding Messenger}"/>
+                </i:Interaction.Behaviors>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction
+                            Command="{Binding SelectArticle}"
+                            CommandParameter="{Binding SelectedItem, ElementName=RssFeeds}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListView>
+        </Grid>
+        <!-- MiddleSide (RssFeeds) -->
+
+        <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="3"/>
+
+        <!-- RightSide (Preview) -->
+        <Grid Style="{StaticResource RightSideStyle}" Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button
+                x:Name="Settings"
+                Style="{StaticResource SettingsButtonStyle}"
+                ContextMenu="{StaticResource SettingsMenu}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:ChangePropertyAction
+                            TargetObject="{Binding ContextMenu, ElementName=Settings}"
+                            PropertyName="IsOpen"
+                            Value="True"/>
+                        <ei:ChangePropertyAction
+                            TargetObject="{Binding ContextMenu, ElementName=Settings}"
+                            PropertyName="PlacementTarget"
+                            Value="{Binding ElementName=Settings, Mode=OneWay}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+
+            <WindowsFormsHost Grid.Row="1">
+                <wf:WebControl/>
+                <i:Interaction.Behaviors>
+                    <my:WebBehavior
+                        Content="{Binding Data.Content.Value, Mode=OneWay}"
+                        EnableNewWindow="{Binding Data.User.Value.EnableNewWindow, Mode=OneWay}"
+                        Hover="{Binding Hover}"/>
+                </i:Interaction.Behaviors>
+            </WindowsFormsHost>
+        </Grid>
+        <!-- RightSide (Preview) -->
+
+        <!-- Footer -->
+        <StatusBar
+            Style="{StaticResource FooterStyle}"
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="4">
+            <StatusBarItem>
+                <TextBlock Text="{Binding Data.Message.Value}"/>
+            </StatusBarItem>
+        </StatusBar>
+        <!-- Footer -->
+    </Grid>
+</Window>

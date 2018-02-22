@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,9 +15,14 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Log;
+using Cube.Net.Http;
+using Cube.Tasks;
 using System;
 using System.Collections.Generic;
-using Cube.Net.Http;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Cube.Net.Rss
 {
@@ -30,7 +35,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssMonitor : HttpMonitor<RssFeed>
+    public class RssMonitor : NetworkMonitorBase
     {
         #region Constructors
 
@@ -43,21 +48,310 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor() : this(new RssContentConverter()) { }
+        public RssMonitor()
+        {
+            Handler    = new HeaderHandler { UseEntityTag = false };
+            _http      = new RssClient(Handler);
+            Timeout    = _http.Timeout;
+            RetryCount = 2;
+
+            Timer.SubscribeAsync(WhenTick);
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// UserAgent
+        ///
+        /// <summary>
+        /// ユーザエージェントを取得または設定します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public string UserAgent
+        {
+            get => Handler.UserAgent;
+            set => Handler.UserAgent = value;
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor
+        /// Feeds
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// RSS フィードの管理用コレクションを取得または設定します。
         /// </summary>
-        /// 
-        /// <param name="converter">変換用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor(IContentConverter<RssFeed> converter)
-            : base(new ContentHandler<RssFeed>(converter) { UseEntityTag = false }) { }
+        protected IDictionary<Uri, DateTime?> Feeds { get; } =
+            new Dictionary<Uri, DateTime?>();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Handler
+        ///
+        /// <summary>
+        /// HTTP 通信用ハンドラを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected HeaderHandler Handler { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscriptions
+        ///
+        /// <summary>
+        /// 購読者一覧を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected IList<Func<RssFeed, Task>> Subscriptions { get; } =
+            new List<Func<RssFeed, Task>>();
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Contains
+        ///
+        /// <summary>
+        /// 指定された URL が監視対象かどうかを判別します。
+        /// </summary>
+        ///
+        /// <param name="uri">RSS フィード URL</param>
+        ///
+        /// <returns>監視対象かどうか</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Contains(Uri uri) => Feeds.ContainsKey(uri);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LastChecked
+        ///
+        /// <summary>
+        /// 指定された URL の最後チェック日時を取得します。
+        /// </summary>
+        ///
+        /// <param name="uri">RSS フィード URL</param>
+        ///
+        /// <returns>最後チェック日時</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public DateTime? LastChecked(Uri uri) => Feeds[uri];
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register
+        ///
+        /// <summary>
+        /// 監視対象となる RSS フィード URL を登録します。
+        /// </summary>
+        ///
+        /// <param name="uri">RSS フィード URL</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Register(Uri uri) => Register(uri, null);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register
+        ///
+        /// <summary>
+        /// 監視対象となる RSS フィード URL を登録します。
+        /// </summary>
+        ///
+        /// <param name="uri">RSS フィード URL</param>
+        /// <param name="last">最終チェック日時</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Register(Uri uri, DateTime? last)
+        {
+            if (Contains(uri)) return;
+            Feeds.Add(uri, last);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register
+        ///
+        /// <summary>
+        /// 監視対象となる RSS フィード URL 一覧を登録します。
+        /// </summary>
+        ///
+        /// <param name="items">RSS フィード URL 一覧</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Register(IEnumerable<Uri> items) => Register(
+            items.Select(e => new KeyValuePair<Uri, DateTime?>(e, default(DateTime?)))
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Register
+        ///
+        /// <summary>
+        /// 監視対象となる RSS フィード URL 一覧を登録します。
+        /// </summary>
+        ///
+        /// <param name="items">RSS フィード URL 一覧</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Register(IEnumerable<KeyValuePair<Uri, DateTime?>> items)
+        {
+            foreach (var kv in items) Register(kv.Key, kv.Value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Remove
+        ///
+        /// <summary>
+        /// 監視対象リストから削除します。
+        /// </summary>
+        ///
+        /// <param name="uri">RSS フィード URL</param>
+        ///
+        /// <returns>削除に成功したかどうか</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Remove(Uri uri) => Feeds.Remove(uri);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Clear
+        ///
+        /// <summary>
+        /// 監視対象リストをクリアします。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Clear() => Feeds.Clear();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SubscribeAsync
+        ///
+        /// <summary>
+        /// データ受信時に非同期実行する処理を登録します。
+        /// </summary>
+        ///
+        /// <param name="action">非同期実行する処理</param>
+        ///
+        /// <returns>登録解除用オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IDisposable SubscribeAsync(Func<RssFeed, Task> action)
+        {
+            Subscriptions.Add(action);
+            return Disposable.Create(() => Subscriptions.Remove(action));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscribe
+        ///
+        /// <summary>
+        /// データ受信時に実行する処理を登録します。
+        /// </summary>
+        ///
+        /// <param name="action">実行する処理</param>
+        ///
+        /// <returns>登録解除用オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IDisposable Subscribe(Action<RssFeed> action) => SubscribeAsync(e =>
+        {
+            action(e);
+            return TaskEx.FromResult(0);
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// RSS フィードの内容を更新します。更新が終了すると Publish
+        /// メソッドを通じて結果が通知されます。
+        /// </summary>
+        ///
+        /// <param name="uris">対象とするフィード URL 一覧</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Update(params Uri[] uris) => Update((IEnumerable<Uri>)uris);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// RSS フィードの内容を更新します。非同期処理は非同期で実行され、
+        /// 終了すると Subscribe で登録されたコールバック関数を通じて
+        /// 結果が通知されます。
+        /// </summary>
+        ///
+        /// <param name="uris">対象とするフィード URL 一覧</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Update(IEnumerable<Uri> uris) => TaskEx.Run(async () =>
+        {
+            Suspend();
+            foreach (var uri in uris)
+            {
+                try { await UpdateAsync(uri); }
+                catch (Exception e) { await PublishErrorAsync(uri, e); }
+            }
+            if (State == TimerState.Suspend) Start();
+        }).Forget();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PublishAsync
+        ///
+        /// <summary>
+        /// 新しい結果を発行します。
+        /// </summary>
+        ///
+        /// <param name="feed">RSS フィード</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual async Task PublishAsync(RssFeed feed)
+        {
+            foreach (var action in Subscriptions)
+            {
+                try { await action(feed); }
+                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを解放します。
+        /// </summary>
+        ///
+        /// <param name="disposing">
+        /// マネージリソースを解放するかどうかを示す値
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _http.Dispose();
+                Handler.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
         #endregion
 
@@ -65,17 +359,131 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetRequestUris
+        /// PublishErrorAsync
         ///
         /// <summary>
-        /// リクエスト送信先 URL 一覧を取得します。
+        /// エラー内容を非同期で通知します。
         /// </summary>
-        /// 
-        /// <returns>URL 一覧</returns>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        protected override IEnumerable<Uri> GetRequestUris() => Uris;
+        private Task PublishErrorAsync(Uri uri, Exception error) =>
+            PublishErrorAsync(new Dictionary<Uri, Exception> { { uri, error } });
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PublishErrorAsync
+        ///
+        /// <summary>
+        /// エラー内容を非同期で通知します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task PublishErrorAsync(IDictionary<Uri, Exception> errors)
+        {
+            foreach (var kv in errors)
+            {
+                await PublishAsync(new RssFeed
+                {
+                    Uri         = kv.Key,
+                    LastChecked = DateTime.Now,
+                    Error       = kv.Value,
+                });
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UpdateAsync
+        ///
+        /// <summary>
+        /// 指定された URL に対応する RSS フィードを非同期で更新します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task UpdateAsync(Uri uri)
+        {
+            if (!Contains(uri)) return;
+
+            var sw   = Stopwatch.StartNew();
+            var dest = await GetAsync(uri).ConfigureAwait(false);
+            this.LogDebug($"{uri} ({sw.Elapsed})");
+
+            Feeds[uri] = dest.LastChecked;
+            await PublishAsync(dest);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        ///  GetAsync
+        ///
+        /// <summary>
+        /// 指定された URL から RSS フィードを非同期で取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task<RssFeed> GetAsync(Uri uri)
+        {
+            this.LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
+            return await _http.GetAsync(uri);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RunAsync
+        ///
+        /// <summary>
+        /// RSS の取得処理を実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task RunAsync(IList<Uri> src, IDictionary<Uri, Exception> errors)
+        {
+            foreach (var uri in src.ToArray())
+            {
+                try
+                {
+                    if (State != TimerState.Run) return;
+                    await UpdateAsync(uri);
+                }
+                catch (Exception err) { errors.Add(uri, err); }
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenTick
+        ///
+        /// <summary>
+        /// 一定間隔で実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task WhenTick()
+        {
+            if (State != TimerState.Run) return;
+
+            var src    = Feeds.OrderBy(e => e.Value).Select(e => e.Key).ToList();
+            var errors = new Dictionary<Uri, Exception>();
+            await RunAsync(src, errors);
+
+            for (var i = 0; i < RetryCount && errors.Count > 0; ++i)
+            {
+                if (State != TimerState.Run) return;
+                await TaskEx.Delay(RetryInterval);
+                if (State != TimerState.Run) return;
+
+                var retry = errors.Keys.ToList();
+                errors.Clear();
+                await RunAsync(retry, errors);
+            }
+
+            await PublishErrorAsync(errors);
+        }
+
+        #endregion
+
+        #region Fields
+        private RssClient _http;
         #endregion
     }
 }

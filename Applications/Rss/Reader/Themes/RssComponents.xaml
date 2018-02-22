@@ -1,0 +1,90 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--
+        Grids for MainWindow
+    -->
+
+    <Style x:Key="LeftSideStyle" TargetType="Grid">
+        <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
+    </Style>
+
+    <Style x:Key="MiddleSideStyle" TargetType="Grid">
+        <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
+    </Style>
+
+    <Style x:Key="RightSideStyle" TargetType="Grid">
+        <Setter Property="Background" Value="White"/>
+    </Style>
+
+    <!--
+        Buttons
+    -->
+
+    <Style x:Key="NewEntryButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
+        <Setter Property="Content" Value="&#xe906;"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolFont}"/>
+        <Setter Property="ToolTip" Value="新しい Web サイトを登録"/>
+    </Style>
+
+    <!--
+        Styles for RssEntry, RssCategory, RssFeed, and RssItem.
+    -->
+
+    <Style x:Key="RssEntriesStyle" TargetType="TreeView">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+    </Style>
+
+    <Style x:Key="RssEntryStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="0,2,0,2"/>
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+
+    <Style x:Key="RssCategoryStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource RssEntryStyle}">
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <Style x:Key="RssEditEntryStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="0,2,0,2"/>
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+
+    <Style x:Key="RssFeedsStyle" TargetType="ListView" BasedOn="{StaticResource {x:Type ListView}}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="SelectionMode" Value="Single"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+        <Setter Property="ScrollViewer.PanningMode" Value="VerticalOnly"/>
+    </Style>
+
+    <Style x:Key="RssItemStyle" TargetType="ListViewItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Margin" Value="0,0,4,4"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <Style x:Key="RssTitleStyle" TargetType="TextBlock">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}"/>
+        <Setter Property="FontFamily" Value="Meiryo"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="TextTrimming" Value="WordEllipsis"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+</ResourceDictionary>

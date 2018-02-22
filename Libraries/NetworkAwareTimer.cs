@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,7 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net.NetworkInformation;
-using Microsoft.Win32;
+using System.Threading.Tasks;
 
 namespace Cube.Net
 {
@@ -28,7 +28,7 @@ namespace Cube.Net
     /// <summary>
     /// ネットワーク状況の変化に反応するタイマーです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class NetworkAwareTimer : WakeableTimer
     {
@@ -37,7 +37,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// NetworkAwareMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -48,33 +48,19 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// NetworkAwareMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="interval">実行周期</param>
         ///
         /* ----------------------------------------------------------------- */
         public NetworkAwareTimer(TimeSpan interval) : base(interval)
         {
-            Network.AvailabilityChanged += (s, e) => OnNetworkChanged(e);
+            Network.AvailabilityChanged -= WhenNetworkChanged;
+            Network.AvailabilityChanged += WhenNetworkChanged;
         }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// NetworkAvailable
-        /// 
-        /// <summary>
-        /// ネットワークが使用可能な状態かどうかを表す値を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool NetworkAvailable => Network.Available;
 
         #endregion
 
@@ -83,7 +69,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// NetworkChanged
-        /// 
+        ///
         /// <summary>
         /// ネットワークの状況が変化した時に発生するイベントです。
         /// </summary>
@@ -94,7 +80,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// OnNetworkChanged
-        /// 
+        ///
         /// <summary>
         /// NetworkChanged イベントを発生させます。
         /// </summary>
@@ -102,9 +88,44 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected virtual void OnNetworkChanged(NetworkAvailabilityEventArgs e)
         {
-            if (NetworkAvailable && State == TimerState.Suspend) Resume();
-            else if (!NetworkAvailable && State == TimerState.Run) Suspend();
+            if (Network.Available && State == TimerState.Suspend) Resume(TimeSpan.FromMilliseconds(100));
+            else if (!Network.Available && State == TimerState.Run) Suspend();
             NetworkChanged?.Invoke(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WhenNetworkChanged
+        ///
+        /// <summary>
+        /// NetworkChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void WhenNetworkChanged(object s, NetworkAvailabilityEventArgs e) =>
+            OnNetworkChanged(e);
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// オブジェクトを開放します。
+        /// </summary>
+        ///
+        /// <param name="disposing">
+        /// マネージオブジェクトを開放するかどうか
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            Network.AvailabilityChanged -= WhenNetworkChanged;
+            base.Dispose(disposing);
         }
 
         #endregion
@@ -113,36 +134,36 @@ namespace Cube.Net
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Publish
-        /// 
+        /// PublishAsync
+        ///
         /// <summary>
         /// モニタリングのための操作を実行するタイミングになった時に
         /// 実行されます。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// ネットワークが利用不可能な状態の場合 Suspend を実行します。
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void Publish()
+        protected override async Task PublishAsync()
         {
-            if (!NetworkAvailable) Suspend();
-            else base.Publish();
+            if (!Network.Available) Suspend();
+            else await base.PublishAsync();
         }
 
         /* ----------------------------------------------------------------- */
         ///
         /// OnPowerModeChanged
-        /// 
+        ///
         /// <summary>
         /// 電源の状態が変更された時に実行されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnPowerModeChanged(PowerModeChangedEventArgs e)
+        protected override void OnPowerModeChanged(EventArgs e)
         {
-            if (!NetworkAvailable)
+            if (!Network.Available)
             {
                 if (State == TimerState.Run) Suspend();
                 return;

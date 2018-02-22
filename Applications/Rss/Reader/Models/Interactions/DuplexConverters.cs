@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,67 +15,60 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Xui.Converters;
 using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Cube.Net.Http;
 
-namespace Cube.Net.Rss
+namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssContentConverter
+    /// MinuteConverter
     ///
     /// <summary>
-    /// HttpContent を RssFeed に変換するためのクラスです。
+    /// TimeSpan オブジェクトを分単位に変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssContentConverter : Cube.Net.Http.ContentConverter<RssFeed>
+    public class MinuteConverter : DuplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// RssContentConverter
+        /// MinuteConverter
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssContentConverter() : base(async (src) =>
-        {
-            if (src == null) return default(RssFeed);
-            var stream = await src.ReadAsStreamAsync();
-            return RssParser.Create(stream);
-        }) { }
+        public MinuteConverter() : base(
+            e => (int)(((TimeSpan?)e)?.TotalMinutes ?? 0.0),
+            e => TimeSpan.FromMinutes(int.Parse(e as string))
+        ) { }
     }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// RssOperations
+    /// HourConverter
     ///
     /// <summary>
-    /// RSS に関する拡張用クラスです。
+    /// TimeSpan オブジェクトを時間単位に変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class RssOperations
+    public class HourConverter : DuplexConverter
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// GetRssAsync
-        /// 
+        /// HourConverter
+        ///
         /// <summary>
-        /// RSS または Atom 形式のデータを非同期で取得します。
+        /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="client">HTTP クライアント</param>
-        /// <param name="uri">レスポンス取得 URL</param>
-        /// 
-        /// <returns>RSS または Atom 形式データの変換結果</returns>
-        ///
         /* ----------------------------------------------------------------- */
-        public static Task<RssFeed> GetRssAsync(this HttpClient client, Uri uri)
-            => client.GetAsync(uri, new RssContentConverter());
+        public HourConverter() : base(
+            e => (int)(((TimeSpan?)e)?.TotalHours ?? 0.0),
+            e => TimeSpan.FromHours(int.Parse(e as string))
+        ) { }
     }
 }

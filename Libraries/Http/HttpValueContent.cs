@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -42,7 +42,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="src">変換前の HttpContent オブジェクト</param>
         /// <param name="value">変換後のオブジェクト</param>
         ///
@@ -50,7 +50,7 @@ namespace Cube.Net.Http
         public HttpValueContent(HttpContent src, TValue value)
         {
             Source = src;
-            Value = value;
+            Value  = value;
         }
 
         #endregion
@@ -64,7 +64,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// 変換前のオブジェクトを取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public HttpContent Source { get; }
 
@@ -75,7 +75,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// 変換後のオブジェクトを取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public TValue Value { get; }
 
@@ -90,7 +90,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// リソースを解放します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
         {
@@ -118,10 +118,10 @@ namespace Cube.Net.Http
         /// 非同期で HTTP コンテンツをシリアライズし Stream オブジェクトに
         /// コピーします。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
-            => Source.CopyToAsync(stream, context);
+        protected override Task SerializeToStreamAsync(Stream stream, TransportContext context) =>
+            Source.CopyToAsync(stream, context);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -130,7 +130,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// HTTP コンテンツのバイト数の取得を試みます。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected override bool TryComputeLength(out long length)
         {
@@ -138,10 +138,10 @@ namespace Cube.Net.Http
             return length != -1;
         }
 
-        #region Fields
-        private bool _disposed = false;
         #endregion
 
+        #region Fields
+        private bool _disposed = false;
         #endregion
     }
 }

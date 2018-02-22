@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,11 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using NUnit.Framework;
 using System;
 using System.Net;
 using System.Reflection;
-using System.Threading.Tasks;
-using NUnit.Framework;
 
 namespace Cube.Net.Tests
 {
@@ -39,12 +38,12 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ConnectionClose
+        /// GetAsync_ConnectionClose
         ///
         /// <summary>
         /// ConnectionClose を設定するテストを行います。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// NuGet に公開されている System.Net.Http for .NET 3.5 には
         /// ConnectionClose に関するバグが存在する模様。
@@ -54,7 +53,7 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async void ConnectionClose()
+        public void GetAsync_ConnectionClose()
         {
             var uri = new Uri("http://www.cube-soft.jp/");
             var h   = new Cube.Net.Http.HeaderHandler
@@ -64,15 +63,15 @@ namespace Cube.Net.Tests
             };
 
             using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
-            using (var response = await http.GetAsync(uri))
+            using (var response = http.GetAsync(uri).Result)
             {
-                Assert.That(response.Headers.Connection.Contains("Close"));
+                Assert.That(response.Headers.ConnectionClose.Value, Is.True);
             }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// EntityTag
+        /// GetAsync_EntityTag
         ///
         /// <summary>
         /// EntityTag (ETag) のテストを行います。
@@ -80,14 +79,14 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async void EntityTag()
+        public void GetAsync_EntityTag()
         {
             var uri = new Uri("http://www.example.com/");
             var h   = new Cube.Net.Http.HeaderHandler { UserAgent = GetUserAgent() };
 
             using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
             {
-                using (var response = await http.GetAsync(uri))
+                using (var response = http.GetAsync(uri).Result)
                 {
                     Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     if (string.IsNullOrEmpty(h.EntityTag)) Assert.Ignore("EntityTag not set");
@@ -95,7 +94,7 @@ namespace Cube.Net.Tests
 
                 var etag = h.EntityTag;
 
-                using (var response = await http.GetAsync(uri))
+                using (var response = http.GetAsync(uri).Result)
                 {
                     if (h.EntityTag != etag) Assert.Ignore("EntityTag changed");
                     Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));

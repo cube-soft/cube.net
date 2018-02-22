@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,13 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using NUnit.Framework;
 using Cube.Net.Http;
-using Cube.Net.Rss;
+using NUnit.Framework;
+using System;
+using System.IO;
 
 namespace Cube.Net.Tests
 {
@@ -32,7 +29,7 @@ namespace Cube.Net.Tests
     /// <summary>
     /// HttpClient に関連するテストを行うためのクラスです。
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// internal class の場合 GetXmlAsync() のテストに失敗するため、
     /// public class に設定しています。
@@ -47,20 +44,20 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetJsonAsync
-        /// 
+        ///
         /// <summary>
         /// JSON データを非同期で取得するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async void GetJsonAsync()
+        public void GetJsonAsync()
         {
             var uri    = new Uri("http://dev.cielquis.net/tests/example.json");
             var client = HttpClientFactory.Create();
-            var json   = await client.GetJsonAsync<PeopleContainer>(uri);
+            var json   = client.GetJsonAsync<PeopleContainer>(uri).Result;
 
-            Assert.That(json.People, Is.Not.Null);
+            Assert.That(json.People,         Is.Not.Null);
             Assert.That(json.People.Count,   Is.EqualTo(2));
             Assert.That(json.People[0].Id,   Is.EqualTo("0001"));
             Assert.That(json.People[0].Name, Is.EqualTo("Jack Daniel"));
@@ -73,18 +70,18 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetXmlAsync
-        /// 
+        ///
         /// <summary>
         /// XML データを非同期で取得するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async void GetXmlAsync()
+        public void GetXmlAsync()
         {
             var uri    = new Uri("http://dev.cielquis.net/tests/example.xml");
             var client = HttpClientFactory.Create();
-            var xml    = await client.GetXmlAsync<PeopleContainer>(uri);
+            var xml    = client.GetXmlAsync<PeopleContainer>(uri).Result;
 
             Assert.That(xml.People, Is.Not.Null);
             Assert.That(xml.People.Count,   Is.EqualTo(2));
@@ -98,43 +95,21 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetRssAsync
-        /// 
-        /// <summary>
-        /// RSS フィードを非同期で取得するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public async void GetRssAsync()
-        {
-            var uri = new Uri("http://clown.hatenablog.jp/rss");
-            var rss = await HttpClientFactory.Create().GetRssAsync(uri);
-
-            Assert.That(rss.Id,            Is.Null);
-            Assert.That(rss.Title,         Is.EqualTo("Life like a clown"));
-            Assert.That(rss.Link,          Is.EqualTo(new Uri("http://clown.hatenablog.jp/")));
-            Assert.That(rss.Description,   Is.Empty);
-            Assert.That(rss.Items.Count(), Is.GreaterThan(5));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// GetAsync
-        /// 
+        ///
         /// <summary>
         /// Handler に null を指定した場合のテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async void GetAsync_NullHandler()
+        public void GetAsync_NullHandler()
         {
             var uri  = new Uri("http://www.example.com/");
             var time = TimeSpan.FromSeconds(5);
 
             using (var http = HttpClientFactory.Create(null, time))
-            using (var response = await http.GetAsync(uri))
+            using (var response = http.GetAsync(uri).Result)
             {
                 Assert.That(response.IsSuccessStatusCode);
             }
@@ -143,40 +118,68 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync_NotFound
-        /// 
+        ///
         /// <summary>
         /// 存在しない URL を指定した時の挙動を確認します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async void GetAsync_NotFound()
+        public void GetAsync_NotFound()
         {
             var uri = new Uri("http://www.cube-soft.jp/404.html");
             using (var http = HttpClientFactory.Create())
             {
-                var result = await http.GetAsync(uri, RawContent);
-                Assert.That(result, Is.Null);
+                var result = http.GetAsync(uri, s => s.ReadByte()).Result;
+                Assert.That(result, Is.EqualTo(0L));
             }
         }
 
         /* ----------------------------------------------------------------- */
         ///
         /// GetAsync_ConverterThrows
-        /// 
+        ///
         /// <summary>
         /// 変換用オブジェクトが例外を送出した時の挙動を確認します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async void GetAsync_ConverterThrows()
+        public void GetAsync_ConverterThrows()
         {
             var uri = new Uri("http://www.example.com/");
             using (var http = HttpClientFactory.Create())
             {
-                var result = await http.GetAsync(uri, Throws);
-                Assert.That(result, Is.Null);
+                Assert.That(
+                    () => http.GetAsync(uri, Throws).Result,
+                    NUnit.Framework.Throws.TypeOf<AggregateException>()
+                          .And
+                          .InnerException
+                          .InstanceOf<ArgumentException>()
+                );
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_IgnoreException
+        ///
+        /// <summary>
+        /// 変換用オブジェクトが例外を無視する時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void GetAsync_IgnoreException()
+        {
+            var uri = new Uri("http://www.example.com/");
+            using (var http = HttpClientFactory.Create())
+            {
+                var result = http.GetAsync(
+                    uri,
+                    new ContentConverter<long>(Throws) { IgnoreException = true }
+                ).Result;
+                Assert.That(result, Is.EqualTo(0L));
             }
         }
 
@@ -186,26 +189,14 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RawContent
-        /// 
-        /// <summary>
-        /// 文字列を取得する関数オブジェクトです。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private Func<HttpContent, Task<string>> RawContent = (s)
-            => s.ReadAsStringAsync();
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Throws
-        /// 
+        ///
         /// <summary>
         /// 例外を発生させる関数オブジェクトです。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        private Func<HttpContent, Task<string>> Throws = (s) =>
+        private Func<Stream, long> Throws = (_) =>
         {
             throw new ArgumentException("ErrorTest");
         };

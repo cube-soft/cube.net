@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,13 +15,14 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Log;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Cube.Log;
 
 namespace Cube.Net.Http
 {
@@ -71,7 +72,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// ConnectionClose ヘッダに設定する値を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public bool ConnectionClose { get; set; } = true;
 
@@ -82,7 +83,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// EntityTag (ETag) を利用するかどうかを示す値を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public bool UseEntityTag { get; set; } = true;
 
@@ -93,7 +94,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// EntityTag (ETag) を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public string EntityTag { get; protected set; }
 
@@ -104,7 +105,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// User-Agent を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public string UserAgent { get; set; }
 
@@ -144,7 +145,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetConnectionClose(HttpRequestHeaders headers) => Execute(() =>
+        private void SetConnectionClose(HttpRequestHeaders headers) => this.LogWarn(() =>
         {
             if (headers.ConnectionClose.HasValue &&
                 headers.ConnectionClose == ConnectionClose) return;
@@ -160,7 +161,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetUserAgent(HttpRequestHeaders headers) => Execute(() =>
+        private void SetUserAgent(HttpRequestHeaders headers) => this.LogWarn(() =>
         {
             if (string.IsNullOrEmpty(UserAgent)) return;
             headers.UserAgent.ParseAdd(UserAgent);
@@ -175,7 +176,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetEntityTag(HttpRequestHeaders headers) => Execute(() =>
+        private void SetEntityTag(HttpRequestHeaders headers) => this.LogWarn(() =>
         {
             if (!UseEntityTag || string.IsNullOrEmpty(EntityTag)) return;
             var etag = EntityTagHeaderValue.Parse(EntityTag);
@@ -191,23 +192,8 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void GetEntityTag(HttpResponseHeaders headers)
-            => EntityTag = headers?.ETag?.Tag ?? string.Empty;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Execute
-        ///
-        /// <summary>
-        /// 処理を実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Execute(Action action)
-        {
-            try { action(); }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
-        }
+        private void GetEntityTag(HttpResponseHeaders headers) =>
+            EntityTag = headers?.ETag?.Tag ?? string.Empty;
 
         #endregion
     }
@@ -244,9 +230,9 @@ namespace Cube.Net.Http
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="converter">変換用オブジェクト</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public ContentHandler(IContentConverter<TValue> converter) : this()
         {
@@ -260,12 +246,12 @@ namespace Cube.Net.Http
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="func">変換用オブジェクト</param>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        public ContentHandler(Func<HttpContent, Task<TValue>> func)
-            : this(new ContentConverter<TValue>(func)) { }
+        public ContentHandler(Func<Stream, TValue> func) :
+            this(new ContentConverter<TValue>(func)) { }
 
         #endregion
 
@@ -278,7 +264,7 @@ namespace Cube.Net.Http
         /// <summary>
         /// 変換用オブジェクトを取得または設定します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         public IContentConverter<TValue> Converter { get; set; }
 
@@ -300,12 +286,13 @@ namespace Cube.Net.Http
         {
             var response = await base.SendAsync(request, cancellationToken);
             if (response == null || Converter == null) return response;
-
-            if ((int)response.StatusCode / 100 == 2) // 2XX
+            if (response.IsSuccessStatusCode)
             {
+                await response.Content.LoadIntoBufferAsync();
+                var stream = await response.Content.ReadAsStreamAsync();
                 response.Content = new HttpValueContent<TValue>(
                     response.Content,
-                    await Converter.ConvertAsync(response.Content)
+                    Converter.Convert(stream)
                 );
             }
             return response;

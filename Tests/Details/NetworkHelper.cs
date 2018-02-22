@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,30 +15,32 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Net.NetworkInformation;
 using NUnit.Framework;
+using System.Net.NetworkInformation;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
     /// NetworkHelper
-    /// 
+    ///
     /// <summary>
     /// ネットワークのテストに関連する処理を定義するクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public class NetworkHelper
     {
         /* ----------------------------------------------------------------- */
         ///
         /// SetUp
-        /// 
+        ///
         /// <summary>
         /// 各テストの直前に実行されます。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// ネットワークの利用可能状況を取得し、利用不可能な場合は
         /// Ignore を実行します。
@@ -52,6 +54,22 @@ namespace Cube.Net.Tests
             {
                 Assert.Ignore("Network is not available");
             }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Wait
+        ///
+        /// <summary>
+        /// 一定時間待機します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected async Task<bool> Wait(CancellationToken token)
+        {
+            try { await TaskEx.Delay(10000, token).ConfigureAwait(false); }
+            catch (TaskCanceledException /* err */) { return true; /* OK */ }
+            return false; /* Timeout */
         }
     }
 }

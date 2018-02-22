@@ -1,0 +1,171 @@
+[
+    {
+        "Categories": [],
+        "Entries": [
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://news.cube-soft.jp/",
+                "SkipContent": false,
+                "Title": "Cubeニュース",
+                "Uri": "https://news.cube-soft.jp/rss2.xml"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://blog.cube-soft.jp/",
+                "SkipContent": false,
+                "Title": "CubeSoft Blog",
+                "Uri": "https://blog.cube-soft.jp/?feed=rss2"
+            }
+        ],
+        "Title": "キューブ・ソフト"
+    },
+    {
+        "Categories": [],
+        "Entries": [
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://www.cnn.co.jp/",
+                "SkipContent": false,
+                "Title": "CNN.co.jp",
+                "Uri": "http://feeds.cnn.co.jp/cnn/rss"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "http://www.aol.com/",
+                "SkipContent": false,
+                "Title": "HuffPost Japan",
+                "Uri": "http://www.huffingtonpost.jp/rss/index.xml"
+            }
+        ],
+        "Title": "ニュース"
+    },
+    {
+        "Categories": [],
+        "Entries": [
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "http://karapaia.com/",
+                "SkipContent": false,
+                "Title": "カラパイア",
+                "Uri": "http://karapaia.com/atom.xml"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "http://natgeo.nikkeibp.co.jp/nng/?rss",
+                "SkipContent": false,
+                "Title": "ナショナルジオグラフィック",
+                "Uri": "http://nationalgeographic.jp/nng/rss/index.rdf"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://wired.jp/",
+                "SkipContent": false,
+                "Title": "WIRED.jp",
+                "Uri": "https://wired.jp/rssfeeder/"
+            }
+        ],
+        "Title": "科学"
+    },
+    {
+        "Categories": [],
+        "Entries": [
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "http://japanese.engadget.com/rss.xml",
+                "SkipContent": false,
+                "Title": "Engadget Japanese",
+                "Uri": "http://japanese.engadget.com/rss.xml"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://japan.cnet.com/",
+                "SkipContent": false,
+                "Title": "CNET Japan",
+                "Uri": "http://feed.japan.cnet.com/rss/index.rdf"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "http://jp.techcrunch.com/",
+                "SkipContent": false,
+                "Title": "TechCrunch Japan",
+                "Uri": "http://jp.techcrunch.com/feed/"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://forest.watch.impress.co.jp/",
+                "SkipContent": false,
+                "Title": "窓の杜",
+                "Uri": "https://forest.watch.impress.co.jp/rss.xml"
+            }
+        ],
+        "Title": "IT・ガジェット"
+    },
+    {
+        "Categories": [],
+        "Entries": [
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://rss.allabout.co.jp/aa/latest/",
+                "SkipContent": false,
+                "Title": "All About",
+                "Uri": "https://rss.allabout.co.jp/aa/latest/"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://woman.mynavi.jp/",
+                "SkipContent": false,
+                "Title": "マイナビウーマン",
+                "Uri": "http://woman.mynavi.jp/feed/"
+            }
+        ],
+        "Title": "生活・ライフスタイル"
+    },
+    {
+        "Categories": [],
+        "Entries": [
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://www.cinematoday.jp/",
+                "SkipContent": false,
+                "Title": "シネマトゥデイ",
+                "Uri": "https://www.cinematoday.jp/index.xml"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://mantan-web.jp/",
+                "SkipContent": false,
+                "Title": "MANTANWEB",
+                "Uri": "https://mantan-web.jp/index.rss"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "https://mdpr.jp/",
+                "SkipContent": false,
+                "Title": "モデルプレス",
+                "Uri": "http://feed.mdpr.jp/rss/export/line-ent.rss"
+            }
+        ],
+        "Title": "芸能・エンターテインメント"
+    },
+    {
+        "Categories": [],
+        "Entries": [],
+        "Title": ""
+    }
+]

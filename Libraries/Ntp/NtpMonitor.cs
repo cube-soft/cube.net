@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,11 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Log;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Win32;
-using Cube.Log;
 
 namespace Cube.Net.Ntp
 {
@@ -32,14 +32,14 @@ namespace Cube.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class NtpMonitor : IDisposable
+    public class NtpMonitor : NetworkMonitorBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
         /// NtpMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
@@ -50,11 +50,11 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// NtpMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="server">NTP サーバ</param>
         ///
         /* ----------------------------------------------------------------- */
@@ -63,11 +63,11 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// NtpMonitor
-        /// 
+        ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
+        ///
         /// <param name="server">NTP サーバ</param>
         /// <param name="port">ポート番号</param>
         ///
@@ -75,10 +75,10 @@ namespace Cube.Net.Ntp
         public NtpMonitor(string server, int port) : base()
         {
             Interval = TimeSpan.FromHours(1);
-            _dispose = new OnceAction<bool>(Dispose);
             _server  = server;
             _port    = port;
-            _core.Subscribe(WhenTick);
+
+            Timer.SubscribeAsync(WhenTick);
             SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
 
@@ -88,45 +88,8 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// NetworkAvailable
-        /// 
-        /// <summary>
-        /// ネットワークが使用可能な状態かどうかを表す値を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool NetworkAvailable => _core.NetworkAvailable;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// State
-        /// 
-        /// <summary>
-        /// オブジェクトの状態を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimerState State => _core.State;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Interval
-        /// 
-        /// <summary>
-        /// 実行間隔を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimeSpan Interval
-        {
-            get { return _core.Interval; }
-            set { _core.Interval = value; }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Server
-        /// 
+        ///
         /// <summary>
         /// NTP サーバのアドレス (ホスト名または IP アドレス) を取得
         /// または設定します。
@@ -147,7 +110,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// Port
-        /// 
+        ///
         /// <summary>
         /// ポート番号を取得または設定します。
         /// </summary>
@@ -163,50 +126,6 @@ namespace Cube.Net.Ntp
                 Reset();
             }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FailedCount
-        /// 
-        /// <summary>
-        /// サーバとの通信に失敗した回数を取得します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public int FailedCount { get; protected set; } = 0;
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryCount
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する最大回数を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public int RetryCount { get; set; } = 5;
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryInterval
-        /// 
-        /// <summary>
-        /// 通信失敗時に再試行する間隔を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Timeout
-        /// 
-        /// <summary>
-        /// タイムアウト時間を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan Timeout { get; set; } = TimeSpan.FromMilliseconds(500);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -226,9 +145,10 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// 購読者一覧を取得します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        protected IList<Action<TimeSpan>> Subscriptions { get; } = new List<Action<TimeSpan>>();
+        protected IList<Func<TimeSpan, Task>> Subscriptions { get; }
+            = new List<Func<TimeSpan, Task>>();
 
         #endregion
 
@@ -237,7 +157,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// TimeChanged
-        /// 
+        ///
         /// <summary>
         /// システムの時刻が変更された時に発生するイベントです。
         /// </summary>
@@ -248,7 +168,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// OnTimeChanged
-        /// 
+        ///
         /// <summary>
         /// システムの時刻が変更された時に発生するイベントです。
         /// </summary>
@@ -256,7 +176,7 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         protected virtual void OnTimeChanged(EventArgs e)
         {
-            if (_core.PowerMode == PowerModes.Suspend) return;
+            if (Power.Mode == PowerModes.Suspend) return;
             Reset();
             TimeChanged?.Invoke(this, e);
         }
@@ -267,49 +187,17 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// SubscribeAsync
         ///
         /// <summary>
-        /// 監視を実行します。
+        /// データ受信時に非同期で実行する処理を登録します。
         /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Start() => Start(TimeSpan.Zero);
-
-        /* ----------------------------------------------------------------- */
         ///
-        /// Start
-        ///
-        /// <summary>
-        /// 監視を実行します。
-        /// </summary>
-        /// 
-        /// <param name="delay">初期遅延時間</param>
-        /// 
         /* ----------------------------------------------------------------- */
-        public void Start(TimeSpan delay)
+        public IDisposable SubscribeAsync(Func<TimeSpan, Task> action)
         {
-            var state = _core.State;
-            _core.Start(delay);
-            if (state != TimerState.Stop) return;
-            this.LogDebug($"Start\tInterval:{Interval}\tInitialDelay:{delay}");
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Stop
-        ///
-        /// <summary>
-        /// 監視を停止します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Stop()
-        {
-            var state = _core.State;
-            _core.Stop();
-            if (state == TimerState.Stop) return;
-            this.LogDebug($"Stop\tLast:{_core.LastExecuted}\tFaild:{FailedCount}");
+            Subscriptions.Add(action);
+            return Disposable.Create(() => Subscriptions.Remove(action));
         }
 
         /* ----------------------------------------------------------------- */
@@ -319,104 +207,32 @@ namespace Cube.Net.Ntp
         /// <summary>
         /// データ受信時に実行する処理を登録します。
         /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<TimeSpan> action)
-        {
-            Subscriptions.Add(action);
-            return Disposable.Create(() => Subscriptions.Remove(action));
-        }
-
-        /* ----------------------------------------------------------------- */
         ///
-        /// Reset
-        ///
-        /// <summary>
-        /// リセットします。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// リセット時に直ちに NTP サーバと通信した場合、精度が悪い傾向が
-        /// あります。現在は、500 ミリ秒の待機時間を設ける事で回避して
-        /// います。
-        /// </remarks>
-        /// 
         /* ----------------------------------------------------------------- */
-        public virtual void Reset()
-        {
-            var current = State;
-            _core.Reset();
-            if (current == TimerState.Run)
+        public IDisposable Subscribe(Action<TimeSpan> action) =>
+            SubscribeAsync(e =>
             {
-                Stop();
-                Start(TimeSpan.FromMilliseconds(500));
-            }
-        }
+                action(e);
+                return TaskEx.FromResult(0);
+            });
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Publish
+        /// PublishAsync
         ///
         /// <summary>
         /// 新しい結果を発行します。
         /// </summary>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Publish(TimeSpan value)
+        protected virtual async Task PublishAsync(TimeSpan value)
         {
-            foreach (var action in Subscriptions) action(value);
+            foreach (var action in Subscriptions)
+            {
+                try { await action(value); }
+                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            }
         }
-
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Monitor
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        ~NtpMonitor()
-        {
-            _dispose.Invoke(false);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        /// 
-        /// <param name="disposing">
-        /// マネージリソースを解放するかどうかを示す値
-        /// </param>
-        /// 
-        /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing) _core.Dispose();
-        }
-
-        #endregion
 
         #endregion
 
@@ -425,57 +241,49 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         ///
         /// WhenTick
-        /// 
+        ///
         /// <summary>
         /// 一定間隔毎に実行されます。
         /// </summary>
         ///
+        /// <remarks>
+        /// アプリケーションの起動直後等に NTP 通信を実行すると精度の
+        /// 悪い傾向が確認されています。そのため、毎回の実行時の最初に
+        /// 500 ミリ秒の待機時間を設ける事としています。
+        /// </remarks>
+        ///
         /* ----------------------------------------------------------------- */
-        private async void WhenTick()
+        private async Task WhenTick()
         {
-            if (State != TimerState.Run || Subscriptions.Count <= 0) return;
+            if (Subscriptions.Count <= 0) return;
+
+            await TaskEx.Delay(500); // see ramarks
 
             for (var i = 0; i < RetryCount; ++i)
             {
                 try
                 {
+                    if (State != TimerState.Run) return;
                     var client = new NtpClient(Server, Port) { Timeout = Timeout };
                     var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid) Publish(packet.LocalClockOffset);
+                    if (packet != null && packet.IsValid) await PublishAsync(packet.LocalClockOffset);
                     else throw new ArgumentException("InvalidPacket");
                     break;
                 }
                 catch (Exception err)
                 {
-                    Fail(err.ToString());
+                    this.LogWarn(err.ToString(), err);
                     await TaskEx.Delay(RetryInterval);
+                    this.LogDebug($"Retry\tCount:{i + 1}\tServer:{Server}");
                 }
             }
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Fail
-        ///
-        /// <summary>
-        /// 通信に失敗した事を伝える処理を実行します。
-        /// </summary>
-        /// 
-        /* ----------------------------------------------------------------- */
-        private void Fail(string message)
-        {
-            ++FailedCount;
-            this.LogWarn(message);
-            this.LogWarn($"Failed\tCount:{FailedCount}");
-        }
-
-        #region Fields
-        private OnceAction<bool> _dispose;
-        private string _server = string.Empty;
-        private int _port = NtpClient.DefaultPort;
-        private NetworkAwareTimer _core = new NetworkAwareTimer();
         #endregion
 
+        #region Fields
+        private string _server = string.Empty;
+        private int _port = NtpClient.DefaultPort;
         #endregion
     }
 }

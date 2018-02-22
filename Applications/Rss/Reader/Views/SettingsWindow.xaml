@@ -1,0 +1,195 @@
+﻿<Window x:Class="Cube.Net.App.Rss.Reader.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
+    xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
+    mc:Ignorable="d"
+
+    FontFamily="Meiryo UI"
+    Style="{StaticResource Dialog}"
+    Title="CubeRSS Reader 設定"
+    Height="460"
+    Width="480"
+    WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Themes/TabControl.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.BindingGroup>
+        <BindingGroup Name="SourceBindings" NotifyOnValidationError="False"/>
+    </Window.BindingGroup>
+
+    <i:Interaction.Behaviors>
+        <xb:CloseBehavior Messenger="{Binding Messenger}"/>
+        <xb:UpdateSourceBehavior Messenger="{Binding Messenger}"/>
+    </i:Interaction.Behaviors>
+
+    <Grid Background="{StaticResource MainBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
+        <TabControl Margin="20,20,20,0">
+            <TabItem Header="設定">
+                <Grid Margin="20,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Text="チェック間隔"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="0"
+                        Grid.Column="0"/>
+
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Grid.Row="0"
+                        Grid.Column="1">
+                        <TextBox
+                            Text="{Binding Data.Value.HighInterval, Converter={my:MinuteConverter}, UpdateSourceTrigger=Explicit}"
+                            Width="100"
+                            Style="{StaticResource InputNumberStyle}"/>
+                        <TextBlock
+                            Text="分（高頻度）"
+                            Style="{StaticResource SummaryStyle}"
+                            Margin="12,0,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Grid.Row="1"
+                        Grid.Column="1">
+                        <TextBox
+                            Text="{Binding Data.Value.LowInterval, Converter={my:HourConverter}, UpdateSourceTrigger=Explicit}"
+                            Width="100"
+                            Style="{StaticResource InputNumberStyle}"/>
+                        <TextBlock
+                            Text="時間（低頻度）"
+                            Style="{StaticResource SummaryStyle}"
+                            Margin="12,0,0,0"/>
+                    </StackPanel>
+
+                    <TextBlock
+                        Text="その他"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="3"
+                        Grid.Column="0"/>
+
+                    <CheckBox
+                        Content="軽量モード"
+                        IsChecked="{Binding Data.Value.LightMode, UpdateSourceTrigger=Explicit}"
+                        VerticalAlignment="Center"
+                        Grid.Row="3"
+                        Grid.Column="1"/>
+
+                    <CheckBox
+                        Content="新しいウィンドウを有効にする"
+                        IsChecked="{Binding Data.Value.EnableNewWindow, UpdateSourceTrigger=Explicit}"
+                        VerticalAlignment="Center"
+                        Grid.Row="4"
+                        Grid.Column="1"/>
+
+                    <CheckBox
+                        Content="記事の取得状況をステータスバーに表示する"
+                        IsChecked="{Binding Data.Value.EnableMonitorMessage, UpdateSourceTrigger=Explicit}"
+                        VerticalAlignment="Center"
+                        Grid.Row="5"
+                        Grid.Column="1"/>
+
+                    <CheckBox
+                        Content="ソフトウェアのアップデートを確認する"
+                        IsChecked="{Binding Data.Value.CheckUpdate, UpdateSourceTrigger=Explicit}"
+                        VerticalAlignment="Center"
+                        Grid.Row="6"
+                        Grid.Column="1"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="バージョン情報">
+                <Grid Margin="20,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Image
+                        Source="{Binding Logo}"
+                        Height="{Binding Source.PixelHeight, RelativeSource={RelativeSource Self}}"
+                        Width="{Binding Source.PixelWidth, RelativeSource={RelativeSource Self}}"
+                        Grid.Row="0"
+                        Grid.RowSpan="4"
+                        Grid.Column="0"/>
+
+                    <TextBlock
+                        Text="{Binding Product}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="0"
+                        Grid.Column="2"/>
+
+                    <TextBlock
+                        Text="{Binding Version}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="1"
+                        Grid.Column="2"/>
+
+                    <TextBlock
+                        Text="{Binding Windows}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="3"
+                        Grid.Column="2"/>
+
+                    <TextBlock
+                        Text="{Binding Framework}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="4"
+                        Grid.Column="2"/>
+
+                    <TextBlock
+                        Text="{Binding Copyright}"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="6"
+                        Grid.Column="2"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Style="{StaticResource FooterButtonsStyle}" Grid.Row="1">
+            <Button Command="{Binding Close}" Style="{StaticResource CancelButtonStyle}" IsCancel="True"/>
+            <Button Command="{Binding Apply}" Style="{StaticResource OkButtonStyle}" IsDefault="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

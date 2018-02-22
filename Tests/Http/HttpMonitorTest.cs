@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,11 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Net.Http;
+using NUnit.Framework;
 using System;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
 
 namespace Cube.Net.Tests.Http
 {
@@ -28,24 +28,23 @@ namespace Cube.Net.Tests.Http
     /// HttpMonitorTest
     ///
     /// <summary>
-    /// Http.Monitor(T) のテスト用クラスです。
+    /// HttpMonitor(T) のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    [Ignore("NUnit for .NET 3.5 does not support async/await")]
     class HttpMonitorTest : NetworkHelper
     {
         #region Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
-        /// 
+        /// Monitor_NormalCase
+        ///
         /// <summary>
         /// 監視テストを実行します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// 過去、TCP コネクションが CLOSE_WAIT のまま残存し、3 回目以降の
         /// 通信に失敗すると言う不都合（.NET の初期設定では一つのエンド
@@ -55,44 +54,158 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Start()
+        public void Monitor_NormalCase()
         {
-            using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
+            using (var mon = Create())
             {
-                Assert.That(mon.NetworkAvailable, Is.True);
+                var count = 0;
+                var start = DateTime.Now;
 
-                mon.Version  = new SoftwareVersion("1.0.0");
-                mon.Interval = TimeSpan.FromMilliseconds(100);
-                mon.Timeout  = TimeSpan.FromMilliseconds(1000);
-                mon.Uris.Add(new Uri("http://www.cube-soft.jp/"));
-                mon.Uris.Add(new Uri("http://s.cube-soft.jp/"));
+                Assert.That(mon.UserAgent, Does.StartWith("Cube.Net.Tests"));
 
-                Assert.That(mon.Uri, Is.EqualTo(new Uri("http://www.cube-soft.jp/")));
+                mon.Interval = TimeSpan.FromMilliseconds(50);
+                mon.Uri = new Uri("http://www.example.com/");
 
                 var cts = new CancellationTokenSource();
-                var sum = 0;
+                mon.Subscribe((u, x) => throw new ArgumentException("Test"));
+                mon.Subscribe((u, x) =>
+                {
+                    count++;
+                    if (count >= 3) cts.Cancel();
+                });
 
-                mon.Subscribe((u, x) => { sum += x; cts.Cancel(); });
                 mon.Start();
                 mon.Start(); // ignore
-
-                Assert.That(
-                    async() => await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token),
-                    Throws.TypeOf<TaskCanceledException>()
-                );
-
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
                 mon.Stop();
                 mon.Stop(); // ignore
 
-                Assert.That(sum, Is.AtLeast(1));
-                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
+                Assert.That(mon.LastPublished.Value, Is.GreaterThan(start));
+                Assert.That(count, Is.AtLeast(3));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor_NoSubscriptions
+        ///
+        /// <summary>
+        /// Subscribe している要素がない状態で監視した時の挙動を
+        /// 確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Monitor_NoSubscriptions() => Assert.DoesNotThrow(() =>
+        {
+            using (var mon = Create())
+            {
+                mon.Interval = TimeSpan.FromMilliseconds(10);
+                mon.Uri = new Uri("http://www.example.com/");
+
+                mon.Start();
+                TaskEx.Delay(100).Wait();
+                mon.Stop();
+            }
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor_UriNotFound
+        ///
+        /// <summary>
+        /// 存在しない Web ページを監視した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Monitor_UriNotFound()
+        {
+            using (var mon = Create())
+            {
+                var count = 0;
+
+                mon.Timeout  = TimeSpan.FromMilliseconds(200);
+                mon.Interval = TimeSpan.FromMilliseconds(50);
+                mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
+                mon.RetryCount = 0;
+                mon.Subscribe((_, __) => count++);
+
+                mon.Start();
+                TaskEx.Delay(mon.Timeout).Wait();
+                mon.Stop();
+                Assert.That(count, Is.EqualTo(0));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor_ConverterThrows
+        ///
+        /// <summary>
+        /// Converter が例外を送出した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Monitor_ConverterThrows()
+        {
+            using (var mon = new HttpMonitor<string>(e => throw new ArgumentException("Test")))
+            {
+                var count = 0;
+
+                mon.Timeout = TimeSpan.FromMilliseconds(200);
+                mon.Interval = TimeSpan.FromMilliseconds(50);
+                mon.Uri = new Uri("http://www.example.com/");
+                mon.Subscribe((_, __) => count++);
+
+                mon.Start();
+                TaskEx.Delay(mon.Timeout).Wait();
+                mon.Stop();
+                Assert.That(count, Is.EqualTo(0));
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Monitor_PowerModeChanged
+        ///
+        /// <summary>
+        /// 電源状態が変更された時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Monitor_PowerModeChanged()
+        {
+            var power = new PowerModeContext(Power.Mode);
+            Power.Configure(power);
+
+            using (var mon = Create())
+            {
+                var count = 0;
+                var cts   = new CancellationTokenSource();
+
+                mon.Interval = TimeSpan.FromMilliseconds(50);
+                mon.Uri = new Uri("http://www.example.com/");
+                mon.Subscribe((_, __) => { count++; cts.Cancel(); });
+
+                mon.Start(mon.Interval);
+                power.Mode = PowerModes.Suspend;
+                TaskEx.Delay(100).Wait();
+                Assert.That(count, Is.EqualTo(0));
+
+                power.Mode = PowerModes.Resume;
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                mon.Stop();
+                Assert.That(count, Is.EqualTo(1));
             }
         }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Reset
-        /// 
+        ///
         /// <summary>
         /// リセット処理のテストを実行します。
         /// </summary>
@@ -101,30 +214,21 @@ namespace Cube.Net.Tests.Http
         [Test]
         public void Reset()
         {
-            using (var mon = new Cube.Net.Http.HttpMonitor<int>(Convert))
+            using (var mon = Create())
             {
-                mon.Version  = new SoftwareVersion("1.0.0");
-                mon.Interval = TimeSpan.FromMinutes(1);
-                mon.Timeout  = TimeSpan.FromMilliseconds(1000);
-                mon.Uris.Add(new Uri("http://www.cube-soft.jp/"));
-
-                var cts   = new CancellationTokenSource();
                 var count = 0;
+                var cts   = new CancellationTokenSource();
 
-                mon.Subscribe((u, x) => { ++count; cts.Cancel(); });
+                mon.Interval = TimeSpan.FromMinutes(1);
+                mon.Uri = new Uri("http://www.example.com/");
+                mon.Subscribe((u, v) => { ++count; cts.Cancel(); });
+
                 mon.Reset();
                 mon.Start(mon.Interval);
                 mon.Reset();
-
-                Assert.That(
-                    async() => await TaskEx.Delay((int)(mon.Timeout.TotalMilliseconds * 2), cts.Token),
-                    Throws.TypeOf<TaskCanceledException>()
-                );
-
+                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
                 mon.Stop();
-
                 Assert.That(count, Is.EqualTo(1));
-                Assert.Pass($"{nameof(mon.FailedCount)}:{mon.FailedCount}");
             }
         }
 
@@ -134,17 +238,24 @@ namespace Cube.Net.Tests.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Convert
-        /// 
+        /// Create
+        ///
         /// <summary>
-        /// HttpContent の変換処理を実行する関数オブジェクトです。
+        /// HttpMonitor オブジェクトを生成します。
         /// </summary>
-        /// 
+        ///
+        /// <remarks>
+        /// テスト中で 3XX が返されると不都合な項目があるため
+        /// HttpMonitor のテストでは EntityTag は無効に設定しています。
+        /// </remarks>
+        ///
         /* ----------------------------------------------------------------- */
-        private Func<HttpContent, Task<int>> Convert = async (s) =>
+        private HttpMonitor<int> Create() => new HttpMonitor<int>(
+            new ContentHandler<int>(s => s.ReadByte()) { UseEntityTag = false })
         {
-            var str = await s.ReadAsStringAsync();
-            return str.Length;
+            Interval  = TimeSpan.FromMinutes(1),
+            Timeout   = TimeSpan.FromSeconds(2),
+            UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}",
         };
 
         #endregion

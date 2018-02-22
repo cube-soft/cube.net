@@ -1,0 +1,69 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net"
+    xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <DataTemplate x:Key="RssItemTemplate" DataType="{x:Type rss:RssItem}">
+        <Border Style="{StaticResource ShadowStyle}">
+            <VirtualizingStackPanel
+                    ToolTip="{Binding Title}"
+                    Background="White"
+                    Cursor="Hand"
+                    Margin="0"
+                    Orientation="Vertical"
+                    HorizontalAlignment="Stretch">
+                <TextBlock
+                    Text="{Binding PublishTime, StringFormat=yyyy/MM/dd hh:mm:ss}"
+                    Foreground="{StaticResource GrayTextBrush}"
+                    FontFamily="Meiryo"
+                    FontSize="8"
+                    HorizontalAlignment="Right"
+                    Margin="12,8,12,0"/>
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="12,8,12,0">
+                    <TextBlock
+                        Text="{Binding Status, Converter={my:ItemStatusToString}}"
+                        Foreground="{StaticResource StatusTextBrush}"
+                        FontFamily="Meiryo"
+                        FontSize="12"/>
+                    <TextBlock
+                        Text="{Binding Title}"
+                        Foreground="{StaticResource MainTextBrush}"
+                        FontFamily="Meiryo"
+                        FontSize="12"
+                        FontWeight="Bold"/>
+                </StackPanel>
+                <TextBlock
+                    Text="{Binding Summary}"
+                    Foreground="{StaticResource FeedTextBrush}"
+                    FontFamily="Meiryo"
+                    FontSize="10"
+                    LineHeight="10"
+                    MaxHeight="48"
+                    Margin="12,8,12,8"
+                    TextTrimming="WordEllipsis"
+                    TextWrapping="{Binding DataContext.Data.User.Value.LightMode,
+                        ElementName=Root, Converter={my:TextWrappingConverter}}"/>
+            </VirtualizingStackPanel>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseEnter">
+                    <i:InvokeCommandAction
+                        Command="{Binding DataContext.Hover, ElementName=Root}"
+                        CommandParameter="{Binding Link}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseLeave">
+                    <i:InvokeCommandAction
+                        Command="{Binding DataContext.Hover, ElementName=Root}"
+                        CommandParameter=""/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

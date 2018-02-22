@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,8 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Threading.Tasks;
-using Cube.Tasks;
 
 namespace Cube.Net
 {
@@ -32,7 +30,7 @@ namespace Cube.Net
     /// <summary>
     /// ネットワーク状況を検証するためのクラスです。
     /// </summary>
-    /// 
+    ///
     /* --------------------------------------------------------------------- */
     public static class Network
     {
@@ -41,7 +39,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// Network
-        /// 
+        ///
         /// <summary>
         /// 静的オブジェクトを初期化します。
         /// </summary>
@@ -49,7 +47,8 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         static Network()
         {
-            NetworkChange.NetworkAvailabilityChanged += WhenChanged;
+            NetworkChange.NetworkAvailabilityChanged +=
+                (s, e) => AvailabilityChanged?.Invoke(s, e);
         }
 
         #endregion
@@ -59,7 +58,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// Status
-        /// 
+        ///
         /// <summary>
         /// ネットワーク状況を示す値を取得します。
         /// </summary>
@@ -79,7 +78,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// Available
-        /// 
+        ///
         /// <summary>
         /// ネットワークが利用可能かどうかを示す値を取得します。
         /// </summary>
@@ -102,7 +101,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// AvailabilityChanged
-        /// 
+        ///
         /// <summary>
         /// ネットワークの利用可能状況が変化した時に発生するイベントです。
         /// </summary>
@@ -117,7 +116,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// DisableOptions
-        /// 
+        ///
         /// <summary>
         /// ネットワークに関連するオプションを無効化します。
         /// </summary>
@@ -137,7 +136,7 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         ///
         /// GetNetworkInterfaces
-        /// 
+        ///
         /// <summary>
         /// ネットワークインターフェースの一覧を取得します。
         /// </summary>
@@ -149,44 +148,6 @@ namespace Cube.Net
                 n.NetworkInterfaceType != NetworkInterfaceType.Loopback &&
                !n.Description.Equals("Microsoft Loopback Adapter", StringComparison.OrdinalIgnoreCase)
             );
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenChanged
-        /// 
-        /// <summary>
-        /// ネットワークの利用可能状況が変化した時に実行されるハンドラです。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// IsAvailable が true に変化した直後は、実際にはまだ通信可能な
-        /// 状態になっていない事があります。Network クラスでは、
-        /// IsAvailable が true になってからいずれかのネットワーク
-        /// インターフェースの状態が Up になるまで、最大 2 分の待機時間を
-        /// 設けています。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static void WhenChanged(object sender, NetworkAvailabilityEventArgs e)
-        {
-            if (!e.IsAvailable) AvailabilityChanged?.Invoke(sender, e);
-            else TaskEx.Run(async () =>
-            {
-                var type = typeof(Network);
-                for (var i = 0; i < 24; ++i) // 5 sec * 24 = 2 min
-                {
-                    if (Status == OperationalStatus.Up)
-                    {
-                        Cube.Log.Operations.Debug(type, ($"Status:Up ({i * 5} sec)"));
-                        AvailabilityChanged?.Invoke(sender, e);
-                        return;
-                    }
-                    await TaskEx.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
-                }
-                Cube.Log.Operations.Debug(type, $"Status:{Status} (Timeout)");
-                AvailabilityChanged?.Invoke(sender, e);
-            }).Forget();
-        }
 
         #endregion
     }
