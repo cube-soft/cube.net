@@ -161,8 +161,10 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="dest">更新先オブジェクト</param>
         /// <param name="src">更新内容</param>
         ///
+        /// <returns>新着記事数</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        public static void Update(this RssEntry dest, RssFeed src)
+        public static int Update(this RssEntry dest, RssFeed src)
         {
             var threshold = dest.LastChecked;
             dest.LastChecked = src.LastChecked;
@@ -171,15 +173,18 @@ namespace Cube.Net.App.Rss.Reader
             {
                 dest.LogDebug($"{dest.Uri} ({src.Error.GetType().Name})");
                 src.Title = dest.Title;
-                return;
+                return 0;
             }
 
-            foreach (var item in src.Items.Shrink(threshold)) dest.Items.Insert(0, item);
+            var received = src.Items.Shrink(threshold).ToList();
+            foreach (var item in received) dest.Items.Insert(0, item);
 
             dest.Description   = src.Description;
             dest.Count         = dest.UnreadItems.Count();
             dest.Link          = src.Link;
             dest.LastPublished = src.LastPublished;
+
+            return received.Count;
         }
 
         /* ----------------------------------------------------------------- */
@@ -319,14 +324,15 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /// <param name="src">RSS フィード</param>
+        /// <param name="count">新着記事数</param>
         ///
         /// <returns>メッセージ</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static string ToMessage(this RssFeed src) =>
-            src.Error != null   ? string.Format(Properties.Resources.ErrorFeed, src.Title) :
-            src.Items.Count > 0 ? string.Format(Properties.Resources.MessageReceived, src.Items.Count, src.Title) :
-                                  string.Format(Properties.Resources.MessageNoReceived, src.Title);
+        public static string ToMessage(this RssFeed src, int count) =>
+            src.Error != null ? string.Format(Properties.Resources.ErrorFeed, src.Title) :
+            count > 0         ? string.Format(Properties.Resources.MessageReceived, count, src.Title) :
+                                string.Format(Properties.Resources.MessageNoReceived, src.Title);
 
         /* ----------------------------------------------------------------- */
         ///

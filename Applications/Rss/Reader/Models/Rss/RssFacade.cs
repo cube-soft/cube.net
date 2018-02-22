@@ -424,10 +424,10 @@ namespace Cube.Net.App.Rss.Reader
             if (dest == null) return;
             if (dest != Data.LastEntry.Value) dest.Shrink();
 
-            dest.Update(src);
+            var count = dest.Update(src);
 
             Data.Message.Value = Settings.Value.EnableMonitorMessage ?
-                                 src.ToMessage() :
+                                 src.ToMessage(count) :
                                  string.Empty;
         }
 

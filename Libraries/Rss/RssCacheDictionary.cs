@@ -476,9 +476,8 @@ namespace Cube.Net.Rss
         private void Stash()
         {
             if (_otm.Count <= Capacity) return;
-            var uri = _otm[0];
-            Save(uri);
-            _otm.Remove(uri);
+            Save(_otm.First.Value);
+            _otm.RemoveFirst();
         }
 
         /* ----------------------------------------------------------------- */
@@ -529,7 +528,7 @@ namespace Cube.Net.Rss
             }
             finally
             {
-                _otm.Add(uri);
+                _otm.AddLast(uri);
                 Stash();
             }
         }
@@ -597,7 +596,7 @@ namespace Cube.Net.Rss
         #region Fields
         private OnceAction<bool> _dispose;
         private IDictionary<Uri, RssFeed> _inner;
-        private IList<Uri> _otm = new List<Uri>();
+        private LinkedList<Uri> _otm = new LinkedList<Uri>();
         private uint _capacity = 100;
         #endregion
     }

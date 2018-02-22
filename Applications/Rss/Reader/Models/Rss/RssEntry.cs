@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Collections;
 using Cube.Net.Rss;
-using Cube.Xui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,9 +48,15 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /// <param name="context">同期用コンテキスト</param>
         ///
+        /// <remarks>
+        /// 将来的に Items に対して ObservableCollection(T) を指定する
+        /// 必要がある。その場合は base を BindableCollection(T) で
+        /// 初期化する。現在は SafeItems を利用しているため必要として
+        /// いない模様（SafeItems の項目も参照）。
+        /// </remarks>
+        ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(SynchronizationContext context) :
-            base(new BindableCollection<RssItem>(context))
+        public RssEntry(SynchronizationContext context) : base()
         {
             _dispose = new OnceAction<bool>(Dispose);
             Context  = context;
@@ -208,8 +213,10 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /// <remarks>
-        /// TODO: Items を直接 Binding するとエラーが発生する場合がある。
-        /// 該当の現象が解消でき次第、このプロパティは削除する。
+        /// Items を BindableCollection(T) で初期化し、直接 Binding すると
+        /// ListView の ItemsControl に対して InvalidOperationException が
+        /// 発生する場合がある。該当の現象が解消でき次第、このプロパティは
+        /// 削除する。
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
