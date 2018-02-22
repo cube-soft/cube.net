@@ -11,7 +11,7 @@
 
     <DataTemplate x:Key="RssItemTemplate" DataType="{x:Type rss:RssItem}">
         <Border Style="{StaticResource ShadowStyle}">
-            <StackPanel
+            <VirtualizingStackPanel
                     ToolTip="{Binding Title}"
                     Background="White"
                     Cursor="Hand"
@@ -51,7 +51,7 @@
                     TextTrimming="WordEllipsis"
                     TextWrapping="{Binding DataContext.Data.User.Value.LightMode,
                         ElementName=Root, Converter={my:TextWrappingConverter}}"/>
-            </StackPanel>
+            </VirtualizingStackPanel>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseEnter">
                     <i:InvokeCommandAction
