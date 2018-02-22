@@ -8,8 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:wf="clr-namespace:Cube.Forms;assembly=Cube.Forms"
+    xmlns:xi="clr-namespace:Cube.Xui;assembly=Cube.Xui"
     xmlns:xc="clr-namespace:Cube.Xui.Converters;assembly=Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
+    xmlns:xt="clr-namespace:Cube.Xui.Triggers;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
 
     mc:Ignorable="d"
@@ -35,10 +37,10 @@
     </Window.DataContext>
 
     <Window.InputBindings>
-        <KeyBinding Gesture="Ctrl+N" Command="{Binding NewEntry}"/>
-        <KeyBinding Gesture="Ctrl+D" Command="{Binding Remove}"/>
-        <KeyBinding Gesture="Delete" Command="{Binding Remove}"/>
-        <KeyBinding Gesture="F2" Command="{Binding Rename}"/>
+        <xi:RelayKeyBinding Gesture="Ctrl+N" CommandEx="{Binding NewEntry}"/>
+        <xi:RelayKeyBinding Gesture="Ctrl+D" CommandEx="{Binding Remove}"/>
+        <xi:RelayKeyBinding Gesture="Delete" CommandEx="{Binding Remove}"/>
+        <xi:RelayKeyBinding Gesture="F2" CommandEx="{Binding Rename}"/>
     </Window.InputBindings>
 
     <i:Interaction.Behaviors>
@@ -53,7 +55,7 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction CommandName="{Binding Setup}"/>
+            <xt:InvokeCommandAction Command="{Binding Setup}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
@@ -146,13 +148,13 @@
                 </Button.Template>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseEnter">
-                        <i:InvokeCommandAction
-                            CommandName="{Binding Hover}"
+                        <xt:InvokeCommandAction
+                            Command="{Binding Hover}"
                             CommandParameter="{Binding Data.LastEntry.Value.Link}"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeave">
-                        <i:InvokeCommandAction
-                            CommandName="{Binding Hover}"
+                        <xt:InvokeCommandAction
+                            Command="{Binding Hover}"
                             CommandParameter=""/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -170,8 +172,8 @@
                 </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction
-                            CommandName="{Binding SelectArticle}"
+                        <xt:InvokeCommandAction
+                            Command="{Binding SelectArticle}"
                             CommandParameter="{Binding SelectedItem, ElementName=RssFeeds}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>

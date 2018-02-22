@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net"
+    xmlns:xt="clr-namespace:Cube.Xui.Triggers;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
 
     <ResourceDictionary.MergedDictionaries>
@@ -11,7 +12,7 @@
 
     <DataTemplate x:Key="RssItemTemplate" DataType="{x:Type rss:RssItem}">
         <Border Style="{StaticResource ShadowStyle}">
-            <VirtualizingStackPanel
+            <StackPanel
                     ToolTip="{Binding Title}"
                     Background="White"
                     Cursor="Hand"
@@ -51,16 +52,16 @@
                     TextTrimming="WordEllipsis"
                     TextWrapping="{Binding DataContext.Data.User.Value.LightMode,
                         ElementName=Root, Converter={my:TextWrappingConverter}}"/>
-            </VirtualizingStackPanel>
+            </StackPanel>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseEnter">
-                    <i:InvokeCommandAction
-                        CommandName="{Binding DataContext.Hover, ElementName=Root}"
+                    <xt:InvokeCommandAction
+                        Command="{Binding DataContext.Hover, ElementName=Root}"
                         CommandParameter="{Binding Link}"/>
                 </i:EventTrigger>
                 <i:EventTrigger EventName="MouseLeave">
-                    <i:InvokeCommandAction
-                        CommandName="{Binding DataContext.Hover, ElementName=Root}"
+                    <xt:InvokeCommandAction
+                        Command="{Binding DataContext.Hover, ElementName=Root}"
                         CommandParameter=""/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>

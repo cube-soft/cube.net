@@ -4,6 +4,7 @@
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:s="clr-namespace:System;assembly=mscorlib"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
+    xmlns:xt="clr-namespace:Cube.Xui.Triggers;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
 
     <ResourceDictionary.MergedDictionaries>
@@ -120,8 +121,8 @@
 
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDown">
-                    <i:InvokeCommandAction
-                        CommandName="{Binding DataContext.SelectEntry, ElementName=Root}"
+                    <xt:InvokeCommandAction
+                        Command="{Binding DataContext.SelectEntry, ElementName=Root}"
                         CommandParameter="{Binding}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
@@ -187,8 +188,8 @@
 
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
-                        <i:InvokeCommandAction
-                            CommandName="{Binding DataContext.SelectEntry, ElementName=Root}"
+                        <xt:InvokeCommandAction
+                            Command="{Binding DataContext.SelectEntry, ElementName=Root}"
                             CommandParameter="{Binding}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>

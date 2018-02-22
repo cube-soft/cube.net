@@ -544,7 +544,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private RssFeed Load(Uri uri) =>
             !string.IsNullOrEmpty(Directory) ?
-            IO.Load(CacheName(uri), e => SettingsType.Json.Load<RssFeed.Json>(e).Convert()) :
+            IO.Load(CacheName(uri), e =>
+            {
+                try { return SettingsType.Json.Load<RssFeed.Json>(e).Convert(); }
+                catch { return default(RssFeed); }
+            }) :
             default(RssFeed);
 
         /* ----------------------------------------------------------------- */
