@@ -3,8 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:ei="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:wf="clr-namespace:Cube.Forms;assembly=Cube.Forms"
@@ -53,11 +53,11 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding Setup}"/>
+            <i:InvokeCommandAction CommandName="{Binding Setup}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid x:Name="Root" UseLayoutRounding="True">
+    <Grid x:Name="Root">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="230" MinWidth="50"/>
             <ColumnDefinition Width="Auto"/>
@@ -147,12 +147,12 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseEnter">
                         <i:InvokeCommandAction
-                            Command="{Binding Hover}"
+                            CommandName="{Binding Hover}"
                             CommandParameter="{Binding Data.LastEntry.Value.Link}"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeave">
                         <i:InvokeCommandAction
-                            Command="{Binding Hover}"
+                            CommandName="{Binding Hover}"
                             CommandParameter=""/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -171,7 +171,7 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction
-                            Command="{Binding SelectArticle}"
+                            CommandName="{Binding SelectArticle}"
                             CommandParameter="{Binding SelectedItem, ElementName=RssFeeds}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -195,11 +195,11 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <ei:ChangePropertyAction
-                            TargetObject="{Binding ContextMenu, ElementName=Settings}"
+                            TargetName="{Binding ContextMenu, ElementName=Settings}"
                             PropertyName="IsOpen"
                             Value="True"/>
                         <ei:ChangePropertyAction
-                            TargetObject="{Binding ContextMenu, ElementName=Settings}"
+                            TargetName="{Binding ContextMenu, ElementName=Settings}"
                             PropertyName="PlacementTarget"
                             Value="{Binding ElementName=Settings, Mode=OneWay}"/>
                     </i:EventTrigger>

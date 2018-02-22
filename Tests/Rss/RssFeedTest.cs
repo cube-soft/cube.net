@@ -59,9 +59,9 @@ namespace Cube.Net.Tests
         [TestCase("SampleNoRss.html", ExpectedResult = 0)]
         public int GetRssUris(string src)
         {
-            using (var stream = IO.OpenRead(Example(src)))
+            using (var stream = new StreamReader(IO.OpenRead(Example(src)), System.Text.Encoding.UTF8))
             {
-                return stream.GetRssUris().Count();
+                return RssParser.GetRssUris(stream.ReadToEnd()).Count();
             }
         }
 

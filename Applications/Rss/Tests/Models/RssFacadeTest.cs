@@ -108,7 +108,7 @@ namespace Cube.Net.App.Rss.Tests
                 m.Stop();
 
                 Assert.That(m.Data.User.Value.CheckUpdate, Is.True);
-                Task.Delay(150).Wait();
+                TaskEx.Delay(150).Wait();
                 m.Data.User.Value.CheckUpdate = false;
                 Assert.That(m.Data.User.Value.CheckUpdate, Is.False);
                 Assert.That(m.Data.User.Value.LastCheckUpdate.HasValue, Is.True);

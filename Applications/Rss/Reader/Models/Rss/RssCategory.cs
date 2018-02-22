@@ -303,8 +303,8 @@ namespace Cube.Net.App.Rss.Reader
                     Title  = Title,
                     Parent = src,
                 };
-                Add(dest, Categories?.Select(e => e.Convert(dest, context)));
-                Add(dest, Entries.Select(e => e.Convert(dest, context)));
+                Add(dest, Categories?.Select(e => e.Convert(dest, context) as IRssEntry));
+                Add(dest, Entries.Select(e => e.Convert(dest, context) as IRssEntry));
                 return dest;
             }
 

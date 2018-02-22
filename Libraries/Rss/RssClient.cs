@@ -145,8 +145,8 @@ namespace Cube.Net.Rss
             {
                 if (!response.IsSuccessStatusCode) return null;
                 await response.Content.LoadIntoBufferAsync();
-                var stream = await response.Content.ReadAsStreamAsync();
-                return await ParseAsync(uri, stream);
+                var content = await response.Content.ReadAsStringAsync();
+                return await ParseAsync(uri, content);
             }
         }
 
@@ -215,12 +215,11 @@ namespace Cube.Net.Rss
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task<RssFeed> ParseAsync(Uri uri, System.IO.Stream content)
+        private async Task<RssFeed> ParseAsync(Uri uri, string content)
         {
             try
             {
-                var reader = new System.IO.StreamReader(content, System.Text.Encoding.UTF8);
-                var root = XDocument.Load(reader).Root;
+                var root = XDocument.Parse(content).Root;
                 var version = root.GetRssVersion();
                 if (version != RssVersion.Unknown)
                 {
@@ -231,8 +230,7 @@ namespace Cube.Net.Rss
             }
             catch (Exception /* err */) { /* try redirect */ }
 
-            content.Seek(0, System.IO.SeekOrigin.Begin);
-            var cvt = content.GetRssUris().FirstOrDefault();
+            var cvt = RssParser.GetRssUris(content).FirstOrDefault();
             if (cvt == null) return default(RssFeed);
 
             OnRedirected(ValueChangedEventArgs.Create(uri, cvt));

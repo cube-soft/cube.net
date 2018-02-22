@@ -116,7 +116,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Setup => _setup ?? (
-            _setup = new RelayCommand(() => Task.Run(() => Model.Setup()).Forget())
+            _setup = new RelayCommand(() => TaskEx.Run(() => Model.Setup()).Forget())
         );
 
         /* ----------------------------------------------------------------- */

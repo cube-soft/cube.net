@@ -101,7 +101,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="message">メッセージ</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected void Send(DialogMessage message) => Messenger.Send(message);
+        protected void Send(Cube.Xui.DialogMessage message) => Messenger.Send(message);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -114,7 +114,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="message">メッセージ</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected void Send(string message) => Send(new DialogMessage(message));
+        protected void Send(string message) => Send(new Cube.Xui.DialogMessage(message));
 
         /* ----------------------------------------------------------------- */
         ///

@@ -767,7 +767,7 @@ namespace Cube.Net.App.Rss.Tests
             for (var i = 0; i < 100; ++i)
             {
                 if (string.IsNullOrEmpty(vm.Data.Message.Value) == empty) return true;
-                await Task.Delay(50);
+                await TaskEx.Delay(50);
             }
             return false;
         }
@@ -793,7 +793,7 @@ namespace Cube.Net.App.Rss.Tests
 
             for (var i = 0; i < 100 && vm.Busy.Value; ++i)
             {
-                await Task.Delay(50).ConfigureAwait(false);
+                await TaskEx.Delay(50).ConfigureAwait(false);
             }
             Assert.That(vm.Busy.Value, Is.False);
         }
@@ -819,7 +819,7 @@ namespace Cube.Net.App.Rss.Tests
             });
             vm.Execute.Execute(null);
 
-            try { await Task.Delay(1000, cts.Token).ConfigureAwait(false); }
+            try { await TaskEx.Delay(1000, cts.Token).ConfigureAwait(false); }
             catch (TaskCanceledException /* err */) { /* OK */ }
         }
 

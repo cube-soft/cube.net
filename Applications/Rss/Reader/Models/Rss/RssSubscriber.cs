@@ -359,7 +359,7 @@ namespace Cube.Net.App.Rss.Reader
                 })
             ));
 
-            if (_feeds.Count > 0) Task.Run(() => RssOperator.Backup(FileName, IO)).Forget();
+            if (_feeds.Count > 0) TaskEx.Run(() => RssOperator.Backup(FileName, IO)).Forget();
         }
 
         /* ----------------------------------------------------------------- */
@@ -756,7 +756,7 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Handlers
         private void WhenChildrenChanged(object s, EventArgs e) => AutoSaveCore();
-        private void WhenAutoSaved(object s, EventArgs e) => Task.Run(() => Save()).Forget();
+        private void WhenAutoSaved(object s, EventArgs e) => TaskEx.Run(() => Save()).Forget();
         #endregion
 
         #region Fields

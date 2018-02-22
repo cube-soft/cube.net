@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
 
@@ -55,12 +55,12 @@
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseEnter">
                     <i:InvokeCommandAction
-                        Command="{Binding DataContext.Hover, ElementName=Root}"
+                        CommandName="{Binding DataContext.Hover, ElementName=Root}"
                         CommandParameter="{Binding Link}"/>
                 </i:EventTrigger>
                 <i:EventTrigger EventName="MouseLeave">
                     <i:InvokeCommandAction
-                        Command="{Binding DataContext.Hover, ElementName=Root}"
+                        CommandName="{Binding DataContext.Hover, ElementName=Root}"
                         CommandParameter=""/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>

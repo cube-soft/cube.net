@@ -68,7 +68,6 @@
         <Setter Property="SelectionMode" Value="Single"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
         <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
-        <Setter Property="ScrollViewer.PanningMode" Value="VerticalOnly"/>
     </Style>
 
     <Style x:Key="RssItemStyle" TargetType="ListViewItem">

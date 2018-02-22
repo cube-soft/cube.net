@@ -104,7 +104,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public IEnumerable<IRssEntry> Load(string path,
-            IDictionary<Uri, RssFeed> filter) => IO.Load(
+            IDictionary<Uri, RssFeed> filter) => IO.LoadEx(
             path,
             e =>
             {
@@ -126,7 +126,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="path">ファイルのパス</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Save(IEnumerable<IRssEntry> src, string path) => IO.Save(
+        public void Save(IEnumerable<IRssEntry> src, string path) => IO.SaveEx(
             path,
             e =>
             {
@@ -141,6 +141,7 @@ namespace Cube.Net.App.Rss.Reader
                         CreateBody(src)
                     )
                 );
+
                 doc.Save(e);
             }
         );

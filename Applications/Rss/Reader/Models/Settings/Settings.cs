@@ -256,8 +256,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public SettingsFolder() : this(System.IO.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            AssemblyReader.Default.Company,
-            AssemblyReader.Default.Product
+            $@"{AssemblyReader.Default.Company}\{AssemblyReader.Default.Product}"
         ), new Operator()) { }
 
         /* ----------------------------------------------------------------- */

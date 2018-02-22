@@ -113,7 +113,7 @@ namespace Cube.Net.App.Rss.Tests
             using (var src = Create())
             {
                 src.Load();
-                Task.Delay(200).Wait();
+                TaskEx.Delay(200).Wait();
             }
 
             Assert.That(IO.GetFiles(Result("Backup")).Length, Is.EqualTo(31));
@@ -219,7 +219,7 @@ namespace Cube.Net.App.Rss.Tests
             for (var i = 0; i < 100; ++i)
             {
                 if (src.Count > 0) return true;
-                await Task.Delay(50);
+                await TaskEx.Delay(50);
             }
             return false;
         }
