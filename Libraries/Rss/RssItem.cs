@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Collections;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -30,7 +31,6 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [DataContract]
     public class RssItem : ObservableProperty
     {
         #region Properties
@@ -44,7 +44,6 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public string Title
         {
             get => _title;
@@ -64,7 +63,6 @@ namespace Cube.Net.Rss
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public string Summary
         {
             get => _summary;
@@ -80,27 +78,10 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public string Content
         {
             get => _content;
             set => SetProperty(ref _content, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Categories
-        ///
-        /// <summary>
-        /// 記事の属するカテゴリ一覧を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public IList<string> Categories
-        {
-            get => _categories = _categories ?? new List<string>();
-            set => SetProperty(ref _categories, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -112,7 +93,6 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public Uri Link
         {
             get => _link;
@@ -128,7 +108,6 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public DateTime? PublishTime
         {
             get => _publishTime;
@@ -144,11 +123,65 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public RssItemStatus Status
         {
             get => _status;
             set => SetProperty(ref _status, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Categories
+        ///
+        /// <summary>
+        /// 記事の属するカテゴリ一覧を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IList<string> Categories { get; } = new List<string>();
+
+        #endregion
+
+        #region Json
+
+        [DataContract]
+        internal class Json
+        {
+            [DataMember] public string Title { get; set; }
+            [DataMember] public string Summary { get; set; }
+            [DataMember] public string Content { get; set; }
+            [DataMember] public IList<string> Categories { get; set; }
+            [DataMember] public Uri Link { get; set; }
+            [DataMember] public DateTime? PublishTime { get; set; }
+            [DataMember] public RssItemStatus Status { get; set; }
+
+            public Json(RssItem src)
+            {
+                Title       = src.Title;
+                Summary     = src.Summary;
+                Content     = src.Content;
+                Link        = src.Link;
+                PublishTime = src.PublishTime;
+                Status      = src.Status;
+                Categories  = new List<string>();
+                foreach (var c in src.Categories) Categories.Add(c);
+            }
+
+            public RssItem Convert()
+            {
+                var dest = new RssItem()
+                {
+                    Title       = Title,
+                    Summary     = Summary,
+                    Content     = Content,
+                    Link        = Link,
+                    PublishTime = PublishTime,
+                    Status      = Status,
+                };
+
+                foreach(var c in Categories.GetOrDefault()) Categories.Add(c);
+                return dest;
+            }
         }
 
         #endregion
@@ -157,7 +190,6 @@ namespace Cube.Net.Rss
         private string _title = string.Empty;
         private string _summary = string.Empty;
         private string _content = string.Empty;
-        private IList<string> _categories = null;
         private Uri _link = null;
         private DateTime? _publishTime = null;
         private RssItemStatus _status = RssItemStatus.Uninitialized;

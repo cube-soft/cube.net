@@ -257,6 +257,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   RSS フィードを更新しています... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageUpdating {
+            get {
+                return ResourceManager.GetString("MessageUpdating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;
         ///&lt;html&gt;
         ///
@@ -298,7 +307,7 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         ///
         ///img {
         ///    max-width       : 100%;
-        ///    height			: auto !important;
+        ///    height          : auto !important;
         ///}
         ///
         ///a, a:visited {
@@ -310,8 +319,7 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         ///}
         ///
         ///.cuberss-title {
-        ///    margin          : 0;
-        ///    [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///    margin          :  [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string SkeletonStyle {
             get {

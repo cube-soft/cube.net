@@ -676,8 +676,6 @@ namespace Cube.Net.App.Rss.Reader
         private void AddCore(RssEntry src)
         {
             if (_feeds.ContainsKey(src.Uri)) return;
-            src.Items = src.Items.ToBindable(_context);
-
             _feeds.Add(src);
             if (src.Parent == null) _tree.Add(src);
             Reschedule(src);

@@ -15,7 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Collections;
 using Cube.Net.Rss;
+using Cube.Xui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +50,8 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="context">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(SynchronizationContext context)
+        public RssEntry(SynchronizationContext context) :
+            base(new BindableCollection<RssItem>(context))
         {
             _dispose = new OnceAction<bool>(Dispose);
             Context  = context;
@@ -75,7 +78,8 @@ namespace Cube.Net.App.Rss.Reader
             Description   = cp.Description;
             LastChecked   = cp.LastChecked;
             LastPublished = cp.LastPublished;
-            Items         = cp.Items;
+
+            foreach (var i in cp.Items.GetOrDefault()) Items.Add(i);
         }
 
         #endregion
@@ -300,7 +304,8 @@ namespace Cube.Net.App.Rss.Reader
                 SkipContent = src.SkipContent;
             }
 
-            public RssEntry Convert(RssCategory src) => new RssEntry(src.Context)
+            public RssEntry Convert(RssCategory src, SynchronizationContext context) =>
+                new RssEntry(context)
             {
                 Title       = Title,
                 Uri         = Uri,

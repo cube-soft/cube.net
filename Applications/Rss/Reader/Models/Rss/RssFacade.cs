@@ -177,6 +177,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Update(IRssEntry src)
         {
+            Data.Message.Value = Properties.Resources.MessageUpdating;
             if (src is RssCategory rc) _core.Update(rc.Children.Flatten<RssEntry>().ToArray());
             else if (src is RssEntry re) _core.Update(re);
         }
@@ -245,7 +246,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Reset()
         {
-            if (Data.Current.Value is RssEntry entry) _core.Reset(entry);
+            if (Data.Current.Value is RssEntry entry)
+            {
+                Data.Message.Value = Properties.Resources.MessageUpdating;
+                _core.Reset(entry);
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -421,7 +426,9 @@ namespace Cube.Net.App.Rss.Reader
 
             dest.Update(src);
 
-            if (Settings.Value.EnableMonitorMessage) Data.Message.Value = src.ToMessage();
+            Data.Message.Value = Settings.Value.EnableMonitorMessage ?
+                                 src.ToMessage() :
+                                 string.Empty;
         }
 
         /* ----------------------------------------------------------------- */

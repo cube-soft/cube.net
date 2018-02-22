@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFeed() { }
+        public RssFeed() : this(new List<RssItem>()) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -55,18 +56,12 @@ namespace Cube.Net.Rss
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="cp">コピー元オブジェクト</param>
+        /// <param name="items">Items 用バッファ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFeed(RssFeed cp)
+        public RssFeed(IList<RssItem> items)
         {
-            Title         = cp.Title;
-            Description   = cp.Description;
-            Link          = cp.Link;
-            Uri           = cp.Uri;
-            LastChecked   = cp.LastChecked;
-            LastPublished = cp.LastPublished;
-            Items         = cp.Items;
+            Items = items;
         }
 
         #endregion
@@ -82,7 +77,6 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public string Title
         {
             get => _title;
@@ -98,7 +92,6 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public string Description
         {
             get => _description;
@@ -114,7 +107,6 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public Uri Link
         {
             get => _link;
@@ -130,7 +122,6 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public Uri Uri
         {
             get => _uri;
@@ -146,7 +137,6 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public DateTime? LastChecked
         {
             get => _lastChecked;
@@ -162,7 +152,6 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
         public DateTime? LastPublished
         {
             get => _lastPublished;
@@ -178,12 +167,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
-        public IList<RssItem> Items
-        {
-            get => _items ?? (_items = new List<RssItem>());
-            set => SetProperty(ref _items, value);
-        }
+        public IList<RssItem> Items { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -214,15 +198,57 @@ namespace Cube.Net.Rss
 
         #endregion
 
+        #region Json
+
+        [DataContract]
+        internal class Json
+        {
+            [DataMember] public string Title { get; set; }
+            [DataMember] public string Description { get; set; }
+            [DataMember] public Uri Uri { get; set; }
+            [DataMember] public Uri Link { get; set; }
+            [DataMember] public DateTime? LastChecked { get; set; }
+            [DataMember] public DateTime? LastPublished { get; set; }
+            [DataMember] public IList<RssItem.Json> Items { get; set; }
+
+            public Json(RssFeed src)
+            {
+                Title         = src.Title;
+                Description   = src.Description;
+                Uri           = src.Uri;
+                Link          = src.Link;
+                LastChecked   = src.LastChecked;
+                LastPublished = src.LastPublished;
+                Items         = new List<RssItem.Json>();
+                foreach (var i in src.Items) Items.Add(new RssItem.Json(i));
+            }
+
+            public RssFeed Convert()
+            {
+                var dest = new RssFeed
+                {
+                    Title         = Title,
+                    Description   = Description,
+                    Uri           = Uri,
+                    Link          = Link,
+                    LastChecked   = LastChecked,
+                    LastPublished = LastPublished,
+                };
+
+                foreach (var i in Items.GetOrDefault()) dest.Items.Add(i.Convert());
+                return dest;
+            }
+        }
+
+        #endregion
+
         #region Fields
-        private string _id = string.Empty;
         private string _title = string.Empty;
         private string _description = string.Empty;
         private Uri _link = null;
         private Uri _uri = null;
         private DateTime? _lastChecked = null;
         private DateTime? _lastPublished = null;
-        private IList<RssItem> _items = null;
         private Exception _error = null;
         #endregion
     }

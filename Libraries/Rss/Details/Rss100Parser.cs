@@ -56,12 +56,11 @@ namespace Cube.Net.Rss
             if (e == null) return default(RssFeed);
 
             var items = ParseItems(root);
-            return new RssFeed
+            return new RssFeed(items)
             {
                 Title         = e.GetTitle(),
                 Description   = e.GetValue("description"),
                 Link          = e.GetUri("link"),
-                Items         = items,
                 LastChecked   = DateTime.Now,
                 LastPublished = items.FirstOrDefault()?.PublishTime,
             };

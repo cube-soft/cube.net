@@ -297,6 +297,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(count, Is.EqualTo(14));
                 Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
                 vm.Update.Execute(null);
+                vm.Data.Message.Value = string.Empty;
                 Assert.That(Wait(vm).Result, Is.True, "Timeout");
                 Assert.That(dest.Count, Is.AtLeast(count));
             }
@@ -325,6 +326,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(count, Is.EqualTo(10));
                 Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
                 vm.Update.Execute(null);
+                vm.Data.Message.Value = string.Empty;
                 Assert.That(Wait(vm).Result, Is.True, "Timeout");
                 Assert.That(dest.Count, Is.AtLeast(count));
             }
@@ -354,6 +356,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(vm.Reset.CanExecute(null), Is.True);
 
                 vm.Reset.Execute(null);
+                vm.Data.Message.Value = string.Empty;
                 Assert.That(dest.Count, Is.EqualTo(0));
                 Assert.That(Wait(vm).Result, Is.True, "Timeout");
                 Assert.That(dest.Count, Is.AtLeast(1));

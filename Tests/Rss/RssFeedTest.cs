@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Net.Rss;
-using Cube.Settings;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -150,9 +149,6 @@ namespace Cube.Net.Tests
                 var feed = RssParser.Parse(stream);
                 var item = feed.Items[0];
                 Assert.That(item.Categories.Count, Is.EqualTo(0));
-
-                item.Categories = new[] { "Foo", "Bar", "Bas" };
-                Assert.That(item.Categories.Count, Is.EqualTo(3));
             }
         }
 
@@ -174,42 +170,6 @@ namespace Cube.Net.Tests
                 Assert.That(RssParser.Parse(stream), Is.Null);
             }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LoadFeed_Uninitialized
-        ///
-        /// <summary>
-        /// 初期化されていない RssFeed を読み込んだ時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void LoadFeed_Uninitialized()
-        {
-            var src = SettingsType.Json.Load<RssFeed>(Example("SampleUninitialized.json"));
-            Assert.That(src.Title,                  Is.Empty);
-            Assert.That(src.Uri,                    Is.Null);
-            Assert.That(src.Link,                   Is.Null);
-            Assert.That(src.LastChecked.HasValue,   Is.False);
-            Assert.That(src.LastPublished.HasValue, Is.False);
-            Assert.That(src.Items.Count,            Is.EqualTo(0));
-            Assert.That(src.UnreadItems.Count(),    Is.EqualTo(0));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SaveFeed_Uninitialized
-        ///
-        /// <summary>
-        /// 初期化されていない RssFeed を保存した時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void SaveFeed_Uninitialized() => Assert.DoesNotThrow(
-            () => SettingsType.Json.Save(Result("Uninitialized.json"), new RssFeed())
-        );
 
         #endregion
 

@@ -174,8 +174,7 @@ namespace Cube.Net.App.Rss.Reader
                 return;
             }
 
-            src.Items = src.Items.Shrink(threshold).ToList();
-            foreach (var item in src.Items) dest.Items.Insert(0, item);
+            foreach (var item in src.Items.Shrink(threshold)) dest.Items.Insert(0, item);
 
             dest.Description   = src.Description;
             dest.Count         = dest.UnreadItems.Count();
@@ -201,8 +200,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static IEnumerable<RssItem> Shrink(this IEnumerable<RssItem> src, DateTime? threshold) =>
             src.Reverse()
-               .SkipWhile(e => e.PublishTime <= threshold)
-               .ToList();
+               .SkipWhile(e => e.PublishTime <= threshold);
 
         /* ----------------------------------------------------------------- */
         ///

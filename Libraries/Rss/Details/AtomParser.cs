@@ -52,11 +52,10 @@ namespace Cube.Net.Rss
         public static RssFeed Parse(XElement root)
         {
             var items = ParseItems(root);
-            return new RssFeed
+            return new RssFeed(items)
             {
                 Title         = root.GetTitle(),
                 Link          = root.GetUri("link"),
-                Items         = items,
                 LastChecked   = DateTime.Now,
                 LastPublished = items.FirstOrDefault()?.PublishTime,
             };

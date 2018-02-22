@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Collections;
 using Cube.Xui;
 using System;
 using System.Collections.Generic;
@@ -303,15 +304,14 @@ namespace Cube.Net.App.Rss.Reader
                     Parent = src,
                 };
                 Add(dest, Categories?.Select(e => e.Convert(dest, context)));
-                Add(dest, Entries.Select(e => e.Convert(dest)));
+                Add(dest, Entries.Select(e => e.Convert(dest, context)));
                 return dest;
             }
 
             private void Add(RssCategory dest, IEnumerable<IRssEntry> items)
             {
                 System.Diagnostics.Debug.Assert(dest != null);
-                if (items == null) return;
-                foreach (var item in items) dest.Children.Add(item);
+                foreach (var item in items.GetOrDefault()) dest.Children.Add(item);
             }
         }
 

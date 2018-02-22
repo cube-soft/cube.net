@@ -518,10 +518,12 @@ namespace Cube.Net.Rss
                     if (feed == null) return;
 
                     dest.Title         = feed.Title;
+                    dest.Description   = feed.Description;
                     dest.Link          = feed.Link;
                     dest.LastChecked   = feed.LastChecked;
                     dest.LastPublished = feed.LastPublished;
-                    dest.Items.Clear();
+
+                    if (dest.Items.Count > 0) dest.Items.Clear();
                     foreach (var a in feed.UnreadItems) dest.Items.Add(a);
                 }
             }
@@ -543,7 +545,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private RssFeed Load(Uri uri) =>
             !string.IsNullOrEmpty(Directory) ?
-            IO.Load(CacheName(uri), e => SettingsType.Json.Load<RssFeed>(e)) :
+            IO.Load(CacheName(uri), e => SettingsType.Json.Load<RssFeed.Json>(e).Convert()) :
             default(RssFeed);
 
         /* ----------------------------------------------------------------- */
@@ -563,7 +565,7 @@ namespace Cube.Net.Rss
             if (feed == null || !feed.LastChecked.HasValue) return;
 
             if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            IO.Save(CacheName(uri), e => SettingsType.Json.Save(e, new RssFeed(feed)));
+            IO.Save(CacheName(uri), e => SettingsType.Json.Save(e, new RssFeed.Json(feed)));
 
             feed.Items.Clear();
         }
