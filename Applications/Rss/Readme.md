@@ -3,8 +3,8 @@ CubeRSS Reader
 
 Copyright (c) 2010 CubeSoft Inc.
 
-* support@cube-soft.jp
-* http://www.cube-soft.jp/
+support@cube-soft.jp  
+http://www.cube-soft.jp/
 
 ## はじめに
 
