@@ -161,13 +161,6 @@
     <Style x:Key="RssEntryBorderStyle" TargetType="{x:Type Border}">
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Padding" Value="8,0,8,0"/>
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding Selected}" Value="True">
-                <Setter Property="Background" Value="{StaticResource HoverBackgroundBrush}"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="BorderBrush" Value="{StaticResource HoverBorderBrush}"/>
-            </DataTrigger>
-        </Style.Triggers>
     </Style>
 
     <ControlTemplate x:Key="RssEntryTemplate">

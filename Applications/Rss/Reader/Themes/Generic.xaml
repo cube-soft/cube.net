@@ -25,22 +25,22 @@
         Border colors
     -->
 
-    <SolidColorBrush x:Key="MainBorderBrush"       Color="#FFE6E6E6"/>
-    <SolidColorBrush x:Key="DarkBorderBrush"       Color="#FFA0A0A0"/>
-    <SolidColorBrush x:Key="HoverBorderBrush"      Color="#FFA2D5FF"/>
-    <SolidColorBrush x:Key="AccentBorderBrush"      Color="#FF7F40B0"/>
-    <SolidColorBrush x:Key="MenuBorderBrush"       Color="#FF7F7F7F"/>
+    <SolidColorBrush x:Key="MainBorderBrush"            Color="#FFE6E6E6"/>
+    <SolidColorBrush x:Key="DarkBorderBrush"            Color="#FFA0A0A0"/>
+    <SolidColorBrush x:Key="HoverBorderBrush"           Color="#FFA2D5FF"/>
+    <SolidColorBrush x:Key="AccentBorderBrush"          Color="#FF7F40B0"/>
+    <SolidColorBrush x:Key="MenuBorderBrush"            Color="#FF7F7F7F"/>
 
     <!--
         Text colors
     -->
 
-    <SolidColorBrush x:Key="MainTextBrush"         Color="#FF444444"/>
-    <SolidColorBrush x:Key="AccentTextBrush"       Color="#FFFFFFFF"/>
-    <SolidColorBrush x:Key="SymbolTextBrush"       Color="#FF8F8F8F"/>
-    <SolidColorBrush x:Key="StatusTextBrush"       Color="#FFD200D2"/>
-    <SolidColorBrush x:Key="GrayTextBrush"         Color="#FF999999"/>
-    <SolidColorBrush x:Key="FeedTextBrush"         Color="#FF838383"/>
+    <SolidColorBrush x:Key="MainTextBrush"              Color="#FF444444"/>
+    <SolidColorBrush x:Key="AccentTextBrush"            Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="SymbolTextBrush"            Color="#FF8F8F8F"/>
+    <SolidColorBrush x:Key="StatusTextBrush"            Color="#FFD200D2"/>
+    <SolidColorBrush x:Key="GrayTextBrush"              Color="#FF999999"/>
+    <SolidColorBrush x:Key="FeedTextBrush"              Color="#FF838383"/>
 
     <!--
         Styles for components
