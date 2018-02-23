@@ -343,10 +343,11 @@ namespace Cube.Net.App.Rss.Reader
         {
             get
             {
-                var app = $"{Product}/{Version.Number}";
-                var win = Environment.OSVersion.VersionString;
-                var net = $".NET {Environment.Version}";
-                return $"{app} ({win}; {net})";
+                var app  = $"{Product}/{Version.Number}";
+                var win  = Environment.OSVersion.VersionString;
+                var net  = $".NET {Environment.Version}";
+                var view = BrowserSettings.Version;
+                return $"{app} ({win}; {net}; {view})";
             }
         }
 
