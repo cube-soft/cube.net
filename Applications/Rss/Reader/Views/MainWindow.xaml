@@ -194,14 +194,7 @@
                 ContextMenu="{StaticResource SettingsMenu}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
-                        <ei:ChangePropertyAction
-                            TargetObject="{Binding ContextMenu, ElementName=Settings}"
-                            PropertyName="IsOpen"
-                            Value="True"/>
-                        <ei:ChangePropertyAction
-                            TargetObject="{Binding ContextMenu, ElementName=Settings}"
-                            PropertyName="PlacementTarget"
-                            Value="{Binding ElementName=Settings, Mode=OneWay}"/>
+                        <my:ContextMenuAction/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
