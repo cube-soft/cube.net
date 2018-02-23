@@ -50,7 +50,7 @@
                     Margin="12,8,12,0"/>
                 <StackPanel
                     Orientation="Horizontal"
-                    Margin="12,8,12,0">
+                    Margin="12,2,12,0">
                     <TextBlock
                         Text="{Binding Status, Converter={my:ItemStatusToString}}"
                         Foreground="{StaticResource StatusTextBrush}"
@@ -68,9 +68,9 @@
                     Foreground="{StaticResource FeedTextBrush}"
                     FontFamily="Meiryo"
                     FontSize="10"
-                    LineHeight="10"
+                    LineHeight="2"
                     MaxHeight="48"
-                    Margin="12,8,12,8"
+                    Margin="12,2,12,8"
                     TextTrimming="WordEllipsis"
                     TextWrapping="{Binding DataContext.Data.User.Value.LightMode,
                         ElementName=Root, Converter={my:TextWrappingConverter}}"/>
