@@ -18,7 +18,7 @@
     WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
-        <ResourceDictionary Source="pack://application:,,,/Themes/Components.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/Views/Components/Button.xaml"/>
     </Window.Resources>
 
     <Window.BindingGroup>

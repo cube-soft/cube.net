@@ -21,11 +21,10 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Themes/RssComponents.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/Button.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Views/Components/ContextMenu.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/ListViewItem.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/TreeViewItem.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Views/Components/UpdateButton.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/ListView.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Views/Components/TreeView.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -101,8 +100,11 @@
 
         <!-- NewEntry (Register) -->
         <Button
+            Content="&#xe906;"
             Command="{Binding NewEntry}"
-            Style="{StaticResource NewEntryButtonStyle}"
+            FontFamily="{StaticResource SymbolFont}"
+            Style="{StaticResource AccentButtonStyle}"
+            ToolTip="新しい Web サイトを登録"
             Grid.Row="1">
         </Button>
         <!-- NewEntry (Register) -->
@@ -120,7 +122,6 @@
             <Button
                 Command="{Binding Update}"
                 Style="{StaticResource UpdateButtonStyle}"
-                Template="{StaticResource UpdateButtonTemplate}"
                 Visibility="{Binding Data.LastEntry.Value, Converter={my:LastCheckedToVisibility}}">
             </Button>
 
@@ -190,8 +191,11 @@
 
             <Button
                 x:Name="Settings"
-                Style="{StaticResource SettingsButtonStyle}"
-                ContextMenu="{StaticResource SettingsMenu}">
+                Content="&#xe905;"
+                Style="{StaticResource MenuButtonStyle}"
+                ContextMenu="{StaticResource SettingsMenu}"
+                ContextMenuService.IsEnabled="False"
+                HorizontalAlignment="Right">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <my:ContextMenuAction/>
