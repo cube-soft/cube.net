@@ -42,7 +42,7 @@
                     Orientation="Vertical"
                     HorizontalAlignment="Stretch">
                 <TextBlock
-                    Text="{Binding PublishTime, StringFormat=yyyy/MM/dd hh:mm:ss}"
+                    Text="{Binding PublishTime, StringFormat=yyyy/MM/dd HH:mm:ss}"
                     Foreground="{StaticResource GrayTextBrush}"
                     FontFamily="Meiryo"
                     FontSize="8"
