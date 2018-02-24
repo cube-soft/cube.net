@@ -323,16 +323,18 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Move(IRssEntry src, IRssEntry dest, int index)
         {
-            if (src.Parent is RssCategory rc) rc.Children.Remove(src);
-            else _tree.Remove(src);
+            var same = dest != null && src.Parent == dest.Parent;
+            var si   = (src.Parent as RssCategory)?.Children ?? _tree;
+            if (same && si.IndexOf(src) < index) --index;
 
             var parent = src is RssEntry && dest is RssCategory ?
                          dest as RssCategory :
                          dest?.Parent as RssCategory;
-            var items  = parent?.Children ?? _tree;
+            var di     = parent?.Children ?? _tree;
             src.Parent = parent;
-            if (index < 0 || index >= items.Count) items.Add(src);
-            else items.Insert(index, src);
+            si.Remove(src);
+            if (index < 0 || index >= di.Count) di.Add(src);
+            else di.Insert(index, src);
         }
 
         /* ----------------------------------------------------------------- */
