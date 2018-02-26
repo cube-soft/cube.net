@@ -9,7 +9,7 @@ The repository also has some implemented applications based on the Cube.Net proj
 
 ### CubeRSS Reader
 
-[CubeRSS Reader](https://github.com/cube-soft/Cube.Net/tree/master/Applications/Rss) is a RSS/Atom feed reader that runs in stand-alone.
+[CubeRSS Reader](https://github.com/cube-soft/Cube.Net/tree/master/Applications/Rss) is a RSS/Atom feed reader that runs without receiving any assistance from servers for monitoring and crawling feeds.
 
 ![Screenshot](https://www.cube-soft.jp/cuberssreader/image/screenshot_original.png)
 
