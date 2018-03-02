@@ -1,0 +1,11 @@
+<opml version="1.1">
+  <head>
+    <title>Feeds</title>
+  </head>
+  <body>
+    <outline text="CubeSoft Blog" xmlUrl="https://blog.cube-soft.jp/?feed=rss2" type="rss"/>
+    <outline htmlUrl="https://blog.cube-soft.jp/" type="rss"/>
+    <outline text="Life like a clown" type="rss"/>
+    <outline type="rss"/>
+  </body>
+</opml>

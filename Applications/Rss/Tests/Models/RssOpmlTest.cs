@@ -37,6 +37,8 @@ namespace Cube.Net.App.Rss.Tests
     [TestFixture]
     class RssOpmlTest : FileHelper
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// LoadOpml
@@ -46,8 +48,41 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
+        [TestCase("SampleNoUri.opml",   ExpectedResult = 1)]
+        [TestCase("SampleNoLink.opml",  ExpectedResult = 3)]
+        [TestCase("SampleNoTitle.opml", ExpectedResult = 7)]
+        [TestCase("Dummy.txt",          ExpectedResult = 0)]
+        public int LoadOpml(string filename)
+        {
+            var dest = new RssOpml(new SynchronizationContext(), IO)
+                .Load(Example(filename), new Dictionary<Uri, RssFeed>())
+                .Flatten();
+
+            foreach (var item in dest)
+            {
+                if (item is RssEntry re)
+                {
+                    Assert.That(re.Uri,   Is.Not.Null);
+                    Assert.That(re.Link,  Is.Not.Null, re.Uri.ToString());
+                    Assert.That(re.Title, Is.Not.Null.And.Not.Empty, re.Uri.ToString());
+                }
+                else Assert.That((item as RssCategory).Title, Is.Not.Null.And.Not.Empty);
+            }
+
+            return dest.Count();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LoadOpml_Details
+        ///
+        /// <summary>
+        /// OPML ファイルをロードするテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
         [Test]
-        public void LoadOpml()
+        public void LoadOpml_Details()
         {
             var filter = new Dictionary<Uri, RssFeed>
             {
@@ -96,5 +131,7 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(s21.Uri,    Is.EqualTo(new Uri("https://blogs.windows.com/feed/")));
             Assert.That(s21.Link,   Is.EqualTo(new Uri("https://blogs.windows.com/")));
         }
+
+        #endregion
     }
 }

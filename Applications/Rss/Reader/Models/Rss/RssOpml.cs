@@ -108,8 +108,15 @@ namespace Cube.Net.App.Rss.Reader
             path,
             e =>
             {
-                var body = XDocument.Load(e).Root.GetElement("body");
-                return Convert(body, null, filter);
+                try {
+                    var body = XDocument.Load(e).Root.GetElement("body");
+                    return Convert(body, null, filter);
+                }
+                catch (Exception err)
+                {
+                    System.Diagnostics.Debug.WriteLine(err.ToString());
+                    return new IRssEntry[0];
+                }
             },
             new IRssEntry[0]
         );
@@ -166,7 +173,7 @@ namespace Cube.Net.App.Rss.Reader
             src.GetElements("outline")
                .Select(e => IsEntry(e) ? ToEntry(e, parent) : ToCategory(e, parent, filter))
                .Where(e => e is RssCategory rc && rc.Children.Count > 0 ||
-                           e is RssEntry re && !filter.ContainsKey(re.Uri));
+                           e is RssEntry re && re.Uri != null && !filter.ContainsKey(re.Uri));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -178,13 +185,17 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private IRssEntry ToEntry(XElement src, IRssEntry parent) => new RssEntry(Context)
+        private IRssEntry ToEntry(XElement src, IRssEntry parent)
         {
-            Parent = parent,
-            Title  = (string)src.Attribute("title"),
-            Uri    = src.Attribute("xmlUrl").Value.ToUri(),
-            Link   = src.Attribute("htmlUrl").Value.ToUri(),
-        } as IRssEntry;
+            var uri = GetUri(src, "xmlUrl", default(Uri));
+            return new RssEntry(Context)
+            {
+                Parent = parent,
+                Uri    = uri,
+                Link   = GetUri(src, "htmlUrl", uri),
+                Title  = GetTitle(src, uri),
+            } as IRssEntry;
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -201,7 +212,7 @@ namespace Cube.Net.App.Rss.Reader
             var dest = new RssCategory(Context)
             {
                 Parent = parent,
-                Title  = (string)src.Attribute("title"),
+                Title  = (string)src.Attribute("title") ?? Properties.Resources.MessageNewCategory,
             };
 
             foreach (var item in Convert(src, dest, filter)) dest.Children.Add(item);
@@ -217,7 +228,36 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static bool IsEntry(XElement src) => src.Attribute("xmlUrl") != null;
+        private bool IsEntry(XElement src) => src.Attribute("xmlUrl") != null;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetUri
+        ///
+        /// <summary>
+        /// Uri オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private Uri GetUri(XElement src, string name, Uri alternate)
+        {
+            try { return src.Attribute(name).Value.ToUri(); }
+            catch (Exception /* err */) { return alternate; }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetTitle
+        ///
+        /// <summary>
+        /// タイトルを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private string GetTitle(XElement src, Uri uri) =>
+            (string)src.Attribute("text")  ??
+            (string)src.Attribute("title") ??
+            uri?.ToString();
 
         #endregion
 
