@@ -80,9 +80,9 @@
     <Compile Include="Models\RssEntryTest.cs" />
     <Compile Include="Models\RssFacadeTest.cs" />
     <Compile Include="Models\RssOpmlTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\RssSubscriberTest.cs" />
     <Compile Include="ViewModels\ViewModelTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Packages.config" />
