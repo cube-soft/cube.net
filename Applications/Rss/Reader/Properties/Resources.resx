@@ -188,4 +188,7 @@
   <data name="MessageUpdating" xml:space="preserve">
     <value>RSS フィードを更新しています...</value>
   </data>
+  <data name="ErrorRegister" xml:space="preserve">
+    <value>RSS フィードの登録に失敗しました。</value>
+  </data>
 </root>

@@ -99,7 +99,7 @@ namespace Cube.Net.App.Rss.Reader
                         await _callback?.Invoke(Url.Value);
                         Close.Execute(null);
                     }
-                    catch (Exception err) { Send(err); }
+                    catch (Exception err) { Send(err, Properties.Resources.ErrorRegister); }
                     finally { Busy.Value = false; }
                 },
                 () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value,
