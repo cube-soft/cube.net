@@ -165,6 +165,7 @@
                 ItemContainerStyle="{StaticResource RssItemStyle}"
                 ItemTemplate="{StaticResource RssItemTemplate}"
                 Style="{StaticResource RssFeedsStyle}"
+                ScrollViewer.IsDeferredScrollingEnabled="{Binding Data.User.Value.LightMode}"
                 Grid.Row="2">
                 <i:Interaction.Behaviors>
                     <my:ScrollToTopBehavior Messenger="{Binding Messenger}"/>
