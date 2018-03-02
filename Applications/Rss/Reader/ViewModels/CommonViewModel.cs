@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Log;
 using Cube.Xui;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -108,36 +109,59 @@ namespace Cube.Net.App.Rss.Reader
         /// Send
         ///
         /// <summary>
-        /// メッセージを表示します。
+        /// エラーメッセージを表示します。
         /// </summary>
         ///
-        /// <param name="message">メッセージ</param>
+        /// <param name="err">例外オブジェクト</param>
+        /// <param name="message">例外発生時のメッセージ</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected void Send(string message) => Send(new Cube.Xui.DialogMessage(message));
+        protected void Send(Exception err, string message)
+        {
+            this.LogError(message);
+            this.LogError(err.ToString(), err);
+
+            var ss = new System.Text.StringBuilder();
+            if (!string.IsNullOrEmpty(message)) ss.AppendLine(message);
+            ss.Append($"{err.Message} ({err.GetType().Name})");
+            Send(new Cube.Xui.DialogMessage(ss.ToString())
+            {
+                Button = System.Windows.MessageBoxButton.OK,
+                Image  = System.Windows.MessageBoxImage.Error,
+                Result = true,
+            });
+        }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Send
         ///
         /// <summary>
-        /// エラーメッセージを表示します。
+        /// 例外発生時にエラーメッセージを表示します。
         /// </summary>
         ///
-        /// <param name="err">例外オブジェクト</param>
+        /// <param name="action">実行内容</param>
+        /// <param name="message">例外発生時のメッセージ</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected void Send(Exception err)
+        protected void Send(Action action, string message)
         {
-            var msg = $"{err.Message} ({err.GetType().Name})";
-            var ss  = new System.Text.StringBuilder();
-
-            ss.AppendLine(Properties.Resources.ErrorFeed);
-            ss.AppendLine();
-            ss.AppendLine(msg);
-
-            Send(ss.ToString());
+            try { action(); }
+            catch (Exception err) { Send(err, message); }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Send
+        ///
+        /// <summary>
+        /// 例外発生時にエラーメッセージを表示します。
+        /// </summary>
+        ///
+        /// <param name="action">実行内容</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected void Send(Action action) => Send(action, string.Empty);
 
         #region IDisposable
 

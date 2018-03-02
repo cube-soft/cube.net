@@ -39,6 +39,14 @@
                 "SkipContent": false,
                 "Title": "HuffPost Japan",
                 "Uri": "http://www.huffingtonpost.jp/rss/index.xml"
+            },
+            {
+                "Count": 0,
+                "Frequency": 0,
+                "Link": "http://www.tenki-yoho.com/",
+                "SkipContent": false,
+                "Title": "天気予報コム",
+                "Uri": "http://www.tenki-yoho.com/feed/rss2.xml"
             }
         ],
         "Title": "ニュース"

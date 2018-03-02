@@ -13,7 +13,6 @@
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="SelectionMode" Value="Single"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
     </Style>
 
     <Style x:Key="RssItemStyle" TargetType="ListViewItem">
@@ -43,7 +42,7 @@
                     Orientation="Vertical"
                     HorizontalAlignment="Stretch">
                 <TextBlock
-                    Text="{Binding PublishTime, StringFormat=yyyy/MM/dd hh:mm:ss}"
+                    Text="{Binding PublishTime, StringFormat=yyyy/MM/dd HH:mm:ss}"
                     Foreground="{StaticResource GrayTextBrush}"
                     FontFamily="Meiryo"
                     FontSize="8"

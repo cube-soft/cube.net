@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<opml version="1.0">
+  <head>
+      <title>Sample Subscriptions</title>
+      <dateCreated>Mon, 25 Sep 2017 00:01:51 UTC</dateCreated>
+      <ownerName>clown</ownerName>
+  </head>
+  <body>
+    <outline title="Subscriptions">
+        <outline>
+          <outline type="rss" title="CubeSoft Blog" xmlUrl="https://blog.cube-soft.jp/?feed=rss2" htmlUrl="https://blog.cube-soft.jp/"/>
+        </outline>
+        <outline title="Microsoft">
+          <outline type="rss" xmlUrl="https://blogs.microsoft.com/feed/" htmlUrl="https://blogs.microsoft.com/"/>
+          <outline type="rss" xmlUrl="https://blogs.windows.com/feed/" htmlUrl="https://blogs.windows.com/"/>
+          <outline type="rss" xmlUrl="https://blogs.msdn.microsoft.com/dotnet/feed/" htmlUrl="https://blogs.msdn.microsoft.com/dotnet/"/>
+        </outline>
+    </outline>
+  </body>
+</opml>

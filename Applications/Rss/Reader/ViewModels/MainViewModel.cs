@@ -116,7 +116,9 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Setup => _setup ?? (
-            _setup = new RelayCommand(() => TaskEx.Run(() => Model.Setup()).Forget())
+            _setup = new RelayCommand(
+                () => TaskEx.Run(() => Send(() => Model.Setup())).Forget()
+            )
         );
 
         /* ----------------------------------------------------------------- */
@@ -132,7 +134,7 @@ namespace Cube.Net.App.Rss.Reader
             _property = new BindableCommand(
                 () => Messenger.Send(new PropertyViewModel(
                     Data.Current.Value as RssEntry,
-                    e => Model.Reschedule(e)
+                    e => Send(() => Model.Reschedule(e))
                 )),
                 () => Data.Current.Value is RssEntry,
                 Data.Current
@@ -167,7 +169,7 @@ namespace Cube.Net.App.Rss.Reader
             _import = new RelayCommand(() => Messenger.Send(
                 MessageFactory.Import(e =>
                 {
-                    if (e.Result) Model.Import(e.FileName);
+                    if (e.Result) Send(() => Model.Import(e.FileName));
                 }))
             )
         );
@@ -185,7 +187,7 @@ namespace Cube.Net.App.Rss.Reader
             _export = new RelayCommand(() => Messenger.Send(
                 MessageFactory.Export(e =>
                 {
-                    if (e.Result) Model.Export(e.FileName);
+                    if (e.Result) Send(() => Model.Export(e.FileName));
                 }))
             )
         );
@@ -215,7 +217,9 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand NewCategory => _newCategory ?? (
-            _newCategory = new RelayCommand(() => Model.NewCategory())
+            _newCategory = new RelayCommand(
+                () => Send(() => Model.NewCategory())
+            )
         );
 
         /* ----------------------------------------------------------------- */
@@ -232,7 +236,7 @@ namespace Cube.Net.App.Rss.Reader
                 () => Messenger.Send(
                     MessageFactory.RemoveWarning(Data.Current.Value.Title, e =>
                     {
-                        if (e.Result) Model.Remove();
+                        if (e.Result) Send(() => Model.Remove());
                     })
                 ),
                 () => Data.Current.HasValue,
@@ -251,7 +255,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Rename => _rename ?? (
             _rename = new BindableCommand(
-                () => Model.Rename(),
+                () => Send(() => Model.Rename()),
                 () => Data.Current.HasValue,
                 Data.Current
             )
@@ -267,7 +271,9 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Read => _read ?? (
-            _read = new RelayCommand(() => Model.Read())
+            _read = new RelayCommand(
+                () => Send(() => Model.Read())
+            )
         );
 
         /* ----------------------------------------------------------------- */
@@ -280,7 +286,9 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Update => _update ?? (
-            _update = new RelayCommand(() => Model.Update(Data.Current.Value))
+            _update = new RelayCommand(
+                () => Send(() => Model.Update(Data.Current.Value))
+            )
         );
 
         /* ----------------------------------------------------------------- */
@@ -294,7 +302,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Reset => _reset ?? (
             _reset = new BindableCommand(
-                () => Model.Reset(),
+                () => Send(() => Model.Reset()),
                 () => Data.Current.Value is RssEntry,
                 Data.Current
             )
@@ -311,11 +319,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand SelectEntry => _selectEntry ?? (
             _selectEntry = new RelayCommand<object>(
-                e =>
+                e => Send(() =>
                 {
                     Model.Select(e as IRssEntry);
                     if (e is RssEntry) Messenger.Send<ScrollToTopMessage>();
-                },
+                }),
                 e => e is IRssEntry
             )
         );
@@ -331,7 +339,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand SelectArticle => _selectArticle ?? (
             _selectArticle = new RelayCommand<object>(
-                e => Model.Select(e as RssItem),
+                e => Send(() => Model.Select(e as RssItem)),
                 e => e is RssItem
             )
         );
@@ -375,7 +383,9 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Stop => _stop ?? (
-            _stop = new RelayCommand(() => Model.Stop())
+            _stop = new RelayCommand(
+                () => Send(() => Model.Stop())
+            )
         );
 
         #endregion

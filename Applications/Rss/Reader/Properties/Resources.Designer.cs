@@ -88,6 +88,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   RSS フィードの登録に失敗しました。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ErrorRegister {
+            get {
+                return ResourceManager.GetString("ErrorRegister", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   OPML ファイル (*.opml, *.xml)|*.opml;*.OPML;*.xml;*.XML|すべてのファイル (*.*)|*.* に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string FilterOpml {

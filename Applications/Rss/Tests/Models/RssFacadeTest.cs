@@ -93,6 +93,39 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Move_SameCategory
+        ///
+        /// <summary>
+        /// 同カテゴリで RSS エントリを移動するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Move_SameCategory()
+        {
+            using (var m = Create())
+            {
+                m.Stop();
+
+                var src = m.Data.Root.First(e => e.Title == "Microsoft") as RssCategory;
+                Assert.That(src.Children.Count,    Is.EqualTo(5));
+                Assert.That(src.Children[0].Title, Is.EqualTo("Windows"), "Before");
+                Assert.That(src.Children[1].Title, Is.EqualTo("Development"), "Before");
+                Assert.That(src.Children[2].Title, Is.EqualTo("Official Microsoft Blog"), "Before");
+                Assert.That(src.Children[3].Title, Is.EqualTo("Microsoft on the Issues"), "Before");
+                Assert.That(src.Children[4].Title, Is.EqualTo("Internet of Things"), "Before");
+
+                m.Move(src.Children[2], src.Children[4], 4);
+
+                var dest = src.Entries.ToList();
+                Assert.That(dest[0].Title, Is.EqualTo("Microsoft on the Issues"), "After");
+                Assert.That(dest[1].Title, Is.EqualTo("Official Microsoft Blog"), "After");
+                Assert.That(dest[2].Title, Is.EqualTo("Internet of Things"), "After");
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// CheckUpdate
         ///
         /// <summary>

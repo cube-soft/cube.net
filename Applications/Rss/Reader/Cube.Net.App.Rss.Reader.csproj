@@ -183,14 +183,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
-      <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RegisterWindow.xaml.cs">
       <DependentUpon>RegisterWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
-      <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsWindow.xaml.cs">
