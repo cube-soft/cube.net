@@ -172,6 +172,7 @@ namespace Cube.Net.App.Rss.Reader
             IRssEntry parent, IDictionary<Uri, RssFeed> filter) =>
             src.GetElements("outline")
                .Select(e => IsEntry(e) ? ToEntry(e, parent) : ToCategory(e, parent, filter))
+               .OfType<IRssEntry>()
                .Where(e => e is RssCategory rc && rc.Children.Count > 0 ||
                            e is RssEntry re && re.Uri != null && !filter.ContainsKey(re.Uri));
 
@@ -187,14 +188,16 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private IRssEntry ToEntry(XElement src, IRssEntry parent)
         {
-            var uri = GetUri(src, "xmlUrl", default(Uri));
-            return new RssEntry(Context)
-            {
-                Parent = parent,
-                Uri    = uri,
-                Link   = GetUri(src, "htmlUrl", uri),
-                Title  = GetTitle(src, uri),
-            } as IRssEntry;
+            var uri = GetUri(src, "xmlUrl", null);
+            return uri == null ?
+                   default(IRssEntry) :
+                   new RssEntry(Context)
+                   {
+                       Parent = parent,
+                       Uri    = uri,
+                       Link   = GetUri(src, "htmlUrl", uri),
+                       Title  = GetTitle(src, uri.ToString()),
+                   };
         }
 
         /* ----------------------------------------------------------------- */
@@ -212,7 +215,7 @@ namespace Cube.Net.App.Rss.Reader
             var dest = new RssCategory(Context)
             {
                 Parent = parent,
-                Title  = (string)src.Attribute("title") ?? Properties.Resources.MessageNewCategory,
+                Title  = GetTitle(src, Properties.Resources.MessageNewCategory),
             };
 
             foreach (var item in Convert(src, dest, filter)) dest.Children.Add(item);
@@ -254,10 +257,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private string GetTitle(XElement src, Uri uri) =>
+        private string GetTitle(XElement src, string alternate) =>
             (string)src.Attribute("text")  ??
-            (string)src.Attribute("title") ??
-            uri?.ToString();
+            (string)src.Attribute("title") ?? alternate;
 
         #endregion
 
