@@ -93,7 +93,7 @@ namespace Cube.Net.Rss.Parsing
             if (!string.IsNullOrEmpty(title)) return title.Trim();
 
             var uri = e.GetUri("link");
-            return uri?.ToString()?.Trim() ?? string.Empty;
+            return uri?.ToString() ?? string.Empty;
         }
 
         /* ----------------------------------------------------------------- */
@@ -171,7 +171,7 @@ namespace Cube.Net.Rss.Parsing
             try
             {
                 var value = e.GetValueOrAttribute(ns, name, "href");
-                return !string.IsNullOrEmpty(value) ? new Uri(value) : default(Uri);
+                return !string.IsNullOrEmpty(value) ? new Uri(value.Trim()) : default(Uri);
             }
             catch (Exception /* err */) { return default(Uri); }
         }

@@ -73,7 +73,7 @@ namespace Cube.Net.Rss
             var name = src.Name.LocalName.ToLower();
             if (name == "rss")
             {
-                switch ((string)src.Attribute("version"))
+                switch ((string)src.Attribute("version") ?? string.Empty)
                 {
                     case "0.91": return RssVersion.Rss091;
                     case "0.92": return RssVersion.Rss092;

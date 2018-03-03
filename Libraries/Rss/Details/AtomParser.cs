@@ -124,7 +124,6 @@ namespace Cube.Net.Rss
         {
             var dest = src.GetValue("content");
             if (string.IsNullOrEmpty(dest)) dest = src.GetValue("summary");
-            if (string.IsNullOrEmpty(dest)) dest = string.Empty;
             return dest.Trim();
         }
 
