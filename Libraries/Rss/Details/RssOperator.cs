@@ -194,7 +194,7 @@ namespace Cube.Net.Rss.Parsing
         {
             var dest = string.IsNullOrEmpty(src) ?
                        string.Empty :
-                       Regex.Replace(src, "<.*?>", string.Empty).Trim();
+                       Regex.Replace(src, @"<(""[^""]*""|'[^']*'|[^'"">])*>|\t|\n|\r", string.Empty).Trim();
             return dest.Length <= n ?
                    dest :
                    dest.Substring(0, n);
