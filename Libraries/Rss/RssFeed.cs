@@ -32,7 +32,6 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [DataContract]
     public class RssFeed : ObservableProperty
     {
         #region Constructors
