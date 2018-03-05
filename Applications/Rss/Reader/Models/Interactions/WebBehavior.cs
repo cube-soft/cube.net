@@ -15,18 +15,203 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Forms;
+using CefSharp;
+using CefSharp.WinForms;
 using Cube.Log;
 using Cube.Net.Rss;
 using Cube.Xui.Behaviors;
 using System;
+using System.Threading;
 using System.Web;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace Cube.Net.App.Rss.Reader
 {
+    /* --------------------------------------------------------------------- */
+    ///
+    /// LifSpanHandler
+    ///
+    /// <summary>
+    /// ChromiumWebBrowser のポップアップに関する挙動を制御するための
+    /// クラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    internal class LifSpanHandler : ILifeSpanHandler
+    {
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// EnableNewWindow
+        ///
+        /// <summary>
+        /// 新しいウィンドウをで開くを有効するかどうかを示す値を取得または
+        /// 設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool EnableNewWindow { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnBeforePopup
+        ///
+        /// <summary>
+        /// ポップアップ前に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool OnBeforePopup(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame,
+            string targetUrl,
+            string targetFrameName,
+            WindowOpenDisposition targetDisposition,
+            bool userGesture,
+            IPopupFeatures popupFeatures,
+            IWindowInfo windowInfo,
+            IBrowserSettings browserSettings,
+            ref bool noJavascriptAccess,
+            out IWebBrowser newBrowser
+        ) {
+            newBrowser = null;
+
+            try
+            {
+                if (EnableNewWindow) System.Diagnostics.Process.Start(targetUrl);
+                else browserControl.Load(targetUrl);
+            }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            return true;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DoClose
+        ///
+        /// <summary>
+        /// ブラウザを閉じます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool DoClose(IWebBrowser browserControl, IBrowser browser) => false;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnAfterCreated
+        ///
+        /// <summary>
+        /// ブラウザ生成後に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void OnAfterCreated(IWebBrowser browserControl, IBrowser browser) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnBeforeClose
+        ///
+        /// <summary>
+        /// ブラウザが閉じる前に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void OnBeforeClose(IWebBrowser browserControl, IBrowser browser) { }
+
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// NullMenuHandler
+    ///
+    /// <summary>
+    /// コンテキストメニューを無効化するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    internal class NullMenuHandler : IContextMenuHandler
+    {
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnBeforeContextMenu
+        ///
+        /// <summary>
+        /// Called before a context menu is displayed.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void OnBeforeContextMenu(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame,
+            IContextMenuParams parameters,
+            IMenuModel model)
+        {
+            model.Clear();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnContextMenuCommand
+        ///
+        /// <summary>
+        /// Called to execute a command selected from the context menu.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool OnContextMenuCommand(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame,
+            IContextMenuParams parameters,
+            CefMenuCommand commandId,
+            CefEventFlags eventFlags) => false;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnContextMenuDismissed
+        ///
+        /// <summary>
+        /// Called when the context menu is dismissed irregardless of
+        /// whether the menu was empty or a command was selected.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void OnContextMenuDismissed(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RunContextMenu
+        ///
+        /// <summary>
+        /// Called to allow custom display of the context menu.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool RunContextMenu(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame,
+            IContextMenuParams parameters,
+            IMenuModel model,
+            IRunContextMenuCallback callback) => false;
+
+        #endregion
+    }
+
     /* --------------------------------------------------------------------- */
     ///
     /// WebBehavior
@@ -36,7 +221,7 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class WebBehavior : WindowsFormsBehavior<WebControl>
+    public class WebBehavior : WindowsFormsBehavior<ChromiumWebBrowser>
     {
         #region Properties
 
@@ -57,25 +242,28 @@ namespace Cube.Net.App.Rss.Reader
             set
             {
                 _content = value;
-                Source.DocumentCompleted -= WhenLoading;
 
-                if (value is Uri uri)
+                Sync(() =>
                 {
-                    if (Source.IsBusy) Source.Stop();
-                    Source.DocumentCompleted += WhenLoading;
-                    Source.DocumentText = Properties.Resources.Loading;
-                }
-                else if (value is RssItem src)
-                {
-                    Source.DocumentText = string.Format(
-                        Properties.Resources.Skeleton,
-                        Properties.Resources.SkeletonStyle,
-                        src.Link,
-                        HttpUtility.HtmlEncode(src.Title),
-                        src.PublishTime,
-                        !string.IsNullOrEmpty(src.Content) ? src.Content : HttpUtility.HtmlEncode(src.Summary)
-                    );
-                }
+                    Source.LoadingStateChanged -= WhenLoading;
+
+                    if (value is Uri uri)
+                    {
+                        Source.LoadingStateChanged += WhenLoading;
+                        Source.LoadHtml(Properties.Resources.Loading);
+                    }
+                    else if (value is RssItem src)
+                    {
+                        Source.LoadHtml(string.Format(
+                            Properties.Resources.Skeleton,
+                            Properties.Resources.SkeletonStyle,
+                            src.Link,
+                            HttpUtility.HtmlEncode(src.Title),
+                            src.PublishTime,
+                            !string.IsNullOrEmpty(src.Content) ? src.Content : HttpUtility.HtmlEncode(src.Summary)
+                        ));
+                    }
+                });
             }
         }
 
@@ -115,11 +303,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public bool EnableNewWindow
         {
-            get => _enableNewWindow;
+            get => _handler.EnableNewWindow;
             set
             {
-                if (_enableNewWindow == value) return;
-                _enableNewWindow = value;
+                if (_handler.EnableNewWindow == value) return;
+                _handler.EnableNewWindow = value;
             }
         }
 
@@ -158,8 +346,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Hover
         {
-            get => GetValue(HoverProperty) as ICommand;
-            set => SetValue(HoverProperty, value);
+            get => _hover;
+            set { if (_hover != value) _hover = value; }
         }
 
         /* ----------------------------------------------------------------- */
@@ -176,7 +364,10 @@ namespace Cube.Net.App.Rss.Reader
                 nameof(Hover),
                 typeof(ICommand),
                 typeof(WebBehavior),
-                new PropertyMetadata(null)
+                new PropertyMetadata((s, e) =>
+                {
+                    if (s is WebBehavior wb) wb.Hover = (ICommand)e.NewValue;
+                })
             );
 
         #endregion
@@ -197,13 +388,13 @@ namespace Cube.Net.App.Rss.Reader
         protected override void OnAttached()
         {
             base.OnAttached();
+            _context = SynchronizationContext.Current;
             if (Source != null)
             {
-                Source.ScriptErrorsSuppressed = true;
-                Source.BeforeNewWindow   -= WhenBeforeNewWindow;
-                Source.BeforeNewWindow   += WhenBeforeNewWindow;
-                Source.DocumentCompleted -= WhenDocumentCompleted;
-                Source.DocumentCompleted += WhenDocumentCompleted;
+                Source.LifeSpanHandler = _handler;
+                Source.MenuHandler     = new NullMenuHandler();
+                Source.StatusMessage  -= WhenMouseOver;
+                Source.StatusMessage  += WhenMouseOver;
             }
         }
 
@@ -220,43 +411,10 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (Source != null)
             {
-                Source.BeforeNewWindow   -= WhenBeforeNewWindow;
-                Source.DocumentCompleted -= WhenDocumentCompleted;
+                Source.LifeSpanHandler = null;
+                Source.StatusMessage  -= WhenMouseOver;
             }
             base.OnDetaching();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenBeforeNewWindow
-        ///
-        /// <summary>
-        /// 新しいウィンドウが開く直前に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenBeforeNewWindow(object sender, NavigatingEventArgs e) =>
-            this.LogWarn(() =>
-        {
-            e.Cancel = true;
-            var uri = new Uri(e.Url);
-            if (EnableNewWindow) System.Diagnostics.Process.Start(uri.ToString());
-            else Content = uri;
-        });
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenDocumentCompleted
-        ///
-        /// <summary>
-        /// Web ドキュメントの読み込み完了時に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            Source.Document.MouseOver -= WhenMouseOver;
-            Source.Document.MouseOver += WhenMouseOver;
         }
 
         /* ----------------------------------------------------------------- */
@@ -268,10 +426,14 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenLoading(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private void WhenLoading(object sender, LoadingStateChangedEventArgs e)
         {
-            Source.DocumentCompleted -= WhenLoading;
-            if (Content is Uri uri) Source.Navigate(uri);
+            if (e.IsLoading) return;
+            Sync(() =>
+            {
+                Source.LoadingStateChanged -= WhenLoading;
+                if (Content is Uri uri) Source.Load(uri.ToString());
+            });
         }
 
         /* ----------------------------------------------------------------- */
@@ -283,24 +445,30 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenMouseOver(object sender, HtmlElementEventArgs e)
+        private void WhenMouseOver(object sender, StatusMessageEventArgs e)
         {
-            if (sender is HtmlDocument doc)
-            {
-                var node = doc.GetElementFromPoint(e.ClientMousePosition);
-                var link = node != null && node.TagName.ToLower() == "a" ?
-                           node.GetAttribute("href") :
-                           string.Empty;
-
-                if (Hover.CanExecute(link)) Hover.Execute(link);
-            }
+            if (Hover.CanExecute(e.Value)) Hover.Execute(e.Value);
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Sync
+        ///
+        /// <summary>
+        /// UI スレッドで実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Sync(Action action) => _context.Send(_ => action(), null);
+
 
         #endregion
 
         #region Fields
         private object _content;
-        private bool _enableNewWindow;
+        private LifSpanHandler _handler = new LifSpanHandler();
+        private ICommand _hover;
+        private SynchronizationContext _context;
         #endregion
     }
 }

@@ -347,7 +347,7 @@ namespace Cube.Net.App.Rss.Reader
                 var app  = $"{Product}/{Version.Number}";
                 var win  = Environment.OSVersion.VersionString;
                 var net  = $".NET {Environment.Version}";
-                var view = BrowserSettings.Version;
+                var view = "Chrome";
                 return $"{app} ({win}; {net}; {view})";
             }
         }

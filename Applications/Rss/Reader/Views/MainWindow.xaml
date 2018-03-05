@@ -10,6 +10,7 @@
     xmlns:xc="clr-namespace:Cube.Xui.Converters;assembly=Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
+    xmlns:cef="clr-namespace:CefSharp.WinForms;assembly=CefSharp.WinForms"
 
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
@@ -204,7 +205,7 @@
             </Button>
 
             <WindowsFormsHost Grid.Row="1">
-                <wf:WebControl/>
+                <cef:ChromiumWebBrowser/>
                 <i:Interaction.Behaviors>
                     <my:WebBehavior
                         Content="{Binding Data.Content.Value, Mode=OneWay}"
