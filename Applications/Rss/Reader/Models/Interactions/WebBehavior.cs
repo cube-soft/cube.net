@@ -116,11 +116,7 @@ namespace Cube.Net.App.Rss.Reader
         public bool EnableNewWindow
         {
             get => _enableNewWindow;
-            set
-            {
-                if (_enableNewWindow == value) return;
-                _enableNewWindow = value;
-            }
+            set { if (_enableNewWindow != value) _enableNewWindow = value; }
         }
 
         /* ----------------------------------------------------------------- */
@@ -158,8 +154,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Hover
         {
-            get => GetValue(HoverProperty) as ICommand;
-            set => SetValue(HoverProperty, value);
+            get => _hover;
+            set { if (_hover != value) _hover = value; }
         }
 
         /* ----------------------------------------------------------------- */
@@ -176,7 +172,10 @@ namespace Cube.Net.App.Rss.Reader
                 nameof(Hover),
                 typeof(ICommand),
                 typeof(WebBehavior),
-                new PropertyMetadata(null)
+                new PropertyMetadata((s, e) =>
+                {
+                    if (s is WebBehavior wb) wb.Hover = (ICommand)e.NewValue;
+                })
             );
 
         #endregion
@@ -301,6 +300,7 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private object _content;
         private bool _enableNewWindow;
+        private ICommand _hover;
         #endregion
     }
 }
