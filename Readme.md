@@ -1,7 +1,7 @@
 Cube.Net
 ====
 
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/oj2tyitj114fpt5h?svg=true)](https://ci.appveyor.com/project/clown/cube-net)
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/qa68l54c48c6jrly?svg=true)](https://ci.appveyor.com/project/clown/cube-net-ftg7w)
 [![Codecov](https://codecov.io/gh/cube-soft/Cube.Net/branch/master/graph/badge.svg)](https://codecov.io/gh/cube-soft/Cube.Net)
 
 Cube.Net is a network library for CubeSoft applications.
@@ -26,6 +26,7 @@ Note that implemented applications based on the Cube.Net project have some more 
 * [log4net](https://logging.apache.org/log4net/)
 * [SgmlReader](https://github.com/MindTouch/SGMLReader)
 * [NUnit](http://nunit.org/)
+* [CefSharp](https://github.com/cefsharp/CefSharp)
 
 ## License
 
