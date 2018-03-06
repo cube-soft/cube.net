@@ -40,10 +40,10 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TestCase(BrowserVersion.IE7,          ExpectedResult = BrowserVersion.IE7)]
-        [TestCase(BrowserVersion.IE8Quirks,    ExpectedResult = BrowserVersion.IE8Quirks)]
-        [TestCase(BrowserVersion.IE8Standards, ExpectedResult = BrowserVersion.IE8Standards)]
-        [TestCase(BrowserVersion.Latest,       ExpectedResult = BrowserVersion.Edge)]
+        [TestCase(BrowserVersion.IE7,       ExpectedResult = BrowserVersion.IE7)]
+        [TestCase(BrowserVersion.IE8Quirks, ExpectedResult = BrowserVersion.IE8Quirks)]
+        [TestCase(BrowserVersion.IE8,       ExpectedResult = BrowserVersion.IE8)]
+        [TestCase(BrowserVersion.Latest,    ExpectedResult = BrowserVersion.IE11)]
         public BrowserVersion Version(BrowserVersion src)
         {
             BrowserSettings.Version = src;

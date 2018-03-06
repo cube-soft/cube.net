@@ -36,19 +36,19 @@ namespace Cube.Net
         /// <summary>IE8 互換モード</summary>
         IE8Quirks = 8000,
         /// <summary>IE8</summary>
-        IE8Standards = 8888,
+        IE8 = 8888,
         /// <summary>IE9 互換モード</summary>
         IE9Quirks = 9000,
         /// <summary>IE9</summary>
-        IE9Standards = 9999,
+        IE9 = 9999,
         /// <summary>IE10 互換モード</summary>
         IE10Quirks = 10000,
         /// <summary>IE10</summary>
-        IE10Standards = 10001,
+        IE10 = 10001,
         /// <summary>IE11 互換モード</summary>
         IE11Quirks = 11000,
-        /// <summary>Edge モード</summary>
-        Edge = 11001,
+        /// <summary>IE11 モード</summary>
+        IE11 = 11001,
         /// <summary>適用可能な最新バージョン</summary>
         Latest = -1,
     }
@@ -353,10 +353,10 @@ namespace Cube.Net
                 switch (int.Parse(value.Substring(0, value.IndexOf('.'))))
                 {
                     case 7:  return BrowserVersion.IE7;
-                    case 8:  return BrowserVersion.IE8Standards;
-                    case 9:  return BrowserVersion.IE9Standards;
-                    case 10: return BrowserVersion.IE10Standards;
-                    case 11: return BrowserVersion.Edge;
+                    case 8:  return BrowserVersion.IE8;
+                    case 9:  return BrowserVersion.IE9;
+                    case 10: return BrowserVersion.IE10;
+                    case 11: return BrowserVersion.IE11;
                     default: return BrowserVersion.IE7;
                 }
             }
