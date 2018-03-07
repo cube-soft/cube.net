@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Net.App.Rss.Reader;
+using Cube.Net.Tests;
 using NUnit.Framework;
 using System;
 using System.Linq;

@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Net.App.Rss.Reader;
 using Cube.Net.Rss;
+using Cube.Net.Tests;
 using Cube.Xui;
 using NUnit.Framework;
 using System;
@@ -767,7 +768,7 @@ namespace Cube.Net.App.Rss.Tests
             for (var i = 0; i < 100; ++i)
             {
                 if (string.IsNullOrEmpty(vm.Data.Message.Value) == empty) return true;
-                await Task.Delay(50);
+                await Task.Delay(50).ConfigureAwait(false);
             }
             return false;
         }

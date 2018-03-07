@@ -15,43 +15,40 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using NUnit.Framework;
-using System.Net.NetworkInformation;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkHelper
+    /// TaskOperator
     ///
     /// <summary>
-    /// ネットワークのテストに関連する処理を定義するクラスです。
+    /// Task の拡張用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class NetworkHelper
+    public static class TaskOperator
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
-        /// SetUp
+        /// Wait
         ///
         /// <summary>
-        /// 各テストの直前に実行されます。
+        /// 一定時間待機します。
         /// </summary>
         ///
-        /// <remarks>
-        /// ネットワークの利用可能状況を取得し、利用不可能な場合は
-        /// Ignore を実行します。
-        /// </remarks>
-        ///
         /* ----------------------------------------------------------------- */
-        [SetUp]
-        public virtual void SetUp()
+        public static async Task<bool> Wait(this CancellationTokenSource src)
         {
-            if (!NetworkInterface.GetIsNetworkAvailable())
-            {
-                Assert.Ignore("Network is not available");
-            }
+            try { await Task.Delay(10000, src.Token).ConfigureAwait(false); }
+            catch (TaskCanceledException /* err */) { return true; /* OK */ }
+            return false; /* Timeout */
         }
+
+        #endregion
     }
 }
