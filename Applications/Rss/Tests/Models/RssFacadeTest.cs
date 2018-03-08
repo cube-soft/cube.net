@@ -16,10 +16,10 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Net.App.Rss.Reader;
-using Cube.Net.Tests;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Cube.Net.App.Rss.Tests
@@ -50,11 +50,11 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Setup_Empty()
         {
-            IO.Delete(Result("Feeds.json"));
-
-            using (var m = Create())
+            using (var m = new RssFacade(new SettingsFolder(Results, IO)))
             {
+                m.Setup();
                 m.Stop();
+
                 Assert.That(m.Data.Root.Count(),       Is.EqualTo(0));
                 Assert.That(m.Data.Current.HasValue,   Is.False, nameof(m.Data.Current));
                 Assert.That(m.Data.LastEntry.HasValue, Is.False, nameof(m.Data.LastEntry));
@@ -177,40 +177,18 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Setup
-        ///
-        /// <summary>
-        /// テスト直前に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [SetUp]
-        public void Setup()
-        {
-            IO.Copy(Example("Sample.json"), Result("Feeds.json"), true);
-            IO.Delete(Result("Settings.json"));
-
-            var cache = "Cache";
-            foreach (var file in IO.GetFiles(Example(cache)))
-            {
-                var info = IO.Get(file);
-                IO.Copy(file, Result($@"{cache}\{info.Name}"), true);
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Create
         ///
         /// <summary>
-        /// ViewModel オブジェクトを生成します。
+        /// RssFacade オブジェクトを生成します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFacade Create()
+        private RssFacade Create([CallerMemberName] string name = null)
         {
-            var settings = new SettingsFolder(Results, IO);
-            var dest = new RssFacade(settings);
+            var root     = Copy(name);
+            var settings = new SettingsFolder(root, IO);
+            var dest     = new RssFacade(settings);
 
             settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
 

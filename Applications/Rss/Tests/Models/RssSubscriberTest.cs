@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Net.App.Rss.Reader;
-using Cube.Net.Tests;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -102,25 +101,26 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Backup_Delete()
         {
+            var dir  = Result($@"{nameof(Backup_Delete)}\Backup");
+            var open = IO.Combine(dir, "20010101.json");
+
             for (var d = new DateTime(2001, 1, 1); d.Month < 2; d = d.AddDays(1))
             {
-                var backup = Result($@"Backup\{d.ToString("yyyyMMdd")}.json");
+                var backup = IO.Combine(dir, $"{d.ToString("yyyyMMdd")}.json");
                 IO.Copy(Example("Sample.json"), backup, true);
             }
 
-            var failed = Result(@"Backup\20010101.json");
-
-            using (var _ = IO.OpenRead(failed))
+            using (var _ = IO.OpenRead(open))
             using (var src = Create())
             {
                 src.Load();
                 Task.Delay(200).Wait();
             }
 
-            Assert.That(IO.GetFiles(Result("Backup")).Length, Is.EqualTo(31));
-            Assert.That(IO.Exists(failed), Is.True); // delete failed
-            Assert.That(IO.Exists(Result(@"Backup\20010102.json")), Is.False);
-            Assert.That(IO.Exists(Result(@"Backup\20010103.json")), Is.True);
+            Assert.That(IO.GetFiles(dir).Length, Is.EqualTo(31));
+            Assert.That(IO.Exists(open), Is.True); // delete failed
+            Assert.That(IO.Exists(IO.Combine(dir, "20010102.json")), Is.False);
+            Assert.That(IO.Exists(IO.Combine(dir, "20010103.json")), Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -199,10 +199,10 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssSubscriber Create([CallerMemberName] string filename = null)
+        private RssSubscriber Create([CallerMemberName] string name = null)
         {
-            var dest = Result(filename + ".json");
-            IO.Copy(Example("Sample.json"), dest, true);
+            var root = Copy(name);
+            var dest = IO.Combine(root, "Feeds.json");
             return new RssSubscriber { FileName = dest };
         }
 

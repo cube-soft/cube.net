@@ -17,11 +17,11 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Net.App.Rss.Reader;
 using Cube.Net.Rss;
-using Cube.Net.Tests;
 using Cube.Xui;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -161,16 +161,17 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Stop.Execute(null);
                 vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
 
-                var e0 = vm.Data.Current.Value;
-                var c0 = Result(@"Cache\7ae34cce28b4272e1170fb1e4c2c87ad");
+                var dir = Result($@"{nameof(VM_Remove)}\Cache");
+                var e0  = vm.Data.Current.Value;
+                var c0  = IO.Combine(dir, "7ae34cce28b4272e1170fb1e4c2c87ad");
                 Assert.That(IO.Exists(c0), Is.True);
                 Assert.That(e0.Title,      Is.EqualTo("The GitHub Blog"));
                 vm.Remove.Execute(null);
                 Assert.That(IO.Exists(c0), Is.False);
 
                 var src = vm.Data.Root.OfType<RssCategory>().First();
-                var e1 = src.Entries.First();
-                var c1 = Result(@"Cache\872e24035276c7104afd116c2052172b");
+                var e1  = src.Entries.First();
+                var c1  = IO.Combine(dir, "872e24035276c7104afd116c2052172b");
                 vm.SelectEntry.Execute(e1);
 
                 Assert.That(e1.Title,          Is.EqualTo("CubeSoft Blog"));
@@ -709,29 +710,6 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Setup
-        ///
-        /// <summary>
-        /// テスト直前に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [SetUp]
-        public void Setup()
-        {
-            IO.Copy(Example("Sample.json"), Result("Feeds.json"), true);
-            IO.Copy(Example("Settings.json"), Result("Settings.json"), true);
-
-            var cache = "Cache";
-            foreach (var file in IO.GetFiles(Example(cache)))
-            {
-                var info = IO.Get(file);
-                IO.Copy(file, Result($@"{cache}\{info.Name}"), true);
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Create
         ///
         /// <summary>
@@ -739,10 +717,11 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private MainViewModel Create()
+        private MainViewModel Create([CallerMemberName] string name = null)
         {
-            var settings = new SettingsFolder(Results, IO);
-            var dest = new MainViewModel(settings);
+            var root     = Copy(name);
+            var settings = new SettingsFolder(root, IO);
+            var dest     = new MainViewModel(settings);
 
             settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
             settings.Value.Width        = 1024;
