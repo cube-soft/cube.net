@@ -55,10 +55,14 @@ namespace Cube.Net.App.Rss.Reader
             LogOperator.ObserveTaskException();
             LogOperator.Info(GetType(), Assembly.GetExecutingAssembly());
 
-            System.Net.ServicePointManager.DefaultConnectionLimit = 10;
-            BrowserSettings.Version = BrowserVersion.Latest;
-            BrowserSettings.MaxConnections = 10;
-            BrowserSettings.NavigationSounds = false;
+            this.LogWarn(() =>
+            {
+                System.Net.ServicePointManager.DefaultConnectionLimit = 10;
+                BrowserSettings.Version = BrowserVersion.Latest;
+                BrowserSettings.MaxConnections = 10;
+                BrowserSettings.NavigationSounds = false;
+
+            });
 
             base.OnStartup(e);
         }

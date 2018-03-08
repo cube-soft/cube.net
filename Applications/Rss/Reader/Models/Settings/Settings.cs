@@ -340,17 +340,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string UserAgent
-        {
-            get
-            {
-                var app  = $"{Product}/{Version.Number}";
-                var win  = Environment.OSVersion.VersionString;
-                var net  = $".NET {Environment.Version}";
-                var view = BrowserSettings.Version;
-                return $"{app} ({win}; {net}; {view})";
-            }
-        }
+        public string UserAgent => _userAgent ?? (
+            _userAgent = GetUserAgent()
+        );
 
         #endregion
 
@@ -382,6 +374,28 @@ namespace Cube.Net.App.Rss.Reader
             base.OnLoaded(e);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetUserAgent
+        ///
+        /// <summary>
+        /// User-Agent を表す文字列を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private string GetUserAgent()
+        {
+            var app  = $"{Product}/{Version.Number}";
+            var win  = Environment.OSVersion.VersionString;
+            var net  = $".NET {Environment.Version}";
+            var view = BrowserSettings.Version;
+            return $"{app} ({win}; {net}; {view})";
+        }
+
+        #endregion
+
+        #region Fields
+        private string _userAgent = null;
         #endregion
     }
 }
