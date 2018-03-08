@@ -29,7 +29,7 @@ namespace Cube.Net.Tests
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    class FileHelper : NetworkHelper
+    public class FileHelper : NetworkHelper
     {
         #region Constructors
 

@@ -86,7 +86,7 @@ namespace Cube.Net.Tests
                         if (++count >= 2) cts.Cancel();
                     });
                     mon.Start();
-                    Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                    Assert.That(cts.Wait().Result, Is.True, "Timeout");
                     mon.Stop();
                 }
 
@@ -133,7 +133,7 @@ namespace Cube.Net.Tests
                 mon.Register(src);
                 mon.Subscribe(e => { dest = e; cts.Cancel(); });
                 mon.Start();
-                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                Assert.That(cts.Wait().Result, Is.True, "Timeout");
                 mon.Stop();
             }
 
@@ -173,7 +173,7 @@ namespace Cube.Net.Tests
                 mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
                 mon.Update(src[1]);
                 mon.Update(src[0]);
-                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                Assert.That(cts.Wait().Result, Is.True, "Timeout");
             }
 
             Assert.That(dest.ContainsKey(src[0]), Is.True);
@@ -201,7 +201,7 @@ namespace Cube.Net.Tests
                 mon.Register(src);
                 mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
                 mon.Update(src);
-                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                Assert.That(cts.Wait().Result, Is.True, "Timeout");
             }
 
             Assert.That(dest.ContainsKey(src), Is.True);

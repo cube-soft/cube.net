@@ -111,7 +111,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Details\FileHelper.cs" />
     <Compile Include="Interactions\DuplexConverterTest.cs" />
     <Compile Include="Interactions\SimplexConverterTest.cs" />
     <Compile Include="Models\RssEntryTest.cs" />
@@ -158,6 +157,10 @@
     <ProjectReference Include="..\..\..\Libraries\Cube.Net.csproj">
       <Project>{06edf5d3-6a49-445b-a605-b9a9ee2250e2}</Project>
       <Name>Cube.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Tests\Cube.Net.Tests.csproj">
+      <Project>{03db8859-93f8-4335-bba1-0c04981a970a}</Project>
+      <Name>Cube.Net.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\Reader\Cube.Net.App.Rss.Reader.csproj">
       <Project>{c7742724-1786-4fdb-86c1-10090245d25e}</Project>

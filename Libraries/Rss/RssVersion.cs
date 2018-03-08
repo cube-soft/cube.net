@@ -70,20 +70,22 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public static RssVersion GetRssVersion(this XElement src)
         {
-            var rss = src.Attribute("version");
-            if (rss != null)
+            var name = src.Name.LocalName.ToLower();
+            if (name == "rss")
             {
-                switch (rss.Value)
+                switch ((string)src.Attribute("version") ?? string.Empty)
                 {
                     case "0.91": return RssVersion.Rss091;
                     case "0.92": return RssVersion.Rss092;
-                    case "2.0" : return RssVersion.Rss20;
+                    case "2.0":  return RssVersion.Rss20;
                 }
             }
-
-            var ns = src.GetDefaultNamespace();
-            if (ns.NamespaceName.ToLower().Contains("atom")) return RssVersion.Atom;
-            if (ns.NamespaceName.ToLower().Contains("purl.org")) return RssVersion.Rss10;
+            else
+            {
+                var ns = src.GetDefaultNamespace().NamespaceName.ToLower();
+                if (name == "feed" && ns.Contains("atom")) return RssVersion.Atom;
+                if (name == "rdf"  && ns.Contains("rss"))  return RssVersion.Rss10;
+            }
             return RssVersion.Unknown;
         }
     }

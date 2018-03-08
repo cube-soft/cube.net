@@ -171,6 +171,25 @@ namespace Cube.Net.Tests
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Strip_Summary
+        ///
+        /// <summary>
+        /// Summary の解析結果を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Strip_Summary()
+        {
+            using (var stream = File.OpenRead(Example("SampleRss20-03.xml")))
+            {
+                var dest = RssParser.Parse(stream);
+                Assert.That(dest.Items[0].Summary, Is.EqualTo("この画像はテスト画像です。"));
+            }
+        }
+
         #endregion
 
         #region TestCases

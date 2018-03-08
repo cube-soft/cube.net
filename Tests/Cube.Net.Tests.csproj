@@ -62,6 +62,7 @@
     <Compile Include="Details\GlobalSetup.cs" />
     <Compile Include="Details\NetworkHelper.cs" />
     <Compile Include="Details\Person.cs" />
+    <Compile Include="Details\TaskOperator.cs" />
     <Compile Include="Http\HttpClientTest.cs" />
     <Compile Include="Http\HttpHandlerTest.cs" />
     <Compile Include="Http\HttpMonitorTest.cs" />
@@ -73,9 +74,9 @@
     <Compile Include="Rss\RssClientTest.cs" />
     <Compile Include="Rss\RssMonitorTest.cs" />
     <Compile Include="Rss\RssFeedTest.cs" />
+    <Compile Include="Rss\RssVersionTest.cs" />
     <Compile Include="BrowserSettingsTest.cs" />
     <Compile Include="NetworkTest.cs" />
-    <Compile Include="Rss\RssVersionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +113,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Examples\SampleRss20-02.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Examples\SampleRss20-03.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Examples\SampleUninitialized.json">
