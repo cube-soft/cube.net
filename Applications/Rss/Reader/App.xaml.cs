@@ -72,6 +72,7 @@ namespace Cube.Net.App.Rss.Reader
         protected override void OnExit(ExitEventArgs e)
         {
             if (_mutex != null) _mutex.ReleaseMutex();
+            CefSharp.Cef.Shutdown();
             base.OnExit(e);
         }
 
