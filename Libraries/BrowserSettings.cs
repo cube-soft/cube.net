@@ -15,8 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Log;
-using System;
 
 namespace Cube.Net
 {
@@ -142,7 +140,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static BrowserVersion GetEmulateVersion() => Log(() =>
+        private static BrowserVersion GetEmulateVersion()
         {
             using (var root = OpenFeatureControl())
             using (var subkey = root.OpenSubKey(_RegEmulation, false))
@@ -154,7 +152,7 @@ namespace Cube.Net
                 var version = subkey.GetValue(filename);
                 return version != null ? (BrowserVersion)version : BrowserVersion.IE7;
             }
-        }, BrowserVersion.IE7);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -165,7 +163,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static void SetEmulateVersion(BrowserVersion version) => Log(() =>
+        private static void SetEmulateVersion(BrowserVersion version)
         {
             using (var root = OpenFeatureControl(true))
             using (var subkey = root.CreateSubKey(_RegEmulation))
@@ -175,7 +173,7 @@ namespace Cube.Net
                 var value = (version == BrowserVersion.Latest) ? GetLatestVersion() : version;
                 subkey.SetValue(filename, (int)value);
             }
-        });
+        }
 
         #endregion
 
@@ -190,7 +188,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static bool GetGpuRendering() => Log(() =>
+        private static bool GetGpuRendering()
         {
             using (var root = OpenFeatureControl())
             using (var subkey = root.OpenSubKey(_RegRendering, false))
@@ -203,7 +201,7 @@ namespace Cube.Net
                 if (value == null) return false;
                 return (int)value == 1;
             }
-        }, false);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -214,7 +212,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static void SetGpuRendering(bool enabled) => Log(() =>
+        private static void SetGpuRendering(bool enabled)
         {
             using (var root = OpenFeatureControl(true))
             using (var subkey = root.CreateSubKey(_RegRendering))
@@ -224,7 +222,7 @@ namespace Cube.Net
                 var value = enabled ? 1 : 0;
                 subkey.SetValue(filename, value);
             }
-        });
+        }
 
         #endregion
 
@@ -239,7 +237,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static int GetMaxConnections() => Log(() =>
+        private static int GetMaxConnections()
         {
             const int default_max_connection = 6;
             using (var root = OpenFeatureControl())
@@ -253,7 +251,7 @@ namespace Cube.Net
                 if (value == null) return default_max_connection;
                 return (int)value;
             }
-        }, 6 /* default_max_connection */);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -264,7 +262,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static void SetMaxConnections(int number) => Log(() =>
+        private static void SetMaxConnections(int number)
         {
             if (number < 2 || number > 128) return;
 
@@ -277,7 +275,7 @@ namespace Cube.Net
                 subkey.SetValue(filename, number);
                 subkey10.SetValue(filename, number);
             }
-        });
+        }
 
         #endregion
 
@@ -342,7 +340,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static BrowserVersion GetLatestVersion() => Log(() =>
+        private static BrowserVersion GetLatestVersion()
         {
             using (var subkey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(_RegRoot))
             {
@@ -360,40 +358,6 @@ namespace Cube.Net
                     default: return BrowserVersion.IE7;
                 }
             }
-        }, BrowserVersion.IE7);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Log
-        ///
-        /// <summary>
-        /// 例外情報をログに出力します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static T Log<T>(Func<T> func, T alternate)
-        {
-            try { return func(); }
-            catch (Exception e)
-            {
-                LogOperator.Warn(typeof(BrowserSettings), e.ToString(), e);
-                return alternate;
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Log
-        ///
-        /// <summary>
-        /// 例外情報をログに出力します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static void Log(Action action)
-        {
-            try { action(); }
-            catch (Exception e) { LogOperator.Warn(typeof(BrowserSettings), e.ToString(), e); }
         }
 
         #endregion
