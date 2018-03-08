@@ -186,13 +186,13 @@ namespace Cube.Net.Tests.Http
                 var count = 0;
                 var cts   = new CancellationTokenSource();
 
-                mon.Interval = TimeSpan.FromMilliseconds(50);
+                mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Uri = new Uri("http://www.example.com/");
                 mon.Subscribe((_, __) => { count++; cts.Cancel(); });
 
                 mon.Start(mon.Interval);
                 power.Mode = PowerModes.Suspend;
-                Task.Delay(100).Wait();
+                Task.Delay(200).Wait();
                 Assert.That(count, Is.EqualTo(0));
 
                 power.Mode = PowerModes.Resume;
