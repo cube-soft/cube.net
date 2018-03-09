@@ -1,7 +1,8 @@
 Cube.Net
 ====
 
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/qa68l54c48c6jrly?svg=true)](https://ci.appveyor.com/project/clown/cube-net-ftg7w)
+[![AppVeyor](https://img.shields.io/appveyor/ci/clown/cube-net/master.svg?label=master)](https://ci.appveyor.com/project/clown/cube-net)
+[![AppVeyor](https://img.shields.io/appveyor/ci/clown/cube-net-ftg7w/chrome.svg?label=chrome)](https://ci.appveyor.com/project/clown/cube-net-ftg7w)
 [![Codecov](https://codecov.io/gh/cube-soft/Cube.Net/branch/master/graph/badge.svg)](https://codecov.io/gh/cube-soft/Cube.Net)
 
 Cube.Net is a network library for CubeSoft applications.
@@ -26,11 +27,11 @@ Note that implemented applications based on the Cube.Net project have some more 
 * [log4net](https://logging.apache.org/log4net/)
 * [SgmlReader](https://github.com/MindTouch/SGMLReader)
 * [NUnit](http://nunit.org/)
-* [CefSharp](https://github.com/cefsharp/CefSharp)
+* [CefSharp](https://github.com/cefsharp/CefSharp) ... Used in the [chrome](https://github.com/cube-soft/Cube.Net/tree/chrome) branch.
 
 ## License
 
-Copyright (c) 2010 [CubeSoft, Inc.](http://www.cube-soft.jp/)
+Copyright (c) 2010 [CubeSoft, Inc.](https://www.cube-soft.jp/)
 
 The project is licensed under the [Apache 2.0](https://github.com/cube-soft/Cube.Net/blob/master/License.txt).
 Note that trade names, trademarks, service marks, or logo images distributed in CubeSoft applications are not allowed to reuse or modify all or parts of them.
