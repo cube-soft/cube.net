@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Forms.Processes;
 using Cube.Log;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -55,14 +56,14 @@ namespace Cube.Net.App.Rss.Reader
             LogOperator.ObserveTaskException();
             LogOperator.Info(GetType(), Assembly.GetExecutingAssembly());
 
-            this.LogWarn(() =>
+            try
             {
                 System.Net.ServicePointManager.DefaultConnectionLimit = 10;
                 BrowserSettings.Version = BrowserVersion.Latest;
                 BrowserSettings.MaxConnections = 10;
                 BrowserSettings.NavigationSounds = false;
-
-            });
+            }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
 
             base.OnStartup(e);
         }

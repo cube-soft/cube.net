@@ -47,8 +47,8 @@ namespace Cube.Net.App.Rss.Tests
         {
             var dest = Result(name);
 
-            IO.Copy(Example("Sample.json"), IO.Combine(dest, "Feeds.json"), true);
-            IO.Delete(IO.Combine(dest, "Settings.json"));
+            IO.Copy(Example("Sample.json"),   IO.Combine(dest, "Feeds.json"),    true);
+            IO.Copy(Example("Settings.json"), IO.Combine(dest, "Settings.json"), true);
 
             var cache = "Cache";
             foreach (var file in IO.GetFiles(Example(cache)))

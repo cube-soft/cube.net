@@ -697,6 +697,7 @@ namespace Cube.Net.App.Rss.Tests
 
                 var dest = vm.Data.User.Value;
                 Assert.That(dest.CheckUpdate,          Is.False);
+                Assert.That(dest.EnableNewWindow,      Is.False);
                 Assert.That(dest.EnableMonitorMessage, Is.False);
                 Assert.That(dest.LightMode,            Is.True);
                 Assert.That(dest.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
@@ -844,6 +845,7 @@ namespace Cube.Net.App.Rss.Tests
 
             var src = vm.Data.Value;
             src.CheckUpdate          = false;
+            src.EnableNewWindow      = false;
             src.EnableMonitorMessage = false;
             src.LightMode            = true;
             src.HighInterval         = TimeSpan.FromHours(2);
