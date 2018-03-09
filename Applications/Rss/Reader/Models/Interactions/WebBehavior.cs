@@ -30,190 +30,6 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// LifSpanHandler
-    ///
-    /// <summary>
-    /// ChromiumWebBrowser のポップアップに関する挙動を制御するための
-    /// クラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    internal class LifSpanHandler : ILifeSpanHandler
-    {
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// EnableNewWindow
-        ///
-        /// <summary>
-        /// 新しいウィンドウをで開くを有効するかどうかを示す値を取得または
-        /// 設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool EnableNewWindow { get; set; }
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnBeforePopup
-        ///
-        /// <summary>
-        /// ポップアップ前に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool OnBeforePopup(
-            IWebBrowser browserControl,
-            IBrowser browser,
-            IFrame frame,
-            string targetUrl,
-            string targetFrameName,
-            WindowOpenDisposition targetDisposition,
-            bool userGesture,
-            IPopupFeatures popupFeatures,
-            IWindowInfo windowInfo,
-            IBrowserSettings browserSettings,
-            ref bool noJavascriptAccess,
-            out IWebBrowser newBrowser
-        ) {
-            newBrowser = null;
-
-            try
-            {
-                if (EnableNewWindow) System.Diagnostics.Process.Start(targetUrl);
-                else browserControl.Load(targetUrl);
-            }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
-            return true;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DoClose
-        ///
-        /// <summary>
-        /// ブラウザを閉じます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool DoClose(IWebBrowser browserControl, IBrowser browser) => false;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnAfterCreated
-        ///
-        /// <summary>
-        /// ブラウザ生成後に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void OnAfterCreated(IWebBrowser browserControl, IBrowser browser) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnBeforeClose
-        ///
-        /// <summary>
-        /// ブラウザが閉じる前に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void OnBeforeClose(IWebBrowser browserControl, IBrowser browser) { }
-
-        #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// NullMenuHandler
-    ///
-    /// <summary>
-    /// コンテキストメニューを無効化するためのクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    internal class NullMenuHandler : IContextMenuHandler
-    {
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnBeforeContextMenu
-        ///
-        /// <summary>
-        /// Called before a context menu is displayed.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void OnBeforeContextMenu(
-            IWebBrowser browserControl,
-            IBrowser browser,
-            IFrame frame,
-            IContextMenuParams parameters,
-            IMenuModel model)
-        {
-            model.Clear();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnContextMenuCommand
-        ///
-        /// <summary>
-        /// Called to execute a command selected from the context menu.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool OnContextMenuCommand(
-            IWebBrowser browserControl,
-            IBrowser browser,
-            IFrame frame,
-            IContextMenuParams parameters,
-            CefMenuCommand commandId,
-            CefEventFlags eventFlags) => false;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnContextMenuDismissed
-        ///
-        /// <summary>
-        /// Called when the context menu is dismissed irregardless of
-        /// whether the menu was empty or a command was selected.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void OnContextMenuDismissed(
-            IWebBrowser browserControl,
-            IBrowser browser,
-            IFrame frame) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RunContextMenu
-        ///
-        /// <summary>
-        /// Called to allow custom display of the context menu.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool RunContextMenu(
-            IWebBrowser browserControl,
-            IBrowser browser,
-            IFrame frame,
-            IContextMenuParams parameters,
-            IMenuModel model,
-            IRunContextMenuCallback callback) => false;
-
-        #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
     /// WebBehavior
     ///
     /// <summary>
@@ -461,7 +277,6 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Sync(Action action) => _context.Send(_ => action(), null);
 
-
         #endregion
 
         #region Fields
@@ -469,6 +284,191 @@ namespace Cube.Net.App.Rss.Reader
         private LifSpanHandler _handler = new LifSpanHandler();
         private ICommand _hover;
         private SynchronizationContext _context;
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// LifSpanHandler
+    ///
+    /// <summary>
+    /// ChromiumWebBrowser のポップアップに関する挙動を制御するための
+    /// クラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    internal class LifSpanHandler : ILifeSpanHandler
+    {
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// EnableNewWindow
+        ///
+        /// <summary>
+        /// 新しいウィンドウをで開くを有効するかどうかを示す値を取得または
+        /// 設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool EnableNewWindow { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnBeforePopup
+        ///
+        /// <summary>
+        /// ポップアップ前に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool OnBeforePopup(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame,
+            string targetUrl,
+            string targetFrameName,
+            WindowOpenDisposition targetDisposition,
+            bool userGesture,
+            IPopupFeatures popupFeatures,
+            IWindowInfo windowInfo,
+            IBrowserSettings browserSettings,
+            ref bool noJavascriptAccess,
+            out IWebBrowser newBrowser
+        )
+        {
+            newBrowser = null;
+
+            try
+            {
+                if (EnableNewWindow) System.Diagnostics.Process.Start(targetUrl);
+                else browserControl.Load(targetUrl);
+            }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            return true;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DoClose
+        ///
+        /// <summary>
+        /// ブラウザを閉じます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool DoClose(IWebBrowser browserControl, IBrowser browser) => false;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnAfterCreated
+        ///
+        /// <summary>
+        /// ブラウザ生成後に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void OnAfterCreated(IWebBrowser browserControl, IBrowser browser) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnBeforeClose
+        ///
+        /// <summary>
+        /// ブラウザが閉じる前に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void OnBeforeClose(IWebBrowser browserControl, IBrowser browser) { }
+
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// NullMenuHandler
+    ///
+    /// <summary>
+    /// コンテキストメニューを無効化するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    internal class NullMenuHandler : IContextMenuHandler
+    {
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnBeforeContextMenu
+        ///
+        /// <summary>
+        /// Called before a context menu is displayed.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void OnBeforeContextMenu(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame,
+            IContextMenuParams parameters,
+            IMenuModel model)
+        {
+            model.Clear();
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnContextMenuCommand
+        ///
+        /// <summary>
+        /// Called to execute a command selected from the context menu.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool OnContextMenuCommand(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame,
+            IContextMenuParams parameters,
+            CefMenuCommand commandId,
+            CefEventFlags eventFlags) => false;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnContextMenuDismissed
+        ///
+        /// <summary>
+        /// Called when the context menu is dismissed irregardless of
+        /// whether the menu was empty or a command was selected.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void OnContextMenuDismissed(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RunContextMenu
+        ///
+        /// <summary>
+        /// Called to allow custom display of the context menu.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool RunContextMenu(
+            IWebBrowser browserControl,
+            IBrowser browser,
+            IFrame frame,
+            IContextMenuParams parameters,
+            IMenuModel model,
+            IRunContextMenuCallback callback) => false;
+
         #endregion
     }
 }
