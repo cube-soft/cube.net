@@ -299,17 +299,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DeleteCache
-        ///
-        /// <summary>
-        /// キャッシュファイルを削除します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void DeleteCache(RssEntry src) => _feeds.DeleteCache(src.Uri);
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Move
         ///
         /// <summary>
@@ -502,7 +491,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Reset(RssEntry src)
         {
-            DeleteCache(src);
+            _feeds.DeleteCache(src.Uri);
             src.Items.Clear();
             src.Count = 0;
             src.LastChecked = null;
@@ -720,7 +709,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             foreach (var mon in _monitors) mon.Remove(src.Uri);
 
-            _feeds.Remove(src.Uri);
+            _feeds.Remove(src.Uri, true);
 
             if (src.Parent is RssCategory rc) rc.Children.Remove(src);
             else _tree.Remove(src);

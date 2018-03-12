@@ -207,11 +207,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Remove()
-        {
-            if (Data.Current.Value is RssEntry re) _core.DeleteCache(re);
-            _core.Remove(Data.Current.Value);
-        }
+        public void Remove() => _core.Remove(Data.Current.Value);
 
         /* ----------------------------------------------------------------- */
         ///
