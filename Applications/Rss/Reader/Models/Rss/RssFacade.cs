@@ -178,8 +178,7 @@ namespace Cube.Net.App.Rss.Reader
         public void Update(IRssEntry src)
         {
             Data.Message.Value = Properties.Resources.MessageUpdating;
-            if (src is RssCategory rc) _core.Update(rc.Children.Flatten<RssEntry>().ToArray());
-            else if (src is RssEntry re) _core.Update(re);
+            _core.Update(new[] { src }.Flatten<RssEntry>().ToArray());
         }
 
         /* ----------------------------------------------------------------- */

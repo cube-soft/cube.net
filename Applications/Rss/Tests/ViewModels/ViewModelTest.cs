@@ -280,7 +280,7 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// VM_Update
+        /// VM_Update_Category
         ///
         /// <summary>
         /// RSS エントリを更新するテストを実行します。
@@ -289,33 +289,6 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         [Test]
         public void VM_Update()
-        {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
-
-                var dest  = vm.Data.LastEntry.Value;
-                var count = dest.Count;
-                Assert.That(count, Is.EqualTo(14));
-                Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
-                vm.Update.Execute(null);
-                vm.Data.Message.Value = string.Empty;
-                Assert.That(Wait(vm).Result, Is.True, "Timeout");
-                Assert.That(dest.Count, Is.AtLeast(count));
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_Update_Category
-        ///
-        /// <summary>
-        /// カテゴリ中の全 RSS エントリを更新するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Update_Category()
         {
             using (var vm = Create())
             {
