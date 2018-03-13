@@ -301,10 +301,8 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Reset => _reset ?? (
-            _reset = new BindableCommand(
-                () => Send(() => Model.Reset()),
-                () => Data.Current.Value is RssEntry,
-                Data.Current
+            _reset = new RelayCommand(
+                () => Send(() => Model.Reset())
             )
         );
 

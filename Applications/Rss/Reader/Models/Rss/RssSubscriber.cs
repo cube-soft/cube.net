@@ -489,13 +489,19 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">対象とする RSS エントリ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Reset(RssEntry src)
+        public void Reset(IRssEntry src)
         {
-            _feeds.DeleteCache(src.Uri);
-            src.Items.Clear();
-            src.Count = 0;
-            src.LastChecked = null;
-            Update(src);
+            var entries = new[] { src }.Flatten<RssEntry>().ToArray();
+
+            foreach (var entry in entries)
+            {
+                _feeds.DeleteCache(entry.Uri);
+                entry.Items.Clear();
+                entry.Count = 0;
+                entry.LastChecked = null;
+            }
+
+            Update(entries);
         }
 
         /* ----------------------------------------------------------------- */

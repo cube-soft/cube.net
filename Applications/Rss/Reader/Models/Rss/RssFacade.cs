@@ -242,11 +242,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Reset()
         {
-            if (Data.Current.Value is RssEntry entry)
-            {
-                Data.Message.Value = Properties.Resources.MessageUpdating;
-                _core.Reset(entry);
-            }
+            Data.Message.Value = Properties.Resources.MessageUpdating;
+            _core.Reset(Data.Current.Value);
         }
 
         /* ----------------------------------------------------------------- */

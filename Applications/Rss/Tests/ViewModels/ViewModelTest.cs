@@ -351,17 +351,12 @@ namespace Cube.Net.App.Rss.Tests
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 vm.Stop.Execute(null);
                 vm.SelectEntry.Execute(src);
-                Assert.That(vm.Reset.CanExecute(null), Is.False);
-
-                var dest = src.Entries.First();
-                vm.SelectEntry.Execute(dest);
-                Assert.That(vm.Reset.CanExecute(null), Is.True);
-
                 vm.Reset.Execute(null);
                 vm.Data.Message.Value = string.Empty;
-                Assert.That(dest.Count, Is.EqualTo(0));
+
+                Assert.That(src.Count, Is.EqualTo(0));
                 Assert.That(Wait(vm).Result, Is.True, "Timeout");
-                Assert.That(dest.Count, Is.AtLeast(1));
+                Assert.That(src.Count, Is.AtLeast(1));
             }
         }
 
@@ -380,7 +375,7 @@ namespace Cube.Net.App.Rss.Tests
             using (var vm = Create())
             {
                 var count = vm.Data.Root.Flatten().Count();
-                var src   = new Uri("http://clown.hatenablog.jp/feed");
+                var src   = new Uri("https://clown.hatenablog.jp/feed");
 
                 vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
                 vm.NewEntry.Execute(null);
@@ -392,7 +387,7 @@ namespace Cube.Net.App.Rss.Tests
                               .FirstOrDefault(e => e.Uri == src);
 
                 Assert.That(entry.Title, Is.EqualTo("Life like a clown"));
-                Assert.That(entry.Link,  Is.EqualTo(new Uri("http://clown.hatenablog.jp/")));
+                Assert.That(entry.Link,  Is.EqualTo(new Uri("https://clown.hatenablog.jp/")));
                 Assert.That(entry.Count, Is.AtLeast(1));
             }
         }
