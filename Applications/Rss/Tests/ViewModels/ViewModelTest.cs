@@ -64,6 +64,12 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(vm.Data.User.Value.Width,           Is.AtLeast(1));
             Assert.That(vm.Data.User.Value.Height,          Is.AtLeast(1));
             Assert.That(vm.Data.User.Value.EnableNewWindow, Is.False);
+            Assert.That(vm.Property.CanExecute(null),       Is.False);
+            Assert.That(vm.Remove.CanExecute(null),         Is.False);
+            Assert.That(vm.Rename.CanExecute(null),         Is.False);
+            Assert.That(vm.Read.CanExecute(null),           Is.False);
+            Assert.That(vm.Update.CanExecute(null),         Is.False);
+            Assert.That(vm.Reset.CanExecute(null),          Is.False);
         }
 
         /* ----------------------------------------------------------------- */

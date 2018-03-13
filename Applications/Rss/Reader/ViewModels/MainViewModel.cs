@@ -271,8 +271,10 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Read => _read ?? (
-            _read = new RelayCommand(
-                () => Send(() => Model.Read())
+            _read = new BindableCommand(
+                () => Send(() => Model.Read()),
+                () => Data.Current.HasValue,
+                Data.Current
             )
         );
 
@@ -286,8 +288,10 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Update => _update ?? (
-            _update = new RelayCommand(
-                () => Send(() => Model.Update(Data.Current.Value))
+            _update = new BindableCommand(
+                () => Send(() => Model.Update()),
+                () => Data.Current.HasValue,
+                Data.Current
             )
         );
 
@@ -301,8 +305,10 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Reset => _reset ?? (
-            _reset = new RelayCommand(
-                () => Send(() => Model.Reset())
+            _reset = new BindableCommand(
+                () => Send(() => Model.Reset()),
+                () => Data.Current.HasValue,
+                Data.Current
             )
         );
 

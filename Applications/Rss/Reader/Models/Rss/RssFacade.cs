@@ -164,25 +164,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Update
-        ///
-        /// <summary>
-        /// 選択中の RSS エントリの内容を更新します。
-        /// カテゴリが指定された場合、カテゴリ中の全 RSS エントリの内容を
-        /// 更新します。
-        /// </summary>
-        ///
-        /// <param name="src">選択中の RSS エントリ</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Update(IRssEntry src)
-        {
-            Data.Message.Value = Properties.Resources.MessageUpdating;
-            _core.Update(new[] { src }.Flatten<RssEntry>().ToArray());
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Move
         ///
         /// <summary>
@@ -229,6 +210,23 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Read() => Data.Current.Value.Read();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// 選択中の RSS エントリの内容を更新します。
+        /// カテゴリが指定された場合、カテゴリ中の全 RSS エントリの内容を
+        /// 更新します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Update()
+        {
+            Data.Message.Value = Properties.Resources.MessageUpdating;
+            _core.Update(new[] { Data.Current.Value }.Flatten<RssEntry>().ToArray());
+        }
 
         /* ----------------------------------------------------------------- */
         ///
