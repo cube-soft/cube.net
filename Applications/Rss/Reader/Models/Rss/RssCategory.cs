@@ -296,15 +296,17 @@ namespace Cube.Net.App.Rss.Reader
                 Categories = src.Categories?.Select(e => new Json(e));
             }
 
-            public RssCategory Convert(RssCategory src, SynchronizationContext context)
+            public  RssCategory Convert(SynchronizationContext context) => Convert(null, context);
+            public  RssCategory Convert(RssCategory src) => Convert(src, src.Context);
+            private RssCategory Convert(RssCategory src, SynchronizationContext context)
             {
                 var dest = new RssCategory(context)
                 {
                     Title  = Title,
                     Parent = src,
                 };
-                Add(dest, Categories?.Select(e => e.Convert(dest, context)));
-                Add(dest, Entries.Select(e => e.Convert(dest, context)));
+                Add(dest, Categories?.Select(e => e.Convert(dest)));
+                Add(dest, Entries.Select(e => e.Convert(dest)));
                 return dest;
             }
 

@@ -477,6 +477,31 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// VM_NewCategory_Empty
+        ///
+        /// <summary>
+        /// 何も存在しない状態で新しいカテゴリを追加した時の挙動を
+        /// 確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_NewCategory_Empty()
+        {
+            var vm = new MainViewModel();
+            vm.NewCategory.Execute(null);
+
+            var dest = vm.Data.Current.Value as RssCategory;
+            Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
+            Assert.That(dest.Parent,         Is.Null);
+            Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
+            Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
+            Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
+            Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// VM_Hover
         ///
         /// <summary>

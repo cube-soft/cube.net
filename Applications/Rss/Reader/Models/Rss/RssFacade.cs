@@ -225,7 +225,7 @@ namespace Cube.Net.App.Rss.Reader
         public void Update()
         {
             Data.Message.Value = Properties.Resources.MessageUpdating;
-            _core.Update(new[] { Data.Current.Value }.Flatten<RssEntry>().ToArray());
+            _core.Update(Data.Current.Value);
         }
 
         /* ----------------------------------------------------------------- */
