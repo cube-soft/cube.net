@@ -27,7 +27,6 @@ Note that implemented applications based on the Cube.Net project have some more 
 * [log4net](https://logging.apache.org/log4net/)
 * [SgmlReader](https://github.com/MindTouch/SGMLReader)
 * [NUnit](http://nunit.org/)
-* [CefSharp](https://github.com/cefsharp/CefSharp) ... Used in the [chrome](https://github.com/cube-soft/Cube.Net/tree/chrome) branch.
 
 ## License
 

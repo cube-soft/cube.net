@@ -89,7 +89,7 @@ namespace Cube.Net.App.Rss.Reader
                 src,
                 ss => SettingsType.Json
                     .Load<List<RssCategory.Json>>(ss)
-                    .Select(e => e.Convert(null, context)),
+                    .Select(e => e.Convert(context)),
                 new RssCategory[0]
             );
 
@@ -270,6 +270,22 @@ namespace Cube.Net.App.Rss.Reader
         /// 木構造の RSS エントリ一覧を一次元配列に変換します。
         /// </summary>
         ///
+        /// <param name="src">RSS エントリ</param>
+        ///
+        /// <returns>変換結果</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static IEnumerable<IRssEntry> Flatten(this IRssEntry src) =>
+            new[] { src }.Flatten();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Flatten
+        ///
+        /// <summary>
+        /// 木構造の RSS エントリ一覧を一次元配列に変換します。
+        /// </summary>
+        ///
         /// <param name="src">木構造の RSS エントリ一覧</param>
         ///
         /// <returns>変換結果</returns>
@@ -278,6 +294,21 @@ namespace Cube.Net.App.Rss.Reader
         public static IEnumerable<T> Flatten<T>(this IEnumerable<IRssEntry> src) =>
             src.Flatten().OfType<T>();
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Flatten
+        ///
+        /// <summary>
+        /// 木構造の RSS エントリ一覧を一次元配列に変換します。
+        /// </summary>
+        ///
+        /// <param name="src">RSS エントリ</param>
+        ///
+        /// <returns>変換結果</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static IEnumerable<T> Flatten<T>(this IRssEntry src) =>
+            src.Flatten().OfType<T>();
 
         /* ----------------------------------------------------------------- */
         ///

@@ -271,8 +271,10 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Read => _read ?? (
-            _read = new RelayCommand(
-                () => Send(() => Model.Read())
+            _read = new BindableCommand(
+                () => Send(() => Model.Read()),
+                () => Data.Current.HasValue,
+                Data.Current
             )
         );
 
@@ -286,8 +288,10 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Update => _update ?? (
-            _update = new RelayCommand(
-                () => Send(() => Model.Update(Data.Current.Value))
+            _update = new BindableCommand(
+                () => Send(() => Model.Update()),
+                () => Data.Current.HasValue,
+                Data.Current
             )
         );
 
@@ -303,22 +307,22 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand Reset => _reset ?? (
             _reset = new BindableCommand(
                 () => Send(() => Model.Reset()),
-                () => Data.Current.Value is RssEntry,
+                () => Data.Current.HasValue,
                 Data.Current
             )
         );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SelectEntry
+        /// Select
         ///
         /// <summary>
-        /// RssEntry を選択するコマンドです。
+        /// IRssEntry を選択するコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand SelectEntry => _selectEntry ?? (
-            _selectEntry = new RelayCommand<object>(
+        public ICommand Select => _select ?? (
+            _select = new RelayCommand<object>(
                 e => Send(() =>
                 {
                     Model.Select(e as IRssEntry);
@@ -422,7 +426,7 @@ namespace Cube.Net.App.Rss.Reader
         private ICommand _reset;
         private ICommand _remove;
         private ICommand _rename;
-        private ICommand _selectEntry;
+        private ICommand _select;
         private ICommand _selectArticle;
         private ICommand _hover;
         private ICommand _navigate;

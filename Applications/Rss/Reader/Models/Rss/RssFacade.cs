@@ -164,26 +164,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Update
-        ///
-        /// <summary>
-        /// 選択中の RSS エントリの内容を更新します。
-        /// カテゴリが指定された場合、カテゴリ中の全 RSS エントリの内容を
-        /// 更新します。
-        /// </summary>
-        ///
-        /// <param name="src">選択中の RSS エントリ</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Update(IRssEntry src)
-        {
-            Data.Message.Value = Properties.Resources.MessageUpdating;
-            if (src is RssCategory rc) _core.Update(rc.Children.Flatten<RssEntry>().ToArray());
-            else if (src is RssEntry re) _core.Update(re);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Move
         ///
         /// <summary>
@@ -207,11 +187,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Remove()
-        {
-            if (Data.Current.Value is RssEntry re) _core.DeleteCache(re);
-            _core.Remove(Data.Current.Value);
-        }
+        public void Remove() => _core.Remove(Data.Current.Value);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -237,6 +213,23 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Update
+        ///
+        /// <summary>
+        /// 選択中の RSS エントリの内容を更新します。
+        /// カテゴリが指定された場合、カテゴリ中の全 RSS エントリの内容を
+        /// 更新します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Update()
+        {
+            Data.Message.Value = Properties.Resources.MessageUpdating;
+            _core.Update(Data.Current.Value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Reset
         ///
         /// <summary>
@@ -246,11 +239,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Reset()
         {
-            if (Data.Current.Value is RssEntry entry)
-            {
-                Data.Message.Value = Properties.Resources.MessageUpdating;
-                _core.Reset(entry);
-            }
+            Data.Message.Value = Properties.Resources.MessageUpdating;
+            _core.Reset(Data.Current.Value);
         }
 
         /* ----------------------------------------------------------------- */

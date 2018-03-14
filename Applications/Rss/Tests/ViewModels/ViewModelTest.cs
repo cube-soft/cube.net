@@ -64,6 +64,12 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(vm.Data.User.Value.Width,           Is.AtLeast(1));
             Assert.That(vm.Data.User.Value.Height,          Is.AtLeast(1));
             Assert.That(vm.Data.User.Value.EnableNewWindow, Is.False);
+            Assert.That(vm.Property.CanExecute(null),       Is.False);
+            Assert.That(vm.Remove.CanExecute(null),         Is.False);
+            Assert.That(vm.Rename.CanExecute(null),         Is.False);
+            Assert.That(vm.Read.CanExecute(null),           Is.False);
+            Assert.That(vm.Update.CanExecute(null),         Is.False);
+            Assert.That(vm.Reset.CanExecute(null),          Is.False);
         }
 
         /* ----------------------------------------------------------------- */
@@ -90,7 +96,7 @@ namespace Cube.Net.App.Rss.Tests
 
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 src.Entries.First().SkipContent = true;
-                vm.SelectEntry.Execute(src.Entries.First());
+                vm.Select.Execute(src.Entries.First());
 
                 var dest = vm.Data.Current.Value as RssEntry;
                 Assert.That(dest.Title,               Is.EqualTo("CubeSoft Blog"));
@@ -100,7 +106,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(dest.UnreadItems.Count(), Is.EqualTo(9));
                 Assert.That(src.Count,                Is.EqualTo(9), nameof(RssCategory));
 
-                vm.SelectEntry.Execute(src);
+                vm.Select.Execute(src);
                 var category = vm.Data.Current.Value as RssCategory;
                 Assert.That(category.Title,           Is.EqualTo("キューブ・ソフト"));
                 Assert.That(category.Count,           Is.EqualTo(9));
@@ -134,8 +140,8 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Stop.Execute(null);
 
                 var src = vm.Data.Root.First(e => e.Title == "Microsoft") as RssCategory;
-                vm.SelectEntry.Execute(src);
-                vm.SelectEntry.Execute(src.Entries.First());
+                vm.Select.Execute(src);
+                vm.Select.Execute(src.Entries.First());
 
                 var dest = vm.Data.LastEntry.Value;
                 Assert.That(dest.Title, Is.EqualTo("Official Microsoft Blog"));
@@ -161,25 +167,17 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Stop.Execute(null);
                 vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
 
-                var dir = Result($@"{nameof(VM_Remove)}\Cache");
-                var e0  = vm.Data.Current.Value;
-                var c0  = IO.Combine(dir, "7ae34cce28b4272e1170fb1e4c2c87ad");
-                Assert.That(IO.Exists(c0), Is.True);
-                Assert.That(e0.Title,      Is.EqualTo("The GitHub Blog"));
-                vm.Remove.Execute(null);
-                Assert.That(IO.Exists(c0), Is.False);
+                var dir  = Result($@"{nameof(VM_Remove)}\Cache");
+                var src  = vm.Data.Current.Value;
+                var dest = IO.Combine(dir, "7ae34cce28b4272e1170fb1e4c2c87ad");
 
-                var src = vm.Data.Root.OfType<RssCategory>().First();
-                var e1  = src.Entries.First();
-                var c1  = IO.Combine(dir, "872e24035276c7104afd116c2052172b");
-                vm.SelectEntry.Execute(e1);
-
-                Assert.That(e1.Title,          Is.EqualTo("CubeSoft Blog"));
-                Assert.That(src.Entries.Count, Is.EqualTo(1));
-                Assert.That(IO.Exists(c1),     Is.True);
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
+                Assert.That(IO.Exists(dest), Is.True);
+                Assert.That(src.Title, Is.EqualTo("The GitHub Blog"));
+                Assert.That(vm.Remove.CanExecute(null), Is.True);
                 vm.Remove.Execute(null);
-                Assert.That(src.Entries.Count, Is.EqualTo(0));
-                Assert.That(IO.Exists(c1),     Is.False);
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(11));
+                Assert.That(IO.Exists(dest), Is.False);
             }
         }
 
@@ -188,7 +186,8 @@ namespace Cube.Net.App.Rss.Tests
         /// VM_Remove_Category
         ///
         /// <summary>
-        /// カテゴリ中の全 RSS エントリを削除するテストを実行します。
+        /// カテゴリおよびカテゴリ中の RSS エントリを削除するテストを
+        /// 実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -197,15 +196,20 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var src = vm.Data.Root.OfType<RssCategory>().First(e => e.Title == "Microsoft");
-
                 vm.Stop.Execute(null);
                 vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
-                vm.SelectEntry.Execute(src);
 
+                var dir  = Result($@"{nameof(VM_Remove_Category)}\Cache");
+                var src  = vm.Data.Root.OfType<RssCategory>().First();
+                var dest = IO.Combine(dir, "872e24035276c7104afd116c2052172b");
+
+                vm.Select.Execute(src);
                 Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
+                Assert.That(IO.Exists(dest), Is.True);
+                Assert.That(vm.Remove.CanExecute(null), Is.True);
                 vm.Remove.Execute(null);
-                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(4));
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(10));
+                Assert.That(IO.Exists(dest), Is.False);
             }
         }
 
@@ -269,7 +273,7 @@ namespace Cube.Net.App.Rss.Tests
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 Assert.That(src.Count, Is.EqualTo(10));
 
-                vm.SelectEntry.Execute(src);
+                vm.Select.Execute(src);
                 Assert.That(vm.Data.Current.Value,   Is.EqualTo(src));
                 Assert.That(vm.Data.LastEntry.Value, Is.Not.EqualTo(src));
 
@@ -292,36 +296,9 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                vm.Stop.Execute(null);
-
-                var dest  = vm.Data.LastEntry.Value;
-                var count = dest.Count;
-                Assert.That(count, Is.EqualTo(14));
-                Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
-                vm.Update.Execute(null);
-                vm.Data.Message.Value = string.Empty;
-                Assert.That(Wait(vm).Result, Is.True, "Timeout");
-                Assert.That(dest.Count, Is.AtLeast(count));
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_Update_Category
-        ///
-        /// <summary>
-        /// カテゴリ中の全 RSS エントリを更新するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Update_Category()
-        {
-            using (var vm = Create())
-            {
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 vm.Stop.Execute(null);
-                vm.SelectEntry.Execute(src);
+                vm.Select.Execute(src);
 
                 var dest  = vm.Data.Current.Value;
                 var count = dest.Count;
@@ -350,18 +327,13 @@ namespace Cube.Net.App.Rss.Tests
             {
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 vm.Stop.Execute(null);
-                vm.SelectEntry.Execute(src);
-                Assert.That(vm.Reset.CanExecute(null), Is.False);
-
-                var dest = src.Entries.First();
-                vm.SelectEntry.Execute(dest);
-                Assert.That(vm.Reset.CanExecute(null), Is.True);
-
+                vm.Select.Execute(src);
                 vm.Reset.Execute(null);
                 vm.Data.Message.Value = string.Empty;
-                Assert.That(dest.Count, Is.EqualTo(0));
+
+                Assert.That(src.Count, Is.EqualTo(0));
                 Assert.That(Wait(vm).Result, Is.True, "Timeout");
-                Assert.That(dest.Count, Is.AtLeast(1));
+                Assert.That(src.Count, Is.AtLeast(1));
             }
         }
 
@@ -380,7 +352,7 @@ namespace Cube.Net.App.Rss.Tests
             using (var vm = Create())
             {
                 var count = vm.Data.Root.Flatten().Count();
-                var src   = new Uri("http://clown.hatenablog.jp/feed");
+                var src   = new Uri("https://clown.hatenablog.jp/feed");
 
                 vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
                 vm.NewEntry.Execute(null);
@@ -392,7 +364,7 @@ namespace Cube.Net.App.Rss.Tests
                               .FirstOrDefault(e => e.Uri == src);
 
                 Assert.That(entry.Title, Is.EqualTo("Life like a clown"));
-                Assert.That(entry.Link,  Is.EqualTo(new Uri("http://clown.hatenablog.jp/")));
+                Assert.That(entry.Link,  Is.EqualTo(new Uri("https://clown.hatenablog.jp/")));
                 Assert.That(entry.Count, Is.AtLeast(1));
             }
         }
@@ -463,7 +435,7 @@ namespace Cube.Net.App.Rss.Tests
                 var src = vm.Data.Root.OfType<RssCategory>().First();
 
                 vm.Stop.Execute(null);
-                vm.SelectEntry.Execute(src.Entries.First());
+                vm.Select.Execute(src.Entries.First());
                 vm.NewCategory.Execute(null);
 
                 var dest = vm.Data.Current.Value as RssCategory;
@@ -501,6 +473,31 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
                 Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
             }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_NewCategory_Empty
+        ///
+        /// <summary>
+        /// 何も存在しない状態で新しいカテゴリを追加した時の挙動を
+        /// 確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_NewCategory_Empty()
+        {
+            var vm = new MainViewModel();
+            vm.NewCategory.Execute(null);
+
+            var dest = vm.Data.Current.Value as RssCategory;
+            Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
+            Assert.That(dest.Parent,         Is.Null);
+            Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
+            Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
+            Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
+            Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
         }
 
         /* ----------------------------------------------------------------- */

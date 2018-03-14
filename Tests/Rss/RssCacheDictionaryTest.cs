@@ -34,6 +34,8 @@ namespace Cube.Net.Tests
     [TestFixture]
     class RssCacheDictionaryTest : FileHelper
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// Properties_Default
@@ -103,6 +105,32 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Contains
+        ///
+        /// <summary>
+        /// Contains および ContainsKey の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Contains()
+        {
+            var feeds = Create();
+            var cache = Result($@"{nameof(Contains)}\Cache");
+
+            using (var src = new RssCacheDictionary { Directory = cache })
+            {
+                foreach (var e in feeds) src.Add(e);
+
+                var q = feeds[0];
+                Assert.That(src.ContainsKey(q.Uri), Is.True);
+                Assert.That(src.Contains(new KeyValuePair<Uri, RssFeed>(q.Uri, q)), Is.True);
+                Assert.That(src.Contains(new KeyValuePair<Uri, RssFeed>(q.Uri, null)), Is.False);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Stash
         ///
         /// <summary>
@@ -113,23 +141,74 @@ namespace Cube.Net.Tests
         [Test]
         public void Stash()
         {
-            var cache = Result("Cache");
+            var feeds = Create();
+            var cache = Result($@"{nameof(Stash)}\Cache");
 
             using (var src = new RssCacheDictionary { Directory = cache })
             {
                 src.Capacity = 3;
-
-                src.Add(new RssFeed { Uri = new Uri("http://www.example.com/"),  Title = "Ex1", LastChecked = DateTime.Now });
-                src.Add(new RssFeed { Uri = new Uri("http://www.example.jp"),    Title = "Ex2", LastChecked = DateTime.Now });
-                src.Add(new RssFeed { Uri = new Uri("http://www.example.net"),   Title = "Ex3", LastChecked = DateTime.Now });
-                src.Add(new RssFeed { Uri = new Uri("http://www.example.org/"),  Title = "Ex4", LastChecked = DateTime.Now });
-                src.Add(new RssFeed { Uri = new Uri("http://www.example.co.jp"), Title = "Ex5", LastChecked = DateTime.Now });
-                src.Add(new RssFeed { Uri = new Uri("http://www.example.ne.jp"), Title = "Ex6", LastChecked = DateTime.Now });
-
+                foreach (var feed in feeds) src.Add(feed);
                 Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(3));
             }
 
             Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(6));
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Remove
+        ///
+        /// <summary>
+        /// Remove のテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Remove()
+        {
+            var feeds = Create();
+            var cache = Result($@"{nameof(Remove)}\Cache");
+
+            using (var src = new RssCacheDictionary { Directory = cache })
+            {
+                src.Capacity = 3;
+                foreach (var e in feeds) src.Add(e);
+                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(3));
+
+                src.Remove(feeds[0].Uri);
+                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(3));
+
+                src.Remove(feeds[1].Uri, true);
+                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(2));
+
+                src.Remove(new KeyValuePair<Uri, RssFeed>(feeds[2].Uri, feeds[2]));
+                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(2));
+            }
+        }
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        ///
+        /// <summary>
+        /// テスト用データを生成します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private IList<RssFeed> Create() => new List<RssFeed>
+        {
+            new RssFeed { Uri = new Uri("http://www.example.com/"),  Title = "Ex1", LastChecked = DateTime.Now },
+            new RssFeed { Uri = new Uri("http://www.example.jp"),    Title = "Ex2", LastChecked = DateTime.Now },
+            new RssFeed { Uri = new Uri("http://www.example.net"),   Title = "Ex3", LastChecked = DateTime.Now },
+            new RssFeed { Uri = new Uri("http://www.example.org/"),  Title = "Ex4", LastChecked = DateTime.Now },
+            new RssFeed { Uri = new Uri("http://www.example.co.jp"), Title = "Ex5", LastChecked = DateTime.Now },
+            new RssFeed { Uri = new Uri("http://www.example.ne.jp"), Title = "Ex6", LastChecked = DateTime.Now },
+        };
+
+        #endregion
     }
 }

@@ -299,17 +299,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DeleteCache
-        ///
-        /// <summary>
-        /// キャッシュファイルを削除します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void DeleteCache(RssEntry src) => _feeds.DeleteCache(src.Uri);
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Move
         ///
         /// <summary>
@@ -472,7 +461,21 @@ namespace Cube.Net.App.Rss.Reader
         /// RSS フィードの内容を更新します。
         /// </summary>
         ///
-        /// <param name="src">対象とする RSS エントリ一覧</param>
+        /// <param name="src">対象 RSS エントリまたはカテゴリ</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Update(IRssEntry src) =>
+            Update(src.Flatten<RssEntry>().ToArray());
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// RSS フィードの内容を更新します。
+        /// </summary>
+        ///
+        /// <param name="src">対象 RSS エントリ一覧</param>
         ///
         /* ----------------------------------------------------------------- */
         public void Update(params RssEntry[] src)
@@ -500,13 +503,19 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">対象とする RSS エントリ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Reset(RssEntry src)
+        public void Reset(IRssEntry src)
         {
-            DeleteCache(src);
-            src.Items.Clear();
-            src.Count = 0;
-            src.LastChecked = null;
-            Update(src);
+            var entries = src.Flatten<RssEntry>().ToArray();
+
+            foreach (var entry in entries)
+            {
+                _feeds.DeleteCache(entry.Uri);
+                entry.Items.Clear();
+                entry.Count = 0;
+                entry.LastChecked = null;
+            }
+
+            Update(entries);
         }
 
         /* ----------------------------------------------------------------- */
@@ -720,7 +729,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             foreach (var mon in _monitors) mon.Remove(src.Uri);
 
-            _feeds.Remove(src.Uri);
+            _feeds.Remove(src.Uri, true);
 
             if (src.Parent is RssCategory rc) rc.Children.Remove(src);
             else _tree.Remove(src);

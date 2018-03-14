@@ -311,8 +311,7 @@ namespace Cube.Net.App.Rss.Reader
                 SkipContent = src.SkipContent;
             }
 
-            public RssEntry Convert(RssCategory src, SynchronizationContext context) =>
-                new RssEntry(context)
+            public RssEntry Convert(RssCategory src) => new RssEntry(src.Context)
             {
                 Title       = Title,
                 Uri         = Uri,
