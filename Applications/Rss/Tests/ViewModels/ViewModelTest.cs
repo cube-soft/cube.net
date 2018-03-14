@@ -167,25 +167,17 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Stop.Execute(null);
                 vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
 
-                var dir = Result($@"{nameof(VM_Remove)}\Cache");
-                var e0  = vm.Data.Current.Value;
-                var c0  = IO.Combine(dir, "7ae34cce28b4272e1170fb1e4c2c87ad");
-                Assert.That(IO.Exists(c0), Is.True);
-                Assert.That(e0.Title,      Is.EqualTo("The GitHub Blog"));
-                vm.Remove.Execute(null);
-                Assert.That(IO.Exists(c0), Is.False);
+                var dir  = Result($@"{nameof(VM_Remove)}\Cache");
+                var src  = vm.Data.Current.Value;
+                var dest = IO.Combine(dir, "7ae34cce28b4272e1170fb1e4c2c87ad");
 
-                var src = vm.Data.Root.OfType<RssCategory>().First();
-                var e1  = src.Entries.First();
-                var c1  = IO.Combine(dir, "872e24035276c7104afd116c2052172b");
-                vm.SelectEntry.Execute(e1);
-
-                Assert.That(e1.Title,          Is.EqualTo("CubeSoft Blog"));
-                Assert.That(src.Entries.Count, Is.EqualTo(1));
-                Assert.That(IO.Exists(c1),     Is.True);
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
+                Assert.That(IO.Exists(dest), Is.True);
+                Assert.That(src.Title, Is.EqualTo("The GitHub Blog"));
+                Assert.That(vm.Remove.CanExecute(null), Is.True);
                 vm.Remove.Execute(null);
-                Assert.That(src.Entries.Count, Is.EqualTo(0));
-                Assert.That(IO.Exists(c1),     Is.False);
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(11));
+                Assert.That(IO.Exists(dest), Is.False);
             }
         }
 
@@ -194,7 +186,8 @@ namespace Cube.Net.App.Rss.Tests
         /// VM_Remove_Category
         ///
         /// <summary>
-        /// カテゴリ中の全 RSS エントリを削除するテストを実行します。
+        /// カテゴリおよびカテゴリ中の RSS エントリを削除するテストを
+        /// 実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -203,15 +196,20 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var vm = Create())
             {
-                var src = vm.Data.Root.OfType<RssCategory>().First(e => e.Title == "Microsoft");
-
                 vm.Stop.Execute(null);
                 vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
-                vm.SelectEntry.Execute(src);
 
+                var dir  = Result($@"{nameof(VM_Remove_Category)}\Cache");
+                var src  = vm.Data.Root.OfType<RssCategory>().First();
+                var dest = IO.Combine(dir, "872e24035276c7104afd116c2052172b");
+
+                vm.SelectEntry.Execute(src);
                 Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
+                Assert.That(IO.Exists(dest), Is.True);
+                Assert.That(vm.Remove.CanExecute(null), Is.True);
                 vm.Remove.Execute(null);
-                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(4));
+                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(10));
+                Assert.That(IO.Exists(dest), Is.False);
             }
         }
 
@@ -286,7 +284,7 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// VM_Update_Category
+        /// VM_Update
         ///
         /// <summary>
         /// RSS エントリを更新するテストを実行します。
