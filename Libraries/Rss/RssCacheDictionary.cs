@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Collections;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
 using Cube.Log;
@@ -22,6 +23,7 @@ using Cube.Settings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace Cube.Net.Rss
@@ -192,7 +194,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Save()
         {
-            foreach (var uri in _otm) this.LogWarn(() => SaveCache(uri));
+            foreach (var kv in _otm) this.LogWarn(() => SaveCache(kv.Key));
             _otm.Clear();
         }
 
@@ -311,11 +313,8 @@ namespace Cube.Net.Rss
         /// <param name="value">値</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Add(Uri key, RssFeed value)
-        {
-            _inner.Add(key, value);
-            Pop(key, value);
-        }
+        public void Add(Uri key, RssFeed value) =>
+            Add(new KeyValuePair<Uri, RssFeed>(key, value));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -519,8 +518,9 @@ namespace Cube.Net.Rss
         private void Stash()
         {
             if (_otm.Count <= Capacity) return;
-            SaveCache(_otm.First.Value);
-            _otm.RemoveFirst();
+            var key = _otm.First().Key;
+            SaveCache(key);
+            _otm.Remove(key);
         }
 
         /* ----------------------------------------------------------------- */
@@ -553,7 +553,7 @@ namespace Cube.Net.Rss
         {
             try
             {
-                if (_otm.Contains(uri)) _otm.Remove(uri);
+                if (_otm.ContainsKey(uri)) _otm.Remove(uri);
                 else
                 {
                     var feed = Load(uri);
@@ -571,7 +571,7 @@ namespace Cube.Net.Rss
             }
             finally
             {
-                _otm.AddLast(uri);
+                _otm.Add(uri, default(object));
                 Stash();
             }
         }
@@ -617,7 +617,7 @@ namespace Cube.Net.Rss
         #region Fields
         private OnceAction<bool> _dispose;
         private IDictionary<Uri, RssFeed> _inner;
-        private LinkedList<Uri> _otm = new LinkedList<Uri>();
+        private OrderedDictionary<Uri, object> _otm = new OrderedDictionary<Uri, object>();
         private uint _capacity = 100;
         #endregion
     }
