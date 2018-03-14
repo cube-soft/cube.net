@@ -96,7 +96,7 @@ namespace Cube.Net.App.Rss.Tests
 
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 src.Entries.First().SkipContent = true;
-                vm.SelectEntry.Execute(src.Entries.First());
+                vm.Select.Execute(src.Entries.First());
 
                 var dest = vm.Data.Current.Value as RssEntry;
                 Assert.That(dest.Title,               Is.EqualTo("CubeSoft Blog"));
@@ -106,7 +106,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(dest.UnreadItems.Count(), Is.EqualTo(9));
                 Assert.That(src.Count,                Is.EqualTo(9), nameof(RssCategory));
 
-                vm.SelectEntry.Execute(src);
+                vm.Select.Execute(src);
                 var category = vm.Data.Current.Value as RssCategory;
                 Assert.That(category.Title,           Is.EqualTo("キューブ・ソフト"));
                 Assert.That(category.Count,           Is.EqualTo(9));
@@ -140,8 +140,8 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Stop.Execute(null);
 
                 var src = vm.Data.Root.First(e => e.Title == "Microsoft") as RssCategory;
-                vm.SelectEntry.Execute(src);
-                vm.SelectEntry.Execute(src.Entries.First());
+                vm.Select.Execute(src);
+                vm.Select.Execute(src.Entries.First());
 
                 var dest = vm.Data.LastEntry.Value;
                 Assert.That(dest.Title, Is.EqualTo("Official Microsoft Blog"));
@@ -203,7 +203,7 @@ namespace Cube.Net.App.Rss.Tests
                 var src  = vm.Data.Root.OfType<RssCategory>().First();
                 var dest = IO.Combine(dir, "872e24035276c7104afd116c2052172b");
 
-                vm.SelectEntry.Execute(src);
+                vm.Select.Execute(src);
                 Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
                 Assert.That(IO.Exists(dest), Is.True);
                 Assert.That(vm.Remove.CanExecute(null), Is.True);
@@ -273,7 +273,7 @@ namespace Cube.Net.App.Rss.Tests
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 Assert.That(src.Count, Is.EqualTo(10));
 
-                vm.SelectEntry.Execute(src);
+                vm.Select.Execute(src);
                 Assert.That(vm.Data.Current.Value,   Is.EqualTo(src));
                 Assert.That(vm.Data.LastEntry.Value, Is.Not.EqualTo(src));
 
@@ -298,7 +298,7 @@ namespace Cube.Net.App.Rss.Tests
             {
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 vm.Stop.Execute(null);
-                vm.SelectEntry.Execute(src);
+                vm.Select.Execute(src);
 
                 var dest  = vm.Data.Current.Value;
                 var count = dest.Count;
@@ -327,7 +327,7 @@ namespace Cube.Net.App.Rss.Tests
             {
                 var src = vm.Data.Root.OfType<RssCategory>().First();
                 vm.Stop.Execute(null);
-                vm.SelectEntry.Execute(src);
+                vm.Select.Execute(src);
                 vm.Reset.Execute(null);
                 vm.Data.Message.Value = string.Empty;
 
@@ -435,7 +435,7 @@ namespace Cube.Net.App.Rss.Tests
                 var src = vm.Data.Root.OfType<RssCategory>().First();
 
                 vm.Stop.Execute(null);
-                vm.SelectEntry.Execute(src.Entries.First());
+                vm.Select.Execute(src.Entries.First());
                 vm.NewCategory.Execute(null);
 
                 var dest = vm.Data.Current.Value as RssCategory;

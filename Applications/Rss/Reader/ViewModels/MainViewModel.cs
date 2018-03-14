@@ -314,15 +314,15 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SelectEntry
+        /// Select
         ///
         /// <summary>
-        /// RssEntry を選択するコマンドです。
+        /// IRssEntry を選択するコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand SelectEntry => _selectEntry ?? (
-            _selectEntry = new RelayCommand<object>(
+        public ICommand Select => _select ?? (
+            _select = new RelayCommand<object>(
                 e => Send(() =>
                 {
                     Model.Select(e as IRssEntry);
@@ -426,7 +426,7 @@ namespace Cube.Net.App.Rss.Reader
         private ICommand _reset;
         private ICommand _remove;
         private ICommand _rename;
-        private ICommand _selectEntry;
+        private ICommand _select;
         private ICommand _selectArticle;
         private ICommand _hover;
         private ICommand _navigate;
