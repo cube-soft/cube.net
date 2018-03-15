@@ -55,6 +55,9 @@
                         <RowDefinition Height="25"/>
                         <RowDefinition Height="25"/>
                         <RowDefinition Height="25"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock
@@ -92,7 +95,7 @@
                     </StackPanel>
 
                     <TextBlock
-                        Text="その他"
+                        Text="オプション"
                         Style="{StaticResource SummaryStyle}"
                         Grid.Row="3"
                         Grid.Column="0"/>
@@ -123,6 +126,41 @@
                         IsChecked="{Binding Data.Value.CheckUpdate, UpdateSourceTrigger=Explicit}"
                         VerticalAlignment="Center"
                         Grid.Row="6"
+                        Grid.Column="1"/>
+
+                    <TextBlock
+                        Text="データフォルダ"
+                        Style="{StaticResource SummaryStyle}"
+                        Grid.Row="8"
+                        Grid.Column="0"/>
+
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Grid.Row="8"
+                        Grid.Column="1">
+                        <TextBox
+                            Text="{Binding Data.Value.DataDirectory, UpdateSourceTrigger=Explicit}"
+                            Style="{StaticResource InputStyle}"
+                            Width="220">
+                            <i:Interaction.Behaviors>
+                                <my:SelectDirectoryBehavior Messenger="{Binding Messenger}"/>
+                            </i:Interaction.Behaviors>
+                        </TextBox>
+                        <Button
+                            Content="..."
+                            Command="{Binding SelectDataDirectory}"
+                            Style="{StaticResource CommonButtonStyle}"
+                            VerticalAlignment="Center"
+                            Margin="4,0,0,0"
+                            Width="50"
+                            Height="22"/>
+                    </StackPanel>
+
+                    <TextBlock
+                        Text="※アプリケーションを再起動する必要があります"
+                        Style="{StaticResource SummaryStyle}"
+                        VerticalAlignment="Center"
+                        Grid.Row="9"
                         Grid.Column="1"/>
                 </Grid>
             </TabItem>

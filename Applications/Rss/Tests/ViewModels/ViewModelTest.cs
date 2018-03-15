@@ -712,6 +712,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(dest.LightMode,            Is.True);
                 Assert.That(dest.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
                 Assert.That(dest.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
+                Assert.That(dest.DataDirectory,        Is.EqualTo(Result(nameof(VM_Settings))));
             }
         }
 
@@ -861,6 +862,7 @@ namespace Cube.Net.App.Rss.Tests
             src.HighInterval         = TimeSpan.FromHours(2);
             src.LowInterval          = TimeSpan.FromHours(12);
 
+            vm.SelectDataDirectory.Execute(null);
             vm.Apply.Execute(null);
         }
 

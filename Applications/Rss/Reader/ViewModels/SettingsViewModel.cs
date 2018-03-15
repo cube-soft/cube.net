@@ -153,6 +153,21 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// SelectDataDirectory
+        ///
+        /// <summary>
+        /// データディレクトリを選択するコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand SelectDataDirectory => _selectDataDirectory ?? (
+            _selectDataDirectory = new RelayCommand(
+                () => Messenger.Send(MessageFactory.DataDirectory(Data.Value.DataDirectory))
+            )
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Apply
         ///
         /// <summary>
@@ -173,6 +188,7 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private BitmapImage _logo;
         private ICommand _apply;
+        private ICommand _selectDataDirectory;
         #endregion
     }
 }

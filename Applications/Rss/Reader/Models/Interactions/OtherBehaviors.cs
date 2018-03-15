@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Xui;
 using Cube.Xui.Behaviors;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -92,6 +93,33 @@ namespace Cube.Net.App.Rss.Reader
         {
             var outer = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
             if (outer.Child is ScrollViewer inner) inner.ScrollToTop();
+        }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// SelectDirectoryBehavior
+    ///
+    /// <summary>
+    /// ディレクトリを選択するための Behavior です。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class SelectDirectoryBehavior : DirectoryDialogBehavior
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Invoke
+        ///
+        /// <summary>
+        /// 処理を実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void Invoke(DirectoryDialogMessage e)
+        {
+            base.Invoke(e);
+            if (e.Result && AssociatedObject is TextBox tb) tb.Text = e.FileName;
         }
     }
 }
