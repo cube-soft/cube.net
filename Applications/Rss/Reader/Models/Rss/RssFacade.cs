@@ -119,7 +119,7 @@ namespace Cube.Net.App.Rss.Reader
 
             this.LogDebug("Load", () => _core.Load());
 
-            var entry = _core.Find(Settings.Value.Start) ??
+            var entry = _core.Find(Settings.Value.StartUri) ??
                         _core.Flatten<RssEntry>().FirstOrDefault();
             if (entry != null)
             {
@@ -263,7 +263,7 @@ namespace Cube.Net.App.Rss.Reader
                 current.Selected = true;
                 Data.LastEntry.Value = current;
                 Select(current.Items.FirstOrDefault());
-                Settings.Value.Start = current.Uri;
+                Settings.Value.StartUri = current.Uri;
             }
         }
 

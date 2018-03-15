@@ -39,7 +39,7 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// StartUri
         ///
         /// <summary>
         /// 起動時に表示する RssEntry オブジェクトの URL を取得または
@@ -47,11 +47,11 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
-        public Uri Start
+        [DataMember(Name = "Start")]
+        public Uri StartUri
         {
-            get => _feedUri;
-            set => SetProperty(ref _feedUri, value);
+            get => _startUri;
+            set => SetProperty(ref _startUri, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -138,6 +138,22 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// DataDirectory
+        ///
+        /// <summary>
+        /// データ格納用ディレクトリのパスを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public string DataDirectory
+        {
+            get => _dataDirectory;
+            set => SetProperty(ref _dataDirectory, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// CheckUpdate
         ///
         /// <summary>
@@ -218,13 +234,14 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private Uri _feedUri;
+        private Uri _startUri;
         private int _width = 1100;
         private int _height = 650;
         private bool _lightMode = false;
         private bool _enableNewWindow = false;
         private bool _enableMonitorMessage = true;
         private bool _checkUpdate = true;
+        private string _dataDirectory = null;
         private DateTime? _lastCheckUpdate = null;
         private TimeSpan? _highInterval = TimeSpan.FromHours(1);
         private TimeSpan? _lowInterval = TimeSpan.FromHours(24);
@@ -274,12 +291,13 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public SettingsFolder(string root, Operator io) : base(SettingsType.Json)
         {
-            AutoSave       = true;
-            Path           = io.Combine(root, "Settings.json");
-            IO             = io;
-            Root           = root;
-            Version.Digit  = 3;
-            Version.Suffix = "β";
+            AutoSave            = true;
+            Path                = io.Combine(root, "Settings.json");
+            IO                  = io;
+            Root                = root;
+            Version.Digit       = 3;
+            Version.Suffix      = "β";
+            Value.DataDirectory = root;
         }
 
         #endregion
@@ -318,7 +336,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Cache => IO.Combine(Root, "Cache");
+        public string Cache => IO.Combine(Value.DataDirectory, "Cache");
 
         /* ----------------------------------------------------------------- */
         ///
@@ -329,7 +347,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Feed => IO.Combine(Root, "Feeds.json");
+        public string Feed => IO.Combine(Value.DataDirectory, "Feeds.json");
 
         /* ----------------------------------------------------------------- */
         ///
@@ -340,9 +358,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string UserAgent => _userAgent ?? (
-            _userAgent = GetUserAgent()
-        );
+        public string UserAgent => _userAgent ?? (_userAgent = GetUserAgent());
 
         #endregion
 
@@ -361,13 +377,16 @@ namespace Cube.Net.App.Rss.Reader
         {
             this.LogWarn(() =>
             {
+                var dest = e.NewValue;
+                if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = Root;
+
                 var name = $@"SOFTWARE\{Company}\{Product}";
                 using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false))
                 {
                     if (key == null) return;
-                    var dest = key.GetValue("LastCheckUpdate") as string;
-                    if (string.IsNullOrEmpty(dest)) return;
-                    e.NewValue.LastCheckUpdate = DateTime.Parse(dest).ToLocalTime();
+                    var s = key.GetValue("LastCheckUpdate") as string;
+                    if (string.IsNullOrEmpty(s)) return;
+                    dest.LastCheckUpdate = DateTime.Parse(s).ToLocalTime();
                 }
             });
 
