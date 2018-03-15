@@ -55,21 +55,34 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new MainViewModel();
 
-            Assert.That(vm.Data.Content.HasValue,           Is.False);
-            Assert.That(vm.Data.Current.HasValue,           Is.False);
-            Assert.That(vm.Data.LastEntry.HasValue,         Is.False);
-            Assert.That(vm.Data.Message.HasValue,           Is.False);
-            Assert.That(vm.DropTarget,                      Is.Not.Null);
-            Assert.That(vm.Data.User.HasValue,              Is.True);
-            Assert.That(vm.Data.User.Value.Width,           Is.AtLeast(1));
-            Assert.That(vm.Data.User.Value.Height,          Is.AtLeast(1));
-            Assert.That(vm.Data.User.Value.EnableNewWindow, Is.False);
-            Assert.That(vm.Property.CanExecute(null),       Is.False);
-            Assert.That(vm.Remove.CanExecute(null),         Is.False);
-            Assert.That(vm.Rename.CanExecute(null),         Is.False);
-            Assert.That(vm.Read.CanExecute(null),           Is.False);
-            Assert.That(vm.Update.CanExecute(null),         Is.False);
-            Assert.That(vm.Reset.CanExecute(null),          Is.False);
+            Assert.That(vm.Property.CanExecute(null),  Is.False);
+            Assert.That(vm.Remove.CanExecute(null),    Is.False);
+            Assert.That(vm.Rename.CanExecute(null),    Is.False);
+            Assert.That(vm.Read.CanExecute(null),      Is.False);
+            Assert.That(vm.Update.CanExecute(null),    Is.False);
+            Assert.That(vm.Reset.CanExecute(null),     Is.False);
+
+            Assert.That(vm.DropTarget,                 Is.Not.Null);
+            Assert.That(vm.Data.Content.HasValue,      Is.False);
+            Assert.That(vm.Data.Current.HasValue,      Is.False);
+            Assert.That(vm.Data.LastEntry.HasValue,    Is.False);
+            Assert.That(vm.Data.Message.HasValue,      Is.False);
+            Assert.That(vm.Data.User.HasValue,         Is.True);
+
+            var user = vm.Data.User.Value;
+
+            Assert.That(user.Width,                    Is.AtLeast(1));
+            Assert.That(user.Height,                   Is.AtLeast(1));
+            Assert.That(user.StartUri,                 Is.Null);
+            Assert.That(user.DataDirectory,            Is.Not.Null.And.Not.Empty);
+            Assert.That(user.EnableNewWindow,          Is.False);
+            Assert.That(user.EnableMonitorMessage,     Is.True);
+            Assert.That(user.LightMode,                Is.False);
+            Assert.That(user.CheckUpdate,              Is.True);
+            Assert.That(user.HighInterval.Value,       Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(user.LowInterval.Value,        Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(user.LastCheckUpdate.HasValue, Is.False);
+            Assert.That(user.InitialDelay.HasValue,    Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -699,6 +712,7 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(dest.LightMode,            Is.True);
                 Assert.That(dest.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
                 Assert.That(dest.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
+                Assert.That(dest.DataDirectory,        Is.EqualTo(Result(nameof(VM_Settings))));
             }
         }
 
@@ -848,6 +862,7 @@ namespace Cube.Net.App.Rss.Tests
             src.HighInterval         = TimeSpan.FromHours(2);
             src.LowInterval          = TimeSpan.FromHours(12);
 
+            vm.SelectDataDirectory.Execute(null);
             vm.Apply.Execute(null);
         }
 

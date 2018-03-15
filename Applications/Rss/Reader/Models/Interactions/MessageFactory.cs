@@ -99,5 +99,26 @@ namespace Cube.Net.App.Rss.Reader
                 Title           = Properties.Resources.MessageExport,
                 Filter          = Properties.Resources.FilterOpml,
             };
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DataDirectory
+        ///
+        /// <summary>
+        /// データディレクトリ選択用メッセージを生成します。
+        /// </summary>
+        ///
+        /// <param name="src">選択パスの初期値</param>
+        ///
+        /// <returns>DirectoryDialogMessage オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static DirectoryDialogMessage DataDirectory(string src) =>
+            new DirectoryDialogMessage(null)
+            {
+                FileName  = src,
+                NewButton = true,
+                Title     = Properties.Resources.MessageDataDirectory,
+            };
     }
 }

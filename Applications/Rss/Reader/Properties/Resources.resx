@@ -191,4 +191,8 @@
   <data name="ErrorRegister" xml:space="preserve">
     <value>RSS フィードの登録に失敗しました。</value>
   </data>
+  <data name="MessageDataDirectory" xml:space="preserve">
+    <value>データフォルダを選択して下さい。
+この設定はアプリケーションを再起動後に反映されます。</value>
+  </data>
 </root>
