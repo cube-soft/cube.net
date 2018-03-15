@@ -80,6 +80,7 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
+        [Ignore("Skip the test in chrome branch")]
         public async Task GetAsync_EntityTag()
         {
             var uri = new Uri("http://www.example.com/");
