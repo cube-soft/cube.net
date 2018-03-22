@@ -518,7 +518,8 @@ namespace Cube.Net.Rss
         private void Stash()
         {
             if (_memory.Count <= Capacity) return;
-            var key = _memory.First().Key;
+            var key = _memory.FirstOrDefault(e => !e.Value).Key;
+            if (key == null) return;
             SaveCache(key);
             _memory.Remove(key);
         }
@@ -551,18 +552,24 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private void Pop(Uri uri, RssFeed dest)
         {
+            var pinned = false;
+
             try
             {
-                if (_memory.ContainsKey(uri)) _memory.Remove(uri);
+                if (_memory.ContainsKey(uri))
+                {
+                    pinned |= _memory[uri];
+                    _memory.Remove(uri);
+                }
                 else
                 {
                     var feed = Load(uri);
                     if (feed == null) return;
 
-                    dest.Title         = feed.Title;
-                    dest.Description   = feed.Description;
-                    dest.Link          = feed.Link;
-                    dest.LastChecked   = feed.LastChecked;
+                    dest.Title = feed.Title;
+                    dest.Description = feed.Description;
+                    dest.Link = feed.Link;
+                    dest.LastChecked = feed.LastChecked;
                     dest.LastPublished = feed.LastPublished;
 
                     if (dest.Items.Count > 0) dest.Items.Clear();
@@ -571,7 +578,7 @@ namespace Cube.Net.Rss
             }
             finally
             {
-                _memory.Add(uri, default(object));
+                _memory.Add(uri, pinned);
                 Stash();
             }
         }
@@ -617,7 +624,7 @@ namespace Cube.Net.Rss
         #region Fields
         private OnceAction<bool> _dispose;
         private IDictionary<Uri, RssFeed> _inner;
-        private OrderedDictionary<Uri, object> _memory = new OrderedDictionary<Uri, object>();
+        private OrderedDictionary<Uri, bool> _memory = new OrderedDictionary<Uri, bool>();
         private uint _capacity = 100;
         #endregion
     }
