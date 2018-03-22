@@ -194,8 +194,8 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Save()
         {
-            foreach (var kv in _otm) this.LogWarn(() => SaveCache(kv.Key));
-            _otm.Clear();
+            foreach (var kv in _memory) this.LogWarn(() => SaveCache(kv.Key));
+            _memory.Clear();
         }
 
         /* ----------------------------------------------------------------- */
@@ -350,7 +350,7 @@ namespace Cube.Net.Rss
         public bool Remove(Uri key, bool deleteCache)
         {
             var result = _inner.Remove(key);
-            if (result) _otm.Remove(key);
+            if (result) _memory.Remove(key);
             if (deleteCache) DeleteCache(key);
             return result;
         }
@@ -381,7 +381,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Clear()
         {
-            _otm.Clear();
+            _memory.Clear();
             _inner.Clear();
         }
 
@@ -517,10 +517,10 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private void Stash()
         {
-            if (_otm.Count <= Capacity) return;
-            var key = _otm.First().Key;
+            if (_memory.Count <= Capacity) return;
+            var key = _memory.First().Key;
             SaveCache(key);
-            _otm.Remove(key);
+            _memory.Remove(key);
         }
 
         /* ----------------------------------------------------------------- */
@@ -553,7 +553,7 @@ namespace Cube.Net.Rss
         {
             try
             {
-                if (_otm.ContainsKey(uri)) _otm.Remove(uri);
+                if (_memory.ContainsKey(uri)) _memory.Remove(uri);
                 else
                 {
                     var feed = Load(uri);
@@ -571,7 +571,7 @@ namespace Cube.Net.Rss
             }
             finally
             {
-                _otm.Add(uri, default(object));
+                _memory.Add(uri, default(object));
                 Stash();
             }
         }
@@ -617,7 +617,7 @@ namespace Cube.Net.Rss
         #region Fields
         private OnceAction<bool> _dispose;
         private IDictionary<Uri, RssFeed> _inner;
-        private OrderedDictionary<Uri, object> _otm = new OrderedDictionary<Uri, object>();
+        private OrderedDictionary<Uri, object> _memory = new OrderedDictionary<Uri, object>();
         private uint _capacity = 100;
         #endregion
     }
