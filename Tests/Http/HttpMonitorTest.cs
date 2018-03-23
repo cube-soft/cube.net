@@ -178,7 +178,7 @@ namespace Cube.Net.Tests.Http
         [Test]
         public void Monitor_PowerModeChanged()
         {
-            var power = new PowerModeContext(Power.Mode);
+            var power = new PowerModeContext(PowerModes.Resume);
             Power.Configure(power);
 
             using (var mon = Create())
