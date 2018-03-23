@@ -56,7 +56,7 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(src.Value.Height,                   Is.EqualTo(650));
             Assert.That(src.Value.StartUri,                 Is.EqualTo(new Uri("https://github.com/blog.atom")));
             Assert.That(src.Value.DataDirectory,            Is.EqualTo(dir));
-            Assert.That(src.Value.Capacity,                 Is.EqualTo(100));
+            Assert.That(src.Value.Capacity,                 Is.EqualTo(5));
             Assert.That(src.Value.EnableNewWindow,          Is.True);
             Assert.That(src.Value.EnableMonitorMessage,     Is.True);
             Assert.That(src.Value.LightMode,                Is.False);

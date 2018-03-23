@@ -261,6 +261,7 @@ namespace Cube.Net.App.Rss.Reader
 
             if (src is RssEntry current && current != Data.LastEntry.Value)
             {
+                _core.Select(Data.LastEntry.Value, current);
                 current.Selected = true;
                 Data.LastEntry.Value = current;
                 Select(current.Items.FirstOrDefault());

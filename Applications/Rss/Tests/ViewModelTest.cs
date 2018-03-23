@@ -92,32 +92,53 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(first.Count,               Is.EqualTo(14));
                 Assert.That(first.UnreadItems.Count(), Is.EqualTo(14));
 
-                var src = vm.Data.Root.OfType<RssCategory>().First();
-                src.Entries.First().SkipContent = true;
-                vm.Select.Execute(src.Entries.First());
-
+                var category = vm.Data.Root.OfType<RssCategory>().First();
+                var src = category.Entries.First();
+                src.SkipContent = true;
+                vm.Select.Execute(src);
                 var dest = vm.Data.Current.Value as RssEntry;
+
                 Assert.That(dest.Title,               Is.EqualTo("CubeSoft Blog"));
                 Assert.That(dest.Selected,            Is.True);
                 Assert.That(dest.SafeItems.Count(),   Is.EqualTo(10));
                 Assert.That(dest.Count,               Is.EqualTo(9), nameof(RssEntry));
                 Assert.That(dest.UnreadItems.Count(), Is.EqualTo(9));
-                Assert.That(src.Count,                Is.EqualTo(9), nameof(RssCategory));
-
-                vm.Select.Execute(src);
-                var category = vm.Data.Current.Value as RssCategory;
-                Assert.That(category.Title,           Is.EqualTo("キューブ・ソフト"));
-                Assert.That(category.Count,           Is.EqualTo(9));
-                Assert.That(vm.Data.LastEntry.Value,  Is.EqualTo(dest));
-                Assert.That(dest.Selected,            Is.True);
+                Assert.That(category.Count,           Is.EqualTo(9), nameof(RssCategory));
 
                 vm.SelectArticle.Execute(dest.UnreadItems.First());
                 Assert.That(vm.Data.Content.HasValue, Is.True);
                 Assert.That(dest.Count,               Is.EqualTo(8), nameof(RssEntry));
                 Assert.That(dest.UnreadItems.Count(), Is.EqualTo(8));
-                Assert.That(src.Count,                Is.EqualTo(8), nameof(RssCategory));
+                Assert.That(category.Count,           Is.EqualTo(8), nameof(RssCategory));
 
                 vm.Close.Execute(null);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Select_Category
+        ///
+        /// <summary>
+        /// カテゴリを選択するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Select_Category()
+        {
+            using (var vm = Create())
+            {
+                vm.Stop.Execute(null);
+                var first = vm.Data.LastEntry.Value;
+                var src = vm.Data.Root.OfType<RssCategory>().First();
+                vm.Select.Execute(src);
+                var dest = vm.Data.Current.Value as RssCategory;
+
+                Assert.That(dest.Title,              Is.EqualTo("キューブ・ソフト"));
+                Assert.That(dest.Count,              Is.EqualTo(10));
+                Assert.That(vm.Data.LastEntry.Value, Is.EqualTo(first));
+                Assert.That(first.Selected,          Is.True);
             }
         }
 
