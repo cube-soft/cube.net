@@ -81,7 +81,8 @@
     <Compile Include="Models\RssFacadeTest.cs" />
     <Compile Include="Models\RssOpmlTest.cs" />
     <Compile Include="Models\RssSubscriberTest.cs" />
-    <Compile Include="ViewModels\ViewModelTest.cs" />
+    <Compile Include="SettingsTest.cs" />
+    <Compile Include="ViewModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +115,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Examples\Settings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Examples\SettingsEmpty.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,4 +1,5 @@
 {
+    "Capacity": 100,
     "CheckUpdate": true,
     "EnableNewWindow": true,
     "EnableMonitorMessage": true,
@@ -7,6 +8,6 @@
     "LastCheckUpdate": null,
     "LightMode": false,
     "LowInterval": "P1D",
-    "Start": "https:\/\/github.com\/blog.atom",
+    "Start": "https://github.com/blog.atom",
     "Width": 1100
 }
