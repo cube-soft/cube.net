@@ -63,6 +63,7 @@ namespace Cube.Net.App.Rss.Reader
 
             _core.IO = Settings.IO;
             _core.FileName = Settings.Feed;
+            _core.Capacity = Settings.Value.Capacity;
             _core.CacheDirectory = Settings.Cache;
             _core.UserAgent = Settings.UserAgent;
             _core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);

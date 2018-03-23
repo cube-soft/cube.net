@@ -105,7 +105,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public uint Capacity
+        public int Capacity
         {
             get => _capacity;
             set => _capacity = Math.Max(value, 1);
@@ -644,7 +644,7 @@ namespace Cube.Net.Rss
         private OnceAction<bool> _dispose;
         private IDictionary<Uri, RssFeed> _inner;
         private OrderedDictionary<Uri, bool> _memory = new OrderedDictionary<Uri, bool>();
-        private uint _capacity = 100;
+        private int _capacity = 100;
         #endregion
     }
 }

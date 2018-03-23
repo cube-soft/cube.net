@@ -56,8 +56,6 @@ namespace Cube.Net.App.Rss.Reader
         {
             _dispose = new OnceAction<bool>(Dispose);
 
-            _feeds.Capacity = 1000;
-
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();
@@ -107,6 +105,21 @@ namespace Cube.Net.App.Rss.Reader
         {
             get => _feeds.IO;
             set => _feeds.IO = value;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CacheDirectory
+        ///
+        /// <summary>
+        /// キャッシュ用ディレクトリのパスを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public int Capacity
+        {
+            get => _feeds.Capacity;
+            set => _feeds.Capacity = value;
         }
 
         /* ----------------------------------------------------------------- */
