@@ -179,7 +179,7 @@ namespace Cube.Net.Tests.Http
         [Ignore("Skip the test in chrome branch")]
         public void Monitor_PowerModeChanged()
         {
-            var power = new PowerModeContext(Power.Mode);
+            var power = new PowerModeContext(PowerModes.Resume);
             Power.Configure(power);
 
             using (var mon = Create())

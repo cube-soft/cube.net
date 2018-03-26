@@ -147,8 +147,8 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected IList<Func<TimeSpan, Task>> Subscriptions { get; }
-            = new List<Func<TimeSpan, Task>>();
+        protected IList<Func<TimeSpan, Task>> Subscriptions { get; } =
+            new List<Func<TimeSpan, Task>>();
 
         #endregion
 

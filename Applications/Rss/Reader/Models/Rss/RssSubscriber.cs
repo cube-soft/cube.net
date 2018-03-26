@@ -56,8 +56,6 @@ namespace Cube.Net.App.Rss.Reader
         {
             _dispose = new OnceAction<bool>(Dispose);
 
-            _feeds.Capacity = 1000;
-
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();
@@ -107,6 +105,21 @@ namespace Cube.Net.App.Rss.Reader
         {
             get => _feeds.IO;
             set => _feeds.IO = value;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CacheDirectory
+        ///
+        /// <summary>
+        /// キャッシュ用ディレクトリのパスを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public int Capacity
+        {
+            get => _feeds.Capacity;
+            set => _feeds.Capacity = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -208,6 +221,24 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssEntry Find(Uri uri) =>
             uri != null && _feeds.ContainsKey(uri) ? _feeds[uri] as RssEntry : null;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Select
+        ///
+        /// <summary>
+        /// RSS エントリの選択状況を変更します。
+        /// </summary>
+        ///
+        /// <param name="from">直前に選択されていたオブジェクト</param>
+        /// <param name="to">選択オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Select(RssEntry from, RssEntry to)
+        {
+            if (to   != null) _feeds.Get(to.Uri, true); // lock
+            if (from != null) _feeds.Unlock(from.Uri);
+        }
 
         /* ----------------------------------------------------------------- */
         ///

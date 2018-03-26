@@ -35,6 +35,21 @@ namespace Cube.Net.App.Rss.Reader
     [DataContract]
     public class Settings : ObservableProperty
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Settings
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Settings() { Reset(); }
+
+        #endregion
+
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -84,6 +99,23 @@ namespace Cube.Net.App.Rss.Reader
         {
             get => _height;
             set => SetProperty(ref _height, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Capacity
+        ///
+        /// <summary>
+        /// メモリ上に保持する RSS フィードの最大項目数を取得または
+        /// 設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public int Capacity
+        {
+            get => _capacity;
+            set => SetProperty(ref _capacity, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -227,25 +259,68 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public TimeSpan? InitialDelay
         {
-            get => _initialDelay ?? (_initialDelay = TimeSpan.FromSeconds(3));
+            get => _initialDelay;
             set => SetProperty(ref _initialDelay, value);
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnDeserializing
+        ///
+        /// <summary>
+        /// デシリアライズ直前に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context) => Reset();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        ///
+        /// <summary>
+        /// 値をリセットします。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Reset()
+        {
+            _startUri             = null;
+            _width                = 1100;
+            _height               = 650;
+            _capacity             = 1000;
+            _lightMode            = false;
+            _enableNewWindow      = false;
+            _enableMonitorMessage = true;
+            _checkUpdate          = true;
+            _dataDirectory        = null;
+            _lastCheckUpdate      = null;
+            _highInterval         = TimeSpan.FromHours(1);
+            _lowInterval          = TimeSpan.FromHours(24);
+            _initialDelay         = TimeSpan.FromSeconds(3);
         }
 
         #endregion
 
         #region Fields
         private Uri _startUri;
-        private int _width = 1100;
-        private int _height = 650;
-        private bool _lightMode = false;
-        private bool _enableNewWindow = false;
-        private bool _enableMonitorMessage = true;
-        private bool _checkUpdate = true;
-        private string _dataDirectory = null;
-        private DateTime? _lastCheckUpdate = null;
-        private TimeSpan? _highInterval = TimeSpan.FromHours(1);
-        private TimeSpan? _lowInterval = TimeSpan.FromHours(24);
-        private TimeSpan? _initialDelay = null;
+        private int _width;
+        private int _height;
+        private int _capacity;
+        private bool _lightMode;
+        private bool _enableNewWindow;
+        private bool _enableMonitorMessage;
+        private bool _checkUpdate;
+        private string _dataDirectory;
+        private DateTime? _lastCheckUpdate;
+        private TimeSpan? _highInterval;
+        private TimeSpan? _lowInterval;
+        private TimeSpan? _initialDelay;
         #endregion
     }
 

@@ -460,18 +460,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private async Task WhenTick()
         {
-            if (State != TimerState.Run) return;
-
             var src    = Feeds.OrderBy(e => e.Value).Select(e => e.Key).ToList();
             var errors = new Dictionary<Uri, Exception>();
             await RunAsync(src, errors);
 
             for (var i = 0; i < RetryCount && errors.Count > 0; ++i)
             {
-                if (State != TimerState.Run) return;
                 await Task.Delay(RetryInterval);
-                if (State != TimerState.Run) return;
-
                 var retry = errors.Keys.ToList();
                 errors.Clear();
                 await RunAsync(retry, errors);

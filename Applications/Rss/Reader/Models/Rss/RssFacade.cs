@@ -63,6 +63,7 @@ namespace Cube.Net.App.Rss.Reader
 
             _core.IO = Settings.IO;
             _core.FileName = Settings.Feed;
+            _core.Capacity = Settings.Value.Capacity;
             _core.CacheDirectory = Settings.Cache;
             _core.UserAgent = Settings.UserAgent;
             _core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
@@ -260,6 +261,7 @@ namespace Cube.Net.App.Rss.Reader
 
             if (src is RssEntry current && current != Data.LastEntry.Value)
             {
+                _core.Select(Data.LastEntry.Value, current);
                 current.Selected = true;
                 Data.LastEntry.Value = current;
                 Select(current.Items.FirstOrDefault());
