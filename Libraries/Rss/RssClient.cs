@@ -228,7 +228,7 @@ namespace Cube.Net.Rss
                     return dest;
                 }
             }
-            catch (Exception /* err */) { /* try redirect */ }
+            catch { /* try redirect */ }
 
             content.Seek(0, System.IO.SeekOrigin.Begin);
             var cvt = content.GetRssUris().FirstOrDefault();

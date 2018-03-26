@@ -163,12 +163,8 @@ namespace Cube.Net
         /* ----------------------------------------------------------------- */
         protected override void OnPowerModeChanged(EventArgs e)
         {
-            if (!Network.Available)
-            {
-                if (State == TimerState.Run) Suspend();
-                return;
-            }
-            base.OnPowerModeChanged(e);
+            if (!Network.Available && State == TimerState.Run) Suspend();
+            else base.OnPowerModeChanged(e);
         }
 
         #endregion

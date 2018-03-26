@@ -173,7 +173,7 @@ namespace Cube.Net.Rss.Parsing
                 var value = e.GetValueOrAttribute(ns, name, "href");
                 return !string.IsNullOrEmpty(value) ? new Uri(value.Trim()) : default(Uri);
             }
-            catch (Exception /* err */) { return default(Uri); }
+            catch { return default(Uri); }
         }
 
         /* ----------------------------------------------------------------- */

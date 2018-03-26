@@ -245,7 +245,7 @@ namespace Cube.Net.App.Rss.Reader
         private Uri GetUri(XElement src, string name, Uri alternate)
         {
             try { return src.Attribute(name).Value.ToUri(); }
-            catch (Exception /* err */) { return alternate; }
+            catch { return alternate; }
         }
 
         /* ----------------------------------------------------------------- */
