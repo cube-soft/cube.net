@@ -435,6 +435,17 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public string UserAgent => _userAgent ?? (_userAgent = GetUserAgent());
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsReadOnly
+        ///
+        /// <summary>
+        /// 読み取り専用モードかどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool IsReadOnly { get; set; } = false;
+
         #endregion
 
         #region Implementations
