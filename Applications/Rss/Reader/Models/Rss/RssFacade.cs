@@ -63,16 +63,16 @@ namespace Cube.Net.App.Rss.Reader
 
             _core.IO = Settings.IO;
             _core.FileName = Settings.Feed;
-            _core.Capacity = Settings.Value.Capacity;
+            _core.Capacity = Settings.Shared.Capacity;
             _core.CacheDirectory = Settings.Cache;
             _core.UserAgent = Settings.UserAgent;
-            _core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
-            _core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
+            _core.Set(RssCheckFrequency.High, Settings.Shared.HighInterval);
+            _core.Set(RssCheckFrequency.Low, Settings.Shared.LowInterval);
             _core.Received += WhenReceived;
 
             _checker = new UpdateChecker(Settings);
 
-            Data = new RssBindableData(_core, Settings.Value);
+            Data = new RssBindableData(_core, Settings);
         }
 
         #endregion
@@ -120,7 +120,7 @@ namespace Cube.Net.App.Rss.Reader
 
             this.LogDebug("Load", () => _core.Load());
 
-            var entry = _core.Find(Settings.Value.StartUri) ??
+            var entry = _core.Find(Settings.Shared.StartUri) ??
                         _core.Flatten<RssEntry>().FirstOrDefault();
             if (entry != null)
             {
@@ -128,8 +128,8 @@ namespace Cube.Net.App.Rss.Reader
                 entry.Parent.Expand();
             }
 
-            Debug.Assert(Settings.Value.InitialDelay.HasValue);
-            _core.Start(Settings.Value.InitialDelay.Value);
+            Debug.Assert(Settings.Shared.InitialDelay.HasValue);
+            _core.Start(Settings.Shared.InitialDelay.Value);
 
             Data.Message.Value = string.Empty;
         }
@@ -265,7 +265,7 @@ namespace Cube.Net.App.Rss.Reader
                 current.Selected = true;
                 Data.LastEntry.Value = current;
                 Select(current.Items.FirstOrDefault());
-                Settings.Value.StartUri = current.Uri;
+                Settings.Shared.StartUri = current.Uri;
             }
         }
 
@@ -418,7 +418,7 @@ namespace Cube.Net.App.Rss.Reader
 
             var count = dest.Update(src);
 
-            Data.Message.Value = Settings.Value.EnableMonitorMessage ?
+            Data.Message.Value = Settings.Shared.EnableMonitorMessage ?
                                  src.ToMessage(count) :
                                  string.Empty;
         }
@@ -436,14 +436,14 @@ namespace Cube.Net.App.Rss.Reader
         {
             switch (e.PropertyName)
             {
-                case nameof(Settings.Value.HighInterval):
-                    _core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
+                case nameof(Settings.Shared.HighInterval):
+                    _core.Set(RssCheckFrequency.High, Settings.Shared.HighInterval);
                     break;
-                case nameof(Settings.Value.LowInterval):
-                    _core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
+                case nameof(Settings.Shared.LowInterval):
+                    _core.Set(RssCheckFrequency.Low, Settings.Shared.LowInterval);
                     break;
-                case nameof(Settings.Value.CheckUpdate):
-                    if (Settings.Value.CheckUpdate) _checker.Start();
+                case nameof(Settings.Shared.CheckUpdate):
+                    if (Settings.Shared.CheckUpdate) _checker.Start();
                     else _checker.Stop();
                     break;
             }

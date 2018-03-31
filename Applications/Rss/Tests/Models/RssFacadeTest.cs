@@ -190,7 +190,7 @@ namespace Cube.Net.App.Rss.Tests
             var settings = new SettingsFolder(root, IO);
             var dest     = new RssFacade(settings);
 
-            settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
+            settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
 
             dest.Setup();
             return dest;

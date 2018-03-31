@@ -45,10 +45,11 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="settings">設定用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssBindableData(IEnumerable<IRssEntry> root, Settings settings)
+        public RssBindableData(IEnumerable<IRssEntry> root, SettingsFolder settings)
         {
-            Root = root;
-            User = new Bindable<Settings>(settings);
+            Root  = root;
+            Local = settings.Value.ToBindable();
+            User  = settings.Shared.ToBindable();
         }
 
         #endregion
@@ -69,6 +70,17 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Local
+        ///
+        /// <summary>
+        /// ローカル設定を保持するオブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<LocalSettings> Local { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// User
         ///
         /// <summary>
@@ -76,7 +88,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<Settings> User { get; }
+        public Bindable<SharedSettings> User { get; }
 
         /* ----------------------------------------------------------------- */
         ///

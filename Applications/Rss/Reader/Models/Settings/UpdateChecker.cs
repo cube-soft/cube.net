@@ -56,7 +56,7 @@ namespace Cube.Net.App.Rss.Reader
             _timer.Interval = TimeSpan.FromDays(1);
             _timer.Subscribe(WhenTick);
 
-            if (settings.Value.CheckUpdate) Start();
+            if (settings.Shared.CheckUpdate) Start();
         }
 
         #endregion
@@ -100,7 +100,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Start()
         {
-            var time  = Settings.Value.LastCheckUpdate ?? DateTime.MinValue;
+            var time  = Settings.Shared.LastCheckUpdate ?? DateTime.MinValue;
             var past  = DateTime.Now - time;
             var delta = past < _timer.Interval ?
                         _timer.Interval - past :
@@ -136,7 +136,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             try { Process.Start(FileName, Settings.Product); }
             catch (Exception err) { this.LogWarn($"{FileName} ({err.Message})"); }
-            finally { Settings.Value.LastCheckUpdate = DateTime.Now; }
+            finally { Settings.Shared.LastCheckUpdate = DateTime.Now; }
         }
 
         #endregion
