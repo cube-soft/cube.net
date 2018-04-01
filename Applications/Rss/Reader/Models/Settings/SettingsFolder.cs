@@ -186,7 +186,6 @@ namespace Cube.Net.App.Rss.Reader
             var dest = e.NewValue;
             if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = Root;
             LoadSharedSettings();
-
             base.OnLoaded(e);
         }
 
@@ -217,6 +216,7 @@ namespace Cube.Net.App.Rss.Reader
         private void LoadSharedSettings()
         {
             var dest = IO.Load(SharedPath, e => Type.Load<SharedSettings>(e), new SharedSettings());
+            System.Diagnostics.Debug.Assert(dest != null);
             LoadLastCheckUpdate(dest);
             dest.PropertyChanged += (s, e) => OnPropertyChanged(e);
             Shared = dest;

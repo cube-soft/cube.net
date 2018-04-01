@@ -54,7 +54,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             _dispose = new OnceAction<bool>(Dispose);
 
-            this.LogWarn(() => settings.Load());
+            settings.LoadOrDefault(new LocalSettings());
             this.LogInfo($"User-Agent:{settings.UserAgent}");
 
             Settings = settings;

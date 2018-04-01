@@ -80,6 +80,7 @@ namespace Cube.Net.App.Rss.Tests
         public void Load_Empty()
         {
             var dir = Result(nameof(Load_Empty));
+            IO.Copy(Example("SettingsEmpty.json"), IO.Combine(dir, "LocalSettings.json"), true);
             IO.Copy(Example("SettingsEmpty.json"), IO.Combine(dir, "Settings.json"), true);
             var src = new SettingsFolder(dir, IO);
             src.Load();
