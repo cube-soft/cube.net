@@ -48,22 +48,23 @@ namespace Cube.Net.App.Rss.Tests
         public void Load()
         {
             var dir = Result(nameof(Load));
+            IO.Copy(Example("LocalSettings.json"), IO.Combine(dir, "LocalSettings.json"), true);
             IO.Copy(Example("Settings.json"), IO.Combine(dir, "Settings.json"), true);
             var src = new SettingsFolder(dir, IO);
             src.Load();
 
             Assert.That(src.Value.Width,                    Is.EqualTo(1100));
             Assert.That(src.Value.Height,                   Is.EqualTo(650));
-            Assert.That(src.Value.StartUri,                 Is.EqualTo(new Uri("https://github.com/blog.atom")));
             Assert.That(src.Value.DataDirectory,            Is.EqualTo(dir));
-            Assert.That(src.Value.Capacity,                 Is.EqualTo(5));
-            Assert.That(src.Value.EnableNewWindow,          Is.True);
-            Assert.That(src.Value.EnableMonitorMessage,     Is.True);
-            Assert.That(src.Value.LightMode,                Is.False);
-            Assert.That(src.Value.CheckUpdate,              Is.True);
-            Assert.That(src.Value.HighInterval.Value,       Is.EqualTo(TimeSpan.FromHours(1)));
-            Assert.That(src.Value.LowInterval.Value,        Is.EqualTo(TimeSpan.FromDays(1)));
-            Assert.That(src.Value.InitialDelay.Value,       Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Shared.StartUri,                Is.EqualTo(new Uri("https://github.com/blog.atom")));
+            Assert.That(src.Shared.Capacity,                Is.EqualTo(5));
+            Assert.That(src.Shared.EnableNewWindow,         Is.True);
+            Assert.That(src.Shared.EnableMonitorMessage,    Is.True);
+            Assert.That(src.Shared.LightMode,               Is.False);
+            Assert.That(src.Shared.CheckUpdate,             Is.True);
+            Assert.That(src.Shared.HighInterval.Value,      Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(src.Shared.LowInterval.Value,       Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(src.Shared.InitialDelay.Value,      Is.EqualTo(TimeSpan.FromSeconds(3)));
         }
 
         /* ----------------------------------------------------------------- */
@@ -79,22 +80,23 @@ namespace Cube.Net.App.Rss.Tests
         public void Load_Empty()
         {
             var dir = Result(nameof(Load_Empty));
+            IO.Copy(Example("SettingsEmpty.json"), IO.Combine(dir, "LocalSettings.json"), true);
             IO.Copy(Example("SettingsEmpty.json"), IO.Combine(dir, "Settings.json"), true);
             var src = new SettingsFolder(dir, IO);
             src.Load();
 
             Assert.That(src.Value.Width,                    Is.EqualTo(1100));
             Assert.That(src.Value.Height,                   Is.EqualTo(650));
-            Assert.That(src.Value.StartUri,                 Is.Null);
             Assert.That(src.Value.DataDirectory,            Is.EqualTo(dir));
-            Assert.That(src.Value.Capacity,                 Is.EqualTo(1000));
-            Assert.That(src.Value.EnableNewWindow,          Is.False);
-            Assert.That(src.Value.EnableMonitorMessage,     Is.True);
-            Assert.That(src.Value.LightMode,                Is.False);
-            Assert.That(src.Value.CheckUpdate,              Is.True);
-            Assert.That(src.Value.HighInterval.Value,       Is.EqualTo(TimeSpan.FromHours(1)));
-            Assert.That(src.Value.LowInterval.Value,        Is.EqualTo(TimeSpan.FromDays(1)));
-            Assert.That(src.Value.InitialDelay.Value,       Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Shared.StartUri,                Is.Null);
+            Assert.That(src.Shared.Capacity,                Is.EqualTo(1000));
+            Assert.That(src.Shared.EnableNewWindow,         Is.False);
+            Assert.That(src.Shared.EnableMonitorMessage,    Is.True);
+            Assert.That(src.Shared.LightMode,               Is.False);
+            Assert.That(src.Shared.CheckUpdate,             Is.True);
+            Assert.That(src.Shared.HighInterval.Value,      Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(src.Shared.LowInterval.Value,       Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(src.Shared.InitialDelay.Value,      Is.EqualTo(TimeSpan.FromSeconds(3)));
         }
 
         #endregion

@@ -14,8 +14,8 @@
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
     Title="{Binding Data.Content.Value, Converter={my:TitleConverter}}"
-    Width="{Binding Data.User.Value.Width, Mode=TwoWay}"
-    Height="{Binding Data.User.Value.Height, Mode=TwoWay}">
+    Width="{Binding Data.Local.Value.Width, Mode=TwoWay}"
+    Height="{Binding Data.Local.Value.Height, Mode=TwoWay}">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -164,7 +164,7 @@
                 ItemContainerStyle="{StaticResource RssItemStyle}"
                 ItemTemplate="{StaticResource RssItemTemplate}"
                 Style="{StaticResource RssFeedsStyle}"
-                ScrollViewer.IsDeferredScrollingEnabled="{Binding Data.User.Value.LightMode}"
+                ScrollViewer.IsDeferredScrollingEnabled="{Binding Data.Shared.Value.LightMode}"
                 Grid.Row="2">
                 <i:Interaction.Behaviors>
                     <my:ScrollToTopBehavior Messenger="{Binding Messenger}"/>
@@ -208,7 +208,7 @@
                 <i:Interaction.Behaviors>
                     <my:WebBehavior
                         Content="{Binding Data.Content.Value, Mode=OneWay}"
-                        EnableNewWindow="{Binding Data.User.Value.EnableNewWindow, Mode=OneWay}"
+                        EnableNewWindow="{Binding Data.Shared.Value.EnableNewWindow, Mode=OneWay}"
                         Hover="{Binding Hover}"/>
                 </i:Interaction.Behaviors>
             </WindowsFormsHost>

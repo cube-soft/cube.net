@@ -15,49 +15,34 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Log;
-using System;
-using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// UpdateChecker
+    /// LocalSettings
     ///
     /// <summary>
-    /// アップデートの確認を行うためのクラスです。
+    /// ユーザ設定を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class UpdateChecker
+    [DataContract]
+    public class LocalSettings : ObservableProperty
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UpdateChecker
+        /// Settings
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="settings">設定用オブジェクト</param>
-        ///
         /* ----------------------------------------------------------------- */
-        public UpdateChecker(SettingsFolder settings)
-        {
-            var io  = settings.IO;
-            var dir = io.Get(AssemblyReader.Default.Location).DirectoryName;
-
-            FileName = io.Combine(dir, "UpdateChecker.exe");
-            Settings = settings;
-
-            _timer.Interval = TimeSpan.FromDays(1);
-            _timer.Subscribe(WhenTick);
-
-            if (settings.Shared.CheckUpdate) Start();
-        }
+        public LocalSettings() { Reset(); }
 
         #endregion
 
@@ -65,59 +50,51 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
+        /// Width
         ///
         /// <summary>
-        /// 設定用オブジェクトを取得します。
+        /// メイン画面の幅を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder Settings { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FileName
-        ///
-        /// <summary>
-        /// アップデート確認用プログラムのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string FileName { get; }
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Start
-        ///
-        /// <summary>
-        /// 定期実行を開始します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Start()
+        [DataMember]
+        public int Width
         {
-            var time  = Settings.Shared.LastCheckUpdate ?? DateTime.MinValue;
-            var past  = DateTime.Now - time;
-            var delta = past < _timer.Interval ?
-                        _timer.Interval - past :
-                        TimeSpan.FromMilliseconds(100);
-            _timer.Start(delta);
+            get => _width;
+            set => SetProperty(ref _width, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Stop
+        /// Height
         ///
         /// <summary>
-        /// 定期実行を停止します。
+        /// メイン画面の高さを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Stop() => _timer.Stop();
+        [DataMember]
+        public int Height
+        {
+            get => _height;
+            set => SetProperty(ref _height, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DataDirectory
+        ///
+        /// <summary>
+        /// データ格納用ディレクトリのパスを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public string DataDirectory
+        {
+            get => _dataDirectory;
+            set => SetProperty(ref _dataDirectory, value);
+        }
 
         #endregion
 
@@ -125,24 +102,38 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WhenTick
+        /// OnDeserializing
         ///
         /// <summary>
-        /// 一定時間毎に実行されます。
+        /// デシリアライズ直前に実行されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenTick()
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context) => Reset();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        ///
+        /// <summary>
+        /// 値をリセットします。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Reset()
         {
-            try { Process.Start(FileName, Settings.Product); }
-            catch (Exception err) { this.LogWarn($"{FileName} ({err.Message})"); }
-            finally { Settings.Shared.LastCheckUpdate = DateTime.Now; }
+            _width         = 1100;
+            _height        = 650;
+            _dataDirectory = null;
         }
 
         #endregion
 
         #region Fields
-        private WakeableTimer _timer = new WakeableTimer();
+        private int _width;
+        private int _height;
+        private string _dataDirectory;
         #endregion
     }
 }

@@ -67,7 +67,7 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(vm.Data.Current.HasValue,      Is.False);
             Assert.That(vm.Data.LastEntry.HasValue,    Is.False);
             Assert.That(vm.Data.Message.HasValue,      Is.False);
-            Assert.That(vm.Data.User.HasValue,         Is.True);
+            Assert.That(vm.Data.Shared.HasValue,         Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -711,14 +711,15 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Messenger.Register<SettingsViewModel>(this, e => SettingsCommand(e));
                 vm.Settings.Execute(null);
 
-                var dest = vm.Data.User.Value;
-                Assert.That(dest.CheckUpdate,          Is.False);
-                Assert.That(dest.EnableNewWindow,      Is.False);
-                Assert.That(dest.EnableMonitorMessage, Is.False);
-                Assert.That(dest.LightMode,            Is.True);
-                Assert.That(dest.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
-                Assert.That(dest.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
-                Assert.That(dest.DataDirectory,        Is.EqualTo(Result(nameof(VM_Settings))));
+                var local = vm.Data.Local.Value;
+                var shred = vm.Data.Shared.Value;
+                Assert.That(shred.CheckUpdate,          Is.False);
+                Assert.That(shred.EnableNewWindow,      Is.False);
+                Assert.That(shred.EnableMonitorMessage, Is.False);
+                Assert.That(shred.LightMode,            Is.True);
+                Assert.That(shred.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
+                Assert.That(shred.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
+                Assert.That(local.DataDirectory,        Is.EqualTo(Result(nameof(VM_Settings))));
             }
         }
 
@@ -741,9 +742,9 @@ namespace Cube.Net.App.Rss.Tests
             var settings = new SettingsFolder(root, IO);
             var dest     = new MainViewModel(settings);
 
-            settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
-            settings.Value.Width        = 1024;
-            settings.Value.Height       = 768;
+            settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
+            settings.Value.Width         = 1024;
+            settings.Value.Height        = 768;
 
             dest.Data.Message.Value = "Test";
             dest.Setup.Execute(null);
@@ -860,7 +861,7 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(vm.Version,   Does.StartWith("Version"));
             Assert.That(vm.Windows,   Does.StartWith("Microsoft Windows"));
 
-            var src = vm.Data.Value;
+            var src = vm.Shared.Value;
             src.CheckUpdate          = false;
             src.EnableNewWindow      = false;
             src.EnableMonitorMessage = false;

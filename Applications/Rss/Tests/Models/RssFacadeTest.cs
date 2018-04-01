@@ -141,13 +141,13 @@ namespace Cube.Net.App.Rss.Tests
             {
                 m.Stop();
 
-                Assert.That(m.Data.User.Value.CheckUpdate, Is.True);
+                Assert.That(m.Data.Shared.Value.CheckUpdate, Is.True);
                 Task.Delay(150).Wait();
-                m.Data.User.Value.CheckUpdate = false;
-                Assert.That(m.Data.User.Value.CheckUpdate, Is.False);
-                Assert.That(m.Data.User.Value.LastCheckUpdate.HasValue, Is.True);
-                m.Data.User.Value.CheckUpdate = true;
-                Assert.That(m.Data.User.Value.CheckUpdate, Is.True);
+                m.Data.Shared.Value.CheckUpdate = false;
+                Assert.That(m.Data.Shared.Value.CheckUpdate, Is.False);
+                Assert.That(m.Data.Shared.Value.LastCheckUpdate.HasValue, Is.True);
+                m.Data.Shared.Value.CheckUpdate = true;
+                Assert.That(m.Data.Shared.Value.CheckUpdate, Is.True);
             }
         }
 
@@ -190,7 +190,7 @@ namespace Cube.Net.App.Rss.Tests
             var settings = new SettingsFolder(root, IO);
             var dest     = new RssFacade(settings);
 
-            settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
+            settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
 
             dest.Setup();
             return dest;
