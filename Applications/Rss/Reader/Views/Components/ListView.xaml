@@ -71,7 +71,7 @@
                     MaxHeight="48"
                     Margin="12,2,12,8"
                     TextTrimming="WordEllipsis"
-                    TextWrapping="{Binding DataContext.Data.User.Value.LightMode,
+                    TextWrapping="{Binding DataContext.Data.Shared.Value.LightMode,
                         ElementName=Root, Converter={my:TextWrappingConverter}}"/>
             </VirtualizingStackPanel>
             <i:Interaction.Triggers>

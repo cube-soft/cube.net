@@ -48,6 +48,7 @@ namespace Cube.Net.App.Rss.Tests
         public void Load()
         {
             var dir = Result(nameof(Load));
+            IO.Copy(Example("LocalSettings.json"), IO.Combine(dir, "LocalSettings.json"), true);
             IO.Copy(Example("Settings.json"), IO.Combine(dir, "Settings.json"), true);
             var src = new SettingsFolder(dir, IO);
             src.Load();

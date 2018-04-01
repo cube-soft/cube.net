@@ -67,7 +67,7 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(vm.Data.Current.HasValue,      Is.False);
             Assert.That(vm.Data.LastEntry.HasValue,    Is.False);
             Assert.That(vm.Data.Message.HasValue,      Is.False);
-            Assert.That(vm.Data.User.HasValue,         Is.True);
+            Assert.That(vm.Data.Shared.HasValue,         Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -712,7 +712,7 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Settings.Execute(null);
 
                 var local = vm.Data.Local.Value;
-                var shred = vm.Data.User.Value;
+                var shred = vm.Data.Shared.Value;
                 Assert.That(shred.CheckUpdate,          Is.False);
                 Assert.That(shred.EnableNewWindow,      Is.False);
                 Assert.That(shred.EnableMonitorMessage, Is.False);
