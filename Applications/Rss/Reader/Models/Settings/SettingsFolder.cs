@@ -137,17 +137,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SharedPath
-        ///
-        /// <summary>
-        /// ユーザ設定を保持するためのファイルのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string SharedPath => IO.Combine(Value.DataDirectory, "Settings.json");
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// UserAgent
         ///
         /// <summary>
@@ -185,7 +174,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             var dest = e.NewValue;
             if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = Root;
-            LoadSharedSettings();
+            LoadSharedSettings(GetSharedPath(dest.DataDirectory));
             base.OnLoaded(e);
         }
 
@@ -200,7 +189,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void OnSaved(KeyValueEventArgs<SettingsType, string> e)
         {
-            IO.Save(SharedPath, ss => Type.Save(ss, Shared));
+            IO.Save(GetSharedPath(Value.DataDirectory), ss => Type.Save(ss, Shared));
             base.OnSaved(e);
         }
 
@@ -213,9 +202,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void LoadSharedSettings()
+        private void LoadSharedSettings(string path)
         {
-            var dest = IO.Load(SharedPath, e => Type.Load<SharedSettings>(e), new SharedSettings());
+            var dest = IO.Load(path, e => Type.Load<SharedSettings>(e), new SharedSettings());
             System.Diagnostics.Debug.Assert(dest != null);
             LoadLastCheckUpdate(dest);
             dest.PropertyChanged += (s, e) => OnPropertyChanged(e);
@@ -242,6 +231,17 @@ namespace Cube.Net.App.Rss.Reader
                 dest.LastCheckUpdate = DateTime.Parse(s).ToLocalTime();
             }
         });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetSharedPath
+        ///
+        /// <summary>
+        /// ユーザ設定ファイルのパスを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private string GetSharedPath(string dir) => IO.Combine(dir, "Settings.json");
 
         /* ----------------------------------------------------------------- */
         ///
