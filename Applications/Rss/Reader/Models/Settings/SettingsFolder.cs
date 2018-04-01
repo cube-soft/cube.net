@@ -183,13 +183,26 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void OnLoaded(ValueChangedEventArgs<LocalSettings> e)
         {
-            this.LogWarn(() =>
-            {
-                var dest = e.NewValue;
-                if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = Root;
-            });
+            var dest = e.NewValue;
+            if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = Root;
+            LoadSharedSettings();
 
             base.OnLoaded(e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnSaved
+        ///
+        /// <summary>
+        /// 設定の保存時に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void OnSaved(KeyValueEventArgs<SettingsType, string> e)
+        {
+            IO.Save(SharedPath, ss => Type.Save(ss, Shared));
+            base.OnSaved(e);
         }
 
         /* ----------------------------------------------------------------- */
