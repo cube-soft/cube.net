@@ -477,8 +477,8 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new MainViewModel();
             vm.NewCategory.Execute(null);
-
             var dest = vm.Data.Current.Value as RssCategory;
+
             Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
             Assert.That(dest.Parent,         Is.Null);
             Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
@@ -557,38 +557,16 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Export() => Execute(vm =>
+        [TestCase(true,  true )]
+        [TestCase(false, false)]
+        public void VM_Export(bool done, bool expected) => Execute(vm =>
         {
-            var dest = Result($"{nameof(VM_Export)}.opml");
-            vm.Messenger.Register<SaveFileDialogMessage>(this, e => ExportCommand(e, dest, true));
+            var dest = Result($"{nameof(VM_Export)}-{done}.opml");
+            vm.Messenger.Register<SaveFileDialogMessage>(this, e => ExportCommand(e, dest, done));
             vm.Export.Execute(null);
 
-            var info = IO.Get(dest);
-            Assert.That(info.Exists, Is.True);
-            Assert.That(info.Length, Is.AtLeast(1));
+            Assert.That(IO.Exists(dest), Is.EqualTo(expected));
         });
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_Export_Cancel
-        ///
-        /// <summary>
-        /// Export コマンドをキャンセルした時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Export_Cancel()
-        {
-            using (var vm = Create())
-            {
-                var dest = Result($"{nameof(VM_Export_Cancel)}.opml");
-                vm.Messenger.Register<SaveFileDialogMessage>(this, e => ExportCommand(e, dest, false));
-                vm.Export.Execute(null);
-                Assert.That(IO.Exists(dest), Is.False);
-            }
-        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -603,20 +581,15 @@ namespace Cube.Net.App.Rss.Tests
         [TestCase(RssCheckFrequency.High)]
         [TestCase(RssCheckFrequency.Low)]
         [TestCase(RssCheckFrequency.None)]
-        public void VM_Property(RssCheckFrequency src)
+        public void VM_Property(RssCheckFrequency src) => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
-                vm.Messenger.Register<PropertyViewModel>(this, e => PropertyCommand(e, src));
-                vm.Property.Execute(null);
+            var dest = vm.Data.Current.Value as RssEntry;
+            vm.Messenger.Register<PropertyViewModel>(this, e => PropertyCommand(e, src));
+            vm.Property.Execute(null);
 
-                var dest = vm.Data.Current.Value as RssEntry;
-                Assert.That(dest, Is.Not.Null);
-                Assert.That(dest.Title, Is.EqualTo(nameof(PropertyCommand)));
-                Assert.That(dest.Frequency, Is.EqualTo(src));
-            }
-        }
+            Assert.That(dest.Title,     Is.EqualTo(nameof(PropertyCommand)));
+            Assert.That(dest.Frequency, Is.EqualTo(src));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -628,25 +601,21 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Settings()
+        public void VM_Settings() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
-                vm.Messenger.Register<SettingsViewModel>(this, e => SettingsCommand(e));
-                vm.Settings.Execute(null);
+            var local = vm.Data.Local.Value;
+            var shred = vm.Data.Shared.Value;
+            vm.Messenger.Register<SettingsViewModel>(this, e => SettingsCommand(e));
+            vm.Settings.Execute(null);
 
-                var local = vm.Data.Local.Value;
-                var shred = vm.Data.Shared.Value;
-                Assert.That(shred.CheckUpdate,          Is.False);
-                Assert.That(shred.EnableNewWindow,      Is.False);
-                Assert.That(shred.EnableMonitorMessage, Is.False);
-                Assert.That(shred.LightMode,            Is.True);
-                Assert.That(shred.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
-                Assert.That(shred.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
-                Assert.That(local.DataDirectory,        Is.EqualTo(Result(nameof(VM_Settings))));
-            }
-        }
+            Assert.That(shred.CheckUpdate,          Is.False);
+            Assert.That(shred.EnableNewWindow,      Is.False);
+            Assert.That(shred.EnableMonitorMessage, Is.False);
+            Assert.That(shred.LightMode,            Is.True);
+            Assert.That(shred.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
+            Assert.That(shred.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
+            Assert.That(local.DataDirectory,        Is.EqualTo(Result(nameof(VM_Settings))));
+        });
 
         #endregion
 
