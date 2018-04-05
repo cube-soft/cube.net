@@ -244,12 +244,15 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void VM_Rename()
         {
+            var changed = 0;
             using (var vm = Create())
             {
+                WatchFeed(_ => ++changed);
                 vm.Stop.Execute(null);
                 vm.Rename.Execute(null);
                 Assert.That(vm.Data.LastEntry.Value.Editing, Is.True);
             }
+            Assert.That(changed, Is.AtLeast(1));
         }
 
         /* ----------------------------------------------------------------- */
@@ -264,18 +267,21 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void VM_Read()
         {
+            var changed = 0;
             using (var vm = Create())
             {
+                WatchFeed(_ => ++changed);
                 vm.Stop.Execute(null);
                 Assert.That(vm.Data.LastEntry.Value.Count, Is.EqualTo(14));
                 vm.Read.Execute(null);
                 Assert.That(vm.Data.LastEntry.Value.Count, Is.EqualTo(0));
             }
+            Assert.That(changed, Is.AtLeast(1));
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// VM_Read
+        /// VM_Read_Category
         ///
         /// <summary>
         /// カテゴリ中の全記事を既読設定にするテストを実行します。

@@ -50,8 +50,8 @@ namespace Cube.Net.App.Rss.Reader
         public SettingsViewModel(SettingsFolder settings) : base(new Messenger())
         {
             Model  = settings;
-            Local  = new Bindable<LocalSettings>(settings.Value) { IsRedirected = false };
-            Shared = new Bindable<SharedSettings>(settings.Shared) { IsRedirected = false };
+            Local  = settings.Value.ToBindable();
+            Shared = settings.Shared.ToBindable();
         }
 
         #endregion

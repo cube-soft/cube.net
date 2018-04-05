@@ -15,6 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Cube.Net.App.Rss.Tests
@@ -30,6 +33,8 @@ namespace Cube.Net.App.Rss.Tests
     /* --------------------------------------------------------------------- */
     public class FileHelper : Cube.Net.Tests.FileHelper
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
         /// Copy
@@ -59,5 +64,69 @@ namespace Cube.Net.App.Rss.Tests
 
             return dest;
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// WatchFeed
+        ///
+        /// <summary>
+        /// Feeds.json の変更を監視します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void WatchFeed(Action<System.IO.FileSystemEventArgs> action,
+            [CallerMemberName] string name = null) =>
+            Watch(IO.Combine(Result(name), "Feeds.json"), action);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Watch
+        ///
+        /// <summary>
+        /// ファイルの変更を監視します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Watch(string src, Action<System.IO.FileSystemEventArgs> action)
+        {
+            var f = IO.Get(src);
+            var w = new System.IO.FileSystemWatcher
+            {
+                Path         = f.DirectoryName,
+                Filter       = f.Name,
+                NotifyFilter = System.IO.NotifyFilters.LastWrite,
+            };
+
+            w.Changed += (s, e) => action(e);
+            w.EnableRaisingEvents = true;
+
+            _watcher.Add(w);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Teardown
+        ///
+        /// <summary>
+        /// テストが終了する度に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TearDown]
+        public virtual void Teardown()
+        {
+            foreach (var w in _watcher)
+            {
+                w.EnableRaisingEvents = false;
+                w.Dispose();
+            }
+            _watcher.Clear();
+        }
+
+        #endregion
+
+        #region Fields
+        private IList<System.IO.FileSystemWatcher> _watcher = new List<System.IO.FileSystemWatcher>();
+        #endregion
     }
 }

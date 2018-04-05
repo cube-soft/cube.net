@@ -675,9 +675,13 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (disposing)
             {
+                _autosaver.Stop();
+                _autosaver.Elapsed -= WhenAutoSaved;
+
                 foreach (var mon in _monitors) mon.Dispose();
                 _feeds.Dispose();
             }
+            Save();
         }
 
         #endregion
