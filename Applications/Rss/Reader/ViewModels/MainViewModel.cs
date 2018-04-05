@@ -21,6 +21,7 @@ using Cube.Xui;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -61,7 +62,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public MainViewModel(SettingsFolder settings) : base(new Messenger())
         {
-            Model      = new RssFacade(settings);
+            Model      = new RssFacade(settings, SynchronizationContext.Current);
             DropTarget = new RssDropTarget((s, d, i) => Model.Move(s, d, i));
         }
 

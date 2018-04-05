@@ -55,19 +55,19 @@ namespace Cube.Net.App.Rss.Tests
         {
             var vm = new MainViewModel();
 
-            Assert.That(vm.Property.CanExecute(null),  Is.False);
-            Assert.That(vm.Remove.CanExecute(null),    Is.False);
-            Assert.That(vm.Rename.CanExecute(null),    Is.False);
-            Assert.That(vm.Read.CanExecute(null),      Is.False);
-            Assert.That(vm.Update.CanExecute(null),    Is.False);
-            Assert.That(vm.Reset.CanExecute(null),     Is.False);
+            Assert.That(vm.Property.CanExecute(null), Is.False);
+            Assert.That(vm.Remove.CanExecute(null),   Is.False);
+            Assert.That(vm.Rename.CanExecute(null),   Is.False);
+            Assert.That(vm.Read.CanExecute(null),     Is.False);
+            Assert.That(vm.Update.CanExecute(null),   Is.False);
+            Assert.That(vm.Reset.CanExecute(null),    Is.False);
 
-            Assert.That(vm.DropTarget,                 Is.Not.Null);
-            Assert.That(vm.Data.Content.HasValue,      Is.False);
-            Assert.That(vm.Data.Current.HasValue,      Is.False);
-            Assert.That(vm.Data.LastEntry.HasValue,    Is.False);
-            Assert.That(vm.Data.Message.HasValue,      Is.False);
-            Assert.That(vm.Data.Shared.HasValue,         Is.True);
+            Assert.That(vm.DropTarget,                Is.Not.Null);
+            Assert.That(vm.Data.Content.HasValue,     Is.False);
+            Assert.That(vm.Data.Current.HasValue,     Is.False);
+            Assert.That(vm.Data.LastEntry.HasValue,   Is.False);
+            Assert.That(vm.Data.Message.HasValue,     Is.False);
+            Assert.That(vm.Data.Shared.HasValue,      Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -325,6 +325,9 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Stop.Execute(null);
                 vm.Select.Execute(src);
 
+                var changed = 0;
+                vm.Data.Current.PropertyChanged += (s, e) => ++changed;
+
                 var dest  = vm.Data.Current.Value;
                 var count = dest.Count;
                 Assert.That(count, Is.EqualTo(10));
@@ -332,7 +335,8 @@ namespace Cube.Net.App.Rss.Tests
                 vm.Update.Execute(null);
                 vm.Data.Message.Value = string.Empty;
                 Assert.That(Wait(vm).Result, Is.True, "Timeout");
-                Assert.That(dest.Count, Is.AtLeast(count));
+                Assert.That(dest.Count, Is.GreaterThan(count));
+                Assert.That(changed, Is.AtLeast(1));
             }
         }
 

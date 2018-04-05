@@ -22,6 +22,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cube.Net.App.Rss.Reader
@@ -48,11 +49,13 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /// <param name="settings">設定用オブジェクト</param>
+        /// <param name="context">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFacade(SettingsFolder settings)
+        public RssFacade(SettingsFolder settings, SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
+            _context = context;
 
             settings.LoadOrDefault(new LocalSettings());
             this.LogInfo($"User-Agent:{settings.UserAgent}");
@@ -61,18 +64,21 @@ namespace Cube.Net.App.Rss.Reader
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
 
-            _core.IO = Settings.IO;
-            _core.FileName = Settings.Feed;
-            _core.Capacity = Settings.Shared.Capacity;
-            _core.CacheDirectory = Settings.Cache;
-            _core.UserAgent = Settings.UserAgent;
+            _core = new RssSubscriber(context)
+            {
+                IO             = Settings.IO,
+                FileName       = Settings.Feed,
+                Capacity       = Settings.Shared.Capacity,
+                CacheDirectory = Settings.Cache,
+                UserAgent      = Settings.UserAgent
+            };
             _core.Set(RssCheckFrequency.High, Settings.Shared.HighInterval);
             _core.Set(RssCheckFrequency.Low, Settings.Shared.LowInterval);
             _core.Received += WhenReceived;
 
             _checker = new UpdateChecker(Settings);
 
-            Data = new RssBindableData(_core, Settings);
+            Data = new RssBindableData(_core, Settings, context);
         }
 
         #endregion
@@ -453,7 +459,8 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private OnceAction<bool> _dispose;
-        private readonly RssSubscriber _core = new RssSubscriber();
+        private readonly RssSubscriber _core;
+        private readonly SynchronizationContext _context;
         private readonly UpdateChecker _checker;
         #endregion
     }

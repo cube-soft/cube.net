@@ -20,6 +20,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cube.Net.App.Rss.Tests
@@ -50,7 +51,8 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Setup_Empty()
         {
-            using (var m = new RssFacade(new SettingsFolder(Results, IO)))
+            var ctx = SynchronizationContext.Current;
+            using (var m = new RssFacade(new SettingsFolder(Results, IO), ctx))
             {
                 m.Setup();
                 m.Stop();
@@ -188,7 +190,8 @@ namespace Cube.Net.App.Rss.Tests
         {
             var root     = Copy(name);
             var settings = new SettingsFolder(root, IO);
-            var dest     = new RssFacade(settings);
+            var context  = SynchronizationContext.Current;
+            var dest     = new RssFacade(settings, context);
 
             settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
 

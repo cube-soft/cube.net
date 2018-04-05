@@ -52,10 +52,25 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscriber()
+        public RssSubscriber() : this(SynchronizationContext.Current) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssSubscriber
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /// <param name="context">同期用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssSubscriber(SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
+            _context = context;
 
+            _tree = new BindableCollection<IRssEntry>(context);
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();
@@ -807,11 +822,11 @@ namespace Cube.Net.App.Rss.Reader
 
         #region Fields
         private OnceAction<bool> _dispose;
-        private BindableCollection<IRssEntry> _tree = new BindableCollection<IRssEntry>();
+        private BindableCollection<IRssEntry> _tree;
         private RssCacheDictionary _feeds = new RssCacheDictionary();
         private RssMonitor[] _monitors = new RssMonitor[3];
         private RssClient _client = new RssClient();
-        private SynchronizationContext _context = SynchronizationContext.Current;
+        private SynchronizationContext _context;
         private System.Timers.Timer _autosaver = new System.Timers.Timer();
         #endregion
     }
