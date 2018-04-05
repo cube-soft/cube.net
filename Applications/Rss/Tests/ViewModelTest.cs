@@ -72,48 +72,50 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// VM_Select
+        /// VM_Setup
         ///
         /// <summary>
-        /// RSS フィードから新着記事を選択するテストを実行します。
+        /// 初期化直後の状態を確認します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Select()
+        public void VM_Setup() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
+            var dest = vm.Data.LastEntry.Value;
 
-                var first = vm.Data.LastEntry.Value;
-                Assert.That(first.Title,               Is.EqualTo("The GitHub Blog"));
-                Assert.That(first.Items.Count(),       Is.EqualTo(15));
-                Assert.That(first.Count,               Is.EqualTo(14));
-                Assert.That(first.UnreadItems.Count(), Is.EqualTo(14));
+            Assert.That(dest.Title,               Is.EqualTo("The GitHub Blog"));
+            Assert.That(dest.Items.Count(),       Is.EqualTo(15));
+            Assert.That(dest.Count,               Is.EqualTo(14));
+            Assert.That(dest.UnreadItems.Count(), Is.EqualTo(14));
+        });
 
-                var category = vm.Data.Root.OfType<RssCategory>().First();
-                var src = category.Entries.First();
-                src.SkipContent = true;
-                vm.Select.Execute(src);
-                var dest = vm.Data.Current.Value as RssEntry;
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Select
+        ///
+        /// <summary>
+        /// RSS フィードを選択するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Select() => Execute(vm =>
+        {
+            var src = vm.Data.Root.OfType<RssCategory>().First().Entries.First();
+            src.SkipContent = true;
+            vm.Select.Execute(src);
+            var dest = vm.Data.Current.Value as RssEntry;
 
-                Assert.That(dest.Title,               Is.EqualTo("CubeSoft Blog"));
-                Assert.That(dest.Selected,            Is.True);
-                Assert.That(dest.SafeItems.Count(),   Is.EqualTo(10));
-                Assert.That(dest.Count,               Is.EqualTo(9), nameof(RssEntry));
-                Assert.That(dest.UnreadItems.Count(), Is.EqualTo(9));
-                Assert.That(category.Count,           Is.EqualTo(9), nameof(RssCategory));
+            Assert.That(dest.Title,               Is.EqualTo("CubeSoft Blog"));
+            Assert.That(dest.Selected,            Is.True);
+            Assert.That(dest.SafeItems.Count(),   Is.EqualTo(10));
+            Assert.That(dest.Count,               Is.EqualTo(9), nameof(RssEntry));
+            Assert.That(dest.UnreadItems.Count(), Is.EqualTo(9));
+            Assert.That(dest.Parent.Count,        Is.EqualTo(9), nameof(RssCategory));
 
-                vm.SelectArticle.Execute(dest.UnreadItems.First());
-                Assert.That(vm.Data.Content.HasValue, Is.True);
-                Assert.That(dest.Count,               Is.EqualTo(8), nameof(RssEntry));
-                Assert.That(dest.UnreadItems.Count(), Is.EqualTo(8));
-                Assert.That(category.Count,           Is.EqualTo(8), nameof(RssCategory));
-
-                vm.Close.Execute(null);
-            }
-        }
+            vm.Close.Execute(null);
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -125,22 +127,17 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Select_Category()
+        public void VM_Select_Category() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
-                var first = vm.Data.LastEntry.Value;
-                var src = vm.Data.Root.OfType<RssCategory>().First();
-                vm.Select.Execute(src);
-                var dest = vm.Data.Current.Value as RssCategory;
+            var entry = vm.Data.LastEntry.Value;
+            vm.Select.Execute(vm.Data.Root.OfType<RssCategory>().First());
+            var dest = vm.Data.Current.Value as RssCategory;
 
-                Assert.That(dest.Title,              Is.EqualTo("キューブ・ソフト"));
-                Assert.That(dest.Count,              Is.EqualTo(10));
-                Assert.That(vm.Data.LastEntry.Value, Is.EqualTo(first));
-                Assert.That(first.Selected,          Is.True);
-            }
-        }
+            Assert.That(dest.Title,              Is.EqualTo("キューブ・ソフト"));
+            Assert.That(dest.Count,              Is.EqualTo(10));
+            Assert.That(vm.Data.LastEntry.Value, Is.EqualTo(entry));
+            Assert.That(entry.Selected,          Is.True);
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -152,22 +149,96 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Select_Empty()
+        public void VM_Select_Empty() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
+            var src = vm.Data.Root.First(e => e.Title == "Microsoft") as RssCategory;
+            vm.Select.Execute(src);
+            vm.Select.Execute(src.Entries.First());
+            var dest = vm.Data.LastEntry.Value;
 
-                var src = vm.Data.Root.First(e => e.Title == "Microsoft") as RssCategory;
-                vm.Select.Execute(src);
-                vm.Select.Execute(src.Entries.First());
+            Assert.That(dest.Title,       Is.EqualTo("Official Microsoft Blog"));
+            Assert.That(dest.Count,       Is.EqualTo(0));
+            Assert.That(dest.Items.Count, Is.EqualTo(0));
+        });
 
-                var dest = vm.Data.LastEntry.Value;
-                Assert.That(dest.Title, Is.EqualTo("Official Microsoft Blog"));
-                Assert.That(dest.Count, Is.EqualTo(0));
-                Assert.That(dest.Items.Count, Is.EqualTo(0));
-            }
-        }
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_SelectArticle
+        ///
+        /// <summary>
+        /// 未読記事を選択するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_SelectArticle() => Execute(vm =>
+        {
+            vm.Select.Execute(vm.Data.Root.OfType<RssCategory>().First().Entries.First());
+            var dest = vm.Data.Current.Value as RssEntry;
+            Assert.That(dest.Count, Is.EqualTo(9));
+
+            vm.SelectArticle.Execute(dest.UnreadItems.First());
+            Assert.That(vm.Data.Content.HasValue, Is.True);
+            Assert.That(dest.Count,               Is.EqualTo(8));
+            Assert.That(dest.UnreadItems.Count(), Is.EqualTo(8));
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Read
+        ///
+        /// <summary>
+        /// RSS エントリの全記事を既読設定にするテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Read() => Execute(vm =>
+        {
+            var dest = vm.Data.LastEntry.Value;
+            Assert.That(dest.Count, Is.EqualTo(14));
+            vm.Read.Execute(null);
+            Assert.That(dest.Count, Is.EqualTo(0));
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Read_Category
+        ///
+        /// <summary>
+        /// カテゴリ中の全記事を既読設定にするテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Read_Category() => Execute(vm =>
+        {
+            var src = vm.Data.Root.OfType<RssCategory>().First();
+            Assert.That(src.Count, Is.EqualTo(10));
+
+            vm.Select.Execute(src);
+            Assert.That(vm.Data.Current.Value,   Is.EqualTo(src));
+            Assert.That(vm.Data.LastEntry.Value, Is.Not.EqualTo(src));
+
+            vm.Read.Execute(null);
+            Assert.That(src.Count, Is.EqualTo(0));
+        });
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_Rename
+        ///
+        /// <summary>
+        /// RSS エントリの名前を変更するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_Rename() => Execute(vm =>
+        {
+            vm.Rename.Execute(null);
+            Assert.That(vm.Data.LastEntry.Value.Editing, Is.True);
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -179,26 +250,22 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Remove()
+        public void VM_Remove() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
-                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+            var src  = vm.Data.Current.Value;
+            var dest = Result($@"{nameof(VM_Remove)}\Cache\7ae34cce28b4272e1170fb1e4c2c87ad");
 
-                var dir  = Result($@"{nameof(VM_Remove)}\Cache");
-                var src  = vm.Data.Current.Value;
-                var dest = IO.Combine(dir, "7ae34cce28b4272e1170fb1e4c2c87ad");
+            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
+            Assert.That(IO.Exists(dest),                Is.True);
+            Assert.That(src.Title,                      Is.EqualTo("The GitHub Blog"));
+            Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
-                Assert.That(IO.Exists(dest), Is.True);
-                Assert.That(src.Title, Is.EqualTo("The GitHub Blog"));
-                Assert.That(vm.Remove.CanExecute(null), Is.True);
-                vm.Remove.Execute(null);
-                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(11));
-                Assert.That(IO.Exists(dest), Is.False);
-            }
-        }
+            vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+            vm.Remove.Execute(null);
+
+            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(11));
+            Assert.That(IO.Exists(dest),                Is.False);
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -211,101 +278,23 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Remove_Category()
+        public void VM_Remove_Category() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
-                vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+            var src  = vm.Data.Root.OfType<RssCategory>().First();
+            var dest = Result($@"{nameof(VM_Remove_Category)}\Cache\872e24035276c7104afd116c2052172b");
 
-                var dir  = Result($@"{nameof(VM_Remove_Category)}\Cache");
-                var src  = vm.Data.Root.OfType<RssCategory>().First();
-                var dest = IO.Combine(dir, "872e24035276c7104afd116c2052172b");
+            vm.Select.Execute(src);
 
-                vm.Select.Execute(src);
-                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
-                Assert.That(IO.Exists(dest), Is.True);
-                Assert.That(vm.Remove.CanExecute(null), Is.True);
-                vm.Remove.Execute(null);
-                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(10));
-                Assert.That(IO.Exists(dest), Is.False);
-            }
-        }
+            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
+            Assert.That(IO.Exists(dest),                Is.True);
+            Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_Rename
-        ///
-        /// <summary>
-        /// RSS エントリの名前を変更するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Rename()
-        {
-            var changed = 0;
-            using (var vm = Create())
-            {
-                WatchFeed(_ => ++changed);
-                vm.Stop.Execute(null);
-                vm.Rename.Execute(null);
-                Assert.That(vm.Data.LastEntry.Value.Editing, Is.True);
-            }
-            Assert.That(changed, Is.AtLeast(1));
-        }
+            vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+            vm.Remove.Execute(null);
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_Read
-        ///
-        /// <summary>
-        /// RSS エントリの全記事を既読設定にするテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Read()
-        {
-            var changed = 0;
-            using (var vm = Create())
-            {
-                WatchFeed(_ => ++changed);
-                vm.Stop.Execute(null);
-                Assert.That(vm.Data.LastEntry.Value.Count, Is.EqualTo(14));
-                vm.Read.Execute(null);
-                Assert.That(vm.Data.LastEntry.Value.Count, Is.EqualTo(0));
-            }
-            Assert.That(changed, Is.AtLeast(1));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_Read_Category
-        ///
-        /// <summary>
-        /// カテゴリ中の全記事を既読設定にするテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Read_Category()
-        {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
-
-                var src = vm.Data.Root.OfType<RssCategory>().First();
-                Assert.That(src.Count, Is.EqualTo(10));
-
-                vm.Select.Execute(src);
-                Assert.That(vm.Data.Current.Value,   Is.EqualTo(src));
-                Assert.That(vm.Data.LastEntry.Value, Is.Not.EqualTo(src));
-
-                vm.Read.Execute(null);
-                Assert.That(src.Count, Is.EqualTo(0));
-            }
-        }
+            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(10));
+            Assert.That(IO.Exists(dest),                Is.False);
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -317,28 +306,24 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Update()
+        public void VM_Update() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var src = vm.Data.Root.OfType<RssCategory>().First();
-                vm.Stop.Execute(null);
-                vm.Select.Execute(src);
+            vm.Select.Execute(vm.Data.Root.OfType<RssCategory>().First());
+            var dest = vm.Data.Current.Value;
+            var count = dest.Count;
 
-                var changed = 0;
-                vm.Data.Current.PropertyChanged += (s, e) => ++changed;
+            Assert.That(count,                 Is.EqualTo(10));
+            Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
 
-                var dest  = vm.Data.Current.Value;
-                var count = dest.Count;
-                Assert.That(count, Is.EqualTo(10));
-                Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
-                vm.Update.Execute(null);
-                vm.Data.Message.Value = string.Empty;
-                Assert.That(Wait(vm).Result, Is.True, "Timeout");
-                Assert.That(dest.Count, Is.GreaterThan(count));
-                Assert.That(changed, Is.AtLeast(1));
-            }
-        }
+            var changed = 0;
+            vm.Data.Current.PropertyChanged += (s, e) => ++changed;
+            vm.Update.Execute(null);
+            vm.Data.Message.Value = string.Empty;
+
+            Assert.That(Wait(vm).Result,       Is.True, "Timeout");
+            Assert.That(dest.Count,            Is.GreaterThan(count));
+            Assert.That(changed,               Is.AtLeast(1));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -350,21 +335,17 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Reset()
+        public void VM_Reset() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var src = vm.Data.Root.OfType<RssCategory>().First();
-                vm.Stop.Execute(null);
-                vm.Select.Execute(src);
-                vm.Reset.Execute(null);
-                vm.Data.Message.Value = string.Empty;
+            var src = vm.Data.Root.OfType<RssCategory>().First();
+            vm.Select.Execute(src);
+            vm.Reset.Execute(null);
+            vm.Data.Message.Value = string.Empty;
 
-                Assert.That(src.Count, Is.EqualTo(0));
-                Assert.That(Wait(vm).Result, Is.True, "Timeout");
-                Assert.That(src.Count, Is.AtLeast(1));
-            }
-        }
+            Assert.That(src.Count,       Is.EqualTo(0));
+            Assert.That(Wait(vm).Result, Is.True, "Timeout");
+            Assert.That(src.Count,       Is.AtLeast(1));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -376,27 +357,21 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_NewEntry()
+        public void VM_NewEntry() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var count = vm.Data.Root.Flatten().Count();
-                var src   = new Uri("https://clown.hatenablog.jp/feed");
+            var count = vm.Data.Root.Flatten().Count();
+            var src = new Uri("https://clown.hatenablog.jp/feed");
 
-                vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
-                vm.NewEntry.Execute(null);
+            vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
+            vm.NewEntry.Execute(null);
 
-                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count + 1));
+            var dest = vm.Data.Root.OfType<RssEntry>().FirstOrDefault(e => e.Uri == src);
 
-                var entry = vm.Data.Root
-                              .OfType<RssEntry>()
-                              .FirstOrDefault(e => e.Uri == src);
-
-                Assert.That(entry.Title, Is.EqualTo("Life like a clown"));
-                Assert.That(entry.Link,  Is.EqualTo(new Uri("https://clown.hatenablog.jp/")));
-                Assert.That(entry.Count, Is.AtLeast(1));
-            }
-        }
+            Assert.That(dest.Title, Is.EqualTo("Life like a clown"));
+            Assert.That(dest.Link,  Is.EqualTo(new Uri("https://clown.hatenablog.jp/")));
+            Assert.That(dest.Count, Is.AtLeast(1));
+            Assert.That(vm.Data.Root.Flatten().Count(), Is.GreaterThan(count));
+        }, false);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -408,19 +383,15 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_NewEntry_Error()
+        public void VM_NewEntry_Error() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var count = vm.Data.Root.Flatten().Count();
+            var count = vm.Data.Root.Flatten().Count();
 
-                vm.Stop.Execute(null);
-                vm.Messenger.Register<RegisterViewModel>(this, e => RegisterError(e).Wait());
-                vm.NewEntry.Execute(null);
+            vm.Messenger.Register<RegisterViewModel>(this, e => RegisterError(e).Wait());
+            vm.NewEntry.Execute(null);
 
-                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
-            }
-        }
+            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -432,20 +403,16 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_NewEntry_Exists()
+        public void VM_NewEntry_Exists() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var count = vm.Data.Root.Flatten().Count();
-                var src   = new Uri("https://blog.cube-soft.jp/");
+            var src = new Uri("https://blog.cube-soft.jp/");
+            var count = vm.Data.Root.Flatten().Count();
 
-                vm.Stop.Execute(null);
-                vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
-                vm.NewEntry.Execute(null);
+            vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
+            vm.NewEntry.Execute(null);
 
-                Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
-            }
-        }
+            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -457,25 +424,20 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_NewCategory()
+        public void VM_NewCategory() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var src = vm.Data.Root.OfType<RssCategory>().First();
+            var src = vm.Data.Root.OfType<RssCategory>().First();
+            vm.Select.Execute(src.Entries.First());
+            vm.NewCategory.Execute(null);
+            var dest = vm.Data.Current.Value as RssCategory;
 
-                vm.Stop.Execute(null);
-                vm.Select.Execute(src.Entries.First());
-                vm.NewCategory.Execute(null);
-
-                var dest = vm.Data.Current.Value as RssCategory;
-                Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
-                Assert.That(dest.Parent,         Is.EqualTo(src));
-                Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
-                Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
-                Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
-                Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
-            }
-        }
+            Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
+            Assert.That(dest.Parent,         Is.EqualTo(src));
+            Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
+            Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
+            Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
+            Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -487,22 +449,18 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_NewCategory_Root()
+        public void VM_NewCategory_Root() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                vm.Stop.Execute(null);
-                vm.NewCategory.Execute(null);
+            vm.NewCategory.Execute(null);
+            var dest = vm.Data.Current.Value as RssCategory;
 
-                var dest = vm.Data.Current.Value as RssCategory;
-                Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
-                Assert.That(dest.Parent,         Is.Null);
-                Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
-                Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
-                Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
-                Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
-            }
-        }
+            Assert.That(dest.Title,          Is.EqualTo("新しいフォルダー"));
+            Assert.That(dest.Parent,         Is.Null);
+            Assert.That(dest.Count,          Is.EqualTo(0), nameof(dest.Count));
+            Assert.That(dest.Children.Count, Is.EqualTo(0), nameof(dest.Children));
+            Assert.That(dest.Editing,        Is.True, nameof(dest.Editing));
+            Assert.That(dest.Expanded,       Is.False, nameof(dest.Expanded));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -539,20 +497,18 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Hover()
+        public void VM_Hover() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var message = nameof(VM_Hover);
+            var message = nameof(VM_Hover);
 
-                vm.Stop.Execute(null);
-                Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
-                Assert.That(vm.Hover.CanExecute(null), Is.False);
-                Assert.That(vm.Hover.CanExecute(message), Is.True);
-                vm.Hover.Execute(message);
-                Assert.That(vm.Data.Message.Value, Is.EqualTo(message));
-            }
-        }
+            Assert.That(vm.Data.Message.Value,        Is.Null.Or.Empty);
+            Assert.That(vm.Hover.CanExecute(null),    Is.False);
+            Assert.That(vm.Hover.CanExecute(message), Is.True);
+
+            vm.Hover.Execute(message);
+
+            Assert.That(vm.Data.Message.Value, Is.EqualTo(message));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -564,18 +520,13 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Navigate()
+        public void VM_Navigate() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var uri = new Uri("http://www.example.com/");
-
-                vm.Stop.Execute(null);
-                Assert.That(vm.Data.Content.Value, Is.TypeOf<RssItem>());
-                vm.Navigate.Execute(uri);
-                Assert.That(vm.Data.Content.Value, Is.EqualTo(uri));
-            }
-        }
+            var src = new Uri("http://www.example.com/");
+            Assert.That(vm.Data.Content.Value, Is.TypeOf<RssItem>());
+            vm.Navigate.Execute(src);
+            Assert.That(vm.Data.Content.Value, Is.EqualTo(src));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -586,48 +537,16 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Import()
+        [TestCase(true,  16)]
+        [TestCase(false, 12)]
+        public void VM_Import(bool cancel, int expected) => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var src = Example("Sample.opml");
-                vm.Stop.Execute(null);
-                var count = vm.Data.Root.Flatten().Count();
+            vm.Messenger.Register<OpenFileDialogMessage>(this,
+                e => ImportCommand(e, Example("Sample.opml"), cancel));
+            vm.Import.Execute(null);
 
-                vm.Messenger.Register<OpenFileDialogMessage>(this, e => ImportCommand(e, src, true));
-                vm.Import.Execute(null);
-
-                var dest = vm.Data.Root.Flatten();
-                Assert.That(dest.Count(), Is.EqualTo(count + 4));
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_Import_Cancel
-        ///
-        /// <summary>
-        /// Import コマンドをキャンセルした時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_Import_Cancel()
-        {
-            using (var vm = Create())
-            {
-                var src = Example("Sample.opml");
-                vm.Stop.Execute(null);
-                var count = vm.Data.Root.Flatten().Count();
-
-                vm.Messenger.Register<OpenFileDialogMessage>(this, e => ImportCommand(e, src, false));
-                vm.Import.Execute(null);
-
-                var dest = vm.Data.Root.Flatten();
-                Assert.That(dest.Count(), Is.EqualTo(count));
-            }
-        }
+            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(expected));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -639,20 +558,16 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Export()
+        public void VM_Export() => Execute(vm =>
         {
-            using (var vm = Create())
-            {
-                var dest = Result($"{nameof(VM_Export)}.opml");
-                vm.Stop.Execute(null);
-                vm.Messenger.Register<SaveFileDialogMessage>(this, e => ExportCommand(e, dest, true));
-                vm.Export.Execute(null);
+            var dest = Result($"{nameof(VM_Export)}.opml");
+            vm.Messenger.Register<SaveFileDialogMessage>(this, e => ExportCommand(e, dest, true));
+            vm.Export.Execute(null);
 
-                var info = IO.Get(dest);
-                Assert.That(info.Exists, Is.True);
-                Assert.That(info.Length, Is.AtLeast(1));
-            }
-        }
+            var info = IO.Get(dest);
+            Assert.That(info.Exists, Is.True);
+            Assert.That(info.Length, Is.AtLeast(1));
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -760,6 +675,30 @@ namespace Cube.Net.App.Rss.Tests
             dest.Setup.Execute(null);
             Assert.That(Wait(dest, true).Result, Is.True, "Timeout");
             return dest;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Execute
+        ///
+        /// <summary>
+        /// テストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Execute(Action<MainViewModel> action, bool stop = true,
+            [CallerMemberName] string name = null)
+        {
+            var changed = 0;
+
+            using (var vm = Create(name))
+            {
+                WatchFeed(_ => ++changed, name);
+                if (stop) vm.Stop.Execute(null);
+                action(vm);
+            }
+
+            Assert.That(changed, Is.AtLeast(1), nameof(WatchFeed));
         }
 
         /* ----------------------------------------------------------------- */
