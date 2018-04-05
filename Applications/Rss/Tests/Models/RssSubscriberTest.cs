@@ -82,7 +82,7 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Load_NotFound()
         {
-            using (var src = new RssSubscriber { FileName = "NotFound.json" })
+            using (var src = new RssSubscriber { FileName = Result("NotFound.json") })
             {
                 src.Load();
                 Assert.That(src.Count, Is.EqualTo(0));
