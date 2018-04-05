@@ -70,7 +70,7 @@
         </Grid.RowDefinitions>
 
         <!-- LeftSide (RssEntries) -->
-        <Grid Style="{StaticResource LeftSideStyle}">
+        <Grid Background="{StaticResource DarkBackgroundBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
@@ -111,7 +111,7 @@
         <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="1"/>
 
         <!-- MiddleSide (RssFeeds) -->
-        <Grid Style="{StaticResource MiddleSideStyle}" Grid.Column="2">
+        <Grid Background="{StaticResource MainBackgroundBrush}" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="24"/>
                 <RowDefinition Height="50"/>
@@ -183,7 +183,7 @@
         <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="3"/>
 
         <!-- RightSide (Preview) -->
-        <Grid Style="{StaticResource RightSideStyle}" Grid.Column="4">
+        <Grid Background="White" Grid.Column="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>
                 <RowDefinition Height="*"/>
