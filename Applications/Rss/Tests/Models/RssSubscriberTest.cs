@@ -201,9 +201,8 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         private RssSubscriber Create([CallerMemberName] string name = null)
         {
-            var root = Copy(name);
-            var dest = IO.Combine(root, "Feeds.json");
-            return new RssSubscriber { FileName = dest };
+            Copy(name);
+            return new RssSubscriber { FileName = FeedsPath(name) };
         }
 
         /* ----------------------------------------------------------------- */

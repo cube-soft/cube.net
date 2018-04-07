@@ -21,7 +21,6 @@ using Cube.Xui;
 using NUnit.Framework;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,7 +36,7 @@ namespace Cube.Net.App.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class ViewModelTest : FileHelper
+    class ViewModelTest : ViewModelHelper
     {
         #region Tests
 
@@ -620,79 +619,6 @@ namespace Cube.Net.App.Rss.Tests
         #endregion
 
         #region Helper methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Create
-        ///
-        /// <summary>
-        /// ViewModel オブジェクトを生成します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private MainViewModel Create([CallerMemberName] string name = null)
-        {
-            var root     = Copy(name);
-            var settings = new SettingsFolder(root, IO);
-            var dest     = new MainViewModel(settings);
-
-            settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
-            settings.Value.Width         = 1024;
-            settings.Value.Height        = 768;
-
-            dest.Data.Message.Value = "Test";
-            dest.Setup.Execute(null);
-            Assert.That(Wait(dest, true).Result, Is.True, "Timeout");
-            return dest;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Execute
-        ///
-        /// <summary>
-        /// テストを実行します。
-        /// </summary>
-        ///
-        /// <remarks>
-        /// AppVeyor でのテストが安定しないので、Assert はコメントアウト。
-        /// 原因については要検証。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Execute(Action<MainViewModel> action, bool stop = true,
-            [CallerMemberName] string name = null)
-        {
-            var changed = 0;
-
-            using (var vm = Create(name))
-            {
-                WatchFeed(_ => ++changed, name);
-                if (stop) vm.Stop.Execute(null);
-                action(vm);
-            }
-
-            // Assert.That(changed, Is.AtLeast(1), nameof(WatchFeed));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Wait
-        ///
-        /// <summary>
-        /// メッセージを受信するまで待機します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task<bool> Wait(MainViewModel vm, bool empty = false)
-        {
-            for (var i = 0; i < 100; ++i)
-            {
-                if (string.IsNullOrEmpty(vm.Data.Message.Value) == empty) return true;
-                await Task.Delay(50).ConfigureAwait(false);
-            }
-            return false;
-        }
 
        /* ----------------------------------------------------------------- */
        ///

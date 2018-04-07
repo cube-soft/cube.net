@@ -188,8 +188,9 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         private RssFacade Create([CallerMemberName] string name = null)
         {
-            var root     = Copy(name);
-            var settings = new SettingsFolder(root, IO);
+            Copy(name);
+
+            var settings = new SettingsFolder(RootDirectory(name), IO);
             var context  = SynchronizationContext.Current;
             var dest     = new RssFacade(settings, context);
 
