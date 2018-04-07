@@ -95,12 +95,12 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Interactions\ContextMenuAction.cs" />
-    <Compile Include="Models\Interactions\DuplexConverters.cs" />
-    <Compile Include="Models\Interactions\MessageFactory.cs" />
-    <Compile Include="Models\Interactions\SimplexConverters.cs" />
-    <Compile Include="Models\Interactions\OtherBehaviors.cs" />
-    <Compile Include="Models\Interactions\WebBehavior.cs" />
+    <Compile Include="Interactions\ContextMenuAction.cs" />
+    <Compile Include="Interactions\DuplexConverters.cs" />
+    <Compile Include="Interactions\MessageFactory.cs" />
+    <Compile Include="Interactions\SimplexConverters.cs" />
+    <Compile Include="Interactions\OtherBehaviors.cs" />
+    <Compile Include="Interactions\WebBehavior.cs" />
     <Compile Include="Models\Rss\IRssEntry.cs" />
     <Compile Include="Models\Rss\RssBindableData.cs" />
     <Compile Include="Models\Rss\RssCategory.cs" />

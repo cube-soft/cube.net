@@ -79,19 +79,16 @@ namespace Cube.Net.App.Rss.Tests
         protected void Execute(Action<MainViewModel> action, bool stop = true,
             [CallerMemberName] string name = null)
         {
-            var n = 0;
-            var w = new System.IO.FileSystemWatcher
+            using (var w = new System.IO.FileSystemWatcher())
             {
-                NotifyFilter = System.IO.NotifyFilters.LastWrite,
-            };
+                var n = 0;
 
-            try
-            {
                 using (var vm = Create(name))
                 {
                     var f = IO.Get(FeedsPath(name));
                     w.Path = f.DirectoryName;
                     w.Filter = f.Name;
+                    w.NotifyFilter = System.IO.NotifyFilters.LastWrite;
                     w.Changed += (s, e) => ++n;
                     w.EnableRaisingEvents = true;
 
@@ -102,7 +99,6 @@ namespace Cube.Net.App.Rss.Tests
                 for (var i = 0; n <= 0 && i < 20; ++i) Task.Delay(50).Wait();
                 Assert.That(n, Is.AtLeast(1), "Feeds.json is not changed");
             }
-            finally { w.EnableRaisingEvents = false; }
         }
 
         /* ----------------------------------------------------------------- */

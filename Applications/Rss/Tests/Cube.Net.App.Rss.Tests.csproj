@@ -82,8 +82,11 @@
     <Compile Include="Models\RssFacadeTest.cs" />
     <Compile Include="Models\RssOpmlTest.cs" />
     <Compile Include="Models\RssSubscriberTest.cs" />
-    <Compile Include="SettingsTest.cs" />
-    <Compile Include="ViewModelTest.cs" />
+    <Compile Include="Models\SettingsTest.cs" />
+    <Compile Include="ViewModels\MainViewModelTest.cs" />
+    <Compile Include="ViewModels\PropertyViewModelTest.cs" />
+    <Compile Include="ViewModels\RegisterViewModelTest.cs" />
+    <Compile Include="ViewModels\SettingsViewModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
