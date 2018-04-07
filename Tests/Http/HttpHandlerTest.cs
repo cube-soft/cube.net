@@ -33,7 +33,7 @@ namespace Cube.Net.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class HttpHandlerTest : NetworkHelper
+    class HttpHandlerTest
     {
         #region Tests
 

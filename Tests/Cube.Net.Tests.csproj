@@ -60,7 +60,6 @@
   <ItemGroup>
     <Compile Include="Details\FileHelper.cs" />
     <Compile Include="Details\GlobalSetup.cs" />
-    <Compile Include="Details\NetworkHelper.cs" />
     <Compile Include="Details\Person.cs" />
     <Compile Include="Details\TaskOperator.cs" />
     <Compile Include="Http\HttpClientTest.cs" />

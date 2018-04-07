@@ -45,7 +45,7 @@ namespace Cube.Net.Tests
         public static async Task<bool> Wait(this CancellationTokenSource src)
         {
             try { await Task.Delay(10000, src.Token).ConfigureAwait(false); }
-            catch (TaskCanceledException /* err */) { return true; /* OK */ }
+            catch (TaskCanceledException) { return true; /* OK */ }
             return false; /* Timeout */
         }
 

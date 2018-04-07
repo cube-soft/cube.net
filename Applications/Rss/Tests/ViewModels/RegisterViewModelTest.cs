@@ -159,7 +159,7 @@ namespace Cube.Net.App.Rss.Tests
             vm.Execute.Execute(null);
 
             try { await Task.Delay(1000, cts.Token).ConfigureAwait(false); }
-            catch (TaskCanceledException /* err */) { /* OK */ }
+            catch (TaskCanceledException) { /* OK */ }
         }
 
         #endregion

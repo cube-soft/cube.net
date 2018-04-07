@@ -24,15 +24,15 @@ namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ClientTest
+    /// NtpClientTest
     ///
     /// <summary>
-    /// Cube.Net.Ntp.Client のテストクラスです。
+    /// NtpClient のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class NtpClientTest : NetworkHelper
+    class NtpClientTest
     {
         #region Tests
 

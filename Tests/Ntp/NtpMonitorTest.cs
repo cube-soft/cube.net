@@ -27,12 +27,12 @@ namespace Cube.Net.Tests
     /// NtpMonitorTest
     ///
     /// <summary>
-    /// Ntp.Monitor のテスト用クラスです。
+    /// NtpMonitor のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class NtpMonitorTest : NetworkHelper
+    class NtpMonitorTest
     {
         #region Tests
 
