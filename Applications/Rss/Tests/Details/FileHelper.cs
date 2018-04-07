@@ -15,7 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Cube.Net.App.Rss.Tests
 {
@@ -113,6 +115,25 @@ namespace Cube.Net.App.Rss.Tests
             {
                 IO.Copy(f, CachePath(IO.Get(f).Name, name), true);
             }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Wait
+        ///
+        /// <summary>
+        /// 条件を満たすまで待機します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected async Task<bool> Wait(Func<bool> predicate)
+        {
+            for (var i = 0; i < 100; ++i)
+            {
+                if (predicate()) return true;
+                await Task.Delay(50).ConfigureAwait(false);
+            }
+            return false;
         }
 
         #endregion

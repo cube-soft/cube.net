@@ -67,13 +67,8 @@ namespace Cube.Net.App.Rss.Tests
         /// Execute
         ///
         /// <summary>
-        /// テストを実行します。
+        /// ViewModel のテストを実行します。
         /// </summary>
-        ///
-        /// <remarks>
-        /// AppVeyor でのテストが安定しないので、Assert はコメントアウト。
-        /// 原因については要検証。
-        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         protected void Execute(Action<MainViewModel> action, bool stop = true,
@@ -110,15 +105,8 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected async Task<bool> Wait(MainViewModel vm, bool empty = false)
-        {
-            for (var i = 0; i < 100; ++i)
-            {
-                if (string.IsNullOrEmpty(vm.Data.Message.Value) == empty) return true;
-                await Task.Delay(50).ConfigureAwait(false);
-            }
-            return false;
-        }
+        protected Task<bool> Wait(MainViewModel vm, bool empty = false) =>
+            Wait(() => string.IsNullOrEmpty(vm.Data.Message.Value) == empty);
 
         #endregion
     }

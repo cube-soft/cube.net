@@ -214,16 +214,7 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task<bool> Wait(RssEntry src)
-        {
-            for (var i = 0; i < 100; ++i)
-            {
-                if (src.Count > 0) return true;
-                await Task.Delay(50);
-            }
-            return false;
-        }
-
+        private Task<bool> Wait(RssEntry src) => Wait(() => src.Count > 0);
 
         #endregion
     }
