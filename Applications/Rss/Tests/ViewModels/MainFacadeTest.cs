@@ -27,15 +27,15 @@ namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssFacadeTest
+    /// MainFacadeTest
     ///
     /// <summary>
-    /// RssFacade のテスト用クラスです。
+    /// MainFacade のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssFacadeTest : FileHelper
+    class MainFacadeTest : FileHelper
     {
         #region Tests
 
@@ -52,7 +52,7 @@ namespace Cube.Net.App.Rss.Tests
         public void Setup_Empty()
         {
             var ctx = SynchronizationContext.Current;
-            using (var m = new RssFacade(new SettingsFolder(Results, IO), ctx))
+            using (var m = new MainFacade(new SettingsFolder(Results, IO), ctx))
             {
                 m.Setup();
                 m.Stop();
@@ -186,13 +186,13 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFacade Create([CallerMemberName] string name = null)
+        private MainFacade Create([CallerMemberName] string name = null)
         {
             Copy(name);
 
             var settings = new SettingsFolder(RootDirectory(name), IO);
             var context  = SynchronizationContext.Current;
-            var dest     = new RssFacade(settings, context);
+            var dest     = new MainFacade(settings, context);
 
             settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
 

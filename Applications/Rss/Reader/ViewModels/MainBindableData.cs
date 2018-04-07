@@ -23,14 +23,14 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssBindableData
+    /// MainBindableData
     ///
     /// <summary>
     /// メイン画面にバインドされるデータ群を定義したクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssBindableData
+    public class MainBindableData
     {
         #region Constructors
 
@@ -47,7 +47,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="context">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssBindableData(IEnumerable<IRssEntry> root,
+        public MainBindableData(IEnumerable<IRssEntry> root,
             SettingsFolder settings, SynchronizationContext context)
         {
             Root      = root;

@@ -62,7 +62,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public MainViewModel(SettingsFolder settings) : base(new Messenger())
         {
-            Model      = new RssFacade(settings, SynchronizationContext.Current);
+            Model      = new MainFacade(settings, SynchronizationContext.Current);
             DropTarget = new RssDropTarget((s, d, i) => Model.Move(s, d, i));
         }
 
@@ -79,7 +79,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssBindableData Data => Model.Data;
+        public MainBindableData Data => Model.Data;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -101,7 +101,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFacade Model { get; }
+        private MainFacade Model { get; }
 
         #endregion
 

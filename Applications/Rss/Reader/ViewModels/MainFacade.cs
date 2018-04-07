@@ -29,20 +29,20 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssFacade
+    /// MainFacade
     ///
     /// <summary>
-    /// RSS フィードに関連する処理の窓口となるクラスです。
+    /// MainViewModel とモデルの窓口となるクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public sealed class RssFacade : IDisposable
+    public sealed class MainFacade : IDisposable
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssFacade
+        /// MainFacade
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -52,7 +52,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="context">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFacade(SettingsFolder settings, SynchronizationContext context)
+        public MainFacade(SettingsFolder settings, SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
             _context = context;
@@ -78,7 +78,7 @@ namespace Cube.Net.App.Rss.Reader
 
             _checker = new UpdateChecker(Settings);
 
-            Data = new RssBindableData(_core, Settings, context);
+            Data = new MainBindableData(_core, Settings, context);
         }
 
         #endregion
@@ -94,7 +94,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssBindableData Data { get; }
+        public MainBindableData Data { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -363,7 +363,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        ~RssFacade() { _dispose.Invoke(false); }
+        ~MainFacade() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///

@@ -79,10 +79,10 @@
     <Compile Include="Interactions\DuplexConverterTest.cs" />
     <Compile Include="Interactions\SimplexConverterTest.cs" />
     <Compile Include="Models\RssEntryTest.cs" />
-    <Compile Include="Models\RssFacadeTest.cs" />
     <Compile Include="Models\RssOpmlTest.cs" />
     <Compile Include="Models\RssSubscriberTest.cs" />
     <Compile Include="Models\SettingsTest.cs" />
+    <Compile Include="ViewModels\MainFacadeTest.cs" />
     <Compile Include="ViewModels\MainViewModelTest.cs" />
     <Compile Include="ViewModels\PropertyViewModelTest.cs" />
     <Compile Include="ViewModels\RegisterViewModelTest.cs" />

@@ -52,6 +52,7 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var src = Create())
             {
+                Assert.That(src.Capacity,       Is.EqualTo(100));
                 Assert.That(src.CacheDirectory, Is.Null, nameof(src.CacheDirectory));
                 Assert.That(src.UserAgent,      Is.Null, nameof(src.UserAgent));
 
