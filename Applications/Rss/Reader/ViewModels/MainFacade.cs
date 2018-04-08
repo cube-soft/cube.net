@@ -70,6 +70,7 @@ namespace Cube.Net.App.Rss.Reader
                 FileName       = Settings.Feed,
                 Capacity       = Settings.Shared.Capacity,
                 CacheDirectory = Settings.Cache,
+                IsReadOnly     = Settings.IsReadOnly,
                 UserAgent      = Settings.UserAgent
             };
             _core.Set(RssCheckFrequency.High, Settings.Shared.HighInterval);
