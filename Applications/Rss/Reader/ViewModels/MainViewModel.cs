@@ -63,7 +63,10 @@ namespace Cube.Net.App.Rss.Reader
         public MainViewModel(SettingsFolder settings) : base(new Messenger())
         {
             Model      = new MainFacade(settings, SynchronizationContext.Current);
-            DropTarget = new RssDropTarget((s, d, i) => Model.Move(s, d, i));
+            DropTarget = new RssDropTarget((s, d, i) => Model.Move(s, d, i))
+            {
+                IsReadOnly = Data.IsReadOnly.Value
+            };
         }
 
         #endregion
@@ -137,8 +140,9 @@ namespace Cube.Net.App.Rss.Reader
                     Data.Current.Value as RssEntry,
                     e => Send(() => Model.Reschedule(e))
                 )),
-                () => Data.Current.Value is RssEntry,
-                Data.Current
+                () => !Data.IsReadOnly.Value && Data.Current.Value is RssEntry,
+                Data.Current,
+                Data.IsReadOnly
             )
         );
 
@@ -167,11 +171,13 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Import => _import ?? (
-            _import = new RelayCommand(() => Messenger.Send(
-                MessageFactory.Import(e =>
+            _import = new BindableCommand(
+                () => Messenger.Send(MessageFactory.Import(e =>
                 {
                     if (e.Result) Send(() => Model.Import(e.FileName));
-                }))
+                })),
+                () => !Data.IsReadOnly.Value,
+                Data.IsReadOnly
             )
         );
 
@@ -185,8 +191,8 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Export => _export ?? (
-            _export = new RelayCommand(() => Messenger.Send(
-                MessageFactory.Export(e =>
+            _export = new RelayCommand(
+                () => Messenger.Send(MessageFactory.Export(e =>
                 {
                     if (e.Result) Send(() => Model.Export(e.FileName));
                 }))
@@ -203,8 +209,10 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand NewEntry => _newEntry ?? (
-            _newEntry = new RelayCommand(() => Messenger.Send(
-                new RegisterViewModel(e => Model.NewEntry(e)))
+            _newEntry = new BindableCommand(
+                () => Messenger.Send(new RegisterViewModel(e => Model.NewEntry(e))),
+                () => !Data.IsReadOnly.Value,
+                Data.IsReadOnly
             )
         );
 
@@ -218,8 +226,10 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand NewCategory => _newCategory ?? (
-            _newCategory = new RelayCommand(
-                () => Send(() => Model.NewCategory())
+            _newCategory = new BindableCommand(
+                () => Send(() => Model.NewCategory()),
+                () => !Data.IsReadOnly.Value,
+                Data.IsReadOnly
             )
         );
 
@@ -240,8 +250,9 @@ namespace Cube.Net.App.Rss.Reader
                         if (e.Result) Send(() => Model.Remove());
                     })
                 ),
-                () => Data.Current.HasValue,
-                Data.Current
+                () => !Data.IsReadOnly.Value && Data.Current.HasValue,
+                Data.Current,
+                Data.IsReadOnly
             )
         );
 
@@ -257,8 +268,9 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand Rename => _rename ?? (
             _rename = new BindableCommand(
                 () => Send(() => Model.Rename()),
-                () => Data.Current.HasValue,
-                Data.Current
+                () => !Data.IsReadOnly.Value && Data.Current.HasValue,
+                Data.Current,
+                Data.IsReadOnly
             )
         );
 
@@ -308,8 +320,9 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand Reset => _reset ?? (
             _reset = new BindableCommand(
                 () => Send(() => Model.Reset()),
-                () => Data.Current.HasValue,
-                Data.Current
+                () => !Data.IsReadOnly.Value && Data.Current.HasValue,
+                Data.Current,
+                Data.IsReadOnly
             )
         );
 

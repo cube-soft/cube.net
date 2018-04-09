@@ -50,13 +50,14 @@ namespace Cube.Net.App.Rss.Reader
         public MainBindableData(IEnumerable<IRssEntry> root,
             SettingsFolder settings, SynchronizationContext context)
         {
-            Root      = root;
-            Local     = settings.Value.ToBindable(context);
-            Shared    = settings.Shared.ToBindable(context);
-            Current   = new Bindable<IRssEntry>(null, true, context);
-            LastEntry = new Bindable<RssEntry>(null, true, context);
-            Content   = new Bindable<object>(null, context);
-            Message   = new Bindable<string>(null, context);
+            Root       = root;
+            IsReadOnly = settings.IsReadOnly.ToBindable(context);
+            Local      = settings.Value.ToBindable(context);
+            Shared     = settings.Shared.ToBindable(context);
+            Current    = new Bindable<IRssEntry>(null, true, context);
+            LastEntry  = new Bindable<RssEntry>(null, true, context);
+            Content    = new Bindable<object>(null, context);
+            Message    = new Bindable<string>(null, context);
         }
 
         #endregion
@@ -74,6 +75,17 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public IEnumerable<IRssEntry> Root { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsReadOnly
+        ///
+        /// <summary>
+        /// 読み取り専用モードかどうかを示す値を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<bool> IsReadOnly { get; }
 
         /* ----------------------------------------------------------------- */
         ///

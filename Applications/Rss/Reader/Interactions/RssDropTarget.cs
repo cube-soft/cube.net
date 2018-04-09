@@ -56,6 +56,21 @@ namespace Cube.Net.App.Rss.Reader
 
         #endregion
 
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsReadOnly
+        ///
+        /// <summary>
+        /// 読み取り専用モードかどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool IsReadOnly { get; set; } = false;
+
+        #endregion
+
         #region Methods
 
         /* ----------------------------------------------------------------- */
@@ -108,7 +123,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private bool CanDrop(IDropInfo e)
         {
-            if (e.Data == e.TargetItem) return false;
+            if (IsReadOnly || e.Data == e.TargetItem) return false;
             if (e.Data is RssEntry src &&
                 e.TargetItem is RssCategory dest &&
                 src.Parent == dest) return false;
