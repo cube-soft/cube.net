@@ -72,7 +72,7 @@ namespace Cube.Net.Ntp
         /// <param name="port">ポート番号</param>
         ///
         /* ----------------------------------------------------------------- */
-        public NtpMonitor(string server, int port) : base()
+        public NtpMonitor(string server, int port)
         {
             Interval = TimeSpan.FromHours(1);
             _server  = server;

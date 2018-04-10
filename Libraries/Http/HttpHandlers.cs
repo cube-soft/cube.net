@@ -49,7 +49,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public HeaderHandler() : base()
+        public HeaderHandler()
         {
             Proxy    = null;
             UseProxy = false;
@@ -221,7 +221,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ContentHandler() : base() { }
+        public ContentHandler() { }
 
         /* ----------------------------------------------------------------- */
         ///

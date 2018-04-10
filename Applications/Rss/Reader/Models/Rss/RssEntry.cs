@@ -56,7 +56,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(SynchronizationContext context) : base()
+        public RssEntry(SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
             Context  = context;
