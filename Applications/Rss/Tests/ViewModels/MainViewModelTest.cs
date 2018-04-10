@@ -498,6 +498,56 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(IO.Exists(dest), Is.EqualTo(expected));
         });
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_ReadOnly
+        ///
+        /// <summary>
+        /// 読み取り専用モードでの挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_ReadOnly()
+        {
+            Copy();
+            IO.Copy(Example("Sample.lockfile"), IO.Combine(RootDirectory(), LockSettings.FileName));
+
+            var n = 0;
+            var settings = new SettingsFolder(RootDirectory(), IO);
+
+            using (var fw = new System.IO.FileSystemWatcher())
+            using (var vm = new MainViewModel(settings))
+            {
+                var f = IO.Get(FeedsPath());
+                fw.Path = f.DirectoryName;
+                fw.Filter = f.Name;
+                fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
+                fw.Changed += (s, e) => ++n;
+                fw.EnableRaisingEvents = true;
+
+                vm.Setup.Execute(null);
+
+                Assert.That(vm.Property.CanExecute(null),    Is.False, nameof(vm.Property));
+                Assert.That(vm.Settings.CanExecute(null),    Is.True,  nameof(vm.Settings));
+                Assert.That(vm.Import.CanExecute(null),      Is.False, nameof(vm.Import));
+                Assert.That(vm.Export.CanExecute(null),      Is.True,  nameof(vm.Export));
+                Assert.That(vm.NewEntry.CanExecute(null),    Is.False, nameof(vm.NewEntry));
+                Assert.That(vm.NewCategory.CanExecute(null), Is.False, nameof(vm.NewCategory));
+                Assert.That(vm.Remove.CanExecute(null),      Is.False, nameof(vm.Remove));
+                Assert.That(vm.Rename.CanExecute(null),      Is.False, nameof(vm.Rename));
+                Assert.That(vm.Read.CanExecute(null),        Is.False, nameof(vm.Read));
+                Assert.That(vm.Update.CanExecute(null),      Is.False, nameof(vm.Update));
+                Assert.That(vm.Reset.CanExecute(null),       Is.False, nameof(vm.Reset));
+
+                vm.Update.Execute(null);
+                Assert.That(Wait(vm).Result, Is.True, "Timeout");
+                //Assert.That(vm.Data.LastEntry.Value.Count, Is.AtLeast(1));
+            }
+
+            Assert.That(n, Is.EqualTo(0));
+        }
+
         #endregion
 
         #region Helper methods

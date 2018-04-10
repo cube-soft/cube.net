@@ -15,6 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem;
+using Cube.FileSystem.Files;
+using Cube.Settings;
 using System;
 using System.Runtime.Serialization;
 
@@ -48,6 +51,17 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FileName
+        ///
+        /// <summary>
+        /// 設定を保持するファイルの名前を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string FileName => "Settings.json";
 
         /* ----------------------------------------------------------------- */
         ///
@@ -211,6 +225,45 @@ namespace Cube.Net.App.Rss.Reader
             get => _initialDelay;
             set => SetProperty(ref _initialDelay, value);
         }
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Load
+        ///
+        /// <summary>
+        /// 設定情報を読み込みます。
+        /// </summary>
+        ///
+        /// <param name="directory">ディレクトリ</param>
+        /// <param name="io">入出力用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static SharedSettings Load(string directory, Operator io)
+        {
+            var src = io.Combine(directory, FileName);
+            return io.Load(src, e => SettingsType.Json.Load<SharedSettings>(e), new SharedSettings());
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Save
+        ///
+        /// <summary>
+        /// 設定情報を保存します。
+        /// </summary>
+        ///
+        /// <param name="directory">ディレクトリ</param>
+        /// <param name="io">入出力用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Save(string directory, Operator io) => io.Save(
+            io.Combine(directory, FileName),
+            e => SettingsType.Json.Save(e, this)
+        );
 
         #endregion
 

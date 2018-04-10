@@ -15,34 +15,42 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem;
+using Cube.FileSystem.Files;
+using Cube.Settings;
+using System;
+using System.DirectoryServices.AccountManagement;
 using System.Runtime.Serialization;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// LocalSettings
+    /// LockSettings
     ///
     /// <summary>
-    /// ユーザ設定を保持するためのクラスです。
+    /// ロック情報を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class LocalSettings : ObservableProperty
+    public class LockSettings : ObservableProperty
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
+        /// LockSettings
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public LocalSettings() { Reset(); }
+        public LockSettings()
+        {
+            Reset();
+        }
 
         #endregion
 
@@ -57,54 +65,118 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static string FileName => "LocalSettings.json";
+        public static string FileName => ".lockfile";
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Width
+        /// Sid
         ///
         /// <summary>
-        /// メイン画面の幅を取得または設定します。
+        /// 識別子を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public int Width
+        public string Sid
         {
-            get => _width;
-            set => SetProperty(ref _width, value);
+            get => _sid;
+            set => SetProperty(ref _sid, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Height
+        /// UserName
         ///
         /// <summary>
-        /// メイン画面の高さを取得または設定します。
+        /// ユーザ名を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public int Height
+        public string UserName
         {
-            get => _height;
-            set => SetProperty(ref _height, value);
+            get => _userName;
+            set => SetProperty(ref _userName, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DataDirectory
+        /// MachineName
         ///
         /// <summary>
-        /// データ格納用ディレクトリのパスを取得または設定します。
+        /// マシン名を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public string DataDirectory
+        public string MachineName
         {
-            get => _dataDirectory;
-            set => SetProperty(ref _dataDirectory, value);
+            get => _machineName;
+            set => SetProperty(ref _machineName, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsReadOnly
+        ///
+        /// <summary>
+        /// 読み取り専用モードかどうかを示す値を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool IsReadOnly
+        {
+            get
+            {
+                if (!_isReadOnly.HasValue)
+                {
+                    _isReadOnly = !Sid.Equals(UserPrincipal.Current.Sid.ToString());
+                }
+                return _isReadOnly.Value;
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Load
+        ///
+        /// <summary>
+        /// 設定情報を読み込みます。
+        /// </summary>
+        ///
+        /// <param name="directory">ディレクトリ</param>
+        /// <param name="io">入出力用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static LockSettings Load(string directory, Operator io)
+        {
+            var src = io.Combine(directory, FileName);
+            if (io.Exists(src)) return io.Load(src, e => SettingsType.Json.Load<LockSettings>(e));
+            var dest = new LockSettings();
+            io.Save(src, e => SettingsType.Json.Save(e, dest));
+            return dest;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Release
+        ///
+        /// <summary>
+        /// ロックを解除します。
+        /// </summary>
+        ///
+        /// <param name="directory">ディレクトリ</param>
+        /// <param name="io">入出力用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Release(string directory, Operator io)
+        {
+            if (IsReadOnly) return;
+            io.Delete(io.Combine(directory, FileName));
         }
 
         #endregion
@@ -134,17 +206,18 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Reset()
         {
-            _width         = 1100;
-            _height        = 650;
-            _dataDirectory = null;
+            _sid         = UserPrincipal.Current.Sid.ToString();
+            _userName    = Environment.UserName;
+            _machineName = Environment.MachineName;
         }
 
         #endregion
 
         #region Fields
-        private int _width;
-        private int _height;
-        private string _dataDirectory;
+        private string _sid;
+        private string _userName;
+        private string _machineName;
+        private bool? _isReadOnly;
         #endregion
     }
 }

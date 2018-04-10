@@ -16,11 +16,9 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.FileSystem;
-using Cube.FileSystem.Files;
 using Cube.Log;
 using Cube.Settings;
 using System;
-
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -67,7 +65,7 @@ namespace Cube.Net.App.Rss.Reader
         public SettingsFolder(string root, Operator io) : base(SettingsType.Json)
         {
             AutoSave            = true;
-            Path                = io.Combine(root, "LocalSettings.json");
+            Path                = io.Combine(root, LocalSettings.FileName);
             IO                  = io;
             Root                = root;
             Version.Digit       = 3;
@@ -78,6 +76,17 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Lock
+        ///
+        /// <summary>
+        /// ロック設定オブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public LockSettings Lock { get; private set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -146,16 +155,24 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public string UserAgent => _userAgent ?? (_userAgent = GetUserAgent());
 
+        #endregion
+
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
-        /// IsReadOnly
+        /// Dispose
         ///
         /// <summary>
-        /// 読み取り専用モードかどうかを示す値を取得または設定します。
+        /// リソースを開放します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsReadOnly { get; set; } = false;
+        protected override void Dispose(bool disposing)
+        {
+            Lock.Release(Value.DataDirectory, IO);
+            base.Dispose(disposing);
+        }
 
         #endregion
 
@@ -174,7 +191,16 @@ namespace Cube.Net.App.Rss.Reader
         {
             var dest = e.NewValue;
             if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = Root;
-            LoadSharedSettings(GetSharedPath(dest.DataDirectory));
+
+            Lock = LockSettings.Load(dest.DataDirectory, IO);
+            System.Diagnostics.Debug.Assert(Lock != null);
+            Lock.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
+
+            Shared = SharedSettings.Load(dest.DataDirectory, IO);
+            System.Diagnostics.Debug.Assert(Shared != null);
+            Shared.LastCheckUpdate = GetLastCheckUpdate();
+            Shared.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
+
             base.OnLoaded(e);
         }
 
@@ -189,59 +215,30 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void OnSaved(KeyValueEventArgs<SettingsType, string> e)
         {
-            IO.Save(GetSharedPath(Value.DataDirectory), ss => Type.Save(ss, Shared));
+            Shared.Save(Value.DataDirectory, IO);
             base.OnSaved(e);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LoadSharedSettings
-        ///
-        /// <summary>
-        /// ユーザ設定を読み込みます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void LoadSharedSettings(string path)
-        {
-            var dest = IO.Load(path, e => Type.Load<SharedSettings>(e), new SharedSettings());
-            System.Diagnostics.Debug.Assert(dest != null);
-            LoadLastCheckUpdate(dest);
-            dest.PropertyChanged += (s, e) => OnPropertyChanged(e);
-            Shared = dest;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LoadLastCheckUpdate
+        /// GetLastCheckUpdate
         ///
         /// <summary>
         /// LastCheckUpdate の項目を読み込みます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void LoadLastCheckUpdate(SharedSettings dest) => this.LogWarn(() =>
+        private DateTime? GetLastCheckUpdate() => this.LogWarn(() =>
         {
             var name = $@"SOFTWARE\{Company}\{Product}";
             using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false))
             {
-                if (key == null) return;
+                if (key == null) return default(DateTime?);
                 var s = key.GetValue("LastCheckUpdate") as string;
-                if (string.IsNullOrEmpty(s)) return;
-                dest.LastCheckUpdate = DateTime.Parse(s).ToLocalTime();
+                if (string.IsNullOrEmpty(s)) return default(DateTime?);
+                return DateTime.Parse(s).ToLocalTime();
             }
         });
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetSharedPath
-        ///
-        /// <summary>
-        /// ユーザ設定ファイルのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private string GetSharedPath(string dir) => IO.Combine(dir, "Settings.json");
 
         /* ----------------------------------------------------------------- */
         ///

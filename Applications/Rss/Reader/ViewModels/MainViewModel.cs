@@ -65,7 +65,7 @@ namespace Cube.Net.App.Rss.Reader
             Model      = new MainFacade(settings, SynchronizationContext.Current);
             DropTarget = new RssDropTarget((s, d, i) => Model.Move(s, d, i))
             {
-                IsReadOnly = Data.IsReadOnly.Value
+                IsReadOnly = Data.Lock.Value.IsReadOnly
             };
         }
 
@@ -140,9 +140,9 @@ namespace Cube.Net.App.Rss.Reader
                     Data.Current.Value as RssEntry,
                     e => Send(() => Model.Reschedule(e))
                 )),
-                () => !Data.IsReadOnly.Value && Data.Current.Value is RssEntry,
+                () => !Data.Lock.Value.IsReadOnly && Data.Current.Value is RssEntry,
                 Data.Current,
-                Data.IsReadOnly
+                Data.Lock
             )
         );
 
@@ -176,8 +176,8 @@ namespace Cube.Net.App.Rss.Reader
                 {
                     if (e.Result) Send(() => Model.Import(e.FileName));
                 })),
-                () => !Data.IsReadOnly.Value,
-                Data.IsReadOnly
+                () => !Data.Lock.Value.IsReadOnly,
+                Data.Lock
             )
         );
 
@@ -211,8 +211,8 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand NewEntry => _newEntry ?? (
             _newEntry = new BindableCommand(
                 () => Messenger.Send(new RegisterViewModel(e => Model.NewEntry(e))),
-                () => !Data.IsReadOnly.Value,
-                Data.IsReadOnly
+                () => !Data.Lock.Value.IsReadOnly,
+                Data.Lock
             )
         );
 
@@ -228,8 +228,8 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand NewCategory => _newCategory ?? (
             _newCategory = new BindableCommand(
                 () => Send(() => Model.NewCategory()),
-                () => !Data.IsReadOnly.Value,
-                Data.IsReadOnly
+                () => !Data.Lock.Value.IsReadOnly,
+                Data.Lock
             )
         );
 
@@ -250,9 +250,9 @@ namespace Cube.Net.App.Rss.Reader
                         if (e.Result) Send(() => Model.Remove());
                     })
                 ),
-                () => !Data.IsReadOnly.Value && Data.Current.HasValue,
+                () => !Data.Lock.Value.IsReadOnly && Data.Current.HasValue,
                 Data.Current,
-                Data.IsReadOnly
+                Data.Lock
             )
         );
 
@@ -268,9 +268,9 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand Rename => _rename ?? (
             _rename = new BindableCommand(
                 () => Send(() => Model.Rename()),
-                () => !Data.IsReadOnly.Value && Data.Current.HasValue,
+                () => !Data.Lock.Value.IsReadOnly && Data.Current.HasValue,
                 Data.Current,
-                Data.IsReadOnly
+                Data.Lock
             )
         );
 
@@ -320,9 +320,9 @@ namespace Cube.Net.App.Rss.Reader
         public ICommand Reset => _reset ?? (
             _reset = new BindableCommand(
                 () => Send(() => Model.Reset()),
-                () => !Data.IsReadOnly.Value && Data.Current.HasValue,
+                () => !Data.Lock.Value.IsReadOnly && Data.Current.HasValue,
                 Data.Current,
-                Data.IsReadOnly
+                Data.Lock
             )
         );
 

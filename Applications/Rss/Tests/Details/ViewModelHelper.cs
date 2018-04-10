@@ -74,18 +74,18 @@ namespace Cube.Net.App.Rss.Tests
         protected void Execute(Action<MainViewModel> action, bool stop = true,
             [CallerMemberName] string name = null)
         {
-            using (var w = new System.IO.FileSystemWatcher())
+            using (var fw = new System.IO.FileSystemWatcher())
             {
                 var n = 0;
 
                 using (var vm = Create(name))
                 {
                     var f = IO.Get(FeedsPath(name));
-                    w.Path = f.DirectoryName;
-                    w.Filter = f.Name;
-                    w.NotifyFilter = System.IO.NotifyFilters.LastWrite;
-                    w.Changed += (s, e) => ++n;
-                    w.EnableRaisingEvents = true;
+                    fw.Path = f.DirectoryName;
+                    fw.Filter = f.Name;
+                    fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
+                    fw.Changed += (s, e) => ++n;
+                    fw.EnableRaisingEvents = true;
 
                     if (stop) vm.Stop.Execute(null);
                     action(vm);

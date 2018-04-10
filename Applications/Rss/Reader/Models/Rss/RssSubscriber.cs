@@ -813,9 +813,12 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void AutoSaveCore()
         {
-            _autosaver.Stop();
-            _autosaver.Interval = 1000.0;
-            _autosaver.Start();
+            if (!IsReadOnly)
+            {
+                _autosaver.Stop();
+                _autosaver.Interval = 1000.0;
+                _autosaver.Start();
+            }
         }
 
         /* ----------------------------------------------------------------- */

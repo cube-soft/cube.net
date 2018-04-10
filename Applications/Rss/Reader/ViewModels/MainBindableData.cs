@@ -51,7 +51,7 @@ namespace Cube.Net.App.Rss.Reader
             SettingsFolder settings, SynchronizationContext context)
         {
             Root       = root;
-            IsReadOnly = settings.IsReadOnly.ToBindable(context);
+            Lock       = settings.Lock.ToBindable(true, context);
             Local      = settings.Value.ToBindable(context);
             Shared     = settings.Shared.ToBindable(context);
             Current    = new Bindable<IRssEntry>(null, true, context);
@@ -78,14 +78,14 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// IsReadOnly
+        /// Lock
         ///
         /// <summary>
-        /// 読み取り専用モードかどうかを示す値を取得します。
+        /// ロック情報を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<bool> IsReadOnly { get; }
+        public Bindable<LockSettings> Lock { get; }
 
         /* ----------------------------------------------------------------- */
         ///
