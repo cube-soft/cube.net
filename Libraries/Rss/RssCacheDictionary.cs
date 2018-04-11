@@ -234,7 +234,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Save()
         {
-            foreach (var kv in _memory) this.LogWarn(() => SaveCache(kv.Key));
+            foreach (var key in _memory.Keys.ToList()) this.LogWarn(() => SaveCache(key));
             _memory.Clear();
         }
 
