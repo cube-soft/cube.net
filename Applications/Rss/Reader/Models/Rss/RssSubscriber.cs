@@ -712,7 +712,8 @@ namespace Cube.Net.App.Rss.Reader
                 foreach (var mon in _monitors) mon.Dispose();
                 _feeds.Dispose();
             }
-            Save();
+
+            if (!IsReadOnly) Save();
         }
 
         #endregion

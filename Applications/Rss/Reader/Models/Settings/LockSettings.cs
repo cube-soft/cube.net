@@ -124,17 +124,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsReadOnly
-        {
-            get
-            {
-                if (!_isReadOnly.HasValue)
-                {
-                    _isReadOnly = !Sid.Equals(UserPrincipal.Current.Sid.ToString());
-                }
-                return _isReadOnly.Value;
-            }
-        }
+        public bool IsReadOnly => _isReadOnly ?? (
+            _isReadOnly = !Sid.Equals(GetCurrentUserPrincipal().Sid.ToString())
+        ).Value;
 
         #endregion
 
@@ -206,9 +198,26 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Reset()
         {
-            _sid         = UserPrincipal.Current.Sid.ToString();
+            _sid         = GetCurrentUserPrincipal().Sid.ToString();
             _userName    = Environment.UserName;
             _machineName = Environment.MachineName;
+            _isReadOnly  = default(bool?);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetCurrentUserPrincipal
+        ///
+        /// <summary>
+        /// ログオン中のユーザの UserPrincipal オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private UserPrincipal GetCurrentUserPrincipal()
+        {
+            var ctx = new PrincipalContext(ContextType.Machine);
+            var src = new UserPrincipal(ctx) { SamAccountName = Environment.UserName };
+            return new PrincipalSearcher(src).FindOne() as UserPrincipal;
         }
 
         #endregion

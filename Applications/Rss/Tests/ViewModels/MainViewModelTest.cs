@@ -556,7 +556,7 @@ namespace Cube.Net.App.Rss.Tests
             }
 
             Assert.That(IO.Exists(dest), Is.True, dest);
-            //Assert.That(n, Is.EqualTo(0));
+            Assert.That(n, Is.EqualTo(0));
         }
 
         #endregion
