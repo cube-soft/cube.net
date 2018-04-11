@@ -148,8 +148,10 @@ namespace Cube.Net.App.Rss.Reader
         {
             var src = io.Combine(directory, FileName);
             if (io.Exists(src)) return io.Load(src, e => SettingsType.Json.Load<LockSettings>(e));
+
             var dest = new LockSettings();
             io.Save(src, e => SettingsType.Json.Save(e, dest));
+            io.SetAttributes(src, System.IO.FileAttributes.ReadOnly | System.IO.FileAttributes.Hidden);
             return dest;
         }
 
