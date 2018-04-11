@@ -64,12 +64,15 @@ namespace Cube.Net.App.Rss.Reader
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
 
+            var feeds = Settings.IO.Combine(Settings.Value.DataDirectory, LocalSettings.FeedFileName);
+            var cache = Settings.IO.Combine(Settings.Value.DataDirectory, LocalSettings.CacheDirectoryName);
+
             _core = new RssSubscriber(context)
             {
                 IO             = Settings.IO,
-                FileName       = Settings.Feed,
+                FileName       = feeds,
+                CacheDirectory = cache,
                 Capacity       = Settings.Shared.Capacity,
-                CacheDirectory = Settings.Cache,
                 IsReadOnly     = Settings.Lock.IsReadOnly,
                 UserAgent      = Settings.UserAgent
             };
@@ -78,7 +81,6 @@ namespace Cube.Net.App.Rss.Reader
             _core.Received += WhenReceived;
 
             _checker = new UpdateChecker(Settings);
-
             Data = new MainBindableData(_core, Settings, context);
         }
 

@@ -241,6 +241,8 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="directory">ディレクトリ</param>
         /// <param name="io">入出力用オブジェクト</param>
         ///
+        /// <returns>SharedSettings オブジェクト</returns>
+        ///
         /* ----------------------------------------------------------------- */
         public static SharedSettings Load(string directory, Operator io)
         {

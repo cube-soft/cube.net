@@ -412,7 +412,7 @@ namespace Cube.Net.App.Rss.Reader
                 })
             ));
 
-            if (_feeds.Count > 0) Task.Run(() => RssOperator.Backup(FileName, IO)).Forget();
+            if (!IsReadOnly && _feeds.Count > 0) Task.Run(() => RssOperator.Backup(FileName, IO)).Forget();
         }
 
         /* ----------------------------------------------------------------- */

@@ -520,9 +520,7 @@ namespace Cube.Net.App.Rss.Tests
             using (var fw = new System.IO.FileSystemWatcher())
             using (var vm = new MainViewModel(new SettingsFolder(RootDirectory(), IO)))
             {
-                var f = IO.Get(FeedsPath());
-                fw.Path = f.DirectoryName;
-                fw.Filter = f.Name;
+                fw.Path = RootDirectory();
                 fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
                 fw.Changed += (s, e) => ++n;
                 fw.EnableRaisingEvents = true;
@@ -555,8 +553,8 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(vm.Data.LastEntry.Value.Count, Is.AtLeast(1));
             }
 
+            Assert.That(n, Is.AtMost(2), "Write only LocalSettings.json");
             Assert.That(IO.Exists(dest), Is.True, dest);
-            Assert.That(n, Is.EqualTo(0));
         }
 
         #endregion

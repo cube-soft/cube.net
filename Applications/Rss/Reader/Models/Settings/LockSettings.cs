@@ -120,7 +120,7 @@ namespace Cube.Net.App.Rss.Reader
         /// IsReadOnly
         ///
         /// <summary>
-        /// 読み取り専用モードかどうかを示す値を取得または設定します。
+        /// 読み取り専用モードかどうかを示す値を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -142,6 +142,8 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /// <param name="directory">ディレクトリ</param>
         /// <param name="io">入出力用オブジェクト</param>
+        ///
+        /// <returns>LockSettings オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static LockSettings Load(string directory, Operator io)

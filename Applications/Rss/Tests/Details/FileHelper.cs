@@ -57,7 +57,7 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string CacheDirectory([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), "Cache");
+            IO.Combine(RootDirectory(name), LocalSettings.CacheDirectoryName);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -69,7 +69,7 @@ namespace Cube.Net.App.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string FeedsPath([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), "Feeds.json");
+            IO.Combine(RootDirectory(name), LocalSettings.FeedFileName);
 
         /* ----------------------------------------------------------------- */
         ///

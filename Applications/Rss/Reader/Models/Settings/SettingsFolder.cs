@@ -67,7 +67,7 @@ namespace Cube.Net.App.Rss.Reader
             AutoSave            = true;
             Path                = io.Combine(root, LocalSettings.FileName);
             IO                  = io;
-            Root                = root;
+            RootDirectory       = root;
             Version.Digit       = 3;
             Version.Suffix      = "β";
             Value.DataDirectory = root;
@@ -112,37 +112,15 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Root
+        /// RootDirectory
         ///
         /// <summary>
-        /// 各種ユーザ設定を保持するディレクトリのルートディレクトリと
-        /// なるパスを取得します。
+        /// 各種ローカル設定を保持するディレクトリのルートとなるパスを
+        /// 取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Root { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Cache
-        ///
-        /// <summary>
-        /// キャッシュ用ディレクトリのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Cache => IO.Combine(Value.DataDirectory, "Cache");
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Feed
-        ///
-        /// <summary>
-        /// 購読フィード一覧を保持するためのファイルのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Feed => IO.Combine(Value.DataDirectory, "Feeds.json");
+        public string RootDirectory { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -190,7 +168,7 @@ namespace Cube.Net.App.Rss.Reader
         protected override void OnLoaded(ValueChangedEventArgs<LocalSettings> e)
         {
             var dest = e.NewValue;
-            if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = Root;
+            if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = RootDirectory;
 
             Lock = LockSettings.Load(dest.DataDirectory, IO);
             System.Diagnostics.Debug.Assert(Lock != null);
@@ -215,7 +193,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void OnSaved(KeyValueEventArgs<SettingsType, string> e)
         {
-            Shared.Save(Value.DataDirectory, IO);
+            if (!Lock.IsReadOnly) Shared.Save(Value.DataDirectory, IO);
             base.OnSaved(e);
         }
 
