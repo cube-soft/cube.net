@@ -47,24 +47,27 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Load()
         {
-            var dir = Result(nameof(Load));
-            IO.Copy(Example("LocalSettings.json"), IO.Combine(dir, "LocalSettings.json"), true);
-            IO.Copy(Example("Settings.json"), IO.Combine(dir, "Settings.json"), true);
-            var src = new SettingsFolder(dir, IO);
+            Copy();
+            var src = new SettingsFolder(RootDirectory(), IO);
             src.Load();
 
-            Assert.That(src.Value.Width,                    Is.EqualTo(1100));
-            Assert.That(src.Value.Height,                   Is.EqualTo(650));
-            Assert.That(src.Value.DataDirectory,            Is.EqualTo(dir));
-            Assert.That(src.Shared.StartUri,                Is.EqualTo(new Uri("https://github.com/blog.atom")));
-            Assert.That(src.Shared.Capacity,                Is.EqualTo(5));
-            Assert.That(src.Shared.EnableNewWindow,         Is.True);
-            Assert.That(src.Shared.EnableMonitorMessage,    Is.True);
-            Assert.That(src.Shared.LightMode,               Is.False);
-            Assert.That(src.Shared.CheckUpdate,             Is.True);
-            Assert.That(src.Shared.HighInterval.Value,      Is.EqualTo(TimeSpan.FromHours(1)));
-            Assert.That(src.Shared.LowInterval.Value,       Is.EqualTo(TimeSpan.FromDays(1)));
-            Assert.That(src.Shared.InitialDelay.Value,      Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Value.Width,                 Is.EqualTo(1100));
+            Assert.That(src.Value.Height,                Is.EqualTo(650));
+            Assert.That(src.Value.DataDirectory,         Is.EqualTo(RootDirectory()));
+            Assert.That(src.Shared.StartUri,             Is.EqualTo(new Uri("https://github.com/blog.atom")));
+            Assert.That(src.Shared.Capacity,             Is.EqualTo(5));
+            Assert.That(src.Shared.EnableNewWindow,      Is.True);
+            Assert.That(src.Shared.EnableMonitorMessage, Is.True);
+            Assert.That(src.Shared.LightMode,            Is.False);
+            Assert.That(src.Shared.CheckUpdate,          Is.True);
+            Assert.That(src.Shared.HighInterval.Value,   Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(src.Shared.LowInterval.Value,    Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(src.Shared.InitialDelay.Value,   Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Lock.IsReadOnly,             Is.False);
+            Assert.That(src.Lock.IsReadOnly,             Is.False);
+            Assert.That(src.Lock.UserName,               Is.EqualTo(Environment.UserName));
+            Assert.That(src.Lock.MachineName,            Is.EqualTo(Environment.MachineName));
+            Assert.That(src.Lock.Sid,                    Does.StartWith("S-1-5-21"));
         }
 
         /* ----------------------------------------------------------------- */
@@ -79,24 +82,28 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Load_Empty()
         {
-            var dir = Result(nameof(Load_Empty));
-            IO.Copy(Example("SettingsEmpty.json"), IO.Combine(dir, "LocalSettings.json"), true);
-            IO.Copy(Example("SettingsEmpty.json"), IO.Combine(dir, "Settings.json"), true);
-            var src = new SettingsFolder(dir, IO);
+            IO.Copy(Example("SettingsEmpty.json"), LocalSettingsPath(), true);
+            IO.Copy(Example("SettingsEmpty.json"), SharedSettingsPath(), true);
+            var src = new SettingsFolder(RootDirectory(), IO);
             src.Load();
 
-            Assert.That(src.Value.Width,                    Is.EqualTo(1100));
-            Assert.That(src.Value.Height,                   Is.EqualTo(650));
-            Assert.That(src.Value.DataDirectory,            Is.EqualTo(dir));
-            Assert.That(src.Shared.StartUri,                Is.Null);
-            Assert.That(src.Shared.Capacity,                Is.EqualTo(1000));
-            Assert.That(src.Shared.EnableNewWindow,         Is.False);
-            Assert.That(src.Shared.EnableMonitorMessage,    Is.True);
-            Assert.That(src.Shared.LightMode,               Is.False);
-            Assert.That(src.Shared.CheckUpdate,             Is.True);
-            Assert.That(src.Shared.HighInterval.Value,      Is.EqualTo(TimeSpan.FromHours(1)));
-            Assert.That(src.Shared.LowInterval.Value,       Is.EqualTo(TimeSpan.FromDays(1)));
-            Assert.That(src.Shared.InitialDelay.Value,      Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Value.Width,                 Is.EqualTo(1100));
+            Assert.That(src.Value.Height,                Is.EqualTo(650));
+            Assert.That(src.Value.DataDirectory,         Is.EqualTo(RootDirectory()));
+            Assert.That(src.Shared.StartUri,             Is.Null);
+            Assert.That(src.Shared.Capacity,             Is.EqualTo(1000));
+            Assert.That(src.Shared.EnableNewWindow,      Is.False);
+            Assert.That(src.Shared.EnableMonitorMessage, Is.True);
+            Assert.That(src.Shared.LightMode,            Is.False);
+            Assert.That(src.Shared.CheckUpdate,          Is.True);
+            Assert.That(src.Shared.HighInterval.Value,   Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(src.Shared.LowInterval.Value,    Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(src.Shared.InitialDelay.Value,   Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Lock.IsReadOnly,             Is.False);
+            Assert.That(src.Lock.IsReadOnly,             Is.False);
+            Assert.That(src.Lock.UserName,               Is.EqualTo(Environment.UserName));
+            Assert.That(src.Lock.MachineName,            Is.EqualTo(Environment.MachineName));
+            Assert.That(src.Lock.Sid,                    Does.StartWith("S-1-5-21"));
         }
 
         #endregion

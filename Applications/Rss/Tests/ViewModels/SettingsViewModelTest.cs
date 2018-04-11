@@ -19,7 +19,7 @@ using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
 using System;
 
-namespace Cube.Net.App.Rss.Tests.ViewModels
+namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///

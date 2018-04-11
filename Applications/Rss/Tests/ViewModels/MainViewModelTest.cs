@@ -34,7 +34,7 @@ namespace Cube.Net.App.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class ViewModelTest : ViewModelHelper
+    class MainViewModelTest : ViewModelHelper
     {
         #region Tests
 
@@ -65,6 +65,7 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(vm.Data.LastEntry.HasValue,   Is.False);
             Assert.That(vm.Data.Message.HasValue,     Is.False);
             Assert.That(vm.Data.Shared.HasValue,      Is.True);
+            Assert.That(vm.Data.Lock.HasValue,        Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -510,14 +511,14 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void VM_ReadOnly()
         {
+            var dest = IO.Combine(RootDirectory(), LockSettings.FileName);
+            IO.Copy(Example("Sample.lockfile"), dest);
             Copy();
-            IO.Copy(Example("Sample.lockfile"), IO.Combine(RootDirectory(), LockSettings.FileName));
 
             var n = 0;
-            var settings = new SettingsFolder(RootDirectory(), IO);
 
             using (var fw = new System.IO.FileSystemWatcher())
-            using (var vm = new MainViewModel(settings))
+            using (var vm = new MainViewModel(new SettingsFolder(RootDirectory(), IO)))
             {
                 var f = IO.Get(FeedsPath());
                 fw.Path = f.DirectoryName;
@@ -526,8 +527,17 @@ namespace Cube.Net.App.Rss.Tests
                 fw.Changed += (s, e) => ++n;
                 fw.EnableRaisingEvents = true;
 
+                vm.Data.Message.Value = "Test";
                 vm.Setup.Execute(null);
+                Assert.That(Wait(vm, true).Result, Is.True, "Timeout");
 
+                Assert.That(vm.Data.Lock.Value.IsReadOnly,   Is.True, nameof(vm.Data.Lock.Value.IsReadOnly));
+                Assert.That(vm.Data.Lock.Value.Sid,          Is.EqualTo("S-1-5-21-0123456789-0123456789-012345678-0123"));
+                Assert.That(vm.Data.Lock.Value.UserName,     Is.EqualTo("DummyName"));
+                Assert.That(vm.Data.Lock.Value.MachineName,  Is.EqualTo("DummyMachine"));
+
+                Assert.That(vm.Data.Current.HasValue,        Is.True,  nameof(vm.Data.Current));
+                Assert.That(vm.Data.LastEntry.HasValue,      Is.True,  nameof(vm.Data.LastEntry));
                 Assert.That(vm.Property.CanExecute(null),    Is.False, nameof(vm.Property));
                 Assert.That(vm.Settings.CanExecute(null),    Is.True,  nameof(vm.Settings));
                 Assert.That(vm.Import.CanExecute(null),      Is.False, nameof(vm.Import));
@@ -536,16 +546,17 @@ namespace Cube.Net.App.Rss.Tests
                 Assert.That(vm.NewCategory.CanExecute(null), Is.False, nameof(vm.NewCategory));
                 Assert.That(vm.Remove.CanExecute(null),      Is.False, nameof(vm.Remove));
                 Assert.That(vm.Rename.CanExecute(null),      Is.False, nameof(vm.Rename));
-                Assert.That(vm.Read.CanExecute(null),        Is.False, nameof(vm.Read));
-                Assert.That(vm.Update.CanExecute(null),      Is.False, nameof(vm.Update));
+                Assert.That(vm.Read.CanExecute(null),        Is.True,  nameof(vm.Read));
+                Assert.That(vm.Update.CanExecute(null),      Is.True,  nameof(vm.Update));
                 Assert.That(vm.Reset.CanExecute(null),       Is.False, nameof(vm.Reset));
 
                 vm.Update.Execute(null);
                 Assert.That(Wait(vm).Result, Is.True, "Timeout");
-                //Assert.That(vm.Data.LastEntry.Value.Count, Is.AtLeast(1));
+                Assert.That(vm.Data.LastEntry.Value.Count, Is.AtLeast(1));
             }
 
-            Assert.That(n, Is.EqualTo(0));
+            Assert.That(IO.Exists(dest), Is.True, dest);
+            //Assert.That(n, Is.EqualTo(0));
         }
 
         #endregion

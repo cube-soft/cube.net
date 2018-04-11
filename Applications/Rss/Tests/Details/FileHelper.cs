@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Net.App.Rss.Reader;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -72,15 +73,27 @@ namespace Cube.Net.App.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SettingsPath
+        /// LocalSettingsPath
+        ///
+        /// <summary>
+        /// ローカル設定情報を保持するファイルのパスを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected string LocalSettingsPath([CallerMemberName] string name = null) =>
+            IO.Combine(RootDirectory(name), LocalSettings.FileName);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SharedSettingsPath
         ///
         /// <summary>
         /// 設定情報を保持するファイルのパスを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected string SettingsPath([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), "Settings.json");
+        protected string SharedSettingsPath([CallerMemberName] string name = null) =>
+            IO.Combine(RootDirectory(name), SharedSettings.FileName);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -109,8 +122,10 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         protected void Copy([CallerMemberName] string name = null)
         {
-            IO.Copy(Example("Sample.json"),   FeedsPath(name),    true);
-            IO.Copy(Example("Settings.json"), SettingsPath(name), true);
+            IO.Copy(Example("LocalSettings.json"), LocalSettingsPath(name), true);
+            IO.Copy(Example("Settings.json"), SharedSettingsPath(name), true);
+            IO.Copy(Example("Sample.json"), FeedsPath(name), true);
+
             foreach (var f in IO.GetFiles(Example("Cache")))
             {
                 IO.Copy(f, CachePath(IO.Get(f).Name, name), true);

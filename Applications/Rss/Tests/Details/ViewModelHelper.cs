@@ -76,10 +76,15 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var fw = new System.IO.FileSystemWatcher())
             {
+                var l = IO.Combine(RootDirectory(name), LockSettings.FileName);
                 var n = 0;
 
                 using (var vm = Create(name))
                 {
+                    Assert.That(IO.Exists(l), Is.True, l);
+                    Assert.That(vm.Data.Lock.HasValue, Is.True, nameof(vm.Data.Lock));
+                    Assert.That(vm.Data.Lock.Value.IsReadOnly, Is.False, nameof(vm.Data.Lock));
+
                     var f = IO.Get(FeedsPath(name));
                     fw.Path = f.DirectoryName;
                     fw.Filter = f.Name;
@@ -91,6 +96,7 @@ namespace Cube.Net.App.Rss.Tests
                     action(vm);
                 }
 
+                Assert.That(IO.Exists(l), Is.False, l);
                 for (var i = 0; n <= 0 && i < 20; ++i) Task.Delay(50).Wait();
                 Assert.That(n, Is.AtLeast(1), "Feeds.json is not changed");
             }
