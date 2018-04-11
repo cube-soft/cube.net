@@ -513,7 +513,10 @@ namespace Cube.Net.App.Rss.Tests
         {
             var dest = IO.Combine(RootDirectory(), LockSettings.FileName);
             IO.Copy(Example("Sample.lockfile"), dest);
-            Copy();
+            IO.Copy(Example("LocalSettings.json"), LocalSettingsPath(), true);
+            IO.Copy(Example("Settings.json"), SharedSettingsPath(), true);
+            IO.Copy(Example("Sample.json"), FeedsPath(), true);
+            IO.CreateDirectory(CacheDirectory());
 
             var n = 0;
 
@@ -554,6 +557,7 @@ namespace Cube.Net.App.Rss.Tests
             }
 
             Assert.That(n, Is.AtMost(2), "Write only LocalSettings.json");
+            Assert.That(IO.GetFiles(CacheDirectory()).Length, Is.EqualTo(0), "Cache");
             Assert.That(IO.Exists(dest), Is.True, dest);
         }
 

@@ -273,11 +273,7 @@ namespace Cube.Net.Rss
         /// <param name="uri">削除する RSS フィードの URL</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void DeleteCache(Uri uri)
-        {
-            var path = CacheName(uri);
-            IO.Delete(path);
-        }
+        public void DeleteCache(Uri uri) => IO.Delete(CacheName(uri));
 
         #region IDictionary<Uri, RssFeed>
 
@@ -538,7 +534,10 @@ namespace Cube.Net.Rss
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing) => Save();
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsReadOnlyCache) Save();
+        }
 
         #endregion
 
@@ -557,7 +556,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private void Stash()
         {
-            if (_memory.Count <= Capacity) return;
+            if (IsReadOnlyCache || _memory.Count <= Capacity) return;
             var key = _memory.FirstOrDefault(e => !e.Value).Key;
             if (key == null) return;
             SaveCache(key);
