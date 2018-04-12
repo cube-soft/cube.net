@@ -13,9 +13,15 @@
 
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
-    Title="{Binding Data.Content.Value, Converter={my:TitleConverter}}"
     Width="{Binding Data.Local.Value.Width, Mode=TwoWay}"
     Height="{Binding Data.Local.Value.Height, Mode=TwoWay}">
+
+    <Window.Title>
+        <MultiBinding Converter="{my:TitleConverter}">
+            <Binding Path="Data.Content.Value"/>
+            <Binding Path="Data.Lock.Value"/>
+        </MultiBinding>
+    </Window.Title>
 
     <Window.Resources>
         <ResourceDictionary>

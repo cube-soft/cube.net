@@ -21,7 +21,7 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 
-namespace Cube.Net.App.Rss.Tests.Interactions
+namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///

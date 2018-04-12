@@ -78,6 +78,7 @@
     <Compile Include="Details\ViewModelHelper.cs" />
     <Compile Include="Interactions\DuplexConverterTest.cs" />
     <Compile Include="Interactions\SimplexConverterTest.cs" />
+    <Compile Include="Interactions\TitleConverterTest.cs" />
     <Compile Include="Models\RssEntryTest.cs" />
     <Compile Include="Models\RssOpmlTest.cs" />
     <Compile Include="Models\RssSubscriberTest.cs" />
@@ -90,9 +91,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Examples\Sample.lockfile">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Packages.config" />
     <None Include="Examples\Cache\7ae34cce28b4272e1170fb1e4c2c87ad">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -110,6 +108,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Examples\Sample.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Examples\Sample.lockfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Examples\Sample.opml">

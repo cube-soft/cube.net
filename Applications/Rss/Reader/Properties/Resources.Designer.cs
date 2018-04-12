@@ -257,6 +257,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   読み取り専用 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageReadOnly {
+            get {
+                return ResourceManager.GetString("MessageReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   {0} 件の新着記事 ({1}) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageReceived {

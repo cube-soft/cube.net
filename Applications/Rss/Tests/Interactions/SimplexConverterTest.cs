@@ -23,7 +23,7 @@ using System;
 using System.Globalization;
 using System.Windows;
 
-namespace Cube.Net.App.Rss.Tests.Ineractions
+namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -38,43 +38,6 @@ namespace Cube.Net.App.Rss.Tests.Ineractions
     class SimplexConverterTest
     {
         #region Tests
-
-        #region TitleConverter
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Convert_Title
-        ///
-        /// <summary>
-        /// タイトルの変換テストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Convert_Title() => Assert.That(
-            Convert<string>(new TitleConverter(), new RssItem
-            {
-                Title = "TitleTest",
-            }),
-            Is.EqualTo("TitleTest - Cube.Core")
-        );
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Convert_Title_Null
-        ///
-        /// <summary>
-        /// タイトルの変換時に null が指定された時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Convert_Title_Null() => Assert.That(
-            Convert<string>(new TitleConverter(), null),
-            Is.EqualTo("Cube.Core")
-        );
-
-        #endregion
 
         #region ExpandConverter
 
