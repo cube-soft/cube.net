@@ -59,6 +59,9 @@
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding Setup}"/>
         </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <xb:DisposeAction/>
+        </i:EventTrigger>
     </i:Interaction.Triggers>
 
     <Grid x:Name="Root" UseLayoutRounding="True">
