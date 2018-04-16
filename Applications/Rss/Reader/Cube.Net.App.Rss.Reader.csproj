@@ -42,16 +42,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\..\..\packages\Cube.Core.1.8.0\lib\net45\Cube.Core.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Core.1.8.1\lib\net45\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\..\..\packages\Cube.FileSystem.1.8.0\lib\net45\Cube.FileSystem.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.FileSystem.1.8.1\lib\net45\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Forms">
-      <HintPath>..\..\..\..\packages\Cube.Forms.1.8.0\lib\net45\Cube.Forms.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Forms.1.8.1\lib\net45\Cube.Forms.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Images">
-      <HintPath>..\..\..\..\packages\Cube.Images.1.8.0\lib\net45\Cube.Images.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Images.1.8.1\lib\net45\Cube.Images.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Xui">
       <HintPath>..\..\..\..\packages\Cube.Xui.1.8.1\lib\net45\Cube.Xui.dll</HintPath>
