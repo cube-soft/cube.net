@@ -64,8 +64,8 @@ namespace Cube.Net.App.Rss.Reader
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
 
-            var feeds = Settings.IO.Combine(Settings.Value.DataDirectory, LocalSettings.FeedFileName);
-            var cache = Settings.IO.Combine(Settings.Value.DataDirectory, LocalSettings.CacheDirectoryName);
+            var feeds = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.FeedFileName);
+            var cache = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.CacheDirectoryName);
 
             _core = new RssSubscriber(context)
             {

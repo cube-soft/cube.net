@@ -64,13 +64,13 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public SettingsFolder(string root, Operator io) : base(SettingsType.Json)
         {
-            AutoSave            = true;
-            Path                = io.Combine(root, LocalSettings.FileName);
-            IO                  = io;
-            RootDirectory       = root;
-            Version.Digit       = 3;
-            Version.Suffix      = "β";
-            Value.DataDirectory = root;
+            AutoSave       = true;
+            Path           = io.Combine(root, LocalSettings.FileName);
+            IO             = io;
+            RootDirectory  = root;
+            DataDirectory  = root;
+            Version.Digit  = 3;
+            Version.Suffix = "β";
         }
 
         #endregion
@@ -124,6 +124,24 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// DataDirectory
+        ///
+        /// <summary>
+        /// 各種ユーザ設定を保持するディレクトリのパスを取得します。
+        /// </summary>
+        ///
+        /// <remarks>
+        /// LocalSettings.DataDirectory プロパティは GUI によるユーザ操作で
+        /// 値が変更される事があります。SettingsFolder の初期化後、または
+        /// ローカル設定ファイルの読み込み後はこのプロパティから 取得して
+        /// 下さい。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string DataDirectory { get; private set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// UserAgent
         ///
         /// <summary>
@@ -148,7 +166,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
         {
-            Lock.Release(Value.DataDirectory, IO);
+            Lock.Release(DataDirectory, IO);
             base.Dispose(disposing);
         }
 
@@ -169,12 +187,13 @@ namespace Cube.Net.App.Rss.Reader
         {
             var dest = e.NewValue;
             if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = RootDirectory;
+            DataDirectory = dest.DataDirectory;
 
-            Lock = LockSettings.Load(dest.DataDirectory, IO);
+            Lock = LockSettings.Load(DataDirectory, IO);
             System.Diagnostics.Debug.Assert(Lock != null);
             Lock.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
 
-            Shared = SharedSettings.Load(dest.DataDirectory, IO);
+            Shared = SharedSettings.Load(DataDirectory, IO);
             System.Diagnostics.Debug.Assert(Shared != null);
             Shared.LastCheckUpdate = GetLastCheckUpdate();
             Shared.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
@@ -193,7 +212,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void OnSaved(KeyValueEventArgs<SettingsType, string> e)
         {
-            if (!Lock.IsReadOnly) Shared.Save(Value.DataDirectory, IO);
+            if (!Lock.IsReadOnly) Shared.Save(DataDirectory, IO);
             base.OnSaved(e);
         }
 

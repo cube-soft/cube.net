@@ -16,8 +16,11 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Net.App.Rss.Reader;
+using Cube.Xui;
 using NUnit.Framework;
 using System;
+using System.Linq;
+using System.Threading;
 
 namespace Cube.Net.App.Rss.Tests
 {
@@ -61,6 +64,37 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(local.DataDirectory,        Is.EqualTo(Result(nameof(VM_Settings))));
         });
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VM_DataDirectory
+        ///
+        /// <summary>
+        /// データディレクトリを変更するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void VM_DataDirectory()
+        {
+            var dest = RootDirectory(nameof(ChangeDataFolder));
+
+            Execute(vm =>
+            {
+                vm.Messenger.Register<SettingsViewModel>(this, e => ChangeDataFolder(e));
+                vm.Settings.Execute(null);
+                Assert.That(vm.Data.Local.Value.DataDirectory, Is.EqualTo(dest), nameof(SettingsViewModel));
+            });
+
+            Assert.That(IO.Exists(dest), Is.False);
+
+            var settings = new SettingsFolder(RootDirectory(), IO);
+            settings.Load();
+            Assert.That(settings.DataDirectory, Is.EqualTo(dest), nameof(SettingsFolder));
+
+            var facade = new MainFacade(settings, SynchronizationContext.Current);
+            Assert.That(facade.Data.Root.Flatten().Count(), Is.EqualTo(0));
+        }
+
         #endregion
 
         #region Helper methods
@@ -90,6 +124,33 @@ namespace Cube.Net.App.Rss.Tests
             src.LightMode            = true;
             src.HighInterval         = TimeSpan.FromHours(2);
             src.LowInterval          = TimeSpan.FromHours(12);
+
+            vm.Apply.Execute(null);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ChangeDataFolder
+        ///
+        /// <summary>
+        /// Settings コマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void ChangeDataFolder(SettingsViewModel vm)
+        {
+            var dest = string.Empty;
+
+            vm.Messenger.Register<DirectoryDialogMessage>(this, e =>
+            {
+                e.FileName = RootDirectory();
+                e.Result   = true;
+                dest       = e.FileName;
+            });
+
+            vm.Messenger.Register<UpdateSourcesMessage>(this,
+                e => vm.Local.Value.DataDirectory = dest
+            );
 
             vm.SelectDataDirectory.Execute(null);
             vm.Apply.Execute(null);
