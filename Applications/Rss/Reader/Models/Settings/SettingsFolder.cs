@@ -19,6 +19,7 @@ using Cube.FileSystem;
 using Cube.Log;
 using Cube.Settings;
 using System;
+using System.Diagnostics;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -185,16 +186,17 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void OnLoaded(ValueChangedEventArgs<LocalSettings> e)
         {
+            Debug.Assert(e.NewValue != null);
             var dest = e.NewValue;
             if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = RootDirectory;
             DataDirectory = dest.DataDirectory;
 
             Lock = LockSettings.Load(DataDirectory, IO);
-            System.Diagnostics.Debug.Assert(Lock != null);
+            Debug.Assert(Lock != null);
             Lock.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
 
             Shared = SharedSettings.Load(DataDirectory, IO);
-            System.Diagnostics.Debug.Assert(Shared != null);
+            Debug.Assert(Shared != null);
             Shared.LastCheckUpdate = GetLastCheckUpdate();
             Shared.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
 

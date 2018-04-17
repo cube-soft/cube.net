@@ -49,7 +49,7 @@ namespace Cube.Net.App.Rss.Tests
         {
             Copy();
             var src = new SettingsFolder(RootDirectory(), IO);
-            src.Load();
+            src.LoadOrDefault(new LocalSettings());
 
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
             Assert.That(src.Value.Height,                Is.EqualTo(650));
@@ -85,7 +85,7 @@ namespace Cube.Net.App.Rss.Tests
             IO.Copy(Example("SettingsEmpty.json"), LocalSettingsPath(), true);
             IO.Copy(Example("SettingsEmpty.json"), SharedSettingsPath(), true);
             var src = new SettingsFolder(RootDirectory(), IO);
-            src.Load();
+            src.LoadOrDefault(new LocalSettings());
 
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
             Assert.That(src.Value.Height,                Is.EqualTo(650));
@@ -104,6 +104,50 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(src.Lock.UserName,               Is.EqualTo(Environment.UserName));
             Assert.That(src.Lock.MachineName,            Is.EqualTo(Environment.MachineName));
             Assert.That(src.Lock.Sid,                    Does.StartWith("S-1-5-21"));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Load_NotFound
+        ///
+        /// <summary>
+        /// 設定ファイルが存在しない場合の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Load_NotFound()
+        {
+            var src = new SettingsFolder(RootDirectory(), IO);
+            src.LoadOrDefault(new LocalSettings());
+
+            Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));
+            Assert.That(src.Value,         Is.Not.Null, nameof(src.Value));
+            Assert.That(src.Shared,        Is.Not.Null, nameof(src.Shared));
+            Assert.That(src.Lock,          Is.Not.Null, nameof(src.Lock));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Load_Invalid
+        ///
+        /// <summary>
+        /// 設定ファイルが破損している場合の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Load_Invalid()
+        {
+            IO.Copy(Example("Dummy.txt"), LocalSettingsPath(), true);
+            IO.Copy(Example("Dummy.txt"), SharedSettingsPath(), true);
+            var src = new SettingsFolder(RootDirectory(), IO);
+            src.LoadOrDefault(new LocalSettings());
+
+            Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));
+            Assert.That(src.Value,         Is.Not.Null, nameof(src.Value));
+            Assert.That(src.Shared,        Is.Not.Null, nameof(src.Shared));
+            Assert.That(src.Lock,          Is.Not.Null, nameof(src.Lock));
         }
 
         #endregion
