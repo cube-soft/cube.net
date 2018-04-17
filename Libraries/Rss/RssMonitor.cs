@@ -304,7 +304,7 @@ namespace Cube.Net.Rss
             Suspend();
             foreach (var uri in uris)
             {
-                try { await UpdateAsync(uri); }
+                try { await UpdateAsync(uri).ConfigureAwait(false); }
                 catch (Exception e) { await PublishErrorAsync(uri, e).ConfigureAwait(false); }
             }
             if (State == TimerState.Suspend) Start();
@@ -443,7 +443,7 @@ namespace Cube.Net.Rss
                 try
                 {
                     if (State != TimerState.Run) return;
-                    await UpdateAsync(uri);
+                    await UpdateAsync(uri).ConfigureAwait(false);
                 }
                 catch (Exception err) { errors.Add(uri, err); }
             }
@@ -462,7 +462,7 @@ namespace Cube.Net.Rss
         {
             var src    = Feeds.OrderBy(e => e.Value).Select(e => e.Key).ToList();
             var errors = new Dictionary<Uri, Exception>();
-            await RunAsync(src, errors);
+            await RunAsync(src, errors).ConfigureAwait(false);
 
             for (var i = 0; i < RetryCount && errors.Count > 0; ++i)
             {

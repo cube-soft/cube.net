@@ -284,7 +284,7 @@ namespace Cube.Net.Http
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var response = await base.SendAsync(request, cancellationToken);
+            var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
             if (response == null || Converter == null) return response;
             if (response.IsSuccessStatusCode)
             {

@@ -121,7 +121,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsReadOnlyCache { get; set; }
+        public bool IsReadOnlyCache { get; set; } = false;
 
         #region IDictionary<Uri, RssFeed>
 

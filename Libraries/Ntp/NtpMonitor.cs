@@ -229,7 +229,7 @@ namespace Cube.Net.Ntp
         {
             foreach (var action in Subscriptions)
             {
-                try { await action(value); }
+                try { await action(value).ConfigureAwait(false); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
         }
