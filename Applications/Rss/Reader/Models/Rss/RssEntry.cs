@@ -326,7 +326,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
+        private readonly OnceAction<bool> _dispose;
         private IRssEntry _parent;
         private RssCheckFrequency _frequency = RssCheckFrequency.Auto;
         private int _count = 0;

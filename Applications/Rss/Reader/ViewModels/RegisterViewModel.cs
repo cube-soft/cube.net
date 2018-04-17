@@ -16,10 +16,10 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Xui;
-using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -89,7 +89,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RelayCommand Execute =>
+        public ICommand Execute =>
             _execute = _execute ?? new BindableCommand(
                 async () =>
                 {
@@ -109,8 +109,8 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private Func<string, Task> _callback;
-        private RelayCommand _execute;
+        private readonly Func<string, Task> _callback;
+        private ICommand _execute;
         #endregion
     }
 }

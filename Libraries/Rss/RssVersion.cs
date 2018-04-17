@@ -70,7 +70,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public static RssVersion GetRssVersion(this XElement src)
         {
-            var name = src.Name.LocalName.ToLower();
+            var name = src.Name.LocalName.ToLowerInvariant();
             if (name == "rss")
             {
                 switch ((string)src.Attribute("version") ?? string.Empty)
@@ -78,11 +78,12 @@ namespace Cube.Net.Rss
                     case "0.91": return RssVersion.Rss091;
                     case "0.92": return RssVersion.Rss092;
                     case "2.0":  return RssVersion.Rss20;
+                    default: break;
                 }
             }
             else
             {
-                var ns = src.GetDefaultNamespace().NamespaceName.ToLower();
+                var ns = src.GetDefaultNamespace().NamespaceName.ToLowerInvariant();
                 if (name == "feed" && ns.Contains("atom")) return RssVersion.Atom;
                 if (name == "rdf"  && ns.Contains("rss"))  return RssVersion.Rss10;
             }

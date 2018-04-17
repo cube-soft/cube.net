@@ -258,7 +258,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private string _userAgent = null;
+        private string _userAgent;
         #endregion
     }
 }

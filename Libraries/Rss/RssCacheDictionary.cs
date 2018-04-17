@@ -121,7 +121,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsReadOnlyCache { get; set; } = false;
+        public bool IsReadOnlyCache { get; set; }
 
         #region IDictionary<Uri, RssFeed>
 
@@ -645,16 +645,16 @@ namespace Cube.Net.Rss
             var md5  = new MD5CryptoServiceProvider();
             var data = System.Text.Encoding.UTF8.GetBytes(uri.ToString());
             var hash = md5.ComputeHash(data);
-            var name = BitConverter.ToString(hash).ToLower().Replace("-", "");
+            var name = BitConverter.ToString(hash).ToLowerInvariant().Replace("-", "");
             return IO.Combine(Directory, name);
         }
 
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private IDictionary<Uri, RssFeed> _inner;
-        private OrderedDictionary<Uri, bool> _memory = new OrderedDictionary<Uri, bool>();
+        private readonly OnceAction<bool> _dispose;
+        private readonly IDictionary<Uri, RssFeed> _inner;
+        private readonly OrderedDictionary<Uri, bool> _memory = new OrderedDictionary<Uri, bool>();
         private int _capacity = 100;
         #endregion
     }

@@ -244,11 +244,11 @@ namespace Cube.Net.Rss
         #region Fields
         private string _title = string.Empty;
         private string _description = string.Empty;
-        private Uri _link = null;
-        private Uri _uri = null;
-        private DateTime? _lastChecked = null;
-        private DateTime? _lastPublished = null;
-        private Exception _error = null;
+        private Uri _link;
+        private Uri _uri;
+        private DateTime? _lastChecked;
+        private DateTime? _lastPublished;
+        private Exception _error;
         #endregion
     }
 }

@@ -18,6 +18,7 @@
 using Cube.Net.App.Rss.Reader;
 using Cube.Net.Rss;
 using NUnit.Framework;
+using System;
 using System.Globalization;
 
 namespace Cube.Net.App.Rss.Tests
@@ -65,6 +66,42 @@ namespace Cube.Net.App.Rss.Tests
             Convert(null, new LockSettings()),
             Is.EqualTo("Cube.Core")
         );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ConvertBack_Throws
+        ///
+        /// <summary>
+        /// ConvertBack 実行時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void ConvertBack_Throws() => Assert.That(
+            () => new TitleConverter().ConvertBack(
+                null,
+                new[] { typeof(string) },
+                null,
+                CultureInfo.CurrentCulture
+            ),
+            Throws.TypeOf<NotSupportedException>()
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ProvideValue
+        ///
+        /// <summary>
+        /// ProvideValue 実行時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void ProvideValue()
+        {
+            var dest = new TitleConverter();
+            Assert.That(dest.ProvideValue(null), Is.EqualTo(dest));
+        }
 
         #endregion
 

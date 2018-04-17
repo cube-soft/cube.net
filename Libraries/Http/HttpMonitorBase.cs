@@ -207,7 +207,7 @@ namespace Cube.Net.Http
         #endregion
 
         #region Fields
-        private HttpClient _http;
+        private readonly HttpClient _http;
         #endregion
     }
 }

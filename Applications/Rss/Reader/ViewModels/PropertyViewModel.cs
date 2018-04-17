@@ -110,8 +110,8 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
+        private readonly Action<RssEntry> _callback;
         private ICommand _apply;
-        private Action<RssEntry> _callback;
         #endregion
     }
 }

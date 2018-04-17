@@ -211,8 +211,8 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private RelayCommand _close;
+        private readonly OnceAction<bool> _dispose;
+        private ICommand _close;
         #endregion
     }
 }

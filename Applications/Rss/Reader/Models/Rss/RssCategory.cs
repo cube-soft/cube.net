@@ -322,7 +322,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
+        private readonly OnceAction<bool> _dispose;
         private string _title;
         private int? _count;
         private IRssEntry _parent;

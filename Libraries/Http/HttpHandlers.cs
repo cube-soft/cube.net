@@ -289,7 +289,7 @@ namespace Cube.Net.Http
             if (response.IsSuccessStatusCode)
             {
                 await response.Content.LoadIntoBufferAsync();
-                var stream = await response.Content.ReadAsStreamAsync();
+                var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 response.Content = new HttpValueContent<TValue>(
                     response.Content,
                     Converter.Convert(stream)

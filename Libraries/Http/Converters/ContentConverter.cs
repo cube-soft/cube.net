@@ -30,7 +30,7 @@ namespace Cube.Net.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public interface IContentConverter<TValue>
+    public interface IContentConverter<out TValue>
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -103,7 +103,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IgnoreException { get; set; } = false;
+        public bool IgnoreException { get; set; }
 
         #endregion
 
@@ -206,7 +206,7 @@ namespace Cube.Net.Http
         #endregion
 
         #region Fields
-        private Func<Stream, TValue> _func;
+        private readonly Func<Stream, TValue> _func;
         #endregion
     }
 }

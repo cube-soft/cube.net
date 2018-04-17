@@ -244,11 +244,11 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>SharedSettings オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static SharedSettings Load(string directory, Operator io)
-        {
-            var src = io.Combine(directory, FileName);
-            return io.Load(src, e => SettingsType.Json.Load<SharedSettings>(e), new SharedSettings());
-        }
+        public static SharedSettings Load(string directory, Operator io) => io.Load(
+            io.Combine(directory, FileName),
+            e => SettingsType.Json.Load<SharedSettings>(e),
+            new SharedSettings()
+        );
 
         /* ----------------------------------------------------------------- */
         ///

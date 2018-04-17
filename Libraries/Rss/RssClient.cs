@@ -146,7 +146,7 @@ namespace Cube.Net.Rss
                 if (!response.IsSuccessStatusCode) return null;
                 await response.Content.LoadIntoBufferAsync();
                 var stream = await response.Content.ReadAsStreamAsync();
-                return await ParseAsync(uri, stream);
+                return await ParseAsync(uri, stream).ConfigureAwait(false);
             }
         }
 
@@ -235,14 +235,14 @@ namespace Cube.Net.Rss
             if (cvt == null) return default(RssFeed);
 
             OnRedirected(ValueChangedEventArgs.Create(uri, cvt));
-            return await GetAsync(cvt);
+            return await GetAsync(cvt).ConfigureAwait(false);
         }
 
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private HttpClient _http;
+        private readonly OnceAction<bool> _dispose;
+        private readonly HttpClient _http;
         #endregion
     }
 }

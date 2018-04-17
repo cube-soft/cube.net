@@ -94,6 +94,7 @@ namespace Cube.Net.Rss
                 case RssVersion.Rss092: return Rss092Parser.Parse(root);
                 case RssVersion.Rss10:  return Rss100Parser.Parse(root);
                 case RssVersion.Rss20:  return Rss200Parser.Parse(root);
+                default: break;
             }
             return default(RssFeed);
         }
@@ -140,7 +141,7 @@ namespace Cube.Net.Rss
         private static bool IsRssLink(XElement e)
         {
             if ((string)e.Attribute("rel") != "alternate") return false;
-            var dest = ((string)e.Attribute("type") ?? "").ToLower();
+            var dest = ((string)e.Attribute("type") ?? "").ToLowerInvariant();
             return dest.Contains("rss") || dest.Contains("atom");
         }
 

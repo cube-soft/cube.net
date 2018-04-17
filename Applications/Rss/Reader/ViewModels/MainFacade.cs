@@ -461,7 +461,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
+        private readonly OnceAction<bool> _dispose;
         private readonly RssSubscriber _core;
         private readonly SynchronizationContext _context;
         private readonly UpdateChecker _checker;

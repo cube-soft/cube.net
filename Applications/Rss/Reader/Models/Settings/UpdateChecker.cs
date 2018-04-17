@@ -142,7 +142,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private WakeableTimer _timer = new WakeableTimer();
+        private readonly WakeableTimer _timer = new WakeableTimer();
         #endregion
     }
 }

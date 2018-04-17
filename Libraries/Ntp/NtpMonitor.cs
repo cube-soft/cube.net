@@ -257,7 +257,7 @@ namespace Cube.Net.Ntp
         {
             if (Subscriptions.Count <= 0) return;
 
-            await Task.Delay(500); // see ramarks
+            await Task.Delay(500).ConfigureAwait(false); // see ramarks
 
             for (var i = 0; i < RetryCount; ++i)
             {
@@ -273,7 +273,7 @@ namespace Cube.Net.Ntp
                 catch (Exception err)
                 {
                     this.LogWarn(err.ToString(), err);
-                    await Task.Delay(RetryInterval);
+                    await Task.Delay(RetryInterval).ConfigureAwait(false);
                     this.LogDebug($"Retry\tCount:{i + 1}\tServer:{Server}");
                 }
             }

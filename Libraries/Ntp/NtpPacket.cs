@@ -515,7 +515,7 @@ namespace Cube.Net.Ntp
             switch (Version)
             {
                 case 3:
-                    var ipaddr = new IPAddress(new byte[] { RawData[12], RawData[13], RawData[14], RawData[15] });
+                    var ipaddr = new IPAddress(new[] { RawData[12], RawData[13], RawData[14], RawData[15] });
                     return ipaddr.ToString();
                 case 4:
                     return string.Empty;

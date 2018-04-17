@@ -305,7 +305,7 @@ namespace Cube.Net.Rss
             foreach (var uri in uris)
             {
                 try { await UpdateAsync(uri); }
-                catch (Exception e) { await PublishErrorAsync(uri, e); }
+                catch (Exception e) { await PublishErrorAsync(uri, e).ConfigureAwait(false); }
             }
             if (State == TimerState.Suspend) Start();
         }).Forget();
@@ -387,7 +387,7 @@ namespace Cube.Net.Rss
                     Uri         = kv.Key,
                     LastChecked = DateTime.Now,
                     Error       = kv.Value,
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -409,7 +409,7 @@ namespace Cube.Net.Rss
             this.LogDebug($"{uri} ({sw.Elapsed})");
 
             Feeds[uri] = dest.LastChecked;
-            await PublishAsync(dest);
+            await PublishAsync(dest).ConfigureAwait(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -466,19 +466,19 @@ namespace Cube.Net.Rss
 
             for (var i = 0; i < RetryCount && errors.Count > 0; ++i)
             {
-                await Task.Delay(RetryInterval);
+                await Task.Delay(RetryInterval).ConfigureAwait(false);
                 var retry = errors.Keys.ToList();
                 errors.Clear();
-                await RunAsync(retry, errors);
+                await RunAsync(retry, errors).ConfigureAwait(false);
             }
 
-            await PublishErrorAsync(errors);
+            await PublishErrorAsync(errors).ConfigureAwait(false);
         }
 
         #endregion
 
         #region Fields
-        private RssClient _http;
+        private readonly RssClient _http;
         #endregion
     }
 }

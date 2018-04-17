@@ -67,7 +67,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsReadOnly { get; set; } = false;
+        public bool IsReadOnly { get; set; }
 
         #endregion
 
@@ -133,7 +133,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private Action<IRssEntry, IRssEntry, int> _callback;
+        private readonly Action<IRssEntry, IRssEntry, int> _callback;
         #endregion
     }
 }

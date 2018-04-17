@@ -77,10 +77,10 @@ namespace Cube.Net.App.Rss.Reader
                 CollectionChanged?.Invoke(this, e);
             };
 
-            _monitors[0] = new RssMonitor() { Interval = TimeSpan.FromHours(1) };
+            _monitors[0] = new RssMonitor { Interval = TimeSpan.FromHours(1) };
             _monitors[0].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
 
-            _monitors[1] = new RssMonitor() { Interval = TimeSpan.FromHours(24) };
+            _monitors[1] = new RssMonitor { Interval = TimeSpan.FromHours(24) };
             _monitors[1].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
 
             _monitors[2] = new RssMonitor(); // for RssCheckFrequency.None
@@ -841,13 +841,13 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private BindableCollection<IRssEntry> _tree;
-        private RssCacheDictionary _feeds = new RssCacheDictionary();
-        private RssMonitor[] _monitors = new RssMonitor[3];
-        private RssClient _client = new RssClient();
-        private SynchronizationContext _context;
-        private System.Timers.Timer _autosaver = new System.Timers.Timer();
+        private readonly OnceAction<bool> _dispose;
+        private readonly BindableCollection<IRssEntry> _tree;
+        private readonly RssCacheDictionary _feeds = new RssCacheDictionary();
+        private readonly RssMonitor[] _monitors = new RssMonitor[3];
+        private readonly RssClient _client = new RssClient();
+        private readonly SynchronizationContext _context;
+        private readonly System.Timers.Timer _autosaver = new System.Timers.Timer();
         #endregion
     }
 }
