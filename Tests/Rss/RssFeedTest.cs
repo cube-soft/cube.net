@@ -251,10 +251,10 @@ namespace Cube.Net.Tests
 
                 yield return new TestCaseData("SampleAtom-02.xml", new RssFeed
                 {
-                    Title       = "カラパイア",
+                    Title       = "Sample for Atom 0.3",
                     Description = "",
-                    Link        = new Uri("http://karapaia.com/"),
-                }).Returns(5);
+                    Link        = new Uri("http://www.example.com/"),
+                }).Returns(2);
             }
         }
 
