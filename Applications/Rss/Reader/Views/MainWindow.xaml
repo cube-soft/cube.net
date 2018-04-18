@@ -13,6 +13,8 @@
 
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
+    MinWidth="650"
+    MinHeight="250"
     Width="{Binding Data.Local.Value.Width, Mode=TwoWay}"
     Height="{Binding Data.Local.Value.Height, Mode=TwoWay}">
 
