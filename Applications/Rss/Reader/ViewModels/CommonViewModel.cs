@@ -49,7 +49,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="messenger">メッセージ伝搬用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public CommonViewModel(IMessenger messenger) : base(messenger)
+        protected CommonViewModel(IMessenger messenger) : base(messenger)
         {
             _dispose = new OnceAction<bool>(Dispose);
         }
@@ -211,8 +211,8 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private RelayCommand _close;
+        private readonly OnceAction<bool> _dispose;
+        private ICommand _close;
         #endregion
     }
 }

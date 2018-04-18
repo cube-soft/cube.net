@@ -162,20 +162,4 @@
         <Setter Property="ResizeDirection" Value="Columns"/>
         <Setter Property="Width" Value="20"/>
     </Style>
-
-    <!--
-        Grids for MainWindow
-    -->
-
-    <Style x:Key="LeftSideStyle" TargetType="Grid">
-        <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
-    </Style>
-
-    <Style x:Key="MiddleSideStyle" TargetType="Grid">
-        <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
-    </Style>
-
-    <Style x:Key="RightSideStyle" TargetType="Grid">
-        <Setter Property="Background" Value="White"/>
-    </Style>
 </ResourceDictionary>

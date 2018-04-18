@@ -37,7 +37,7 @@ namespace Cube.Net.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    public class HttpClientTest : NetworkHelper
+    public class HttpClientTest
     {
         #region Tests
 
@@ -196,7 +196,7 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Func<Stream, long> Throws = (_) =>
+        private readonly Func<Stream, long> Throws = (_) =>
         {
             throw new ArgumentException("ErrorTest");
         };

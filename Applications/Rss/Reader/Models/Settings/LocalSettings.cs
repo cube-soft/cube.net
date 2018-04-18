@@ -15,41 +15,34 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xui;
-using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssBindableData
+    /// LocalSettings
     ///
     /// <summary>
-    /// メイン画面にバインドされるデータ群を定義したクラスです。
+    /// ユーザ設定を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssBindableData
+    [DataContract]
+    public class LocalSettings : ObservableProperty
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssBindableData
+        /// Settings
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="root">ルートオブジェクト</param>
-        /// <param name="settings">設定用オブジェクト</param>
-        ///
         /* ----------------------------------------------------------------- */
-        public RssBindableData(IEnumerable<IRssEntry> root, Settings settings)
-        {
-            Root = root;
-            User = new Bindable<Settings>(settings);
-        }
+        public LocalSettings() { Reset(); }
 
         #endregion
 
@@ -57,78 +50,123 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Root
+        /// FileName
         ///
         /// <summary>
-        /// 登録されている RssEntry のルートにあたるオブジェクトを
-        /// 取得します。
+        /// 設定を保持するファイルの名前を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<IRssEntry> Root { get; }
+        public static string FileName => "LocalSettings.json";
 
         /* ----------------------------------------------------------------- */
         ///
-        /// User
+        /// FeedFileName
         ///
         /// <summary>
-        /// ユーザ設定を保持するオブジェクトを取得します。
+        /// 購読フィード一覧を保持するためのファイルの名前を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<Settings> User { get; }
+        public static string FeedFileName => "Feeds.json";
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Current
+        /// CacheDirectoryName
         ///
         /// <summary>
-        /// 選択中のカテゴリまたは RSS エントリを取得します。
+        /// キャッシュファイルを格納するディレクトリの名前を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<IRssEntry> Current { get; } = new Bindable<IRssEntry>();
+        public static string CacheDirectoryName => "Cache";
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LastEntry
+        /// Width
         ///
         /// <summary>
-        /// 最後に選択した RSS エントリを取得します。
-        /// </summary>
-        ///
-        /// <remarks>
-        /// RSS エントリを選択中の場合、Current と LastEntry は同じ値に
-        /// なります。カテゴリを選択中の場合、Current は該当カテゴリの
-        /// 値を LastEntry は直前まで選択されていた RssEntry の値を保持
-        /// します。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Bindable<RssEntry> LastEntry { get; } = new Bindable<RssEntry>();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Content
-        ///
-        /// <summary>
-        /// Web ブラウザに表示する内容を取得します。
+        /// メイン画面の幅を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<object> Content { get; } = new Bindable<object>();
+        [DataMember]
+        public int Width
+        {
+            get => _width;
+            set => SetProperty(ref _width, value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Message
+        /// Height
         ///
         /// <summary>
-        /// メッセージを取得します。
+        /// メイン画面の高さを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<string> Message { get; } = new Bindable<string>();
+        [DataMember]
+        public int Height
+        {
+            get => _height;
+            set => SetProperty(ref _height, value);
+        }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DataDirectory
+        ///
+        /// <summary>
+        /// データ格納用ディレクトリのパスを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public string DataDirectory
+        {
+            get => _dataDirectory;
+            set => SetProperty(ref _dataDirectory, value);
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnDeserializing
+        ///
+        /// <summary>
+        /// デシリアライズ直前に実行されます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context) => Reset();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        ///
+        /// <summary>
+        /// 値をリセットします。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Reset()
+        {
+            _width         = 1100;
+            _height        = 650;
+            _dataDirectory = null;
+        }
+
+        #endregion
+
+        #region Fields
+        private int _width;
+        private int _height;
+        private string _dataDirectory;
         #endregion
     }
 }

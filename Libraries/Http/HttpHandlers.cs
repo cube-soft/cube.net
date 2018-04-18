@@ -49,7 +49,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public HeaderHandler() : base()
+        public HeaderHandler()
         {
             Proxy    = null;
             UseProxy = false;
@@ -221,7 +221,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ContentHandler() : base() { }
+        public ContentHandler() { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -284,12 +284,12 @@ namespace Cube.Net.Http
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var response = await base.SendAsync(request, cancellationToken);
+            var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
             if (response == null || Converter == null) return response;
             if (response.IsSuccessStatusCode)
             {
                 await response.Content.LoadIntoBufferAsync();
-                var stream = await response.Content.ReadAsStreamAsync();
+                var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 response.Content = new HttpValueContent<TValue>(
                     response.Content,
                     Converter.Convert(stream)

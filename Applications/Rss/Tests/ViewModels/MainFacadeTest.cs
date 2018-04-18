@@ -20,21 +20,22 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssFacadeTest
+    /// MainFacadeTest
     ///
     /// <summary>
-    /// RssFacade のテスト用クラスです。
+    /// MainFacade のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssFacadeTest : FileHelper
+    class MainFacadeTest : FileHelper
     {
         #region Tests
 
@@ -50,7 +51,8 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Setup_Empty()
         {
-            using (var m = new RssFacade(new SettingsFolder(Results, IO)))
+            var ctx = SynchronizationContext.Current;
+            using (var m = new MainFacade(new SettingsFolder(Results, IO), ctx))
             {
                 m.Setup();
                 m.Stop();
@@ -141,13 +143,13 @@ namespace Cube.Net.App.Rss.Tests
             {
                 m.Stop();
 
-                Assert.That(m.Data.User.Value.CheckUpdate, Is.True);
+                Assert.That(m.Data.Shared.Value.CheckUpdate, Is.True);
                 Task.Delay(150).Wait();
-                m.Data.User.Value.CheckUpdate = false;
-                Assert.That(m.Data.User.Value.CheckUpdate, Is.False);
-                Assert.That(m.Data.User.Value.LastCheckUpdate.HasValue, Is.True);
-                m.Data.User.Value.CheckUpdate = true;
-                Assert.That(m.Data.User.Value.CheckUpdate, Is.True);
+                m.Data.Shared.Value.CheckUpdate = false;
+                Assert.That(m.Data.Shared.Value.CheckUpdate, Is.False);
+                Assert.That(m.Data.Shared.Value.LastCheckUpdate.HasValue, Is.True);
+                m.Data.Shared.Value.CheckUpdate = true;
+                Assert.That(m.Data.Shared.Value.CheckUpdate, Is.True);
             }
         }
 
@@ -184,13 +186,15 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFacade Create([CallerMemberName] string name = null)
+        private MainFacade Create([CallerMemberName] string name = null)
         {
-            var root     = Copy(name);
-            var settings = new SettingsFolder(root, IO);
-            var dest     = new RssFacade(settings);
+            Copy(name);
 
-            settings.Value.InitialDelay = TimeSpan.FromMinutes(1);
+            var settings = new SettingsFolder(RootDirectory(name), IO);
+            var context  = SynchronizationContext.Current;
+            var dest     = new MainFacade(settings, context);
+
+            settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
 
             dest.Setup();
             return dest;

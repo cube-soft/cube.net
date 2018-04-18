@@ -15,64 +15,74 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Net.App.Rss.Reader;
 using NUnit.Framework;
-using System.Net.NetworkInformation;
+using System.Linq;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.App.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkTest
+    /// PropertyViewModelTest
     ///
     /// <summary>
-    /// Network のテスト用クラスです。
+    /// PropertyViewModel のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class NetworkTest
+    class PropertyViewModelTest : ViewModelHelper
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Status
-        ///
-        /// <summary>
-        /// ネットワーク状況を取得するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Status() => Assert.That(Network.Status, Is.EqualTo(OperationalStatus.Up));
+        #region Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Available
+        /// VM_Property
         ///
         /// <summary>
-        /// ネットワークが利用可能かどうか判別するテストを実行します。
+        /// RSS エントリの情報を編集するテストを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void Available() => Assert.That(Network.Available);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DisableOptions
-        ///
-        /// <summary>
-        /// 各種ネットワークオプションを無効にするテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void DisableOptions()
+        [TestCase(RssCheckFrequency.Auto)]
+        [TestCase(RssCheckFrequency.High)]
+        [TestCase(RssCheckFrequency.Low)]
+        [TestCase(RssCheckFrequency.None)]
+        public void VM_Property(RssCheckFrequency src) => Execute(vm =>
         {
-            Network.DisableOptions();
+            var dest = vm.Data.Current.Value as RssEntry;
+            vm.Messenger.Register<PropertyViewModel>(this, e => PropertyCommand(e, src));
+            vm.Property.Execute(null);
 
-            Assert.That(System.Net.ServicePointManager.Expect100Continue, Is.False);
-            Assert.That(System.Net.ServicePointManager.UseNagleAlgorithm, Is.False);
-            Assert.That(System.Net.WebRequest.DefaultWebProxy, Is.Null);
+            Assert.That(dest.Title, Is.EqualTo(nameof(PropertyCommand)));
+            Assert.That(dest.Frequency, Is.EqualTo(src));
+        });
+
+        #endregion
+
+        #region Helper methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PropertyCommand
+        ///
+        /// <summary>
+        /// Property コマンドを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void PropertyCommand(PropertyViewModel vm, RssCheckFrequency value)
+        {
+            Assert.That(vm.Entry.HasValue, Is.True);
+            Assert.That(vm.Frequencies.Count(), Is.EqualTo(4));
+
+            var dest = vm.Entry.Value;
+            dest.Title = nameof(PropertyCommand);
+            dest.Frequency = value;
+
+            vm.Apply.Execute(null);
         }
+
+        #endregion
     }
 }

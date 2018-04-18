@@ -111,6 +111,18 @@ namespace Cube.Net.Rss
             set => _capacity = Math.Max(value, 1);
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsReadOnlyCache
+        ///
+        /// <summary>
+        /// キャッシュファイルを読み込み専用で利用するかどうかを示す値を
+        /// 取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool IsReadOnlyCache { get; set; } = false;
+
         #region IDictionary<Uri, RssFeed>
 
         /* ----------------------------------------------------------------- */
@@ -222,7 +234,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Save()
         {
-            foreach (var kv in _memory) this.LogWarn(() => SaveCache(kv.Key));
+            foreach (var key in _memory.Keys.ToList()) this.LogWarn(() => SaveCache(key));
             _memory.Clear();
         }
 
@@ -261,11 +273,7 @@ namespace Cube.Net.Rss
         /// <param name="uri">削除する RSS フィードの URL</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void DeleteCache(Uri uri)
-        {
-            var path = CacheName(uri);
-            IO.Delete(path);
-        }
+        public void DeleteCache(Uri uri) => IO.Delete(CacheName(uri));
 
         #region IDictionary<Uri, RssFeed>
 
@@ -526,7 +534,10 @@ namespace Cube.Net.Rss
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing) => Save();
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsReadOnlyCache) Save();
+        }
 
         #endregion
 
@@ -545,7 +556,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private void Stash()
         {
-            if (_memory.Count <= Capacity) return;
+            if (IsReadOnlyCache || _memory.Count <= Capacity) return;
             var key = _memory.FirstOrDefault(e => !e.Value).Key;
             if (key == null) return;
             SaveCache(key);
@@ -565,14 +576,15 @@ namespace Cube.Net.Rss
         {
             if (dest != null)
             {
+                var f = locked;
                 if (_memory.ContainsKey(dest.Uri))
                 {
-                    locked |= _memory[dest.Uri];
+                    f |= _memory[dest.Uri];
                     _memory.Remove(dest.Uri);
                 }
                 else Load(dest);
 
-                _memory.Add(dest.Uri, locked);
+                _memory.Add(dest.Uri, f);
                 Stash();
             }
             return dest;
@@ -634,16 +646,16 @@ namespace Cube.Net.Rss
             var md5  = new MD5CryptoServiceProvider();
             var data = System.Text.Encoding.UTF8.GetBytes(uri.ToString());
             var hash = md5.ComputeHash(data);
-            var name = BitConverter.ToString(hash).ToLower().Replace("-", "");
+            var name = BitConverter.ToString(hash).ToLowerInvariant().Replace("-", "");
             return IO.Combine(Directory, name);
         }
 
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private IDictionary<Uri, RssFeed> _inner;
-        private OrderedDictionary<Uri, bool> _memory = new OrderedDictionary<Uri, bool>();
+        private readonly OnceAction<bool> _dispose;
+        private readonly IDictionary<Uri, RssFeed> _inner;
+        private readonly OrderedDictionary<Uri, bool> _memory = new OrderedDictionary<Uri, bool>();
         private int _capacity = 100;
         #endregion
     }

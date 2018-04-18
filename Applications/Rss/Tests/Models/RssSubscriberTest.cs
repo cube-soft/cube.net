@@ -52,6 +52,7 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var src = Create())
             {
+                Assert.That(src.Capacity,       Is.EqualTo(100));
                 Assert.That(src.CacheDirectory, Is.Null, nameof(src.CacheDirectory));
                 Assert.That(src.UserAgent,      Is.Null, nameof(src.UserAgent));
 
@@ -82,7 +83,7 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Load_NotFound()
         {
-            using (var src = new RssSubscriber { FileName = "NotFound.json" })
+            using (var src = new RssSubscriber { FileName = Result("NotFound.json") })
             {
                 src.Load();
                 Assert.That(src.Count, Is.EqualTo(0));
@@ -201,9 +202,8 @@ namespace Cube.Net.App.Rss.Tests
         /* ----------------------------------------------------------------- */
         private RssSubscriber Create([CallerMemberName] string name = null)
         {
-            var root = Copy(name);
-            var dest = IO.Combine(root, "Feeds.json");
-            return new RssSubscriber { FileName = dest };
+            Copy(name);
+            return new RssSubscriber { FileName = FeedsPath(name) };
         }
 
         /* ----------------------------------------------------------------- */
@@ -215,16 +215,7 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task<bool> Wait(RssEntry src)
-        {
-            for (var i = 0; i < 100; ++i)
-            {
-                if (src.Count > 0) return true;
-                await Task.Delay(50);
-            }
-            return false;
-        }
-
+        private Task<bool> Wait(RssEntry src) => Wait(() => src.Count > 0);
 
         #endregion
     }

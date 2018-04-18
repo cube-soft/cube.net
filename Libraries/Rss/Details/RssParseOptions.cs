@@ -26,7 +26,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal class RssParseOptions
+    internal static class RssParseOptions
     {
         /* ----------------------------------------------------------------- */
         ///

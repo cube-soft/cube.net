@@ -72,7 +72,7 @@ namespace Cube.Net.Ntp
         /// <param name="port">ポート番号</param>
         ///
         /* ----------------------------------------------------------------- */
-        public NtpMonitor(string server, int port) : base()
+        public NtpMonitor(string server, int port)
         {
             Interval = TimeSpan.FromHours(1);
             _server  = server;
@@ -229,7 +229,7 @@ namespace Cube.Net.Ntp
         {
             foreach (var action in Subscriptions)
             {
-                try { await action(value); }
+                try { await action(value).ConfigureAwait(false); }
                 catch (Exception err) { this.LogWarn(err.ToString(), err); }
             }
         }
@@ -257,7 +257,7 @@ namespace Cube.Net.Ntp
         {
             if (Subscriptions.Count <= 0) return;
 
-            await Task.Delay(500); // see ramarks
+            await Task.Delay(500).ConfigureAwait(false); // see ramarks
 
             for (var i = 0; i < RetryCount; ++i)
             {
@@ -266,14 +266,17 @@ namespace Cube.Net.Ntp
                     if (State != TimerState.Run) return;
                     var client = new NtpClient(Server, Port) { Timeout = Timeout };
                     var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid) await PublishAsync(packet.LocalClockOffset);
+                    if (packet != null && packet.IsValid)
+                    {
+                        await PublishAsync(packet.LocalClockOffset).ConfigureAwait(false);
+                    }
                     else throw new ArgumentException("InvalidPacket");
                     break;
                 }
                 catch (Exception err)
                 {
                     this.LogWarn(err.ToString(), err);
-                    await Task.Delay(RetryInterval);
+                    await Task.Delay(RetryInterval).ConfigureAwait(false);
                     this.LogDebug($"Retry\tCount:{i + 1}\tServer:{Server}");
                 }
             }

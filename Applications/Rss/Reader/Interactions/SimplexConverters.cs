@@ -23,33 +23,6 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// TitleConverter
-    ///
-    /// <summary>
-    /// メイン画面のタイトルに変換するためのクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public class TitleConverter : SimplexConverter
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// TitleConverter
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TitleConverter() : base(e =>
-            e is RssItem src ?
-            $"{src.Title} - {AssemblyReader.Default.Title}" :
-            $"{AssemblyReader.Default.Title}"
-        ) { }
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
     /// ExpandConverter
     ///
     /// <summary>

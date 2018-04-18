@@ -22,57 +22,65 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssFacade
+    /// MainFacade
     ///
     /// <summary>
-    /// RSS フィードに関連する処理の窓口となるクラスです。
+    /// MainViewModel とモデルの窓口となるクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public sealed class RssFacade : IDisposable
+    public sealed class MainFacade : IDisposable
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RssFacade
+        /// MainFacade
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /// <param name="settings">設定用オブジェクト</param>
+        /// <param name="context">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFacade(SettingsFolder settings)
+        public MainFacade(SettingsFolder settings, SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
 
-            this.LogWarn(() => settings.Load());
+            settings.LoadOrDefault(new LocalSettings());
             this.LogInfo($"User-Agent:{settings.UserAgent}");
 
             Settings = settings;
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
 
-            _core.IO = Settings.IO;
-            _core.FileName = Settings.Feed;
-            _core.Capacity = Settings.Value.Capacity;
-            _core.CacheDirectory = Settings.Cache;
-            _core.UserAgent = Settings.UserAgent;
-            _core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
-            _core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
+            var feeds = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.FeedFileName);
+            var cache = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.CacheDirectoryName);
+
+            _core = new RssSubscriber(context)
+            {
+                IO             = Settings.IO,
+                FileName       = feeds,
+                CacheDirectory = cache,
+                Capacity       = Settings.Shared.Capacity,
+                IsReadOnly     = Settings.Lock.IsReadOnly,
+                UserAgent      = Settings.UserAgent
+            };
+            _core.Set(RssCheckFrequency.High, Settings.Shared.HighInterval);
+            _core.Set(RssCheckFrequency.Low, Settings.Shared.LowInterval);
             _core.Received += WhenReceived;
 
             _checker = new UpdateChecker(Settings);
-
-            Data = new RssBindableData(_core, Settings.Value);
+            Data = new MainBindableData(_core, Settings, context);
         }
 
         #endregion
@@ -88,7 +96,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssBindableData Data { get; }
+        public MainBindableData Data { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -120,7 +128,7 @@ namespace Cube.Net.App.Rss.Reader
 
             this.LogDebug("Load", () => _core.Load());
 
-            var entry = _core.Find(Settings.Value.StartUri) ??
+            var entry = _core.Find(Settings.Shared.StartUri) ??
                         _core.Flatten<RssEntry>().FirstOrDefault();
             if (entry != null)
             {
@@ -128,8 +136,8 @@ namespace Cube.Net.App.Rss.Reader
                 entry.Parent.Expand();
             }
 
-            Debug.Assert(Settings.Value.InitialDelay.HasValue);
-            _core.Start(Settings.Value.InitialDelay.Value);
+            Debug.Assert(Settings.Shared.InitialDelay.HasValue);
+            _core.Start(Settings.Shared.InitialDelay.Value);
 
             Data.Message.Value = string.Empty;
         }
@@ -265,7 +273,7 @@ namespace Cube.Net.App.Rss.Reader
                 current.Selected = true;
                 Data.LastEntry.Value = current;
                 Select(current.Items.FirstOrDefault());
-                Settings.Value.StartUri = current.Uri;
+                Settings.Shared.StartUri = current.Uri;
             }
         }
 
@@ -357,7 +365,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        ~RssFacade() { _dispose.Invoke(false); }
+        ~MainFacade() { _dispose.Invoke(false); }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -418,7 +426,7 @@ namespace Cube.Net.App.Rss.Reader
 
             var count = dest.Update(src);
 
-            Data.Message.Value = Settings.Value.EnableMonitorMessage ?
+            Data.Message.Value = Settings.Shared.EnableMonitorMessage ?
                                  src.ToMessage(count) :
                                  string.Empty;
         }
@@ -436,15 +444,17 @@ namespace Cube.Net.App.Rss.Reader
         {
             switch (e.PropertyName)
             {
-                case nameof(Settings.Value.HighInterval):
-                    _core.Set(RssCheckFrequency.High, Settings.Value.HighInterval);
+                case nameof(Settings.Shared.HighInterval):
+                    _core.Set(RssCheckFrequency.High, Settings.Shared.HighInterval);
                     break;
-                case nameof(Settings.Value.LowInterval):
-                    _core.Set(RssCheckFrequency.Low, Settings.Value.LowInterval);
+                case nameof(Settings.Shared.LowInterval):
+                    _core.Set(RssCheckFrequency.Low, Settings.Shared.LowInterval);
                     break;
-                case nameof(Settings.Value.CheckUpdate):
-                    if (Settings.Value.CheckUpdate) _checker.Start();
+                case nameof(Settings.Shared.CheckUpdate):
+                    if (Settings.Shared.CheckUpdate) _checker.Start();
                     else _checker.Stop();
+                    break;
+                default:
                     break;
             }
         }
@@ -452,8 +462,8 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private readonly RssSubscriber _core = new RssSubscriber();
+        private readonly OnceAction<bool> _dispose;
+        private readonly RssSubscriber _core;
         private readonly UpdateChecker _checker;
         #endregion
     }

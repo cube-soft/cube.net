@@ -33,7 +33,7 @@ namespace Cube.Net.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class HttpHandlerTest : NetworkHelper
+    class HttpHandlerTest
     {
         #region Tests
 
@@ -83,23 +83,17 @@ namespace Cube.Net.Tests
         [Ignore("Skip the test in chrome branch")]
         public async Task GetAsync_EntityTag()
         {
-            var uri = new Uri("http://www.example.com/");
+            var uri = new Uri("https://www.cube-soft.jp/favicon.ico");
             var h   = new Cube.Net.Http.HeaderHandler { UserAgent = GetUserAgent() };
 
             using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
             {
-                using (var response = await http.GetAsync(uri))
+                using (var r = await http.GetAsync(uri)) Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                var tag = h.EntityTag;
+                using (var r = await http.GetAsync(uri))
                 {
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    if (string.IsNullOrEmpty(h.EntityTag)) Assert.Ignore("EntityTag not set");
-                }
-
-                var etag = h.EntityTag;
-
-                using (var response = await http.GetAsync(uri))
-                {
-                    if (h.EntityTag != etag) Assert.Ignore("EntityTag changed");
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
+                    Assert.That(h.EntityTag,  Is.EqualTo(tag));
+                    Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
                 }
             }
         }

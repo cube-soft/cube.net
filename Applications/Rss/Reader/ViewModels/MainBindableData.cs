@@ -15,54 +15,49 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem;
-using System.Reflection;
+using Cube.Xui;
+using System.Collections.Generic;
+using System.Threading;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FileHelper
+    /// MainBindableData
     ///
     /// <summary>
-    /// テストでファイルを使用するためのクラスです。
+    /// メイン画面にバインドされるデータ群を定義したクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class FileHelper
+    public class MainBindableData
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// FileHelper
+        /// RssBindableData
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /* ----------------------------------------------------------------- */
-        protected FileHelper() : this(new Operator()) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FileHelper
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /// <param name="io">ファイル操作用オブジェクト</param>
+        /// <param name="root">ルートオブジェクト</param>
+        /// <param name="settings">設定用オブジェクト</param>
+        /// <param name="context">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected FileHelper(Operator io)
+        public MainBindableData(IEnumerable<IRssEntry> root,
+            SettingsFolder settings, SynchronizationContext context)
         {
-            IO = io;
-            Root = IO.Get(Assembly.GetExecutingAssembly().Location).DirectoryName;
-            _directory = GetType().FullName;
-
-            if (!IO.Exists(Results)) IO.CreateDirectory(Results);
-            Delete(Results);
+            Root       = root;
+            Lock       = settings.Lock.ToBindable(true, context);
+            Local      = settings.Value.ToBindable(context);
+            Shared     = settings.Shared.ToBindable(context);
+            Current    = new Bindable<IRssEntry>(null, true, context);
+            LastEntry  = new Bindable<RssEntry>(null, true, context);
+            Content    = new Bindable<object>(null, context);
+            Message    = new Bindable<string>(null, context);
         }
 
         #endregion
@@ -71,111 +66,100 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// IO
-        ///
-        /// <summary>
-        /// ファイル操作用オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected Operator IO { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Root
         ///
         /// <summary>
-        /// テスト用リソースの存在するルートディレクトリへのパスを
-        /// 取得、または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected string Root { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Examples
-        ///
-        /// <summary>
-        /// テスト用ファイルの存在するフォルダへのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected string Examples => IO.Combine(Root, "Examples");
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Results
-        ///
-        /// <summary>
-        /// テスト結果を格納するためのフォルダへのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected string Results => IO.Combine(Root, $@"Results\{_directory}");
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Example
-        ///
-        /// <summary>
-        /// ファイル名に対して Examples フォルダのパスを結合したパスを
+        /// 登録されている RssEntry のルートにあたるオブジェクトを
         /// 取得します。
         /// </summary>
         ///
-        /// <param name="filename">ファイル名</param>
-        /// <returns>パス</returns>
-        ///
         /* ----------------------------------------------------------------- */
-        protected string Example(string filename) => IO.Combine(Examples, filename);
+        public IEnumerable<IRssEntry> Root { get; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Example
+        /// Lock
         ///
         /// <summary>
-        /// ファイル名に対して Results フォルダのパスを結合したパスを
-        /// 取得します。
-        /// </summary>
-        ///
-        /// <param name="filename">ファイル名</param>
-        /// <returns>パス</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected string Result(string filename) => IO.Combine(Results, filename);
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Delete
-        ///
-        /// <summary>
-        /// 指定されたフォルダ内に存在する全てのファイルおよびフォルダを
-        /// 削除します。
+        /// ロック情報を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void Delete(string directory)
-        {
-            foreach (string f in IO.GetFiles(directory)) IO.Delete(f);
-            foreach (string d in IO.GetDirectories(directory))
-            {
-                Delete(d);
-                IO.Delete(d);
-            }
-        }
+        public Bindable<LockSettings> Lock { get; }
 
-        #endregion
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Local
+        ///
+        /// <summary>
+        /// ローカル設定を保持するオブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<LocalSettings> Local { get; }
 
-        #region Fields
-        private readonly string _directory;
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Shared
+        ///
+        /// <summary>
+        /// ユーザ設定を保持するオブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<SharedSettings> Shared { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Current
+        ///
+        /// <summary>
+        /// 選択中のカテゴリまたは RSS エントリを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<IRssEntry> Current { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LastEntry
+        ///
+        /// <summary>
+        /// 最後に選択した RSS エントリを取得します。
+        /// </summary>
+        ///
+        /// <remarks>
+        /// RSS エントリを選択中の場合、Current と LastEntry は同じ値に
+        /// なります。カテゴリを選択中の場合、Current は該当カテゴリの
+        /// 値を LastEntry は直前まで選択されていた RssEntry の値を保持
+        /// します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<RssEntry> LastEntry { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Content
+        ///
+        /// <summary>
+        /// Web ブラウザに表示する内容を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<object> Content { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Message
+        ///
+        /// <summary>
+        /// メッセージを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<string> Message { get; }
+
         #endregion
     }
 }

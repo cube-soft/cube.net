@@ -15,7 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Net.App.Rss.Reader;
+using System;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Cube.Net.App.Rss.Tests
 {
@@ -24,12 +27,86 @@ namespace Cube.Net.App.Rss.Tests
     /// FileHelper
     ///
     /// <summary>
-    /// 各種テストファイルを扱う際の補助を行うクラスです。
+    /// 各種テストファイルを扱う際の補助クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public class FileHelper : Cube.Net.Tests.FileHelper
     {
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RootDirectory
+        ///
+        /// <summary>
+        /// 各種データファイルのルートディレクトリを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected string RootDirectory([CallerMemberName] string name = null) =>
+            Result(name);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CacheDirectory
+        ///
+        /// <summary>
+        /// キャッシュファイルを格納するディレクトリのパスを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected string CacheDirectory([CallerMemberName] string name = null) =>
+            IO.Combine(RootDirectory(name), LocalSettings.CacheDirectoryName);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// FeedsPath
+        ///
+        /// <summary>
+        /// フィード情報を保持するファイルのパスを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected string FeedsPath([CallerMemberName] string name = null) =>
+            IO.Combine(RootDirectory(name), LocalSettings.FeedFileName);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LocalSettingsPath
+        ///
+        /// <summary>
+        /// ローカル設定情報を保持するファイルのパスを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected string LocalSettingsPath([CallerMemberName] string name = null) =>
+            IO.Combine(RootDirectory(name), LocalSettings.FileName);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SharedSettingsPath
+        ///
+        /// <summary>
+        /// 設定情報を保持するファイルのパスを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected string SharedSettingsPath([CallerMemberName] string name = null) =>
+            IO.Combine(RootDirectory(name), SharedSettings.FileName);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CachePath
+        ///
+        /// <summary>
+        /// キャッシュファイルのパスを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected string CachePath(string filename, [CallerMemberName] string name = null) =>
+            IO.Combine(CacheDirectory(name), filename);
+
         /* ----------------------------------------------------------------- */
         ///
         /// Copy
@@ -43,21 +120,37 @@ namespace Cube.Net.App.Rss.Tests
         /// <returns>コピー先のルートディレクトリ</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public string Copy([CallerMemberName] string name = null)
+        protected void Copy([CallerMemberName] string name = null)
         {
-            var dest = Result(name);
+            IO.Copy(Example("LocalSettings.json"), LocalSettingsPath(name), true);
+            IO.Copy(Example("Settings.json"), SharedSettingsPath(name), true);
+            IO.Copy(Example("Sample.json"), FeedsPath(name), true);
 
-            IO.Copy(Example("Sample.json"),   IO.Combine(dest, "Feeds.json"),    true);
-            IO.Copy(Example("Settings.json"), IO.Combine(dest, "Settings.json"), true);
-
-            var cache = "Cache";
-            foreach (var file in IO.GetFiles(Example(cache)))
+            foreach (var f in IO.GetFiles(Example("Cache")))
             {
-                var info = IO.Get(file);
-                IO.Copy(file, IO.Combine(dest, $@"{cache}\{info.Name}"), true);
+                IO.Copy(f, CachePath(IO.Get(f).Name, name), true);
             }
-
-            return dest;
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Wait
+        ///
+        /// <summary>
+        /// 条件を満たすまで待機します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected async Task<bool> Wait(Func<bool> predicate)
+        {
+            for (var i = 0; i < 100; ++i)
+            {
+                if (predicate()) return true;
+                await Task.Delay(50).ConfigureAwait(false);
+            }
+            return false;
+        }
+
+        #endregion
     }
 }

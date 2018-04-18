@@ -14,9 +14,17 @@
 
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
-    Title="{Binding Data.Content.Value, Converter={my:TitleConverter}}"
-    Width="{Binding Data.User.Value.Width, Mode=TwoWay}"
-    Height="{Binding Data.User.Value.Height, Mode=TwoWay}">
+    MinWidth="650"
+    MinHeight="250"
+    Width="{Binding Data.Local.Value.Width, Mode=TwoWay}"
+    Height="{Binding Data.Local.Value.Height, Mode=TwoWay}">
+
+    <Window.Title>
+        <MultiBinding Converter="{my:TitleConverter}">
+            <Binding Path="Data.Content.Value"/>
+            <Binding Path="Data.Lock.Value"/>
+        </MultiBinding>
+    </Window.Title>
 
     <Window.Resources>
         <ResourceDictionary>
@@ -54,6 +62,9 @@
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding Setup}"/>
         </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <xb:DisposeAction/>
+        </i:EventTrigger>
     </i:Interaction.Triggers>
 
     <Grid x:Name="Root" UseLayoutRounding="True">
@@ -71,7 +82,7 @@
         </Grid.RowDefinitions>
 
         <!-- LeftSide (RssEntries) -->
-        <Grid Style="{StaticResource LeftSideStyle}">
+        <Grid Background="{StaticResource DarkBackgroundBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
@@ -112,7 +123,7 @@
         <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="1"/>
 
         <!-- MiddleSide (RssFeeds) -->
-        <Grid Style="{StaticResource MiddleSideStyle}" Grid.Column="2">
+        <Grid Background="{StaticResource MainBackgroundBrush}" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="24"/>
                 <RowDefinition Height="50"/>
@@ -165,7 +176,7 @@
                 ItemContainerStyle="{StaticResource RssItemStyle}"
                 ItemTemplate="{StaticResource RssItemTemplate}"
                 Style="{StaticResource RssFeedsStyle}"
-                ScrollViewer.IsDeferredScrollingEnabled="{Binding Data.User.Value.LightMode}"
+                ScrollViewer.IsDeferredScrollingEnabled="{Binding Data.Shared.Value.LightMode}"
                 Grid.Row="2">
                 <i:Interaction.Behaviors>
                     <my:ScrollToTopBehavior Messenger="{Binding Messenger}"/>
@@ -184,7 +195,7 @@
         <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="3"/>
 
         <!-- RightSide (Preview) -->
-        <Grid Style="{StaticResource RightSideStyle}" Grid.Column="4">
+        <Grid Background="White" Grid.Column="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>
                 <RowDefinition Height="*"/>
@@ -209,7 +220,7 @@
                 <i:Interaction.Behaviors>
                     <my:WebBehavior
                         Content="{Binding Data.Content.Value, Mode=OneWay}"
-                        EnableNewWindow="{Binding Data.User.Value.EnableNewWindow, Mode=OneWay}"
+                        EnableNewWindow="{Binding Data.Shared.Value.EnableNewWindow, Mode=OneWay}"
                         Hover="{Binding Hover}"/>
                 </i:Interaction.Behaviors>
             </WindowsFormsHost>

@@ -15,64 +15,72 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using NUnit.Framework;
-using System.Net.NetworkInformation;
+using Cube.Net.Rss;
+using System;
+using System.Globalization;
+using System.Windows.Data;
+using System.Windows.Markup;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkTest
+    /// TitleConverter
     ///
     /// <summary>
-    /// Network のテスト用クラスです。
+    /// メイン画面のタイトルに変換するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class NetworkTest
+    public class TitleConverter : MarkupExtension, IMultiValueConverter
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Status
-        ///
-        /// <summary>
-        /// ネットワーク状況を取得するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Status() => Assert.That(Network.Status, Is.EqualTo(OperationalStatus.Up));
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Available
+        /// Convert
         ///
         /// <summary>
-        /// ネットワークが利用可能かどうか判別するテストを実行します。
+        /// 変換処理を実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void Available() => Assert.That(Network.Available);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DisableOptions
-        ///
-        /// <summary>
-        /// 各種ネットワークオプションを無効にするテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void DisableOptions()
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            Network.DisableOptions();
-
-            Assert.That(System.Net.ServicePointManager.Expect100Continue, Is.False);
-            Assert.That(System.Net.ServicePointManager.UseNagleAlgorithm, Is.False);
-            Assert.That(System.Net.WebRequest.DefaultWebProxy, Is.Null);
+            var ss = new System.Text.StringBuilder();
+            if (values[0] is RssItem src) ss.Append($"{src.Title} - ");
+            ss.Append(AssemblyReader.Default.Title);
+            if (values[1] is LockSettings x && x.IsReadOnly) ss.Append($" ({Properties.Resources.MessageReadOnly})");
+            return ss.ToString();
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ConvertBack
+        ///
+        /// <summary>
+        /// 逆変換を実行します。
+        /// </summary>
+        ///
+        /// <remarks>
+        /// このメソッドはサポートされていません。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public object[] ConvertBack(object s, Type[] t, object p, CultureInfo c) =>
+            throw new NotSupportedException();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ProvideValue
+        ///
+        /// <summary>
+        /// 自身のオブジェクトを返します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public override object ProvideValue(IServiceProvider serviceProvider) => this;
+
+        #endregion
     }
 }

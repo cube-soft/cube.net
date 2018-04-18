@@ -47,7 +47,7 @@ namespace Cube.Net.Http
         /// <param name="handler">HTTP 通信用ハンドラ</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected HttpMonitorBase(ContentHandler<TValue> handler) : base()
+        protected HttpMonitorBase(ContentHandler<TValue> handler)
         {
             Handler = handler;
             Timeout = TimeSpan.FromSeconds(2);
@@ -207,7 +207,7 @@ namespace Cube.Net.Http
         #endregion
 
         #region Fields
-        private HttpClient _http;
+        private readonly HttpClient _http;
         #endregion
     }
 }

@@ -15,43 +15,41 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xui;
-using Cube.Xui.Converters;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
+using Cube.FileSystem;
+using Cube.FileSystem.Files;
+using Cube.Settings;
 using System;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.DirectoryServices.AccountManagement;
+using System.Runtime.Serialization;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SettingsViewModel
+    /// LockSettings
     ///
     /// <summary>
-    /// 設定画面とモデルを関連付けるためのクラスです。
+    /// ロック情報を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class SettingsViewModel : CommonViewModel
+    [DataContract]
+    public class LockSettings : ObservableProperty
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SettingsViewModel
+        /// LockSettings
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsViewModel(SettingsFolder settings) : base(new Messenger())
+        public LockSettings()
         {
-            Model  = settings;
-            Local  = settings.Value.ToBindable();
-            Shared = settings.Shared.ToBindable();
+            Reset();
         }
 
         #endregion
@@ -60,147 +58,179 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Local
+        /// FileName
         ///
         /// <summary>
-        /// ローカル設定を取得します。
+        /// 設定を保持するファイルの名前を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<LocalSettings> Local { get; }
+        public static string FileName => ".lockfile";
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Data
+        /// Sid
         ///
         /// <summary>
-        /// ユーザ設定を取得します。
+        /// 識別子を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<SharedSettings> Shared { get; }
+        [DataMember]
+        public string Sid
+        {
+            get => _sid;
+            set => SetProperty(ref _sid, value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Logo
+        /// UserName
         ///
         /// <summary>
-        /// アプリケーションのロゴ画像を取得します。
+        /// ユーザ名を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BitmapImage Logo => _logo ?? (
-            _logo = Properties.Resources.Logo.ToBitmapImage()
-        );
+        [DataMember]
+        public string UserName
+        {
+            get => _userName;
+            set => SetProperty(ref _userName, value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Product
+        /// MachineName
         ///
         /// <summary>
-        /// アプリケーション名を取得します。
+        /// マシン名を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Product => Model.Product;
+        [DataMember]
+        public string MachineName
+        {
+            get => _machineName;
+            set => SetProperty(ref _machineName, value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Version
+        /// IsReadOnly
         ///
         /// <summary>
-        /// バージョンを表す文字列を取得します。
+        /// 読み取り専用モードかどうかを示す値を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Version => $"Version {Model.Version.ToString(true)}";
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Windows
-        ///
-        /// <summary>
-        /// Windows のバージョンを表す文字列を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Windows => Environment.OSVersion.ToString();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Framework
-        ///
-        /// <summary>
-        /// .NET Framework のバージョンを表す文字列を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Framework => $"Microsoft .NET Framework {Environment.Version}";
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Copyright
-        ///
-        /// <summary>
-        /// コピーライト表記を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Copyright => AssemblyReader.Default.Copyright;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Model
-        ///
-        /// <summary>
-        /// ユーザ設定を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private SettingsFolder Model { get; }
+        public bool IsReadOnly => _isReadOnly ?? (
+            _isReadOnly = !Sid.Equals(GetCurrentUserPrincipal().Sid.ToString())
+        ).Value;
 
         #endregion
 
-        #region Commands
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SelectDataDirectory
+        /// Load
         ///
         /// <summary>
-        /// データディレクトリを選択するコマンドです。
+        /// 設定情報を読み込みます。
         /// </summary>
         ///
+        /// <param name="directory">ディレクトリ</param>
+        /// <param name="io">入出力用オブジェクト</param>
+        ///
+        /// <returns>LockSettings オブジェクト</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        public ICommand SelectDataDirectory => _selectDataDirectory ?? (
-            _selectDataDirectory = new RelayCommand(
-                () => Messenger.Send(MessageFactory.DataDirectory(Local.Value.DataDirectory))
-            )
-        );
+        public static LockSettings Load(string directory, Operator io)
+        {
+            var src = io.Combine(directory, FileName);
+            if (io.Exists(src)) return io.Load(src, e => SettingsType.Json.Load<LockSettings>(e));
+
+            var dest = new LockSettings();
+            io.Save(src, e => SettingsType.Json.Save(e, dest));
+            io.SetAttributes(src, System.IO.FileAttributes.ReadOnly | System.IO.FileAttributes.Hidden);
+            return dest;
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Apply
+        /// Release
         ///
         /// <summary>
-        /// 内容を適用するコマンドです。
+        /// ロックを解除します。
+        /// </summary>
+        ///
+        /// <param name="directory">ディレクトリ</param>
+        /// <param name="io">入出力用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Release(string directory, Operator io)
+        {
+            if (IsReadOnly) return;
+            io.Delete(io.Combine(directory, FileName));
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnDeserializing
+        ///
+        /// <summary>
+        /// デシリアライズ直前に実行されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Apply => _apply ?? (
-            _apply = new RelayCommand(() =>
-            {
-                Messenger.Send<UpdateSourcesMessage>();
-                Close.Execute(null);
-            })
-        );
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context) => Reset();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        ///
+        /// <summary>
+        /// 値をリセットします。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Reset()
+        {
+            _sid         = GetCurrentUserPrincipal().Sid.ToString();
+            _userName    = Environment.UserName;
+            _machineName = Environment.MachineName;
+            _isReadOnly  = default(bool?);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetCurrentUserPrincipal
+        ///
+        /// <summary>
+        /// ログオン中のユーザの UserPrincipal オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private UserPrincipal GetCurrentUserPrincipal()
+        {
+            var ctx = new PrincipalContext(ContextType.Machine);
+            var src = new UserPrincipal(ctx) { SamAccountName = Environment.UserName };
+            return new PrincipalSearcher(src).FindOne() as UserPrincipal;
+        }
 
         #endregion
 
         #region Fields
-        private BitmapImage _logo;
-        private ICommand _apply;
-        private ICommand _selectDataDirectory;
+        private string _sid;
+        private string _userName;
+        private string _machineName;
+        private bool? _isReadOnly;
         #endregion
     }
 }

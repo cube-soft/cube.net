@@ -239,10 +239,11 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static void Expand(this IRssEntry src)
         {
-            while (src is RssCategory category)
+            var current = src;
+            while (current is RssCategory category)
             {
                 category.Expanded = true;
-                src = category.Parent;
+                current = category.Parent;
             }
         }
 

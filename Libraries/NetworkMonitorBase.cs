@@ -271,7 +271,7 @@ namespace Cube.Net
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
+        private readonly OnceAction<bool> _dispose;
         #endregion
     }
 }

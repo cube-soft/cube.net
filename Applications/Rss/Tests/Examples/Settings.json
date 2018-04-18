@@ -3,11 +3,9 @@
     "CheckUpdate": true,
     "EnableNewWindow": true,
     "EnableMonitorMessage": true,
-    "Height": 650,
     "HighInterval": "PT1H",
     "LastCheckUpdate": null,
     "LightMode": false,
     "LowInterval": "P1D",
-    "Start": "https://github.com/blog.atom",
-    "Width": 1100
+    "Start": "https://github.com/blog.atom"
 }

@@ -195,4 +195,7 @@
     <value>データフォルダを選択して下さい。
 この設定はアプリケーションを再起動後に反映されます。</value>
   </data>
+  <data name="MessageReadOnly" xml:space="preserve">
+    <value>読み取り専用</value>
+  </data>
 </root>
