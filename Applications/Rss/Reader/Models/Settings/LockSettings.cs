@@ -20,7 +20,6 @@ using Cube.FileSystem.Files;
 using Cube.Settings;
 using Microsoft.Win32;
 using System;
-using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace Cube.Net.App.Rss.Reader
@@ -217,38 +216,19 @@ namespace Cube.Net.App.Rss.Reader
         /// ログオン中のユーザの SID を初期化します。
         /// </summary>
         ///
-        /// <remarks>
-        /// 64bit Windows 上で 32bit エミュレーションで実行すると SID の
-        /// 取得に失敗する。 System.DirectoryServices.AccountManagement を
-        /// 利用した場合でも、サービスが起動しておらず例外が送出される事が
-        /// あり、取得に成功する事を保証する方法が今のところ存在しない。
-        /// </remarks>
-        ///
         /* ----------------------------------------------------------------- */
         private string GetCurrentUserSid()
         {
-            var name = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\SessionData";
-            using (var root = Registry.LocalMachine.OpenSubKey(name, false))
+            var keyword = "Volatile Environment";
+            foreach (var name in Registry.Users.GetSubKeyNames())
+            using (var key = Registry.Users.OpenSubKey($@"{name}\{keyword}", false))
             {
-                if (root == null) return string.Empty;
-
-                foreach (var subname in root.GetSubKeyNames())
-                using (var src = root.OpenSubKey(subname, false))
-                {
-                    Debug.Assert(src != null);
-
-                    var tmp = src.GetValue("LoggedOnUser") as string ??
-                              src.GetValue("LoggedOnSAMUser") as string;
-                    if (string.IsNullOrEmpty(tmp)) continue;
-
-                    var index = tmp.IndexOf('\\');
-                    var user = index >= 0 ? tmp.Substring(index + 1) : tmp;
-                    if (user.Equals(Environment.UserName)) return src.GetValue("LoggedOnUserSID") as string;
-                }
+                if (key == null) continue;
+                var user = key.GetValue("UserName", string.Empty) as string;
+                if (Environment.UserName.Equals(user, StringComparison.InvariantCultureIgnoreCase)) return name;
             }
             return string.Empty;
         }
-
 
         #endregion
 

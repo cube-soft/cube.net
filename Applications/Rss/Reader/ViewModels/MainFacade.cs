@@ -48,18 +48,19 @@ namespace Cube.Net.App.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="settings">設定用オブジェクト</param>
+        /// <param name="src">設定用オブジェクト</param>
         /// <param name="context">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MainFacade(SettingsFolder settings, SynchronizationContext context)
+        public MainFacade(SettingsFolder src, SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
 
-            settings.LoadOrDefault(new LocalSettings());
-            this.LogInfo($"User-Agent:{settings.UserAgent}");
+            src.LoadOrDefault(new LocalSettings());
+            this.LogInfo($"Owner:{src.Lock.UserName}@{src.Lock.MachineName} ({src.Lock.Sid})");
+            this.LogInfo($"User-Agent:{src.UserAgent}");
 
-            Settings = settings;
+            Settings = src;
             Settings.PropertyChanged += WhenSettingsChanged;
             Settings.AutoSave = true;
 
