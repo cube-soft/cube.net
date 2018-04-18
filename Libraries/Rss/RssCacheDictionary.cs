@@ -576,14 +576,15 @@ namespace Cube.Net.Rss
         {
             if (dest != null)
             {
+                var f = locked;
                 if (_memory.ContainsKey(dest.Uri))
                 {
-                    locked |= _memory[dest.Uri];
+                    f |= _memory[dest.Uri];
                     _memory.Remove(dest.Uri);
                 }
                 else Load(dest);
 
-                _memory.Add(dest.Uri, locked);
+                _memory.Add(dest.Uri, f);
                 Stash();
             }
             return dest;
