@@ -176,7 +176,6 @@ namespace Cube.Net.App.Rss.Reader
             _mutex = new Mutex(true, name, out bool dest);
             if (!dest)
             {
-                _mutex.Dispose();
                 _mutex = null;
                 var id = Process.GetCurrentProcess().Id;
                 Process.GetProcessesByName(name).FirstOrDefault(p => p.Id != id).Activate();

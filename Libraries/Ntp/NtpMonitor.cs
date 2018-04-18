@@ -266,7 +266,10 @@ namespace Cube.Net.Ntp
                     if (State != TimerState.Run) return;
                     var client = new NtpClient(Server, Port) { Timeout = Timeout };
                     var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid) await PublishAsync(packet.LocalClockOffset);
+                    if (packet != null && packet.IsValid)
+                    {
+                        await PublishAsync(packet.LocalClockOffset).ConfigureAwait(false);
+                    }
                     else throw new ArgumentException("InvalidPacket");
                     break;
                 }

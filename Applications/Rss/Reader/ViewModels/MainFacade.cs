@@ -67,7 +67,7 @@ namespace Cube.Net.App.Rss.Reader
             var feeds = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.FeedFileName);
             var cache = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.CacheDirectoryName);
 
-            _core = new RssSubscriber(context)
+            _core = new RssSubscriber(_context)
             {
                 IO             = Settings.IO,
                 FileName       = feeds,
@@ -81,7 +81,7 @@ namespace Cube.Net.App.Rss.Reader
             _core.Received += WhenReceived;
 
             _checker = new UpdateChecker(Settings);
-            Data = new MainBindableData(_core, Settings, context);
+            Data = new MainBindableData(_core, Settings, _context);
         }
 
         #endregion
@@ -454,6 +454,8 @@ namespace Cube.Net.App.Rss.Reader
                 case nameof(Settings.Shared.CheckUpdate):
                     if (Settings.Shared.CheckUpdate) _checker.Start();
                     else _checker.Stop();
+                    break;
+                default:
                     break;
             }
         }
