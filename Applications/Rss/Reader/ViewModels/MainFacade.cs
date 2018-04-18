@@ -55,7 +55,6 @@ namespace Cube.Net.App.Rss.Reader
         public MainFacade(SettingsFolder settings, SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
-            _context = context;
 
             settings.LoadOrDefault(new LocalSettings());
             this.LogInfo($"User-Agent:{settings.UserAgent}");
@@ -67,7 +66,7 @@ namespace Cube.Net.App.Rss.Reader
             var feeds = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.FeedFileName);
             var cache = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.CacheDirectoryName);
 
-            _core = new RssSubscriber(_context)
+            _core = new RssSubscriber(context)
             {
                 IO             = Settings.IO,
                 FileName       = feeds,
@@ -81,7 +80,7 @@ namespace Cube.Net.App.Rss.Reader
             _core.Received += WhenReceived;
 
             _checker = new UpdateChecker(Settings);
-            Data = new MainBindableData(_core, Settings, _context);
+            Data = new MainBindableData(_core, Settings, context);
         }
 
         #endregion
@@ -465,7 +464,6 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private readonly OnceAction<bool> _dispose;
         private readonly RssSubscriber _core;
-        private readonly SynchronizationContext _context;
         private readonly UpdateChecker _checker;
         #endregion
     }
