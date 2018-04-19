@@ -13,10 +13,10 @@
 
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
-    MinWidth="650"
-    MinHeight="250"
     Width="{Binding Data.Local.Value.Width, Mode=TwoWay}"
-    Height="{Binding Data.Local.Value.Height, Mode=TwoWay}">
+    MinWidth="650"
+    Height="{Binding Data.Local.Value.Height, Mode=TwoWay}"
+    MinHeight="250">
 
     <Window.Title>
         <MultiBinding Converter="{my:TitleConverter}">
@@ -68,11 +68,15 @@
 
     <Grid x:Name="Root" UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="230" MinWidth="50"/>
+            <ColumnDefinition
+                Width="{Binding Data.Local.Value.EntryColumn, Converter={my:ColumnConverter}, Mode=TwoWay}"
+                MinWidth="50"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="270" MinWidth="50"/>
+            <ColumnDefinition
+                Width="{Binding Data.Local.Value.ArticleColumn, Converter={my:ColumnConverter}, Mode=TwoWay}"
+                MinWidth="50"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"   MinWidth="50"/>
+            <ColumnDefinition Width="*" MinWidth="50"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>

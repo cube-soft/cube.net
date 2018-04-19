@@ -115,6 +115,38 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// EntryColumn
+        ///
+        /// <summary>
+        /// RSS エントリ一覧部分の幅を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public int EntryColumn
+        {
+            get => _entryColumn;
+            set => SetProperty(ref _entryColumn, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ArticleColumn
+        ///
+        /// <summary>
+        /// 新着記事一覧部分の幅を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DataMember]
+        public int ArticleColumn
+        {
+            get => _articleColumn;
+            set => SetProperty(ref _articleColumn, value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// DataDirectory
         ///
         /// <summary>
@@ -158,6 +190,8 @@ namespace Cube.Net.App.Rss.Reader
         {
             _width         = 1100;
             _height        = 650;
+            _entryColumn   = 230;
+            _articleColumn = 270;
             _dataDirectory = null;
         }
 
@@ -166,6 +200,8 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private int _width;
         private int _height;
+        private int _entryColumn;
+        private int _articleColumn;
         private string _dataDirectory;
         #endregion
     }
