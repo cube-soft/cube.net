@@ -220,12 +220,17 @@ namespace Cube.Net.App.Rss.Reader
         private string GetCurrentUserSid()
         {
             var keyword = "Volatile Environment";
-            foreach (var name in Registry.Users.GetSubKeyNames())
-            using (var key = Registry.Users.OpenSubKey($@"{name}\{keyword}", false))
+            var cmp     = Environment.UserName;
+            var option  = StringComparison.CurrentCultureIgnoreCase;
+
+            foreach (var dest in Registry.Users.GetSubKeyNames())
             {
-                if (key == null) continue;
-                var user = key.GetValue("UserName", string.Empty) as string;
-                if (Environment.UserName.Equals(user, StringComparison.InvariantCultureIgnoreCase)) return name;
+                using (var key = Registry.Users.OpenSubKey($@"{dest}\{keyword}", false))
+                {
+                    if (key == null) continue;
+                    var user = key.GetValue("UserName", string.Empty) as string;
+                    if (user.Equals(cmp, option)) return dest;
+                }
             }
             return string.Empty;
         }
