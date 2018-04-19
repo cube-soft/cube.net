@@ -21,6 +21,7 @@ using Cube.Settings;
 using Microsoft.Win32;
 using System;
 using System.Runtime.Serialization;
+using System.Security;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -225,12 +226,16 @@ namespace Cube.Net.App.Rss.Reader
 
             foreach (var dest in Registry.Users.GetSubKeyNames())
             {
-                using (var key = Registry.Users.OpenSubKey($@"{dest}\{keyword}", false))
+                try
                 {
-                    if (key == null) continue;
-                    var user = key.GetValue("UserName", string.Empty) as string;
-                    if (user.Equals(cmp, option)) return dest;
+                    using (var key = Registry.Users.OpenSubKey($@"{dest}\{keyword}", false))
+                    {
+                        if (key == null) continue;
+                        var user = key.GetValue("UserName", string.Empty) as string;
+                        if (user.Equals(cmp, option)) return dest;
+                    }
                 }
+                catch (SecurityException) { /* Other's profile */ }
             }
             return string.Empty;
         }

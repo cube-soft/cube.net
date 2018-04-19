@@ -172,7 +172,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private bool Activate()
         {
-            var name = AssemblyReader.Default.Product;
+            var name = $"{Environment.UserName}@{AssemblyReader.Default.Product}";
             _mutex = new Mutex(true, name, out bool dest);
             if (!dest)
             {
