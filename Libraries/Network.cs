@@ -168,9 +168,9 @@ namespace Cube.Net
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        private static void WhenChanged(object sender, NetworkAvailabilityEventArgs e)
+        private static void WhenChanged(object s, NetworkAvailabilityEventArgs e)
         {
-            if (!e.IsAvailable) AvailabilityChanged?.Invoke(sender, e);
+            if (!e.IsAvailable) AvailabilityChanged?.Invoke(s, e);
             else Task.Run(async () =>
             {
                 var type = typeof(Network);
@@ -179,13 +179,13 @@ namespace Cube.Net
                     if (Status == OperationalStatus.Up)
                     {
                         LogOperator.Debug(type, ($"Status:Up ({i * 5} sec)"));
-                        AvailabilityChanged?.Invoke(sender, e);
+                        AvailabilityChanged?.Invoke(s, e);
                         return;
                     }
                     await Task.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
                 }
                 LogOperator.Debug(type, $"Status:{Status} (Timeout)");
-                AvailabilityChanged?.Invoke(sender, e);
+                AvailabilityChanged?.Invoke(s, e);
             }).Forget();
         }
 

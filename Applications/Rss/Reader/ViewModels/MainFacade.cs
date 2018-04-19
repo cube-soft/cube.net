@@ -416,7 +416,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenReceived(object sender, ValueEventArgs<RssFeed> e)
+        private void WhenReceived(object s, ValueEventArgs<RssFeed> e)
         {
             var src  = e.Value;
             var dest = _core.Find(src.Uri);
@@ -441,7 +441,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenSettingsChanged(object sender, PropertyChangedEventArgs e)
+        private void WhenSettingsChanged(object s, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {

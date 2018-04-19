@@ -268,7 +268,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenChildrenChanged(object sender, NotifyCollectionChangedEventArgs e) =>
+        private void WhenChildrenChanged(object s, NotifyCollectionChangedEventArgs e) =>
             RaisePropertyChanged(nameof(Count));
 
         #region Json
