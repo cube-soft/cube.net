@@ -20,6 +20,7 @@ using Cube.Xui.Converters;
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.Windows;
 
 namespace Cube.Net.App.Rss.Tests
 {
@@ -131,6 +132,55 @@ namespace Cube.Net.App.Rss.Tests
         public void ConvertBack_Hour() => Assert.That(
             ConvertBack<TimeSpan?>(new HourConverter(), "3"),
             Is.EqualTo(TimeSpan.FromHours(3))
+        );
+
+        #endregion
+
+        #region ColumnConverter
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Convert_Column
+        ///
+        /// <summary>
+        /// 整数値を GridLength オブジェクトに変換するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Convert_Column() => Assert.That(
+            (int)Convert<GridLength>(new ColumnConverter(), 300).Value,
+            Is.EqualTo(300)
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Convert_Column_Null
+        ///
+        /// <summary>
+        /// ColumnConverter に null を指定した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Convert_Column_Null() => Assert.That(
+            () => Convert<GridLength>(new ColumnConverter(), null),
+            Throws.TypeOf<NotSupportedException>()
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ConvertBack_Column
+        ///
+        /// <summary>
+        /// GridLength オブジェクトを整数値に変換するテストを実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void ConvertBack_Column() => Assert.That(
+            ConvertBack<int>(new ColumnConverter(), new GridLength(200)),
+            Is.EqualTo(200)
         );
 
         #endregion

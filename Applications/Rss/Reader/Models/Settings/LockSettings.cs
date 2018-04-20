@@ -18,9 +18,10 @@
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
 using Cube.Settings;
+using Microsoft.Win32;
 using System;
-using System.DirectoryServices.AccountManagement;
 using System.Runtime.Serialization;
+using System.Security;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -125,7 +126,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public bool IsReadOnly => _isReadOnly ?? (
-            _isReadOnly = !Sid.Equals(GetCurrentUserPrincipal().Sid.ToString())
+            _isReadOnly = !Sid.Equals(GetCurrentUserSid())
         ).Value;
 
         #endregion
@@ -202,7 +203,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Reset()
         {
-            _sid         = GetCurrentUserPrincipal().Sid.ToString();
+            _sid         = GetCurrentUserSid();
             _userName    = Environment.UserName;
             _machineName = Environment.MachineName;
             _isReadOnly  = default(bool?);
@@ -210,18 +211,33 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetCurrentUserPrincipal
+        /// GetCurrentUserSid
         ///
         /// <summary>
-        /// ログオン中のユーザの UserPrincipal オブジェクトを初期化します。
+        /// ログオン中のユーザの SID を初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private UserPrincipal GetCurrentUserPrincipal()
+        private string GetCurrentUserSid()
         {
-            var ctx = new PrincipalContext(ContextType.Machine);
-            var src = new UserPrincipal(ctx) { SamAccountName = Environment.UserName };
-            return new PrincipalSearcher(src).FindOne() as UserPrincipal;
+            var keyword = "Volatile Environment";
+            var cmp     = Environment.UserName;
+            var option  = StringComparison.CurrentCultureIgnoreCase;
+
+            foreach (var dest in Registry.Users.GetSubKeyNames())
+            {
+                try
+                {
+                    using (var key = Registry.Users.OpenSubKey($@"{dest}\{keyword}", false))
+                    {
+                        if (key == null) continue;
+                        var user = key.GetValue("UserName", string.Empty) as string;
+                        if (user.Equals(cmp, option)) return dest;
+                    }
+                }
+                catch (SecurityException) { /* Other's profile */ }
+            }
+            return string.Empty;
         }
 
         #endregion

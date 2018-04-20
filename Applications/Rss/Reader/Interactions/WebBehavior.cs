@@ -242,7 +242,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenLoading(object sender, LoadingStateChangedEventArgs e)
+        private void WhenLoading(object s, LoadingStateChangedEventArgs e)
         {
             if (e.IsLoading) return;
             Sync(() =>
@@ -261,7 +261,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenMouseOver(object sender, StatusMessageEventArgs e)
+        private void WhenMouseOver(object s, StatusMessageEventArgs e)
         {
             if (Hover.CanExecute(e.Value)) Hover.Execute(e.Value);
         }

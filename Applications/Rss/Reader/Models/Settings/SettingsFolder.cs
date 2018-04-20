@@ -187,8 +187,11 @@ namespace Cube.Net.App.Rss.Reader
         protected override void OnLoaded(ValueChangedEventArgs<LocalSettings> e)
         {
             Debug.Assert(e.NewValue != null);
+            var min  = 100;
             var dest = e.NewValue;
             if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = RootDirectory;
+            dest.EntryColumn = Math.Min(dest.EntryColumn, dest.Width - min * 2);
+            dest.ArticleColumn = Math.Min(dest.ArticleColumn, dest.Width - dest.EntryColumn - min);
             DataDirectory = dest.DataDirectory;
 
             Lock = LockSettings.Load(DataDirectory, IO);
