@@ -25,9 +25,7 @@ Note that implemented applications based on the Cube.Net project have some more 
 
 * [Cube.Core](https://github.com/cube-soft/Cube.Core)
 * [Cube.FileSystem](https://github.com/cube-soft/Cube.FileSystem)
-* [log4net](https://logging.apache.org/log4net/)
 * [SgmlReader](https://github.com/MindTouch/SGMLReader)
-* [NUnit](http://nunit.org/)
 
 ## License
 
