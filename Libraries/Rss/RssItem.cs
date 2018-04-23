@@ -169,7 +169,7 @@ namespace Cube.Net.Rss
 
             public RssItem Convert()
             {
-                var dest = new RssItem()
+                var dest = new RssItem
                 {
                     Title       = Title,
                     Summary     = Summary,
@@ -190,8 +190,8 @@ namespace Cube.Net.Rss
         private string _title = string.Empty;
         private string _summary = string.Empty;
         private string _content = string.Empty;
-        private Uri _link = null;
-        private DateTime? _publishTime = null;
+        private Uri _link;
+        private DateTime? _publishTime;
         private RssItemStatus _status = RssItemStatus.Uninitialized;
         #endregion
     }

@@ -268,7 +268,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenChildrenChanged(object sender, NotifyCollectionChangedEventArgs e) =>
+        private void WhenChildrenChanged(object s, NotifyCollectionChangedEventArgs e) =>
             RaisePropertyChanged(nameof(Count));
 
         #region Json
@@ -296,15 +296,17 @@ namespace Cube.Net.App.Rss.Reader
                 Categories = src.Categories?.Select(e => new Json(e));
             }
 
-            public RssCategory Convert(RssCategory src, SynchronizationContext context)
+            public  RssCategory Convert(SynchronizationContext context) => Convert(null, context);
+            public  RssCategory Convert(RssCategory src) => Convert(src, src.Context);
+            private RssCategory Convert(RssCategory src, SynchronizationContext context)
             {
                 var dest = new RssCategory(context)
                 {
                     Title  = Title,
                     Parent = src,
                 };
-                Add(dest, Categories?.Select(e => e.Convert(dest, context) as IRssEntry));
-                Add(dest, Entries.Select(e => e.Convert(dest, context) as IRssEntry));
+                Add(dest, Categories?.Select(e => e.Convert(dest) as IRssEntry));
+                Add(dest, Entries.Select(e => e.Convert(dest) as IRssEntry));
                 return dest;
             }
 
@@ -320,7 +322,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
+        private readonly OnceAction<bool> _dispose;
         private string _title;
         private int? _count;
         private IRssEntry _parent;

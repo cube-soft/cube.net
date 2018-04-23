@@ -52,6 +52,7 @@ namespace Cube.Net.App.Rss.Tests
         {
             using (var src = Create())
             {
+                Assert.That(src.Capacity,       Is.EqualTo(100));
                 Assert.That(src.CacheDirectory, Is.Null, nameof(src.CacheDirectory));
                 Assert.That(src.UserAgent,      Is.Null, nameof(src.UserAgent));
 
@@ -82,7 +83,7 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Load_NotFound()
         {
-            using (var src = new RssSubscriber { FileName = "NotFound.json" })
+            using (var src = new RssSubscriber { FileName = Result("NotFound.json") })
             {
                 src.Load();
                 Assert.That(src.Count, Is.EqualTo(0));
@@ -101,25 +102,26 @@ namespace Cube.Net.App.Rss.Tests
         [Test]
         public void Backup_Delete()
         {
+            var dir  = Result($@"{nameof(Backup_Delete)}\Backup");
+            var open = IO.Combine(dir, "20010101.json");
+
             for (var d = new DateTime(2001, 1, 1); d.Month < 2; d = d.AddDays(1))
             {
-                var backup = Result($@"Backup\{d.ToString("yyyyMMdd")}.json");
+                var backup = IO.Combine(dir, $"{d.ToString("yyyyMMdd")}.json");
                 IO.Copy(Example("Sample.json"), backup, true);
             }
 
-            var failed = Result(@"Backup\20010101.json");
-
-            using (var _ = IO.OpenRead(failed))
+            using (var _ = IO.OpenRead(open))
             using (var src = Create())
             {
                 src.Load();
                 TaskEx.Delay(200).Wait();
             }
 
-            Assert.That(IO.GetFiles(Result("Backup")).Length, Is.EqualTo(31));
-            Assert.That(IO.Exists(failed), Is.True); // delete failed
-            Assert.That(IO.Exists(Result(@"Backup\20010102.json")), Is.False);
-            Assert.That(IO.Exists(Result(@"Backup\20010103.json")), Is.True);
+            Assert.That(IO.GetFiles(dir).Length, Is.EqualTo(31));
+            Assert.That(IO.Exists(open), Is.True); // delete failed
+            Assert.That(IO.Exists(IO.Combine(dir, "20010102.json")), Is.False);
+            Assert.That(IO.Exists(IO.Combine(dir, "20010103.json")), Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -198,11 +200,10 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssSubscriber Create([CallerMemberName] string filename = null)
+        private RssSubscriber Create([CallerMemberName] string name = null)
         {
-            var dest = Result(filename + ".json");
-            IO.Copy(Example("Sample.json"), dest, true);
-            return new RssSubscriber { FileName = dest };
+            Copy(name);
+            return new RssSubscriber { FileName = FeedsPath(name) };
         }
 
         /* ----------------------------------------------------------------- */
@@ -214,16 +215,7 @@ namespace Cube.Net.App.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task<bool> Wait(RssEntry src)
-        {
-            for (var i = 0; i < 100; ++i)
-            {
-                if (src.Count > 0) return true;
-                await TaskEx.Delay(50);
-            }
-            return false;
-        }
-
+        private Task<bool> Wait(RssEntry src) => Wait(() => src.Count > 0);
 
         #endregion
     }

@@ -32,7 +32,7 @@ namespace Cube.Net.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class HttpHandlerTest : NetworkHelper
+    class HttpHandlerTest
     {
         #region Tests
 
@@ -81,23 +81,17 @@ namespace Cube.Net.Tests
         [Test]
         public void GetAsync_EntityTag()
         {
-            var uri = new Uri("http://www.example.com/");
+            var uri = new Uri("https://www.cube-soft.jp/favicon.ico");
             var h   = new Cube.Net.Http.HeaderHandler { UserAgent = GetUserAgent() };
 
             using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
             {
-                using (var response = http.GetAsync(uri).Result)
+                using (var r = http.GetAsync(uri).Result) Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                var tag = h.EntityTag;
+                using (var r = http.GetAsync(uri).Result)
                 {
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    if (string.IsNullOrEmpty(h.EntityTag)) Assert.Ignore("EntityTag not set");
-                }
-
-                var etag = h.EntityTag;
-
-                using (var response = http.GetAsync(uri).Result)
-                {
-                    if (h.EntityTag != etag) Assert.Ignore("EntityTag changed");
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
+                    Assert.That(h.EntityTag,  Is.EqualTo(tag));
+                    Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
                 }
             }
         }

@@ -27,12 +27,12 @@ namespace Cube.Net.Tests
     /// NtpMonitorTest
     ///
     /// <summary>
-    /// Ntp.Monitor のテスト用クラスです。
+    /// NtpMonitor のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class NtpMonitorTest : NetworkHelper
+    class NtpMonitorTest
     {
         #region Tests
 
@@ -64,7 +64,7 @@ namespace Cube.Net.Tests
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start();
                 mon.Start(); // ignore
-                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                Assert.That(cts.Wait().Result, Is.True, "Timeout");
                 mon.Stop();
                 mon.Stop(); // ignore
 
@@ -146,7 +146,7 @@ namespace Cube.Net.Tests
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start(mon.Interval);
                 mon.Reset();
-                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                Assert.That(cts.Wait().Result, Is.True, "Timeout");
                 mon.Stop();
 
                 Assert.That(count, Is.EqualTo(1));

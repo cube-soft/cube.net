@@ -11,14 +11,21 @@
     xmlns:xi="clr-namespace:Cube.Xui;assembly=Cube.Xui"
     xmlns:xc="clr-namespace:Cube.Xui.Converters;assembly=Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
-    xmlns:xt="clr-namespace:Cube.Xui.Triggers;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
 
     mc:Ignorable="d"
     FontFamily="Meiryo UI"
-    Title="{Binding Data.Content.Value, Converter={my:TitleConverter}}"
-    Width="{Binding Data.User.Value.Width, Mode=TwoWay}"
-    Height="{Binding Data.User.Value.Height, Mode=TwoWay}">
+    Width="{Binding Data.Local.Value.Width, Mode=TwoWay}"
+    MinWidth="650"
+    Height="{Binding Data.Local.Value.Height, Mode=TwoWay}"
+    MinHeight="250">
+
+    <Window.Title>
+        <MultiBinding Converter="{my:TitleConverter}">
+            <Binding Path="Data.Content.Value"/>
+            <Binding Path="Data.Lock.Value"/>
+        </MultiBinding>
+    </Window.Title>
 
     <Window.Resources>
         <ResourceDictionary>
@@ -54,17 +61,24 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <xt:InvokeCommandAction Command="{Binding Setup}"/>
+            <xb:InvokeCommandAction Command="{Binding Setup}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <xb:DisposeAction/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
     <Grid x:Name="Root">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="230" MinWidth="50"/>
+            <ColumnDefinition
+                Width="{Binding Data.Local.Value.EntryColumn, Converter={my:ColumnConverter}, Mode=TwoWay}"
+                MinWidth="50"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="270" MinWidth="50"/>
+            <ColumnDefinition
+                Width="{Binding Data.Local.Value.ArticleColumn, Converter={my:ColumnConverter}, Mode=TwoWay}"
+                MinWidth="50"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"   MinWidth="50"/>
+            <ColumnDefinition Width="*" MinWidth="50"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -73,7 +87,7 @@
         </Grid.RowDefinitions>
 
         <!-- LeftSide (RssEntries) -->
-        <Grid Style="{StaticResource LeftSideStyle}">
+        <Grid Background="{StaticResource DarkBackgroundBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
@@ -114,7 +128,7 @@
         <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="1"/>
 
         <!-- MiddleSide (RssFeeds) -->
-        <Grid Style="{StaticResource MiddleSideStyle}" Grid.Column="2">
+        <Grid Background="{StaticResource MainBackgroundBrush}" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="24"/>
                 <RowDefinition Height="50"/>
@@ -149,12 +163,12 @@
                 </Button.Template>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseEnter">
-                        <xt:InvokeCommandAction
+                        <xb:InvokeCommandAction
                             Command="{Binding Hover}"
                             CommandParameter="{Binding Data.LastEntry.Value.Link}"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeave">
-                        <xt:InvokeCommandAction
+                        <xb:InvokeCommandAction
                             Command="{Binding Hover}"
                             CommandParameter=""/>
                     </i:EventTrigger>
@@ -167,14 +181,14 @@
                 ItemContainerStyle="{StaticResource RssItemStyle}"
                 ItemTemplate="{StaticResource RssItemTemplate}"
                 Style="{StaticResource RssFeedsStyle}"
-                ScrollViewer.IsDeferredScrollingEnabled="{Binding Data.User.Value.LightMode}"
+                ScrollViewer.IsDeferredScrollingEnabled="{Binding Data.Shared.Value.LightMode}"
                 Grid.Row="2">
                 <i:Interaction.Behaviors>
                     <my:ScrollToTopBehavior Messenger="{Binding Messenger}"/>
                 </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
-                        <xt:InvokeCommandAction
+                        <xb:InvokeCommandAction
                             Command="{Binding SelectArticle}"
                             CommandParameter="{Binding SelectedItem, ElementName=RssFeeds}"/>
                     </i:EventTrigger>
@@ -186,7 +200,7 @@
         <GridSplitter Style="{StaticResource SplitterStyle}" Grid.Column="3"/>
 
         <!-- RightSide (Preview) -->
-        <Grid Style="{StaticResource RightSideStyle}" Grid.Column="4">
+        <Grid Background="White" Grid.Column="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>
                 <RowDefinition Height="*"/>
@@ -211,7 +225,7 @@
                 <i:Interaction.Behaviors>
                     <my:WebBehavior
                         Content="{Binding Data.Content.Value, Mode=OneWay}"
-                        EnableNewWindow="{Binding Data.User.Value.EnableNewWindow, Mode=OneWay}"
+                        EnableNewWindow="{Binding Data.Shared.Value.EnableNewWindow, Mode=OneWay}"
                         Hover="{Binding Hover}"/>
                 </i:Interaction.Behaviors>
             </WindowsFormsHost>

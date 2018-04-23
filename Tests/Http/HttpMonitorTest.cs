@@ -33,7 +33,7 @@ namespace Cube.Net.Tests.Http
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class HttpMonitorTest : NetworkHelper
+    class HttpMonitorTest
     {
         #region Tests
 
@@ -76,7 +76,7 @@ namespace Cube.Net.Tests.Http
 
                 mon.Start();
                 mon.Start(); // ignore
-                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                Assert.That(cts.Wait().Result, Is.True, "Timeout");
                 mon.Stop();
                 mon.Stop(); // ignore
 
@@ -178,7 +178,7 @@ namespace Cube.Net.Tests.Http
         [Test]
         public void Monitor_PowerModeChanged()
         {
-            var power = new PowerModeContext(Power.Mode);
+            var power = new PowerModeContext(PowerModes.Resume);
             Power.Configure(power);
 
             using (var mon = Create())
@@ -186,17 +186,17 @@ namespace Cube.Net.Tests.Http
                 var count = 0;
                 var cts   = new CancellationTokenSource();
 
-                mon.Interval = TimeSpan.FromMilliseconds(50);
+                mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Uri = new Uri("http://www.example.com/");
                 mon.Subscribe((_, __) => { count++; cts.Cancel(); });
 
                 mon.Start(mon.Interval);
                 power.Mode = PowerModes.Suspend;
-                TaskEx.Delay(100).Wait();
+                TaskEx.Delay(200).Wait();
                 Assert.That(count, Is.EqualTo(0));
 
                 power.Mode = PowerModes.Resume;
-                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                Assert.That(cts.Wait().Result, Is.True, "Timeout");
                 mon.Stop();
                 Assert.That(count, Is.EqualTo(1));
             }
@@ -226,7 +226,7 @@ namespace Cube.Net.Tests.Http
                 mon.Reset();
                 mon.Start(mon.Interval);
                 mon.Reset();
-                Assert.That(Wait(cts.Token).Result, Is.True, "Timeout");
+                Assert.That(cts.Wait().Result, Is.True, "Timeout");
                 mon.Stop();
                 Assert.That(count, Is.EqualTo(1));
             }

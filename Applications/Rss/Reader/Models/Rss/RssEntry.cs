@@ -56,7 +56,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(SynchronizationContext context) : base()
+        public RssEntry(SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
             Context  = context;
@@ -311,8 +311,7 @@ namespace Cube.Net.App.Rss.Reader
                 SkipContent = src.SkipContent;
             }
 
-            public RssEntry Convert(RssCategory src, SynchronizationContext context) =>
-                new RssEntry(context)
+            public RssEntry Convert(RssCategory src) => new RssEntry(src.Context)
             {
                 Title       = Title,
                 Uri         = Uri,
@@ -327,7 +326,7 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
+        private readonly OnceAction<bool> _dispose;
         private IRssEntry _parent;
         private RssCheckFrequency _frequency = RssCheckFrequency.Auto;
         private int _count = 0;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+		<title>StripTest</title>
+		<link>http://www.example.com/</link>
+		<description>このサンプルファイルはタグ、改行、およびタブの除去処理をテストするためのものです。タブを空白に置換しないように注意して下さい。</description>
+		<item>
+			<title>この画像はテスト画像です。</title>
+			<link>http://www.example.com/</link>
+			<description><![CDATA[この画像
+			<img src="../images/example.png" alt='example.png' title='<img>タグ例' />
+			は<span>テスト画像</span>です。]]></description>
+			<pubDate>Sat, 21 Nov 2015 07:11:41 +0900</pubDate>
+		</item>
+	</channel>
+</rss>

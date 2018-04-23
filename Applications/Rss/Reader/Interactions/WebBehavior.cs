@@ -116,11 +116,7 @@ namespace Cube.Net.App.Rss.Reader
         public bool EnableNewWindow
         {
             get => _enableNewWindow;
-            set
-            {
-                if (_enableNewWindow == value) return;
-                _enableNewWindow = value;
-            }
+            set { if (_enableNewWindow != value) _enableNewWindow = value; }
         }
 
         /* ----------------------------------------------------------------- */
@@ -158,8 +154,8 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Hover
         {
-            get => GetValue(HoverProperty) as ICommand;
-            set => SetValue(HoverProperty, value);
+            get => _hover;
+            set { if (_hover != value) _hover = value; }
         }
 
         /* ----------------------------------------------------------------- */
@@ -176,7 +172,10 @@ namespace Cube.Net.App.Rss.Reader
                 nameof(Hover),
                 typeof(ICommand),
                 typeof(WebBehavior),
-                new PropertyMetadata(null)
+                new PropertyMetadata((s, e) =>
+                {
+                    if (s is WebBehavior wb) wb.Hover = (ICommand)e.NewValue;
+                })
             );
 
         #endregion
@@ -235,7 +234,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenBeforeNewWindow(object sender, NavigatingEventArgs e) =>
+        private void WhenBeforeNewWindow(object s, NavigatingEventArgs e) =>
             this.LogWarn(() =>
         {
             e.Cancel = true;
@@ -253,7 +252,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private void WhenDocumentCompleted(object s, WebBrowserDocumentCompletedEventArgs e)
         {
             Source.Document.MouseOver -= WhenMouseOver;
             Source.Document.MouseOver += WhenMouseOver;
@@ -268,7 +267,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenLoading(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private void WhenLoading(object s, WebBrowserDocumentCompletedEventArgs e)
         {
             Source.DocumentCompleted -= WhenLoading;
             if (Content is Uri uri) Source.Navigate(uri);
@@ -283,9 +282,9 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenMouseOver(object sender, HtmlElementEventArgs e)
+        private void WhenMouseOver(object s, HtmlElementEventArgs e)
         {
-            if (sender is HtmlDocument doc)
+            if (s is HtmlDocument doc)
             {
                 var node = doc.GetElementFromPoint(e.ClientMousePosition);
                 var link = node != null && node.TagName.ToLower() == "a" ?
@@ -301,6 +300,7 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private object _content;
         private bool _enableNewWindow;
+        private ICommand _hover;
         #endregion
     }
 }

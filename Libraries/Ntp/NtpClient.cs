@@ -258,8 +258,8 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        private readonly OnceAction<bool> _dispose;
+        private readonly Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         #endregion
     }
 }

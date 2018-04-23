@@ -30,7 +30,7 @@ namespace Cube.Net.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class NetworkTest : NetworkHelper
+    class NetworkTest
     {
         /* ----------------------------------------------------------------- */
         ///

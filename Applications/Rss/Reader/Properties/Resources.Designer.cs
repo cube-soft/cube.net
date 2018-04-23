@@ -166,6 +166,16 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         }
         
         /// <summary>
+        ///   データフォルダを選択して下さい。
+        ///この設定はアプリケーションを再起動後に反映されます。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageDataDirectory {
+            get {
+                return ResourceManager.GetString("MessageDataDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   ファイル名を指定して保存 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MessageExport {
@@ -243,6 +253,15 @@ namespace Cube.Net.App.Rss.Reader.Properties {
         internal static string MessageNoReceived {
             get {
                 return ResourceManager.GetString("MessageNoReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   読み取り専用 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageReadOnly {
+            get {
+                return ResourceManager.GetString("MessageReadOnly", resourceCulture);
             }
         }
         

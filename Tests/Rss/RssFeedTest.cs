@@ -171,6 +171,25 @@ namespace Cube.Net.Tests
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Strip_Summary
+        ///
+        /// <summary>
+        /// Summary の解析結果を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Strip_Summary()
+        {
+            using (var stream = File.OpenRead(Example("SampleRss20-03.xml")))
+            {
+                var dest = RssParser.Parse(stream);
+                Assert.That(dest.Items[0].Summary, Is.EqualTo("この画像はテスト画像です。"));
+            }
+        }
+
         #endregion
 
         #region TestCases
@@ -232,10 +251,10 @@ namespace Cube.Net.Tests
 
                 yield return new TestCaseData("SampleAtom-02.xml", new RssFeed
                 {
-                    Title       = "カラパイア",
+                    Title       = "Sample for Atom 0.3",
                     Description = "",
-                    Link        = new Uri("http://karapaia.com/"),
-                }).Returns(5);
+                    Link        = new Uri("http://www.example.com/"),
+                }).Returns(2);
             }
         }
 

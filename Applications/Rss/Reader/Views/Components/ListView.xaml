@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net"
-    xmlns:xt="clr-namespace:Cube.Xui.Triggers;assembly=Cube.Xui"
+    xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
 
     <Style x:Key="RssFeedsStyle" TargetType="ListView" BasedOn="{StaticResource {x:Type ListView}}">
@@ -72,17 +72,17 @@
                     MaxHeight="48"
                     Margin="12,2,12,8"
                     TextTrimming="WordEllipsis"
-                    TextWrapping="{Binding DataContext.Data.User.Value.LightMode,
+                    TextWrapping="{Binding DataContext.Data.Shared.Value.LightMode,
                         ElementName=Root, Converter={my:TextWrappingConverter}}"/>
             </StackPanel>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseEnter">
-                    <xt:InvokeCommandAction
+                    <xb:InvokeCommandAction
                         Command="{Binding DataContext.Hover, ElementName=Root}"
                         CommandParameter="{Binding Link}"/>
                 </i:EventTrigger>
                 <i:EventTrigger EventName="MouseLeave">
-                    <xt:InvokeCommandAction
+                    <xb:InvokeCommandAction
                         Command="{Binding DataContext.Hover, ElementName=Root}"
                         CommandParameter=""/>
                 </i:EventTrigger>

@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Xui.Converters;
 using System;
+using System.Windows;
 
 namespace Cube.Net.App.Rss.Reader
 {
@@ -69,6 +70,32 @@ namespace Cube.Net.App.Rss.Reader
         public HourConverter() : base(
             e => (int)(((TimeSpan?)e)?.TotalHours ?? 0.0),
             e => TimeSpan.FromHours(int.Parse(e as string))
+        ) { }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ColumnConverter
+    ///
+    /// <summary>
+    /// 数値を GridLength オブジェクトに変換するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class ColumnConverter : DuplexConverter
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ColumnConverter
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ColumnConverter() : base(
+            e => new GridLengthConverter().ConvertFrom(e),
+            e => (int)((GridLength)e).Value
         ) { }
     }
 }

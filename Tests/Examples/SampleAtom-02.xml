@@ -1,149 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed version="0.3" xmlns="http://purl.org/atom/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="ja">
-<title>カラパイア</title>
-<link rel="alternate" type="text/html" href="http://karapaia.com/" />
-<link rel="service.post" type="application/x.atom+xml" href="http://cms.blog.livedoor.com/atom/blog_id=2628902" title="カラパイア" />
+
+<title>Sample for Atom 0.3</title>
+<link rel="alternate" type="text/html" href="http://www.example.com/" />
 <link rel="hub" href="http://pubsubhubbub.appspot.com" />
-<link rel="self" href="http://karapaia.com/atom.xml" />
 <modified>2018-02-20T18:41:22Z</modified>
-<tagline><![CDATA[「不思議と謎の大冒険」をテーマに、世界中から、笑いあり、涙ありの好奇心を刺激する情報を集めています。]]></tagline>
-<id>tag:blog.livedoor.jp,2007:karapaia_zaeega</id>
+<id>tag:sample:atom03</id>
 <author>
-<name>karapaia_zaeega</name>
+<name>SampleAuthor</name>
 </author>
-<generator url="http://blog.livedoor.com/" version="1.0">livedoor Blog</generator>
-<copyright>Copyright (c) 2018, karapaia_zaeega </copyright>
+
 <entry>
-<title>孔明の罠か？横山光輝作品「三国志」の関羽殿が可動式フィギュアになって予約販売受付中！</title>
-<link rel="alternate" type="text/html" href="http://karapaia.com/archives/52254029.html" />
+<title>Atom 0.3 のサンプル その 1</title>
+<link rel="alternate" type="text/html" href="http://www.example.com/01.html" />
 <modified>2018-02-20T09:31:02Z</modified>
 <issued>2018-02-20T18:30:19+09:00</issued>
-<id>tag:blog.livedoor.jp,2018:karapaia_zaeega.52254029</id>
-<summary type="text/plain">
-　私が三国志を改めて勉強しようと思ったのは、漫画家、横山光輝先生の「三国志 」を読んでからだ。数ある登場人物の中で一番惹かれたのが関羽殿。「桃園の誓い」の名シーンは本当に感動した。
-
-　その後蒼天航路を読んで曹操に心奪われてしまったのはここだけの話だが、と...</summary>
+<id>tag:sample:atom03:01</id>
+<summary type="text/plain">Atom 0.3 のサンプルです。</summary>
 <dc:subject>グッズ・商品</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="ja" xml:base="http://karapaia.com/archives/52254029.html">
-<![CDATA[<img src="http://livedoor.blogimg.jp/karapaia_zaeega/imgs/5/2/524d86e8.jpg" width="580" height="459" border="0" alt="000" hspace="5" class="pict"  /><br /><br>
-　私が三国志を改めて勉強しようと思ったのは、漫画家、横山光輝先生の「<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4267870012/amaneko666-22/ref=nosim/" target="_blank">三国志 </a>」を読んでからだ。数ある登場人物の中で一番惹かれたのが関羽殿。「桃園の誓い」の名シーンは本当に感動した。<br>
-<br>
-　その後<a href="http://www.amazon.co.jp/exec/obidos/ASIN/B009KWUP9K/amaneko666-22/ref=nosim/" target="_blank">蒼天航路</a>を読んで曹操に心奪われてしまったのはここだけの話だが、とにかく関羽殿はすごいお人なのだ。<br>
-<br>
-　その忠義の将、関羽殿が横山光輝先生の作画そのままにフィギュアとなった。しかも顔のパーツは3種類用意されており、可動式なので思い思いのシーンを作り上げることができる。もちろん「青龍偃月刀（せいりゅうえんげつとう）」付きだ。<br>
-
-<a href="http://karapaia.com/archives/52254029.html">続きを読む</a>]]>
+<content type="text/html" mode="escaped" xml:lang="ja" xml:base="http://www.example.com/01.html">
+<![CDATA[<p>Atom 0.3 のサンプルです。</p>]]>
 </content>
 <author>
-<name>parumo_zaeega</name>
+<name>SampleAuthor</name>
 </author>
 </entry>
 
 <entry>
-<title>すごくシンプルに見えるのになぜ？ネット民を困惑させた馬の計算問題</title>
+<title>Atom 0.3 のサンプル その 2</title>
 <link rel="alternate" type="text/html" href="http://karapaia.com/archives/52253993.html" />
 <modified>2018-02-20T09:15:00Z</modified>
 <issued>2018-02-20T16:30:34+09:00</issued>
-<id>tag:blog.livedoor.jp,2018:karapaia_zaeega.52253993</id>
-<summary type="text/plain">
-　一見簡単そうに見えても、ひっかけだったりトンチが必要だったりするクイズはネット上を定期的ににぎわせている。
-
-　最近では、海外のあるサイトがシェアした馬の売り買いに関する計算問題が注目を集めていた。これにより多くのネット民が困惑したという。
-
-　数字自体は...</summary>
+<id>tag:sample:atom03:02</id>
+<summary type="text/plain">タグ付きサンプルです。</summary>
 <dc:subject>知る</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="ja" xml:base="http://karapaia.com/archives/52253993.html">
-<![CDATA[<img src="http://livedoor.blogimg.jp/karapaia_zaeega/imgs/9/2/92e06840.jpg" width="580" height="445" border="0" alt="2" hspace="5" class="pict"  /><br /><br>
-　一見簡単そうに見えても、ひっかけだったりトンチが必要だったりするクイズはネット上を定期的ににぎわせている。<br>
-<br>
-　最近では、海外のあるサイトがシェアした馬の売り買いに関する計算問題が注目を集めていた。これにより多くのネット民が困惑したという。<br>
-<br>
-　数字自体は暗算で求められるほど単純。なのになぜ困惑してしまうのか？みんなも頭の体操気分でちょっくら挑戦してみてはいかがだろう？<br>
-
-<a href="http://karapaia.com/archives/52253993.html">続きを読む</a>]]>
+<content type="text/html" mode="escaped" xml:lang="ja" xml:base="http://www.example.com/02.html">
+<![CDATA[<img src="images/sample.jpg" /><br /><br>タグ付きサンプルです。
+<a href="http://www.example.com/02.html">続きを読む</a>]]>
 </content>
 <author>
-<name>uulala</name>
+<name>SampleAuthor</name>
 </author>
 </entry>
 
-<entry>
-<title>ネットで人気の猫ミームの流行。その先駆けは100年前のアメリカの教科書にあった？</title>
-<link rel="alternate" type="text/html" href="http://karapaia.com/archives/52253884.html" />
-<modified>2018-02-20T09:13:13Z</modified>
-<issued>2018-02-20T14:30:36+09:00</issued>
-<id>tag:blog.livedoor.jp,2018:karapaia_zaeega.52253884</id>
-<summary type="text/plain">
-　海外のネット上では猫の画像にユーモラスで風変りなキャプションや変な英語をつける「ロルキャット」なるものが常に取り上げられており、ひとつのインターネットミームとなっている。
-
-　だがその手法はすでに100年以上前のアメリカの小学生向けの教科書にあり、どうやら...</summary>
-<dc:subject>知る</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="ja" xml:base="http://karapaia.com/archives/52253884.html">
-<![CDATA[<img src="http://livedoor.blogimg.jp/karapaia_zaeega/imgs/e/b/eb58e2d5.jpg" width="850" height="571" border="0" alt="0_e0" hspace="5" class="pict"  /><br /><br>
-　海外のネット上では猫の画像にユーモラスで風変りなキャプションや変な英語をつける「<a href="https://ja.wikipedia.org/wiki/Lolcat" target="_blank" title="">ロルキャット</a>」なるものが常に取り上げられており、ひとつのインターネットミームとなっている。<br>
-<br>
-　だがその手法はすでに100年以上前のアメリカの小学生向けの教科書にあり、どうやらそれが起源らしいというのだ。<br>
-
-<a href="http://karapaia.com/archives/52253884.html">続きを読む</a>]]>
-</content>
-<author>
-<name>parumo_zaeega</name>
-</author>
-</entry>
-
-<entry>
-<title>モルモット姉妹の末妹になったのは保護犬のピットブル。仲良く3匹でお昼寝するよ（アメリカ）</title>
-<link rel="alternate" type="text/html" href="http://karapaia.com/archives/52254002.html" />
-<modified>2018-02-20T09:13:13Z</modified>
-<issued>2018-02-20T11:45:03+09:00</issued>
-<id>tag:blog.livedoor.jp,2018:karapaia_zaeega.52254002</id>
-<summary type="text/plain">
-　モルモットをモルモットのように可愛がる犬のように犬とモルモットが仲睦まじく暮らすケースは以前もお伝えしているが、米カリフォルニア州サンフランシスコに、モルモット姉妹と仲良く暮らすピットブルがいるという。
-
-　彼女の名はモキ。5ヵ月で保護されていたところを...</summary>
-<dc:subject>画像</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="ja" xml:base="http://karapaia.com/archives/52254002.html">
-<![CDATA[<img src="http://livedoor.blogimg.jp/karapaia_zaeega/imgs/f/3/f336db18.jpg" width="580" height="450" border="0" alt="top" hspace="5" class="pict"  /><br /><br>
-　<a href="http://karapaia.com/archives/52147123.html" target="_blank" title="">モルモットをモルモットのように可愛がる犬</a>のように犬とモルモットが仲睦まじく暮らすケースは以前もお伝えしているが、米カリフォルニア州サンフランシスコに、モルモット姉妹と仲良く暮らすピットブルがいるという。<br>
-<br>
-　彼女の名はモキ。5ヵ月で保護されていたところをモルモット2匹がいる飼い主に迎えられ、3匹は初対面で意気投合。<br>
-<br>
-　今では末の妹のようになり、小さなモル姉さんズと昼寝までたしなむ間柄になっている。ちょっと他ではみかけない変わった組み合わせの3姉妹だがきっちりと心の絆を結んでいるようだ。<br>
-
-<a href="http://karapaia.com/archives/52254002.html">続きを読む</a>]]>
-</content>
-<author>
-<name>uulala</name>
-</author>
-</entry>
-
-<entry>
-<title>悪名高きギャングが看護師を誘拐し貧しい人々に予防接種をさせるという事件(ブラジル)</title>
-<link rel="alternate" type="text/html" href="http://karapaia.com/archives/52253887.html" />
-<modified>2018-02-20T09:14:41Z</modified>
-<issued>2018-02-20T09:18:29+09:00</issued>
-<id>tag:blog.livedoor.jp,2018:karapaia_zaeega.52253887</id>
-<summary type="text/plain">
-　2017年初めごろからブラジルでは黄熱が流行し、今年に入ってからすでに数十人が死亡。感染者は増える一方で、しかしワクチンが不足している状況だという。
-
-　政府はその対応に追われており予防接種センターはフル稼働しているが、貧困層までは手が回っていないようだ。
-
-...</summary>
-<dc:subject>知る</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="ja" xml:base="http://karapaia.com/archives/52253887.html">
-<![CDATA[<img src="http://livedoor.blogimg.jp/karapaia_zaeega/imgs/3/d/3dedb093.jpg" width="580" height="387" border="0" alt="gang2_e" hspace="5" class="pict"  /><br /><br>
-　2017年初めごろからブラジルでは黄熱が流行し、今年に入ってからすでに数十人が死亡。感染者は増える一方で、しかしワクチンが不足している状況だという。<br>
-<br>
-　政府はその対応に追われており予防接種センターはフル稼働しているが、貧困層までは手が回っていないようだ。<br>
-<br>
-　そんな中、「2N」の名で知られ、ブラジル・リオデジャネイロで最も危険なギャングの一人とされるトーマス・ビエラ・ゴメスがある大胆な行動に出た。<br>
-<br>
-　リオデジャネイロの最貧困エリアの一つであるサルゲイロの人々に黄熱の予防接種を受けさせるべく看護師2人を誘拐したのだ。<br>
-
-<a href="http://karapaia.com/archives/52253887.html">続きを読む</a>]]>
-</content>
-<author>
-<name>parumo_2</name>
-</author>
-</entry>
 </feed>

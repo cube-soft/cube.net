@@ -16,7 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.FileSystem;
-using Cube.Log;
+using Cube.FileSystem.Files;
 using Cube.Settings;
 using System;
 using System.Runtime.Serialization;
@@ -25,7 +25,7 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Settings
+    /// SharedSettings
     ///
     /// <summary>
     /// ユーザ設定を保持するためのクラスです。
@@ -33,13 +33,39 @@ namespace Cube.Net.App.Rss.Reader
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class Settings : ObservableProperty
+    public class SharedSettings : ObservableProperty
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Settings
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public SharedSettings() { Reset(); }
+
+        #endregion
+
         #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Start
+        /// FileName
+        ///
+        /// <summary>
+        /// 設定を保持するファイルの名前を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string FileName => "Settings.json";
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// StartUri
         ///
         /// <summary>
         /// 起動時に表示する RssEntry オブジェクトの URL を取得または
@@ -47,43 +73,28 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
-        public Uri Start
+        [DataMember(Name = "Start")]
+        public Uri StartUri
         {
-            get => _feedUri;
-            set => SetProperty(ref _feedUri, value);
+            get => _startUri;
+            set => SetProperty(ref _startUri, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Width
+        /// Capacity
         ///
         /// <summary>
-        /// メイン画面の幅を取得または設定します。
+        /// メモリ上に保持する RSS フィードの最大項目数を取得または
+        /// 設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public int Width
+        public int Capacity
         {
-            get => _width;
-            set => SetProperty(ref _width, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Height
-        ///
-        /// <summary>
-        /// メイン画面の高さを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DataMember]
-        public int Height
-        {
-            get => _height;
-            set => SetProperty(ref _height, value);
+            get => _capacity;
+            set => SetProperty(ref _capacity, value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -211,145 +222,50 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public TimeSpan? InitialDelay
         {
-            get => _initialDelay ?? (_initialDelay = TimeSpan.FromSeconds(3));
+            get => _initialDelay;
             set => SetProperty(ref _initialDelay, value);
         }
 
         #endregion
 
-        #region Fields
-        private Uri _feedUri;
-        private int _width = 1100;
-        private int _height = 650;
-        private bool _lightMode = false;
-        private bool _enableNewWindow = false;
-        private bool _enableMonitorMessage = true;
-        private bool _checkUpdate = true;
-        private DateTime? _lastCheckUpdate = null;
-        private TimeSpan? _highInterval = TimeSpan.FromHours(1);
-        private TimeSpan? _lowInterval = TimeSpan.FromHours(24);
-        private TimeSpan? _initialDelay = null;
-        #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// SettingsFolder
-    ///
-    /// <summary>
-    /// ユーザ設定を保持するためのクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public class SettingsFolder : SettingsFolder<Settings>
-    {
-        #region Constructors
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SettingsFolder
+        /// Load
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// 設定情報を読み込みます。
         /// </summary>
         ///
+        /// <param name="directory">ディレクトリ</param>
+        /// <param name="io">入出力用オブジェクト</param>
+        ///
+        /// <returns>SharedSettings オブジェクト</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder() : this(System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            $@"{AssemblyReader.Default.Company}\{AssemblyReader.Default.Product}"
-        ), new Operator()) { }
+        public static SharedSettings Load(string directory, Operator io) => io.Load(
+            io.Combine(directory, FileName),
+            e => SettingsType.Json.Load<SharedSettings>(e),
+            new SharedSettings()
+        );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SettingsFolder
+        /// Save
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// 設定情報を保存します。
         /// </summary>
         ///
-        /// <param name="root">設定用フォルダのルートパス</param>
+        /// <param name="directory">ディレクトリ</param>
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder(string root, Operator io) : base(SettingsType.Json)
-        {
-            AutoSave       = true;
-            Path           = io.Combine(root, "Settings.json");
-            IO             = io;
-            Root           = root;
-            Version.Digit  = 3;
-            Version.Suffix = "β";
-        }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IO
-        ///
-        /// <summary>
-        /// 入出力用オブジェクトを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public Operator IO { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Root
-        ///
-        /// <summary>
-        /// 各種ユーザ設定を保持するディレクトリのルートディレクトリと
-        /// なるパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Root { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Cache
-        ///
-        /// <summary>
-        /// キャッシュ用ディレクトリのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Cache => IO.Combine(Root, "Cache");
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Feed
-        ///
-        /// <summary>
-        /// 購読フィード一覧を保持するためのファイルのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string Feed => IO.Combine(Root, "Feeds.json");
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// UserAgent
-        ///
-        /// <summary>
-        /// ユーザエージェントを表す文字列を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string UserAgent
-        {
-            get
-            {
-                var app  = $"{Product}/{Version.Number}";
-                var win  = Environment.OSVersion.VersionString;
-                var net  = $".NET {Environment.Version}";
-                var view = BrowserSettings.Version;
-                return $"{app} ({win}; {net}; {view})";
-            }
-        }
+        public void Save(string directory, Operator io) => io.Save(
+            io.Combine(directory, FileName),
+            e => SettingsType.Json.Save(e, this)
+        );
 
         #endregion
 
@@ -357,30 +273,52 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnLoaded
+        /// OnDeserializing
         ///
         /// <summary>
-        /// 設定の読み込み時に実行されます。
+        /// デシリアライズ直前に実行されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnLoaded(ValueChangedEventArgs<Settings> e)
-        {
-            this.LogWarn(() =>
-            {
-                var name = $@"SOFTWARE\{Company}\{Product}";
-                using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false))
-                {
-                    if (key == null) return;
-                    var dest = key.GetValue("LastCheckUpdate") as string;
-                    if (string.IsNullOrEmpty(dest)) return;
-                    e.NewValue.LastCheckUpdate = DateTime.Parse(dest).ToLocalTime();
-                }
-            });
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context) => Reset();
 
-            base.OnLoaded(e);
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        ///
+        /// <summary>
+        /// 値をリセットします。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Reset()
+        {
+            _startUri             = null;
+            _capacity             = 1000;
+            _lightMode            = false;
+            _enableNewWindow      = false;
+            _enableMonitorMessage = true;
+            _checkUpdate          = true;
+            _lastCheckUpdate      = null;
+            _highInterval         = TimeSpan.FromHours(1);
+            _lowInterval          = TimeSpan.FromHours(24);
+            _initialDelay         = TimeSpan.FromSeconds(3);
         }
 
+        #endregion
+
+        #region Fields
+        private Uri _startUri;
+        private int _capacity;
+        private bool _lightMode;
+        private bool _enableNewWindow;
+        private bool _enableMonitorMessage;
+        private bool _checkUpdate;
+        private DateTime? _lastCheckUpdate;
+        private TimeSpan? _highInterval;
+        private TimeSpan? _lowInterval;
+        private TimeSpan? _initialDelay;
         #endregion
     }
 }

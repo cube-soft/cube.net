@@ -52,22 +52,35 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscriber()
+        public RssSubscriber() : this(SynchronizationContext.Current) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssSubscriber
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /// <param name="context">同期用オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssSubscriber(SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
+            _context = context;
 
-            _feeds.Capacity = 1000;
-
+            _tree = new BindableCollection<IRssEntry>(context);
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();
                 CollectionChanged?.Invoke(this, e);
             };
 
-            _monitors[0] = new RssMonitor() { Interval = TimeSpan.FromHours(1) };
+            _monitors[0] = new RssMonitor { Interval = TimeSpan.FromHours(1) };
             _monitors[0].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
 
-            _monitors[1] = new RssMonitor() { Interval = TimeSpan.FromHours(24) };
+            _monitors[1] = new RssMonitor { Interval = TimeSpan.FromHours(24) };
             _monitors[1].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
 
             _monitors[2] = new RssMonitor(); // for RssCheckFrequency.None
@@ -111,6 +124,21 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Capacity
+        ///
+        /// <summary>
+        /// 未読記事をメモリ上に保持する最大数を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public int Capacity
+        {
+            get => _feeds.Capacity;
+            set => _feeds.Capacity = value;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// CacheDirectory
         ///
         /// <summary>
@@ -122,6 +150,22 @@ namespace Cube.Net.App.Rss.Reader
         {
             get => _feeds.Directory;
             set => _feeds.Directory = value;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// IsReadOnly
+        ///
+        /// <summary>
+        /// キャッシュファイルを読み込み専用で利用するかどうかを示す値を
+        /// 取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool IsReadOnly
+        {
+            get => _feeds.IsReadOnlyCache;
+            set => _feeds.IsReadOnlyCache = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -208,6 +252,24 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssEntry Find(Uri uri) =>
             uri != null && _feeds.ContainsKey(uri) ? _feeds[uri] as RssEntry : null;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Select
+        ///
+        /// <summary>
+        /// RSS エントリの選択状況を変更します。
+        /// </summary>
+        ///
+        /// <param name="from">直前に選択されていたオブジェクト</param>
+        /// <param name="to">選択オブジェクト</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Select(RssEntry from, RssEntry to)
+        {
+            if (to   != null) _feeds.Get(to.Uri, true); // lock
+            if (from != null) _feeds.Unlock(from.Uri);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -299,17 +361,6 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DeleteCache
-        ///
-        /// <summary>
-        /// キャッシュファイルを削除します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void DeleteCache(RssEntry src) => _feeds.DeleteCache(src.Uri);
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Move
         ///
         /// <summary>
@@ -361,7 +412,7 @@ namespace Cube.Net.App.Rss.Reader
                 })
             ));
 
-            if (_feeds.Count > 0) TaskEx.Run(() => RssOperator.Backup(FileName, IO)).Forget();
+            if (!IsReadOnly && _feeds.Count > 0) TaskEx.Run(() => RssOperator.Backup(FileName, IO)).Forget();
         }
 
         /* ----------------------------------------------------------------- */
@@ -472,7 +523,21 @@ namespace Cube.Net.App.Rss.Reader
         /// RSS フィードの内容を更新します。
         /// </summary>
         ///
-        /// <param name="src">対象とする RSS エントリ一覧</param>
+        /// <param name="src">対象 RSS エントリまたはカテゴリ</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Update(IRssEntry src) =>
+            Update(src.Flatten<RssEntry>().ToArray());
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// RSS フィードの内容を更新します。
+        /// </summary>
+        ///
+        /// <param name="src">対象 RSS エントリ一覧</param>
         ///
         /* ----------------------------------------------------------------- */
         public void Update(params RssEntry[] src)
@@ -500,13 +565,19 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="src">対象とする RSS エントリ</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Reset(RssEntry src)
+        public void Reset(IRssEntry src)
         {
-            DeleteCache(src);
-            src.Items.Clear();
-            src.Count = 0;
-            src.LastChecked = null;
-            Update(src);
+            var entries = src.Flatten<RssEntry>().ToArray();
+
+            foreach (var entry in entries)
+            {
+                _feeds.DeleteCache(entry.Uri);
+                entry.Items.Clear();
+                entry.Count = 0;
+                entry.LastChecked = null;
+            }
+
+            Update(entries);
         }
 
         /* ----------------------------------------------------------------- */
@@ -635,9 +706,14 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (disposing)
             {
+                _autosaver.Stop();
+                _autosaver.Elapsed -= WhenAutoSaved;
+
                 foreach (var mon in _monitors) mon.Dispose();
                 _feeds.Dispose();
             }
+
+            if (!IsReadOnly) Save();
         }
 
         #endregion
@@ -720,7 +796,7 @@ namespace Cube.Net.App.Rss.Reader
         {
             foreach (var mon in _monitors) mon.Remove(src.Uri);
 
-            _feeds.Remove(src.Uri);
+            _feeds.Remove(src.Uri, true);
 
             if (src.Parent is RssCategory rc) rc.Children.Remove(src);
             else _tree.Remove(src);
@@ -738,9 +814,12 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void AutoSaveCore()
         {
-            _autosaver.Stop();
-            _autosaver.Interval = 1000.0;
-            _autosaver.Start();
+            if (!IsReadOnly)
+            {
+                _autosaver.Stop();
+                _autosaver.Interval = 1000.0;
+                _autosaver.Start();
+            }
         }
 
         /* ----------------------------------------------------------------- */
@@ -762,13 +841,13 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private BindableCollection<IRssEntry> _tree = new BindableCollection<IRssEntry>();
-        private RssCacheDictionary _feeds = new RssCacheDictionary();
-        private RssMonitor[] _monitors = new RssMonitor[3];
-        private RssClient _client = new RssClient();
-        private SynchronizationContext _context = SynchronizationContext.Current;
-        private System.Timers.Timer _autosaver = new System.Timers.Timer();
+        private readonly OnceAction<bool> _dispose;
+        private readonly BindableCollection<IRssEntry> _tree;
+        private readonly RssCacheDictionary _feeds = new RssCacheDictionary();
+        private readonly RssMonitor[] _monitors = new RssMonitor[3];
+        private readonly RssClient _client = new RssClient();
+        private readonly SynchronizationContext _context;
+        private readonly System.Timers.Timer _autosaver = new System.Timers.Timer();
         #endregion
     }
 }

@@ -146,7 +146,7 @@ namespace Cube.Net.Rss
                 if (!response.IsSuccessStatusCode) return null;
                 await response.Content.LoadIntoBufferAsync();
                 var content = await response.Content.ReadAsStringAsync();
-                return await ParseAsync(uri, content);
+                return await ParseAsync(uri, content).ConfigureAwait(false);
             }
         }
 
@@ -228,20 +228,20 @@ namespace Cube.Net.Rss
                     return dest;
                 }
             }
-            catch (Exception /* err */) { /* try redirect */ }
+            catch { /* try redirect */ }
 
             var cvt = RssParser.GetRssUris(content).FirstOrDefault();
             if (cvt == null) return default(RssFeed);
 
             OnRedirected(ValueChangedEventArgs.Create(uri, cvt));
-            return await GetAsync(cvt);
+            return await GetAsync(cvt).ConfigureAwait(false);
         }
 
         #endregion
 
         #region Fields
-        private OnceAction<bool> _dispose;
-        private HttpClient _http;
+        private readonly OnceAction<bool> _dispose;
+        private readonly HttpClient _http;
         #endregion
     }
 }

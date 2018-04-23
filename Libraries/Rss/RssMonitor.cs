@@ -304,8 +304,8 @@ namespace Cube.Net.Rss
             Suspend();
             foreach (var uri in uris)
             {
-                try { await UpdateAsync(uri); }
-                catch (Exception e) { await PublishErrorAsync(uri, e); }
+                try { await UpdateAsync(uri).ConfigureAwait(false); }
+                catch (Exception e) { await PublishErrorAsync(uri, e).ConfigureAwait(false); }
             }
             if (State == TimerState.Suspend) Start();
         }).Forget();
@@ -387,7 +387,7 @@ namespace Cube.Net.Rss
                     Uri         = kv.Key,
                     LastChecked = DateTime.Now,
                     Error       = kv.Value,
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -409,7 +409,7 @@ namespace Cube.Net.Rss
             this.LogDebug($"{uri} ({sw.Elapsed})");
 
             Feeds[uri] = dest.LastChecked;
-            await PublishAsync(dest);
+            await PublishAsync(dest).ConfigureAwait(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -443,7 +443,7 @@ namespace Cube.Net.Rss
                 try
                 {
                     if (State != TimerState.Run) return;
-                    await UpdateAsync(uri);
+                    await UpdateAsync(uri).ConfigureAwait(false);
                 }
                 catch (Exception err) { errors.Add(uri, err); }
             }
@@ -460,30 +460,25 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private async Task WhenTick()
         {
-            if (State != TimerState.Run) return;
-
             var src    = Feeds.OrderBy(e => e.Value).Select(e => e.Key).ToList();
             var errors = new Dictionary<Uri, Exception>();
-            await RunAsync(src, errors);
+            await RunAsync(src, errors).ConfigureAwait(false);
 
             for (var i = 0; i < RetryCount && errors.Count > 0; ++i)
             {
-                if (State != TimerState.Run) return;
-                await TaskEx.Delay(RetryInterval);
-                if (State != TimerState.Run) return;
-
+                await TaskEx.Delay(RetryInterval).ConfigureAwait(false);
                 var retry = errors.Keys.ToList();
                 errors.Clear();
-                await RunAsync(retry, errors);
+                await RunAsync(retry, errors).ConfigureAwait(false);
             }
 
-            await PublishErrorAsync(errors);
+            await PublishErrorAsync(errors).ConfigureAwait(false);
         }
 
         #endregion
 
         #region Fields
-        private RssClient _http;
+        private readonly RssClient _http;
         #endregion
     }
 }

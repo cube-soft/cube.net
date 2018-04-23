@@ -49,13 +49,25 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         public SettingsViewModel(SettingsFolder settings) : base(new Messenger())
         {
-            Model = settings;
-            Data  = new Bindable<Settings>(settings.Value);
+            Model  = settings;
+            Local  = settings.Value.ToBindable();
+            Shared = settings.Shared.ToBindable();
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Local
+        ///
+        /// <summary>
+        /// ローカル設定を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<LocalSettings> Local { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -66,7 +78,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<Settings> Data { get; }
+        public Bindable<SharedSettings> Shared { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -153,6 +165,21 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// SelectDataDirectory
+        ///
+        /// <summary>
+        /// データディレクトリを選択するコマンドです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ICommand SelectDataDirectory => _selectDataDirectory ?? (
+            _selectDataDirectory = new RelayCommand(
+                () => Messenger.Send(MessageFactory.DataDirectory(Local.Value.DataDirectory))
+            )
+        );
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Apply
         ///
         /// <summary>
@@ -173,6 +200,7 @@ namespace Cube.Net.App.Rss.Reader
         #region Fields
         private BitmapImage _logo;
         private ICommand _apply;
+        private ICommand _selectDataDirectory;
         #endregion
     }
 }

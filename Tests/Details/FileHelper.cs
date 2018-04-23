@@ -29,7 +29,7 @@ namespace Cube.Net.Tests
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    class FileHelper : NetworkHelper
+    public class FileHelper
     {
         #region Constructors
 
@@ -175,7 +175,7 @@ namespace Cube.Net.Tests
         #endregion
 
         #region Fields
-        private string _directory = string.Empty;
+        private readonly string _directory;
         #endregion
     }
 }

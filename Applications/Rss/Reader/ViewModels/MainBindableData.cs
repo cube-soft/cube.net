@@ -17,19 +17,20 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Xui;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssBindableData
+    /// MainBindableData
     ///
     /// <summary>
     /// メイン画面にバインドされるデータ群を定義したクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssBindableData
+    public class MainBindableData
     {
         #region Constructors
 
@@ -43,12 +44,20 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /// <param name="root">ルートオブジェクト</param>
         /// <param name="settings">設定用オブジェクト</param>
+        /// <param name="context">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssBindableData(IEnumerable<IRssEntry> root, Settings settings)
+        public MainBindableData(IEnumerable<IRssEntry> root,
+            SettingsFolder settings, SynchronizationContext context)
         {
-            Root = root;
-            User = new Bindable<Settings>(settings);
+            Root       = root;
+            Lock       = settings.Lock.ToBindable(true, context);
+            Local      = settings.Value.ToBindable(context);
+            Shared     = settings.Shared.ToBindable(context);
+            Current    = new Bindable<IRssEntry>(null, true, context);
+            LastEntry  = new Bindable<RssEntry>(null, true, context);
+            Content    = new Bindable<object>(null, context);
+            Message    = new Bindable<string>(null, context);
         }
 
         #endregion
@@ -69,14 +78,36 @@ namespace Cube.Net.App.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// User
+        /// Lock
+        ///
+        /// <summary>
+        /// ロック情報を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<LockSettings> Lock { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Local
+        ///
+        /// <summary>
+        /// ローカル設定を保持するオブジェクトを取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Bindable<LocalSettings> Local { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Shared
         ///
         /// <summary>
         /// ユーザ設定を保持するオブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<Settings> User { get; }
+        public Bindable<SharedSettings> Shared { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -87,7 +118,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<IRssEntry> Current { get; } = new Bindable<IRssEntry>();
+        public Bindable<IRssEntry> Current { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -105,7 +136,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssEntry> LastEntry { get; } = new Bindable<RssEntry>();
+        public Bindable<RssEntry> LastEntry { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -116,7 +147,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<object> Content { get; } = new Bindable<object>();
+        public Bindable<object> Content { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -127,7 +158,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<string> Message { get; } = new Bindable<string>();
+        public Bindable<string> Message { get; }
 
         #endregion
     }

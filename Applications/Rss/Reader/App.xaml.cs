@@ -17,6 +17,9 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Forms.Processes;
 using Cube.Log;
+using Cube.Xui;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -34,8 +37,26 @@ namespace Cube.Net.App.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public partial class App : Application
+    public partial class App : Application, IDisposable
     {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// App
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public App()
+        {
+            _dispose = new OnceAction<bool>(Dispose);
+        }
+
+        #endregion
+
         #region Methods
 
         /* ----------------------------------------------------------------- */
@@ -52,13 +73,19 @@ namespace Cube.Net.App.Rss.Reader
             if (!Activate()) return;
 
             LogOperator.Configure();
-            LogOperator.ObserveTaskException();
             LogOperator.Info(GetType(), Assembly.GetExecutingAssembly());
 
-            System.Net.ServicePointManager.DefaultConnectionLimit = 10;
-            BrowserSettings.Version = BrowserVersion.Latest;
-            BrowserSettings.MaxConnections = 10;
-            BrowserSettings.NavigationSounds = false;
+            _resources.Add(LogOperator.ObserveTaskException());
+            _resources.Add(XuiLogOperator.ObserveUiException(this));
+
+            try
+            {
+                System.Net.ServicePointManager.DefaultConnectionLimit = 10;
+                BrowserSettings.Version = BrowserVersion.Latest;
+                BrowserSettings.MaxConnections = 10;
+                BrowserSettings.NavigationSounds = false;
+            }
+            catch (Exception err) { this.LogWarn(err.ToString(), err); }
 
             base.OnStartup(e);
         }
@@ -74,9 +101,61 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void OnExit(ExitEventArgs e)
         {
-            if (_mutex != null) _mutex.ReleaseMutex();
+            _mutex?.ReleaseMutex();
             base.OnExit(e);
         }
+
+        #region IDisposable
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~App
+        ///
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        ~App() { _dispose.Invoke(false); }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Dispose()
+        {
+            _dispose.Invoke(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// リソースを開放します。
+        /// </summary>
+        ///
+        /// <param name="disposing">
+        /// マネージオブジェクトを開放するかどうか
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                foreach (var obj in _resources) obj.Dispose();
+                // _mutex?.Dispose();
+            }
+        }
+
+        #endregion
 
         #endregion
 
@@ -93,7 +172,7 @@ namespace Cube.Net.App.Rss.Reader
         /* ----------------------------------------------------------------- */
         private bool Activate()
         {
-            var name = AssemblyReader.Default.Product;
+            var name = $"{Environment.UserName}@{AssemblyReader.Default.Product}";
             _mutex = new Mutex(true, name, out bool dest);
             if (!dest)
             {
@@ -108,6 +187,8 @@ namespace Cube.Net.App.Rss.Reader
         #endregion
 
         #region Fields
+        private readonly OnceAction<bool> _dispose;
+        private readonly IList<IDisposable> _resources = new List<IDisposable>();
         private Mutex _mutex;
         #endregion
     }

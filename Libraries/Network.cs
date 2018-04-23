@@ -1,19 +1,19 @@
 ﻿/* ------------------------------------------------------------------------- */
-///
-/// Copyright (c) 2010 CubeSoft, Inc.
-///
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///  http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-///
+//
+// Copyright (c) 2010 CubeSoft, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 /* ------------------------------------------------------------------------- */
 using Cube.Log;
 using Cube.Tasks;
@@ -168,9 +168,9 @@ namespace Cube.Net
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        private static void WhenChanged(object sender, NetworkAvailabilityEventArgs e)
+        private static void WhenChanged(object s, NetworkAvailabilityEventArgs e)
         {
-            if (!e.IsAvailable) AvailabilityChanged?.Invoke(sender, e);
+            if (!e.IsAvailable) AvailabilityChanged?.Invoke(s, e);
             else TaskEx.Run(async () =>
             {
                 var type = typeof(Network);
@@ -179,13 +179,13 @@ namespace Cube.Net
                     if (Status == OperationalStatus.Up)
                     {
                         LogOperator.Debug(type, ($"Status:Up ({i * 5} sec)"));
-                        AvailabilityChanged?.Invoke(sender, e);
+                        AvailabilityChanged?.Invoke(s, e);
                         return;
                     }
                     await TaskEx.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
                 }
                 LogOperator.Debug(type, $"Status:{Status} (Timeout)");
-                AvailabilityChanged?.Invoke(sender, e);
+                AvailabilityChanged?.Invoke(s, e);
             }).Forget();
         }
 

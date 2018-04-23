@@ -24,15 +24,15 @@ namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ClientTest
+    /// NtpClientTest
     ///
     /// <summary>
-    /// Cube.Net.Ntp.Client のテストクラスです。
+    /// NtpClient のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class NtpClientTest : NetworkHelper
+    class NtpClientTest
     {
         #region Tests
 
@@ -150,8 +150,7 @@ namespace Cube.Net.Tests
                 using (var client = new Ntp.NtpClient())
                 {
                     client.Timeout = TimeSpan.FromMilliseconds(1);
-                    var result = client.GetAsync().Result;
-                    Assert.Fail("never reached");
+                    client.GetAsync().Wait();
                 }
             },
             Throws.TypeOf<AggregateException>()
