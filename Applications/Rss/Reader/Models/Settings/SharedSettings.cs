@@ -295,7 +295,7 @@ namespace Cube.Net.App.Rss.Reader
         private void Reset()
         {
             _startUri             = null;
-            _capacity             = 1000;
+            _capacity             = 100;
             _lightMode            = false;
             _enableNewWindow      = false;
             _enableMonitorMessage = true;

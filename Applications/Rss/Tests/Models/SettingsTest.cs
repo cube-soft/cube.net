@@ -91,7 +91,7 @@ namespace Cube.Net.App.Rss.Tests
             Assert.That(src.Value.Height,                Is.EqualTo(650));
             Assert.That(src.Value.DataDirectory,         Is.EqualTo(RootDirectory()));
             Assert.That(src.Shared.StartUri,             Is.Null);
-            Assert.That(src.Shared.Capacity,             Is.EqualTo(1000));
+            Assert.That(src.Shared.Capacity,             Is.EqualTo(100));
             Assert.That(src.Shared.EnableNewWindow,      Is.False);
             Assert.That(src.Shared.EnableMonitorMessage, Is.True);
             Assert.That(src.Shared.LightMode,            Is.False);
