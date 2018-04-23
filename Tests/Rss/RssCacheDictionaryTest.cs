@@ -188,20 +188,20 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DeleteCache_Null
+        /// Delete_Null
         ///
         /// <summary>
-        /// DeleteCache の引数に null を指定した時の挙動を確認します。
+        /// Delete の引数に null を指定した時の挙動を確認します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void DeleteCache_Null() => Assert.DoesNotThrow(() =>
+        public void Delete_Null() => Assert.DoesNotThrow(() =>
         {
-            var cache = Result($@"{nameof(DeleteCache_Null)}\Cache");
+            var cache = Result($@"{nameof(Delete_Null)}\Cache");
             using (var src = new RssCacheDictionary { Directory = cache})
             {
-                src.DeleteCache(null);
+                src.Delete(null);
             }
         });
 

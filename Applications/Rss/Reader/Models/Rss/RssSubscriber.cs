@@ -571,7 +571,7 @@ namespace Cube.Net.App.Rss.Reader
 
             foreach (var entry in entries)
             {
-                _feeds.DeleteCache(entry.Uri);
+                _feeds.Delete(entry.Uri);
                 entry.Items.Clear();
                 entry.Count = 0;
                 entry.LastChecked = null;

@@ -234,38 +234,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void Save()
         {
-            foreach (var key in _memory.Keys.ToList()) this.LogWarn(() => SaveCache(key));
+            foreach (var key in _memory.Keys.ToList()) this.LogWarn(() => Save(key));
             _memory.Clear();
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SaveCache
-        ///
-        /// <summary>
-        /// RSS フィードをキャッシュファイルに保存します。
-        /// </summary>
-        ///
-        /// <param name="uri">RSS フィードの URL</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void SaveCache(Uri uri)
-        {
-            var dest = CacheName(uri);
-            if (string.IsNullOrEmpty(dest) || !_inner.ContainsKey(uri)) return;
-
-            var src = _inner[uri];
-            if (src == null || !src.LastChecked.HasValue) return;
-
-            if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            IO.Save(dest, e => SettingsType.Json.Save(e, new RssFeed.Json(src)));
-
-            src.Items.Clear();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DeleteCache
+        /// Delete
         ///
         /// <summary>
         /// キャッシュファイルを削除します。
@@ -274,7 +249,7 @@ namespace Cube.Net.Rss
         /// <param name="uri">削除する RSS フィードの URL</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void DeleteCache(Uri uri)
+        public void Delete(Uri uri)
         {
             var dest = CacheName(uri);
             if (!string.IsNullOrEmpty(dest)) IO.Delete(dest);
@@ -393,7 +368,7 @@ namespace Cube.Net.Rss
         {
             var result = _inner.Remove(key);
             if (result) _memory.Remove(key);
-            if (deleteCache) DeleteCache(key);
+            if (deleteCache) Delete(key);
             return result;
         }
 
@@ -565,7 +540,7 @@ namespace Cube.Net.Rss
             if (IsReadOnlyCache || _memory.Count <= Capacity) return;
             var key = _memory.FirstOrDefault(e => !e.Value).Key;
             if (key == null) return;
-            SaveCache(key);
+            Save(key);
             _memory.Remove(key);
         }
 
@@ -637,6 +612,29 @@ namespace Cube.Net.Rss
             return !string.IsNullOrEmpty(src) ?
                    IO.Load(src, e => SettingsType.Json.Load<RssFeed.Json>(e).Convert()) :
                    default(RssFeed);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Save
+        ///
+        /// <summary>
+        /// RSS フィードをキャッシュファイルに保存します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Save(Uri uri)
+        {
+            var dest = CacheName(uri);
+            if (string.IsNullOrEmpty(dest) || !_inner.ContainsKey(uri)) return;
+
+            var src = _inner[uri];
+            if (src == null || !src.LastChecked.HasValue) return;
+
+            if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
+            IO.Save(dest, e => SettingsType.Json.Save(e, new RssFeed.Json(src)));
+
+            src.Items.Clear();
         }
 
         /* ----------------------------------------------------------------- */
