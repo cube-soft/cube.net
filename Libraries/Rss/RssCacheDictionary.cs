@@ -204,7 +204,7 @@ namespace Cube.Net.Rss
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFeed Get(Uri key, bool locked) => Pop(_inner[key], locked);
+        public RssFeed Get(Uri key, bool locked) => MarkMemory(_inner[key], locked);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -251,15 +251,16 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public void SaveCache(Uri uri)
         {
-            if (string.IsNullOrEmpty(Directory) || !_inner.ContainsKey(uri)) return;
+            var dest = CacheName(uri);
+            if (string.IsNullOrEmpty(dest) || !_inner.ContainsKey(uri)) return;
 
-            var feed = _inner[uri];
-            if (feed == null || !feed.LastChecked.HasValue) return;
+            var src = _inner[uri];
+            if (src == null || !src.LastChecked.HasValue) return;
 
             if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            IO.Save(CacheName(uri), e => SettingsType.Json.Save(e, new RssFeed.Json(feed)));
+            IO.Save(dest, e => SettingsType.Json.Save(e, new RssFeed.Json(src)));
 
-            feed.Items.Clear();
+            src.Items.Clear();
         }
 
         /* ----------------------------------------------------------------- */
@@ -273,7 +274,11 @@ namespace Cube.Net.Rss
         /// <param name="uri">削除する RSS フィードの URL</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void DeleteCache(Uri uri) => IO.Delete(CacheName(uri));
+        public void DeleteCache(Uri uri)
+        {
+            var dest = CacheName(uri);
+            if (!string.IsNullOrEmpty(dest)) IO.Delete(dest);
+        }
 
         #region IDictionary<Uri, RssFeed>
 
@@ -334,7 +339,8 @@ namespace Cube.Net.Rss
         public void Add(KeyValuePair<Uri, RssFeed> item)
         {
             _inner.Add(item);
-            Pop(item.Value, false);
+            var dest = CacheName(item.Key);
+            if (!string.IsNullOrEmpty(dest) && !IO.Exists(dest)) MarkMemory(item.Value, false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -438,7 +444,7 @@ namespace Cube.Net.Rss
         public bool TryGetValue(Uri key, out RssFeed value)
         {
             var result = _inner.TryGetValue(key, out value);
-            if (result) Pop(value, false);
+            if (result) MarkMemory(value, false);
             return result;
         }
 
@@ -473,7 +479,7 @@ namespace Cube.Net.Rss
         {
             foreach (var kv in _inner)
             {
-                Pop(kv.Value, false);
+                MarkMemory(kv.Value, false);
                 yield return kv;
             }
         }
@@ -565,14 +571,16 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Pop
+        /// MarkMemory
         ///
         /// <summary>
-        /// RSS フィードをキャッシュファイルから復旧します。
+        /// メモリ上に展開されている事を記憶します。また、指定された RSS
+        /// フィードに対するキャッシュファイルが存在する場合、その内容を
+        /// 読み込みます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFeed Pop(RssFeed dest, bool locked)
+        private RssFeed MarkMemory(RssFeed dest, bool locked)
         {
             if (dest != null)
             {
@@ -623,10 +631,13 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFeed Load(Uri uri) =>
-            !string.IsNullOrEmpty(Directory) ?
-            IO.Load(CacheName(uri), e => SettingsType.Json.Load<RssFeed.Json>(e).Convert()) :
-            default(RssFeed);
+        private RssFeed Load(Uri uri)
+        {
+            var src = CacheName(uri);
+            return !string.IsNullOrEmpty(src) ?
+                   IO.Load(src, e => SettingsType.Json.Load<RssFeed.Json>(e).Convert()) :
+                   default(RssFeed);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -643,6 +654,8 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private string CacheName(Uri uri)
         {
+            if (string.IsNullOrEmpty(Directory) || uri == null) return string.Empty;
+
             var md5  = new MD5CryptoServiceProvider();
             var data = System.Text.Encoding.UTF8.GetBytes(uri.ToString());
             var hash = md5.ComputeHash(data);
