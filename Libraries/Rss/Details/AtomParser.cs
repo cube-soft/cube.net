@@ -87,9 +87,11 @@ namespace Cube.Net.Rss
                 Summary     = GetSummary(e),
                 Content     = GetContent(e),
                 Link        = e.GetUri("link"),
-                PublishTime = e.GetDateTime("updated") ??
-                              e.GetDateTime("modified") ??
-                              e.GetDateTime("published"),
+                PublishTime = e.GetDateTime("updated")   ?? // Atom 1.0
+                              e.GetDateTime("modified")  ?? // Atom 0.3
+                              e.GetDateTime("issued")    ?? // Atom 0.3
+                              e.GetDateTime("published") ?? // Atom 1.0
+                              e.GetDateTime("created"),     // Atom 0.3
                 Status      = RssItemStatus.Unread,
             })
             .OrderByDescending(e => e.PublishTime)
