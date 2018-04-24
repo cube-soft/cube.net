@@ -21,7 +21,7 @@ build:
     parallel: true
     project: Cube.Net.Rss.sln
     publish_nuget: true
-    verbosity: normal
+    verbosity: minimal
 artifacts:
     - path: Applications\Rss\Reader\bin\Release
       name: CubeRssReader
