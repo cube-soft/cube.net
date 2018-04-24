@@ -225,21 +225,6 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Save
-        ///
-        /// <summary>
-        /// メモリ上にある要素を全てキャッシュファイルに保存します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Save()
-        {
-            foreach (var key in _memory.Keys.ToList()) this.LogWarn(() => Save(key));
-            _memory.Clear();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Delete
         ///
         /// <summary>
@@ -517,7 +502,11 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing)
         {
-            if (!IsReadOnlyCache) Save();
+            if (!IsReadOnlyCache)
+            {
+                foreach (var key in _memory.Keys.ToList()) this.LogWarn(() => Save(key, false));
+                _memory.Clear();
+            }
         }
 
         #endregion
@@ -525,6 +514,38 @@ namespace Cube.Net.Rss
         #endregion
 
         #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// MarkMemory
+        ///
+        /// <summary>
+        /// メモリ上に展開されている事を記憶します。また、指定された RSS
+        /// フィードに対するキャッシュファイルが存在する場合、その内容を
+        /// 読み込みます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private RssFeed MarkMemory(RssFeed dest, bool locked)
+        {
+            try
+            {
+                if (dest != null)
+                {
+                    var exist = _memory.ContainsKey(dest.Uri);
+                    var value = exist ?
+                                locked | _memory[dest.Uri] :
+                                locked;
+
+                    if (exist) _memory.Remove(dest.Uri);
+                    else Load(dest);
+
+                    _memory.Add(dest.Uri, value);
+                }
+                return dest;
+            }
+            finally { Stash(); }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -540,42 +561,13 @@ namespace Cube.Net.Rss
             if (IsReadOnlyCache || _memory.Count <= Capacity) return;
             var key = _memory.FirstOrDefault(e => !e.Value).Key;
             if (key == null) return;
-            Save(key);
+            Save(key, true);
             _memory.Remove(key);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// MarkMemory
-        ///
-        /// <summary>
-        /// メモリ上に展開されている事を記憶します。また、指定された RSS
-        /// フィードに対するキャッシュファイルが存在する場合、その内容を
-        /// 読み込みます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private RssFeed MarkMemory(RssFeed dest, bool locked)
-        {
-            if (dest != null)
-            {
-                var f = locked;
-                if (_memory.ContainsKey(dest.Uri))
-                {
-                    f |= _memory[dest.Uri];
-                    _memory.Remove(dest.Uri);
-                }
-                else Load(dest);
-
-                _memory.Add(dest.Uri, f);
-                Stash();
-            }
-            return dest;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Pop
+        /// Load
         ///
         /// <summary>
         /// RSS フィードをキャッシュファイルから読み込みます。
@@ -622,8 +614,13 @@ namespace Cube.Net.Rss
         /// RSS フィードをキャッシュファイルに保存します。
         /// </summary>
         ///
+        /// <param name="uri">保存する RSS フィードの URL</param>
+        /// <param name="shrink">
+        /// 保存後にメモリ上の RSS フィードを軽量化するかどうか
+        /// </param>
+        ///
         /* ----------------------------------------------------------------- */
-        private void Save(Uri uri)
+        private void Save(Uri uri, bool shrink)
         {
             var dest = CacheName(uri);
             if (string.IsNullOrEmpty(dest) || !_inner.ContainsKey(uri)) return;
@@ -632,9 +629,11 @@ namespace Cube.Net.Rss
             if (src == null || !src.LastChecked.HasValue) return;
 
             if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            IO.Save(dest, e => SettingsType.Json.Save(e, new RssFeed.Json(src)));
-
-            src.Items.Clear();
+            IO.Save(dest, e =>
+            {
+                SettingsType.Json.Save(e, new RssFeed.Json(src));
+                if (shrink) src.Items.Clear();
+            });
         }
 
         /* ----------------------------------------------------------------- */
