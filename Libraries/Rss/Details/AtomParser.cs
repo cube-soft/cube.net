@@ -31,6 +31,10 @@ namespace Cube.Net.Rss
     /// Atom を解析するクラスです。
     /// </summary>
     ///
+    /// <remarks>
+    /// このクラスでは Atom 0.3 で定義された一部のタグも解析します。
+    /// </remarks>
+    ///
     /* --------------------------------------------------------------------- */
     internal static class AtomParser
     {
@@ -78,8 +82,7 @@ namespace Cube.Net.Rss
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        private static IList<RssItem> ParseItems(XElement src)
-            => src
+        private static IList<RssItem> ParseItems(XElement src) => src
             .Descendants(src.GetDefaultNamespace() + "entry")
             .Select(e => new RssItem
             {
@@ -87,11 +90,7 @@ namespace Cube.Net.Rss
                 Summary     = GetSummary(e),
                 Content     = GetContent(e),
                 Link        = e.GetUri("link"),
-                PublishTime = e.GetDateTime("updated")   ?? // Atom 1.0
-                              e.GetDateTime("modified")  ?? // Atom 0.3
-                              e.GetDateTime("issued")    ?? // Atom 0.3
-                              e.GetDateTime("published") ?? // Atom 1.0
-                              e.GetDateTime("created"),     // Atom 0.3
+                PublishTime = GetPublishTime(e),
                 Status      = RssItemStatus.Unread,
             })
             .OrderByDescending(e => e.PublishTime)
@@ -128,6 +127,22 @@ namespace Cube.Net.Rss
             if (string.IsNullOrEmpty(dest)) dest = src.GetValue("summary");
             return dest.Trim();
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetPublishTime
+        ///
+        /// <summary>
+        /// 公開日時を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static DateTime? GetPublishTime(XElement src) =>
+            src.GetDateTime("updated")   ?? // Atom 1.0
+            src.GetDateTime("modified")  ?? // Atom 0.3
+            src.GetDateTime("issued")    ?? // Atom 0.3
+            src.GetDateTime("published") ?? // Atom 1.0
+            src.GetDateTime("created");     // Atom 0.3
 
         #endregion
     }

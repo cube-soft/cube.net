@@ -44,8 +44,8 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         [TestCase("SampleRss091.xml",   ExpectedResult = RssVersion.Rss091)]
         [TestCase("SampleRss092.xml",   ExpectedResult = RssVersion.Rss092)]
-        [TestCase("SampleRss10-01.xml", ExpectedResult = RssVersion.Rss10)]
-        [TestCase("SampleRss20-01.xml", ExpectedResult = RssVersion.Rss20)]
+        [TestCase("SampleRss10-01.xml", ExpectedResult = RssVersion.Rss100)]
+        [TestCase("SampleRss20-01.xml", ExpectedResult = RssVersion.Rss200)]
         [TestCase("SampleAtom-01.xml",  ExpectedResult = RssVersion.Atom)]
         [TestCase("Sample.xml",         ExpectedResult = RssVersion.Unknown)]
         public RssVersion GetRssVersion(string filename) => XDocument
