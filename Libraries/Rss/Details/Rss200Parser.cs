@@ -82,8 +82,7 @@ namespace Cube.Net.Rss
         /// <returns>RssFeed オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        private static IList<RssItem> ParseItems(XElement src)
-            => src
+        private static IList<RssItem> ParseItems(XElement src) => src
             .Descendants("item")
             .Select(e => new RssItem
             {
@@ -136,61 +135,5 @@ namespace Cube.Net.Rss
         }
 
         #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// Rss092Parser
-    ///
-    /// <summary>
-    /// RSS 0.92 を解析するクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    internal static class Rss092Parser
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Parse
-        ///
-        /// <summary>
-        /// XML オブジェクトから RssFeed オブジェクトを生成します。
-        /// </summary>
-        ///
-        /// <param name="root">XML のルート要素</param>
-        ///
-        /// <returns>RssFeed オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(XElement root) =>
-            Rss200Parser.Parse(root);
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// Rss091Parser
-    ///
-    /// <summary>
-    /// RSS 0.91 を解析するクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    internal static class Rss091Parser
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Parse
-        ///
-        /// <summary>
-        /// XML オブジェクトから RssFeed オブジェクトを生成します。
-        /// </summary>
-        ///
-        /// <param name="root">XML のルート要素</param>
-        ///
-        /// <returns>RssFeed オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(XElement root) =>
-            Rss200Parser.Parse(root);
     }
 }
