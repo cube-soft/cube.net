@@ -11,28 +11,24 @@ RESTORE  = 'nuget restore'
 PACK     = 'nuget pack -Properties "Configuration=Release;Platform=AnyCPU"'
 
 # Tasks
-task :default {
+task :default do
     Rake::Task[:clean].execute
     Rake::Task[:build].execute
     Rake::Task[:pack].execute
-    Rake::Task[:postproc].execute
-}
+end
 
-task :build {
-    BRANCHES.each { |branch|
+task :build do
+    BRANCHES.each do |branch|
         sh("#{CHECKOUT} #{branch}")
         sh("#{RESTORE} #{PROJECT}.sln")
         sh("#{BUILD} #{PROJECT}.sln")
-    }
-}
+    end
+end
 
-task :pack {
+task :pack do
     sh("#{CHECKOUT} net35")
     sh("#{PACK} Libraries/#{PROJECT}.nuspec")
-}
-
-task :postproc {
     sh("#{CHECKOUT} master")
-}
+end
 
 CLEAN.include("#{PROJECT}.*.nupkg")
