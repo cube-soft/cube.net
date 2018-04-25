@@ -254,7 +254,7 @@ namespace Cube.Net.Tests
                     Title       = "Sample for Atom 0.3",
                     Description = "",
                     Link        = new Uri("http://www.example.com/"),
-                }).Returns(2);
+                }).Returns(3);
             }
         }
 

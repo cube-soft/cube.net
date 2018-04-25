@@ -8,7 +8,7 @@
     <owners>$author$</owners>
     <copyright>$copyright$</copyright>
     <description>Network library for CubeSoft applications.</description>
-    <tags>Cube Windows Network</tags>
+    <tags>Cube HTTP NTP RSS</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/cube-soft/Cube.Net</projectUrl>
     <licenseUrl>https://github.com/cube-soft/Cube.Net/blob/master/License.txt</licenseUrl>

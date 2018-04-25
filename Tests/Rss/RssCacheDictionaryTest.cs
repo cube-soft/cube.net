@@ -186,6 +186,25 @@ namespace Cube.Net.Tests
             }
         }
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Delete_Null
+        ///
+        /// <summary>
+        /// Delete の引数に null を指定した時の挙動を確認します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void Delete_Null() => Assert.DoesNotThrow(() =>
+        {
+            var cache = Result($@"{nameof(Delete_Null)}\Cache");
+            using (var src = new RssCacheDictionary { Directory = cache})
+            {
+                src.Delete(null);
+            }
+        });
+
         #endregion
 
         #region Helper methods

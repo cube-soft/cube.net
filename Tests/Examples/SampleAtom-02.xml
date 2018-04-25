@@ -15,6 +15,7 @@
 <link rel="alternate" type="text/html" href="http://www.example.com/01.html" />
 <modified>2018-02-20T09:31:02Z</modified>
 <issued>2018-02-20T18:30:19+09:00</issued>
+<created>2018-02-19T17:30:19+09:00</created>
 <id>tag:sample:atom03:01</id>
 <summary type="text/plain">Atom 0.3 のサンプルです。</summary>
 <dc:subject>グッズ・商品</dc:subject>
@@ -28,15 +29,29 @@
 
 <entry>
 <title>Atom 0.3 のサンプル その 2</title>
-<link rel="alternate" type="text/html" href="http://karapaia.com/archives/52253993.html" />
-<modified>2018-02-20T09:15:00Z</modified>
+<link rel="alternate" type="text/html" href="http://www.example.com/02.html" />
 <issued>2018-02-20T16:30:34+09:00</issued>
+<created>2018-02-19T16:05:00+09:00</created>
 <id>tag:sample:atom03:02</id>
 <summary type="text/plain">タグ付きサンプルです。</summary>
 <dc:subject>知る</dc:subject>
 <content type="text/html" mode="escaped" xml:lang="ja" xml:base="http://www.example.com/02.html">
 <![CDATA[<img src="images/sample.jpg" /><br /><br>タグ付きサンプルです。
 <a href="http://www.example.com/02.html">続きを読む</a>]]>
+</content>
+<author>
+<name>SampleAuthor</name>
+</author>
+</entry>
+
+<entry>
+<title>Atom 0.3 のサンプル その 3</title>
+<link rel="alternate" type="text/html" href="http://www.example.com/03.html" />
+<created>2018-02-19T14:25:32+09:00</created>
+<id>tag:sample:atom03:03</id>
+<summary type="text/plain">Atom 0.3 のサンプル その 3。</summary>
+<content type="text/html" mode="escaped" xml:lang="ja" xml:base="http://www.example.com/03.html">
+<![CDATA[<p>Atom 0.3 のサンプル その 3。</p>]]>
 </content>
 <author>
 <name>SampleAuthor</name>

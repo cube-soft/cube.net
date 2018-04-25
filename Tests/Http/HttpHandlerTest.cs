@@ -19,7 +19,6 @@ using NUnit.Framework;
 using System;
 using System.Net;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Cube.Net.Tests
 {
@@ -54,7 +53,7 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public async Task GetAsync_ConnectionClose()
+        public void GetAsync_ConnectionClose()
         {
             var uri = new Uri("http://www.cube-soft.jp/");
             var h   = new Cube.Net.Http.HeaderHandler
@@ -64,7 +63,7 @@ namespace Cube.Net.Tests
             };
 
             using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
-            using (var response = await http.GetAsync(uri))
+            using (var response = http.GetAsync(uri).Result)
             {
                 Assert.That(response.Headers.Connection.Contains("Close"));
             }
@@ -80,17 +79,16 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        [Ignore("Skip the test in chrome branch")]
-        public async Task GetAsync_EntityTag()
+        public void GetAsync_EntityTag()
         {
             var uri = new Uri("https://www.cube-soft.jp/favicon.ico");
             var h   = new Cube.Net.Http.HeaderHandler { UserAgent = GetUserAgent() };
 
             using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
             {
-                using (var r = await http.GetAsync(uri)) Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                using (var r = http.GetAsync(uri).Result) Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                 var tag = h.EntityTag;
-                using (var r = await http.GetAsync(uri))
+                using (var r = http.GetAsync(uri).Result)
                 {
                     Assert.That(h.EntityTag,  Is.EqualTo(tag));
                     Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));

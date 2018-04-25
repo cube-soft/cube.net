@@ -127,7 +127,7 @@ namespace Cube.Net.Tests
         [Test]
         public void GetAsync_NotFound()
         {
-            var uri = new Uri("http://www.cube-soft.jp/404.html");
+            var uri = new Uri("https://www.cube-soft.jp/404.html");
             using (var http = HttpClientFactory.Create())
             {
                 var result = http.GetAsync(uri, s => s.ReadByte()).Result;

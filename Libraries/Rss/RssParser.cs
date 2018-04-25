@@ -90,10 +90,10 @@ namespace Cube.Net.Rss
             switch (version)
             {
                 case RssVersion.Atom:   return AtomParser.Parse(root);
-                case RssVersion.Rss091: return Rss091Parser.Parse(root);
-                case RssVersion.Rss092: return Rss092Parser.Parse(root);
-                case RssVersion.Rss10:  return Rss100Parser.Parse(root);
-                case RssVersion.Rss20:  return Rss200Parser.Parse(root);
+                case RssVersion.Rss091: return Rss200Parser.Parse(root);
+                case RssVersion.Rss092: return Rss200Parser.Parse(root);
+                case RssVersion.Rss100: return Rss100Parser.Parse(root);
+                case RssVersion.Rss200: return Rss200Parser.Parse(root);
                 default: break;
             }
             return default(RssFeed);
