@@ -106,6 +106,7 @@ namespace Cube.Net.App.Rss.Reader
                         _timer.Interval - past :
                         TimeSpan.FromMilliseconds(100);
             _timer.Start(delta);
+            this.LogDebug($"Start\tInterval:{_timer.Interval}\tInitialDelay:{delta}");
         }
 
         /* ----------------------------------------------------------------- */
