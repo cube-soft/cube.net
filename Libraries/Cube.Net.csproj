@@ -76,10 +76,9 @@
     <Compile Include="Ntp\NtpMonitor.cs" />
     <Compile Include="Ntp\NtpPacket.cs" />
     <Compile Include="Rss\Details\AtomParser.cs" />
-    <Compile Include="Rss\Details\Rss100Parser.cs" />
-    <Compile Include="Rss\Details\Rss200Parser.cs" />
-    <Compile Include="Rss\Details\RssParseOptions.cs" />
     <Compile Include="Rss\Details\RssOperator.cs" />
+    <Compile Include="Rss\Details\RssParser.cs" />
+    <Compile Include="Rss\Details\RssParseOptions.cs" />
     <Compile Include="Rss\RssCacheDictionary.cs" />
     <Compile Include="Rss\RssClient.cs" />
     <Compile Include="Rss\RssFeed.cs" />

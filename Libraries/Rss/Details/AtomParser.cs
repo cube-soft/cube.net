@@ -107,9 +107,9 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static string GetSummary(XElement src)
         {
-            var dest = src.GetValue("summary");
-            if (string.IsNullOrEmpty(dest)) dest = src.GetValue("content");
-            return dest.Strip(RssParseOptions.MaxSummaryLength);
+            var n    = RssParseOptions.MaxSummaryLength;
+            var dest = src.GetValue("summary").Strip(n);
+            return !string.IsNullOrEmpty(dest) ? dest : src.GetValue("content").Strip(n);
         }
 
         /* ----------------------------------------------------------------- */

@@ -89,8 +89,8 @@ namespace Cube.Net.Rss
             .Select(e => new RssItem
             {
                 Title       = e.GetTitle(),
-                Summary     = GetSummary(e),
-                Content     = GetContent(e),
+                Summary     = e.GetRssSummary(),
+                Content     = e.GetRssContent(),
                 Link        = e.GetUri("link"),
                 PublishTime = e.GetDateTime("dc", "date"),
                 Status      = RssItemStatus.Unread,
@@ -98,36 +98,81 @@ namespace Cube.Net.Rss
             .OrderByDescending(e => e.PublishTime)
             .ToList();
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetSummary
-        ///
-        /// <summary>
-        /// Summary を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static string GetSummary(XElement src) =>
-            src.GetValue("description").Strip(RssParseOptions.MaxSummaryLength);
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Rss200Parser
+    ///
+    /// <summary>
+    /// RSS 2.0 を解析するクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    internal static class Rss200Parser
+    {
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetContent
+        /// Parse
         ///
         /// <summary>
-        /// Content を取得します。
+        /// XML オブジェクトから RssFeed オブジェクトを生成します。
         /// </summary>
         ///
+        /// <param name="root">XML のルート要素</param>
+        ///
+        /// <returns>RssFeed オブジェクト</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        private static string GetContent(XElement src)
+        public static RssFeed Parse(XElement root)
         {
-            var end  = src.GetValue("content", "encoded");
-            var dest = !string.IsNullOrEmpty(end) ?
-                       end :
-                       src.GetValue("description") ??
-                       string.Empty;
-            return dest.Trim();
+            var e = root.Element("channel");
+            if (e == null) return default(RssFeed);
+
+            var items = ParseItems(e);
+            return new RssFeed(items)
+            {
+                Title         = e.GetTitle(),
+                Description   = e.GetValue("description"),
+                Link          = e.GetUri("link"),
+                LastChecked   = DateTime.Now,
+                LastPublished = items.FirstOrDefault()?.PublishTime,
+            };
         }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ParseItems
+        ///
+        /// <summary>
+        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// </summary>
+        ///
+        /// <param name="src">XML</param>
+        ///
+        /// <returns>RssFeed オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IList<RssItem> ParseItems(XElement src) => src
+            .Descendants("item")
+            .Select(e => new RssItem
+            {
+                Title       = e.GetTitle(),
+                Summary     = e.GetRssSummary(),
+                Content     = e.GetRssContent(),
+                Link        = e.GetUri("link"),
+                PublishTime = e.GetDateTime("pubDate"),
+                Status      = RssItemStatus.Unread,
+            })
+            .OrderByDescending(e => e.PublishTime)
+            .ToList();
 
         #endregion
     }
