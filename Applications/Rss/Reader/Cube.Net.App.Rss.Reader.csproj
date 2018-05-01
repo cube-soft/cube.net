@@ -103,7 +103,7 @@
     <Compile Include="Models\Rss\IRssEntry.cs" />
     <Compile Include="Models\Rss\RssCategory.cs" />
     <Compile Include="Models\Rss\RssEntry.cs" />
-    <Compile Include="Models\Rss\RssOperator.cs" />
+    <Compile Include="Models\Rss\RssExtension.cs" />
     <Compile Include="Models\Rss\RssOpml.cs" />
     <Compile Include="Models\Rss\RssSubscriber.cs" />
     <Compile Include="Models\Settings\LocalSettings.cs" />

@@ -402,7 +402,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Load() {
-            Add(RssOperator.Load(FileName, _context, IO).SelectMany(e =>
+            Add(RssExtension.Load(FileName, _context, IO).SelectMany(e =>
                 !string.IsNullOrEmpty(e.Title) ?
                 new[] { e as IRssEntry } :
                 e.Entries.Select(re =>
@@ -412,7 +412,7 @@ namespace Cube.Net.App.Rss.Reader
                 })
             ));
 
-            if (!IsReadOnly && _feeds.Count > 0) Task.Run(() => RssOperator.Backup(FileName, IO)).Forget();
+            if (!IsReadOnly && _feeds.Count > 0) Task.Run(() => RssExtension.Backup(FileName, IO)).Forget();
         }
 
         /* ----------------------------------------------------------------- */

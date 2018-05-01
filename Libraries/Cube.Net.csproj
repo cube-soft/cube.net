@@ -65,10 +65,10 @@
     <Compile Include="Http\Converters\JsonConverter.cs" />
     <Compile Include="Http\Converters\XmlConverter.cs" />
     <Compile Include="Http\HttpClientFactory.cs" />
+    <Compile Include="Http\HttpExtension.cs" />
     <Compile Include="Http\HttpHandlers.cs" />
     <Compile Include="Http\HttpMonitor.cs" />
     <Compile Include="Http\HttpMonitorBase.cs" />
-    <Compile Include="Http\HttpOperator.cs" />
     <Compile Include="Http\HttpValueContent.cs" />
     <Compile Include="NativeMethods\UrlMon.cs" />
     <Compile Include="Ntp\NtpClient.cs" />
@@ -76,8 +76,8 @@
     <Compile Include="Ntp\NtpMonitor.cs" />
     <Compile Include="Ntp\NtpPacket.cs" />
     <Compile Include="Rss\Details\AtomParser.cs" />
-    <Compile Include="Rss\Details\RssOperator.cs" />
-    <Compile Include="Rss\Details\RssParser.cs" />
+    <Compile Include="Rss\Details\RssExtension.cs" />
+    <Compile Include="Rss\Details\RssParseCore.cs" />
     <Compile Include="Rss\Details\RssParseOptions.cs" />
     <Compile Include="Rss\RssCacheDictionary.cs" />
     <Compile Include="Rss\RssClient.cs" />

@@ -30,14 +30,14 @@ namespace Cube.Net.App.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssOperator
+    /// RssExtension
     ///
     /// <summary>
     /// RSS エントリに関する拡張用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class RssOperator
+    public static class RssExtension
     {
         #region Methods
 
@@ -64,7 +64,7 @@ namespace Cube.Net.App.Rss.Reader
 
             foreach (var f in io.GetFiles(dir).OrderByDescending(e => e).Skip(30))
             {
-                Logger.Warn(typeof(RssOperator), () => io.Delete(f));
+                Logger.Warn(typeof(RssExtension), () => io.Delete(f));
             }
         }
 

@@ -24,14 +24,14 @@ namespace Cube.Net.Rss.Parsing
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FeedOperator
+    /// FeedExtension
     ///
     /// <summary>
     /// RSS/Atom 解析時に使用する拡張メソッドを定義するクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class FeedOperator
+    internal static class FeedExtension
     {
         #region Methods
 
@@ -206,14 +206,14 @@ namespace Cube.Net.Rss.Parsing
 
     /* --------------------------------------------------------------------- */
     ///
-    /// RssParseHelper
+    /// RssExtension
     ///
     /// <summary>
     /// RSS 解析時に使用する拡張メソッドを定義するクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class RssOperator
+    internal static class RssExtension
     {
         /* ----------------------------------------------------------------- */
         ///
