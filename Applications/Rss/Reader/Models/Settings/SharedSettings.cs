@@ -15,9 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
-using Cube.Settings;
 using System;
 using System.Runtime.Serialization;
 
@@ -244,9 +244,9 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>SharedSettings オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static SharedSettings Load(string directory, Operator io) => io.Load(
+        public static SharedSettings Load(string directory, IO io) => io.Load(
             io.Combine(directory, FileName),
-            e => SettingsType.Json.Load<SharedSettings>(e),
+            e => Format.Json.Deserialize<SharedSettings>(e),
             new SharedSettings()
         );
 
@@ -262,9 +262,9 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Save(string directory, Operator io) => io.Save(
+        public void Save(string directory, IO io) => io.Save(
             io.Combine(directory, FileName),
-            e => SettingsType.Json.Save(e, this)
+            e => Format.Json.Serialize(e, this)
         );
 
         #endregion

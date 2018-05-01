@@ -53,7 +53,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="io">入出力用のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssOpml(SynchronizationContext context, Operator io)
+        public RssOpml(SynchronizationContext context, IO io)
         {
             Context = context;
             IO      = io;
@@ -83,7 +83,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Operator IO { get; }
+        public IO IO { get; }
 
         #endregion
 

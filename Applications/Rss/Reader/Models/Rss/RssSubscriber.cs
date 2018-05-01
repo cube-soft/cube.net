@@ -116,7 +116,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Operator IO
+        public IO IO
         {
             get => _feeds.IO;
             set => _feeds.IO = value;

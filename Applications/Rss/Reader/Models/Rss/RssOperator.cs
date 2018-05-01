@@ -16,11 +16,11 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Collections;
+using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
 using Cube.Log;
 using Cube.Net.Rss;
-using Cube.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +53,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static void Backup(string src, Operator io)
+        public static void Backup(string src, IO io)
         {
             var info = io.Get(src);
             var dir  = io.Combine(info.DirectoryName, "Backup");
@@ -64,7 +64,7 @@ namespace Cube.Net.App.Rss.Reader
 
             foreach (var f in io.GetFiles(dir).OrderByDescending(e => e).Skip(30))
             {
-                LogOperator.Warn(typeof(RssOperator), () => io.Delete(f));
+                Logger.Warn(typeof(RssOperator), () => io.Delete(f));
             }
         }
 
@@ -84,11 +84,11 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public static IEnumerable<RssCategory> Load(string src,
-            SynchronizationContext context, Operator io) =>
+            SynchronizationContext context, IO io) =>
             io.Load(
                 src,
-                ss => SettingsType.Json
-                    .Load<List<RssCategory.Json>>(ss)
+                ss => Format.Json
+                    .Deserialize<List<RssCategory.Json>>(ss)
                     .Select(e => e.Convert(context)),
                 new RssCategory[0]
             );
@@ -106,10 +106,10 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static void Save(this IEnumerable<RssCategory> src, string dest, Operator io) =>
+        public static void Save(this IEnumerable<RssCategory> src, string dest, IO io) =>
             io.Save(
                 dest,
-                ms => SettingsType.Json.Save(ms, src.Select(e => new RssCategory.Json(e)))
+                ms => Format.Json.Serialize(ms, src.Select(e => new RssCategory.Json(e)))
             );
 
         /* ----------------------------------------------------------------- */
