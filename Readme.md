@@ -30,9 +30,9 @@ Note that implemented applications based on the Cube.Net project have some more 
 ## Contributing
 
 1. Fork [Cube.Net](https://github.com/cube-soft/Cube.Net/fork) repository.
-2. Create a feature branch from the [release](https://github.com/cube-soft/Cube.Net/tree/release) branch (git checkout -b my-new-feature origin/release). The [master](https://github.com/cube-soft/Cube.Net/tree/master) branch may refer some pre-released version of NuGet libraries. See [AppVeyor.yml](https://github.com/cube-soft/Cube.Net/blob/master/AppVeyor.yml) if you want to build and commit in the master branch.
+2. Create a feature branch from the [stable](https://github.com/cube-soft/Cube.Net/tree/stable) branch (git checkout -b my-new-feature origin/stable). The [master](https://github.com/cube-soft/Cube.Net/tree/master) branch may refer some pre-released NuGet packages. See [AppVeyor.yml](https://github.com/cube-soft/Cube.Net/blob/master/AppVeyor.yml) if you want to build and commit in the master branch.
 3. Commit your changes.
-4. Rebase your local changes against the release (or master) branch.
+4. Rebase your local changes against the stable (or master) branch.
 5. Run test suite with the [NUnit](http://nunit.org/) console or the Visual Studio (NUnit 3 test adapter) and confirm that it passes.
 6. Create new Pull Request.
 
