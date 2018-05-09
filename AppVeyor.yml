@@ -22,9 +22,10 @@ build:
     project: Cube.Net.Rss.sln
     publish_nuget: true
     verbosity: minimal
+after_build:
+    - xcopy /Y /I Applications\Rss\Reader\bin\Release CubeRssReader
 artifacts:
-    - path: Applications\Rss\Reader\bin\Release
-      name: CubeRssReader
+    - path: CubeRssReader
 test_script:
     - ..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:nunit3-console.exe -targetargs:Cube.Net.Tests.dll -targetdir:Tests\bin\Release -returntargetcode -hideskipped:All -output:CoverResult.xml -filter:"+[*]* -[*]*NativeMethods -[*]*Properties.*"
     - ..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:nunit3-console.exe -targetargs:Cube.Net.App.Rss.Tests.dll -targetdir:Applications\Rss\Tests\bin\Release -returntargetcode -hideskipped:All -mergeoutput -output:CoverResult.xml -filter:"+[*]* -[GalaSoft]* -[*]*NativeMethods -[*]*Properties.* -[*]*Window -[*]*Control -[*]*.App"
