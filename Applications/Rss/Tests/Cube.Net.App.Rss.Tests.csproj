@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Details\FileHelper.cs" />
+    <Compile Include="Details\GlobalSetup.cs" />
     <Compile Include="Details\ViewModelHelper.cs" />
     <Compile Include="Interactions\DuplexConverterTest.cs" />
     <Compile Include="Interactions\SimplexConverterTest.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="Packages.config" />
     <None Include="Examples\Cache\7ae34cce28b4272e1170fb1e4c2c87ad">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
