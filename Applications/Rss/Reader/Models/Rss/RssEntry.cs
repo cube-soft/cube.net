@@ -16,14 +16,13 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Collections;
-using Cube.Net.Rss;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

@@ -20,13 +20,12 @@ using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
 using Cube.Log;
-using Cube.Net.Rss;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

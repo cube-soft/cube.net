@@ -19,7 +19,7 @@ using Cube.Log;
 using NUnit.Framework;
 using System.Reflection;
 
-namespace Cube.Net.App.Rss.Tests
+namespace Cube.Net.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///

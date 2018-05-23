@@ -15,16 +15,14 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Net.App.Rss.Reader;
-using Cube.Net.Rss;
-using Cube.Net.Tests;
+using Cube.Net.Rss.App.Reader;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Cube.Net.App.Rss.Tests
+namespace Cube.Net.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///

@@ -18,7 +18,6 @@
 using Cube.Conversions;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
-using Cube.Net.Rss;
 using Cube.Xml;
 using System;
 using System.Collections.Generic;
@@ -26,7 +25,7 @@ using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("Cube.Net.App.Rss.Tests")]
+[assembly: AssemblyTitle("Cube.Net.Rss.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CubeSoft")]
-[assembly: AssemblyProduct("Cube.Net.App.Rss.Tests")]
+[assembly: AssemblyProduct("Cube.Net.Rss.Tests")]
 [assembly: AssemblyCopyright("Copyright © 2017 CubeSoft, Inc.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

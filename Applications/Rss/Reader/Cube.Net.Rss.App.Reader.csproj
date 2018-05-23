@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C7742724-1786-4FDB-86C1-10090245D25E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Cube.Net.App.Rss.Reader</RootNamespace>
+    <RootNamespace>Cube.Net.Rss.App.Reader</RootNamespace>
     <AssemblyName>CubeRssReader</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

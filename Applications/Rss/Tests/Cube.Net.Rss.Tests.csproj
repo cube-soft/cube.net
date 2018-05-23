@@ -7,8 +7,8 @@
     <ProjectGuid>{91B9E559-B44B-4AF4-9401-13CA795AB9E8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cube.Net.App.Rss.Tests</RootNamespace>
-    <AssemblyName>Cube.Net.App.Rss.Tests</AssemblyName>
+    <RootNamespace>Cube.Net.Rss.Tests</RootNamespace>
+    <AssemblyName>Cube.Net.Rss.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -141,9 +141,9 @@
       <Project>{03db8859-93f8-4335-bba1-0c04981a970a}</Project>
       <Name>Cube.Net.Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Reader\Cube.Net.App.Rss.Reader.csproj">
+    <ProjectReference Include="..\Reader\Cube.Net.Rss.App.Reader.csproj">
       <Project>{c7742724-1786-4fdb-86c1-10090245d25e}</Project>
-      <Name>Cube.Net.App.Rss.Reader</Name>
+      <Name>Cube.Net.Rss.App.Reader</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

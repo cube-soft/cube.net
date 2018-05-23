@@ -1,11 +1,11 @@
-﻿<Window x:Class="Cube.Net.App.Rss.Reader.SettingsWindow"
+﻿<Window x:Class="Cube.Net.Rss.App.Reader.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
-    xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader"
+    xmlns:my="clr-namespace:Cube.Net.Rss.App.Reader"
     mc:Ignorable="d"
 
     FontFamily="Meiryo UI"

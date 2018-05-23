@@ -21,7 +21,7 @@ using Cube.Log;
 using System;
 using System.Diagnostics;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

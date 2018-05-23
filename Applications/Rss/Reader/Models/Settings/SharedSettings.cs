@@ -21,7 +21,7 @@ using Cube.FileSystem.Files;
 using System;
 using System.Runtime.Serialization;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
