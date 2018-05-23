@@ -19,7 +19,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

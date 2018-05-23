@@ -15,15 +15,15 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
-using Cube.Settings;
 using Microsoft.Win32;
 using System;
 using System.Runtime.Serialization;
 using System.Security;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -147,13 +147,13 @@ namespace Cube.Net.App.Rss.Reader
         /// <returns>LockSettings オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static LockSettings Load(string directory, Operator io)
+        public static LockSettings Load(string directory, IO io)
         {
             var src = io.Combine(directory, FileName);
-            if (io.Exists(src)) return io.Load(src, e => SettingsType.Json.Load<LockSettings>(e));
+            if (io.Exists(src)) return io.Load(src, e => Format.Json.Deserialize<LockSettings>(e));
 
             var dest = new LockSettings();
-            io.Save(src, e => SettingsType.Json.Save(e, dest));
+            io.Save(src, e => Format.Json.Serialize(e, dest));
             io.SetAttributes(src, System.IO.FileAttributes.ReadOnly | System.IO.FileAttributes.Hidden);
             return dest;
         }
@@ -170,7 +170,7 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Release(string directory, Operator io)
+        public void Release(string directory, IO io)
         {
             if (IsReadOnly) return;
             io.Delete(io.Combine(directory, FileName));

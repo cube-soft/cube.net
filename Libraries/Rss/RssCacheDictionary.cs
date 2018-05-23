@@ -16,10 +16,10 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Collections;
+using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.FileSystem.Files;
 using Cube.Log;
-using Cube.Settings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -82,7 +82,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Operator IO { get; set; } = new Operator();
+        public IO IO { get; set; } = new IO();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -602,7 +602,7 @@ namespace Cube.Net.Rss
         {
             var src = CacheName(uri);
             return !string.IsNullOrEmpty(src) ?
-                   IO.Load(src, e => SettingsType.Json.Load<RssFeed.Json>(e).Convert()) :
+                   IO.Load(src, e => Format.Json.Deserialize<RssFeed.Json>(e).Convert()) :
                    default(RssFeed);
         }
 
@@ -631,7 +631,7 @@ namespace Cube.Net.Rss
             if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
             IO.Save(dest, e =>
             {
-                SettingsType.Json.Save(e, new RssFeed.Json(src));
+                Format.Json.Serialize(e, new RssFeed.Json(src));
                 if (shrink) src.Items.Clear();
             });
         }

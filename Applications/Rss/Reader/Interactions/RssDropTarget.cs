@@ -19,7 +19,7 @@ using GongSolutions.Wpf.DragDrop;
 using System;
 using System.Windows;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

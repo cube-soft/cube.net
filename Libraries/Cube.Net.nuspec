@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Cube.Net</id>
-    <version>1.8.1</version>
+    <version>1.9.0</version>
     <title>Cube.Net</title>
     <authors>CubeSoft</authors>
     <owners>CubeSoft</owners>
@@ -15,13 +15,13 @@
     <iconUrl>https://github.com/cube-soft/Cube.Net/blob/master/Icon.png?raw=true</iconUrl>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="Cube.Core" version="1.8.1" />
-        <dependency id="Cube.FileSystem" version="1.8.1" />
+        <dependency id="Cube.Core" version="1.9.0" />
+        <dependency id="Cube.FileSystem" version="1.9.0" />
         <dependency id="SgmlReader" version="1.8.11" />
       </group>
       <group targetFramework="net35">
-        <dependency id="Cube.Core" version="1.8.1" />
-        <dependency id="Cube.FileSystem" version="1.8.1" />
+        <dependency id="Cube.Core" version="1.9.0" />
+        <dependency id="Cube.FileSystem" version="1.9.0" />
         <dependency id="SgmlReader" version="1.8.11" />
         <dependency id="AsyncBridge" version="0.3.1" />
         <dependency id="Cube.Backwards" version="1.4.1" />

@@ -178,13 +178,13 @@ namespace Cube.Net
                 {
                     if (Status == OperationalStatus.Up)
                     {
-                        LogOperator.Debug(type, ($"Status:Up ({i * 5} sec)"));
+                        Logger.Debug(type, ($"Status:Up ({i * 5} sec)"));
                         AvailabilityChanged?.Invoke(s, e);
                         return;
                     }
                     await TaskEx.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
                 }
-                LogOperator.Debug(type, $"Status:{Status} (Timeout)");
+                Logger.Debug(type, $"Status:{Status} (Timeout)");
                 AvailabilityChanged?.Invoke(s, e);
             }).Forget();
         }

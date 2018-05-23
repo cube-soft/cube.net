@@ -20,7 +20,7 @@ using Cube.Xui.Behaviors;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

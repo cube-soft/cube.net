@@ -19,7 +19,7 @@ using Cube.Xui;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

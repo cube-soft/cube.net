@@ -7,8 +7,8 @@
     <ProjectGuid>{91B9E559-B44B-4AF4-9401-13CA795AB9E8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cube.Net.App.Rss.Tests</RootNamespace>
-    <AssemblyName>Cube.Net.App.Rss.Tests</AssemblyName>
+    <RootNamespace>Cube.Net.Rss.Tests</RootNamespace>
+    <AssemblyName>Cube.Net.Rss.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -38,13 +38,13 @@
       <HintPath>..\..\..\..\packages\Cube.Backwards.1.4.1\lib\net35\Cube.Backwards.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\..\..\packages\Cube.Core.1.8.1\lib\net35\Cube.Core.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Core.1.9.0\lib\net35\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\..\..\packages\Cube.FileSystem.1.8.1\lib\net35\Cube.FileSystem.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.FileSystem.1.9.0\lib\net35\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Xui">
-      <HintPath>..\..\..\..\packages\Cube.Xui.1.8.1\lib\net35\Cube.Xui.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Xui.1.9.0\lib\net35\Cube.Xui.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\..\..\..\packages\MvvmLightLibs.5.4.1\lib\net35\GalaSoft.MvvmLight.dll</HintPath>
@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Details\FileHelper.cs" />
+    <Compile Include="Details\GlobalSetup.cs" />
     <Compile Include="Details\ViewModelHelper.cs" />
     <Compile Include="Interactions\DuplexConverterTest.cs" />
     <Compile Include="Interactions\SimplexConverterTest.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="Packages.config" />
     <None Include="Examples\Cache\7ae34cce28b4272e1170fb1e4c2c87ad">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -150,9 +152,9 @@
       <Project>{03db8859-93f8-4335-bba1-0c04981a970a}</Project>
       <Name>Cube.Net.Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Reader\Cube.Net.App.Rss.Reader.csproj">
+    <ProjectReference Include="..\Reader\Cube.Net.Rss.App.Reader.csproj">
       <Project>{c7742724-1786-4fdb-86c1-10090245d25e}</Project>
-      <Name>Cube.Net.App.Rss.Reader</Name>
+      <Name>Cube.Net.Rss.App.Reader</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
