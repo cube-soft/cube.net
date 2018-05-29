@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net"
-    xmlns:my="clr-namespace:Cube.Net.App.Rss.Reader">
+    xmlns:my="clr-namespace:Cube.Net.Rss.App.Reader">
 
     <Style x:Key="RssFeedsStyle" TargetType="ListView" BasedOn="{StaticResource {x:Type ListView}}">
         <Setter Property="Background" Value="Transparent"/>
@@ -34,12 +34,11 @@
     <DataTemplate x:Key="RssItemTemplate" DataType="{x:Type rss:RssItem}">
         <Border Style="{StaticResource ShadowStyle}">
             <VirtualizingStackPanel
-                    ToolTip="{Binding Title}"
-                    Background="White"
-                    Cursor="Hand"
-                    Margin="0"
-                    Orientation="Vertical"
-                    HorizontalAlignment="Stretch">
+                Background="White"
+                Cursor="Hand"
+                Margin="0"
+                Orientation="Vertical"
+                HorizontalAlignment="Stretch">
                 <TextBlock
                     Text="{Binding PublishTime, StringFormat=yyyy/MM/dd HH:mm:ss}"
                     Foreground="{StaticResource GrayTextBrush}"
@@ -73,6 +72,11 @@
                     TextTrimming="WordEllipsis"
                     TextWrapping="{Binding DataContext.Data.Shared.Value.LightMode,
                         ElementName=Root, Converter={my:TextWrappingConverter}}"/>
+                <VirtualizingStackPanel.ToolTip>
+                    <ToolTip MaxWidth="400">
+                        <TextBlock Text="{Binding Title}" TextWrapping="Wrap"/>
+                    </ToolTip>
+                </VirtualizingStackPanel.ToolTip>
             </VirtualizingStackPanel>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseEnter">

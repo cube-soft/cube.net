@@ -26,7 +26,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -72,11 +72,11 @@ namespace Cube.Net.App.Rss.Reader
         {
             if (!Activate()) return;
 
-            LogOperator.Configure();
-            LogOperator.Info(GetType(), Assembly.GetExecutingAssembly());
+            Logger.Configure();
+            Logger.Info(GetType(), Assembly.GetExecutingAssembly());
 
-            _resources.Add(LogOperator.ObserveTaskException());
-            _resources.Add(XuiLogOperator.ObserveUiException(this));
+            _resources.Add(Logger.ObserveTaskException());
+            _resources.Add(this.ObserveUiException());
 
             try
             {

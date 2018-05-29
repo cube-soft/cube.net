@@ -23,7 +23,7 @@ using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Windows.Input;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

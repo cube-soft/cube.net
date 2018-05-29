@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.FileSystem;
-using Cube.Net.Rss;
 using Cube.Tasks;
 using Cube.Xui;
 using System;
@@ -27,7 +26,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -116,7 +115,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Operator IO
+        public IO IO
         {
             get => _feeds.IO;
             set => _feeds.IO = value;
@@ -402,7 +401,7 @@ namespace Cube.Net.App.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Load() {
-            Add(RssOperator.Load(FileName, _context, IO).SelectMany(e =>
+            Add(RssExtension.Load(FileName, _context, IO).SelectMany(e =>
                 !string.IsNullOrEmpty(e.Title) ?
                 new[] { e as IRssEntry } :
                 e.Entries.Select(re =>
@@ -412,7 +411,7 @@ namespace Cube.Net.App.Rss.Reader
                 })
             ));
 
-            if (!IsReadOnly && _feeds.Count > 0) Task.Run(() => RssOperator.Backup(FileName, IO)).Forget();
+            if (!IsReadOnly && _feeds.Count > 0) Task.Run(() => RssExtension.Backup(FileName, IO)).Forget();
         }
 
         /* ----------------------------------------------------------------- */

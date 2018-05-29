@@ -15,13 +15,13 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.Log;
-using Cube.Settings;
 using System;
 using System.Diagnostics;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -49,7 +49,7 @@ namespace Cube.Net.App.Rss.Reader
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             AssemblyReader.Default.Company,
             AssemblyReader.Default.Product
-        ), new Operator()) { }
+        ), new IO()) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -63,10 +63,10 @@ namespace Cube.Net.App.Rss.Reader
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder(string root, Operator io) : base(SettingsType.Json)
+        public SettingsFolder(string root, IO io) : base(Format.Json)
         {
             AutoSave       = true;
-            Path           = io.Combine(root, LocalSettings.FileName);
+            Location       = io.Combine(root, LocalSettings.FileName);
             IO             = io;
             RootDirectory  = root;
             DataDirectory  = root;
@@ -109,7 +109,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Operator IO { get; set; }
+        public IO IO { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -215,7 +215,7 @@ namespace Cube.Net.App.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnSaved(KeyValueEventArgs<SettingsType, string> e)
+        protected override void OnSaved(KeyValueEventArgs<Format, string> e)
         {
             if (!Lock.IsReadOnly) Shared.Save(DataDirectory, IO);
             base.OnSaved(e);

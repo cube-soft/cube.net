@@ -23,7 +23,7 @@ using System;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

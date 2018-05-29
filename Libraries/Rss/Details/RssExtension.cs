@@ -24,14 +24,14 @@ namespace Cube.Net.Rss.Parsing
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RssOperator
+    /// FeedExtension
     ///
     /// <summary>
-    /// RSS 解析時に使用する拡張メソッドを定義するクラスです。
+    /// RSS/Atom 解析時に使用する拡張メソッドを定義するクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class RssOperator
+    internal static class FeedExtension
     {
         #region Methods
 
@@ -201,5 +201,68 @@ namespace Cube.Net.Rss.Parsing
         }
 
         #endregion
+    }
+
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RssExtension
+    ///
+    /// <summary>
+    /// RSS 解析時に使用する拡張メソッドを定義するクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    internal static class RssExtension
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetRssSummary
+        ///
+        /// <summary>
+        /// Summary を取得します。
+        /// </summary>
+        ///
+        /// <remarks>
+        /// description タグが存在せず、かつ content:encoded タグが存在
+        /// する場合、content:encoded から html タグを除去した内容を
+        /// 返します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string GetRssSummary(this XElement src)
+        {
+            var n    = RssParseOptions.MaxSummaryLength;
+            var dest = src.GetValue("description").Strip(n);
+            return !string.IsNullOrEmpty(dest) ?
+                   dest :
+                   src.GetValue("content", "encoded").Strip(n);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetRssContent
+        ///
+        /// <summary>
+        /// Content を取得します。
+        /// </summary>
+        ///
+        /// <remarks>
+        /// RSS 1.0/2.0 ともに content:encoded タグを利用される事が多い
+        /// ため、該当タグが存在する場合はその内容を返します。
+        /// content:encoded タグが存在しない場合は description の内容を
+        /// 返します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static string GetRssContent(this XElement src)
+        {
+            var enc  = src.GetValue("content", "encoded");
+            var dest = !string.IsNullOrEmpty(enc) ?
+                       enc :
+                       src.GetValue("description") ??
+                       string.Empty;
+            return dest.Trim();
+        }
     }
 }

@@ -18,7 +18,6 @@
 using CefSharp;
 using CefSharp.WinForms;
 using Cube.Log;
-using Cube.Net.Rss;
 using Cube.Xui.Behaviors;
 using System;
 using System.Threading;
@@ -26,7 +25,7 @@ using System.Web;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Cube.Net.App.Rss.Reader
+namespace Cube.Net.Rss.App.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
