@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System.Collections.Generic;
 
 namespace Cube.Net
 {
@@ -347,18 +348,33 @@ namespace Cube.Net
                 var value = subkey.GetValue("svcVersion") as string;
                 if (value == null) value = subkey.GetValue("Version") as string;
                 if (value == null) return BrowserVersion.IE7;
-
-                switch (int.Parse(value.Substring(0, value.IndexOf('.'))))
-                {
-                    case 7:  return BrowserVersion.IE7;
-                    case 8:  return BrowserVersion.IE8;
-                    case 9:  return BrowserVersion.IE9;
-                    case 10: return BrowserVersion.IE10;
-                    case 11: return BrowserVersion.IE11;
-                    default: return BrowserVersion.IE7;
-                }
+                var src = int.Parse(value.Substring(0, value.IndexOf('.')));
+                return GetVersionMap().TryGetValue(src, out BrowserVersion dest) ?
+                       dest :
+                       BrowserVersion.IE7;
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetVersionMap
+        ///
+        /// <summary>
+        /// ブラウザのバージョン番号との対応関係を示すコレクションを
+        /// 取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IDictionary<int, BrowserVersion> GetVersionMap() => _vmap ?? (
+            _vmap = new Dictionary<int, BrowserVersion>
+            {
+                {  7, BrowserVersion.IE7  },
+                {  8, BrowserVersion.IE8  },
+                {  9, BrowserVersion.IE9  },
+                { 10, BrowserVersion.IE10 },
+                { 11, BrowserVersion.IE11 },
+            }
+        );
 
         #endregion
 
@@ -368,6 +384,7 @@ namespace Cube.Net
         private static readonly string _RegRendering = "FEATURE_GPU_RENDERING ";
         private static readonly string _RegMaxConnections = "FEATURE_MAXCONNECTIONSPERSERVER";
         private static readonly string _RegMaxConnections10 = "FEATURE_MAXCONNECTIONSPER1_0SERVER";
+        private static IDictionary<int, BrowserVersion> _vmap;
         #endregion
     }
 }
