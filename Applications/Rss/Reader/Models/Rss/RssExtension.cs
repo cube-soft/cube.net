@@ -18,7 +18,7 @@
 using Cube.Collections;
 using Cube.DataContract;
 using Cube.FileSystem;
-using Cube.FileSystem.Files;
+using Cube.FileSystem.Mixin;
 using Cube.Log;
 using System;
 using System.Collections.Generic;

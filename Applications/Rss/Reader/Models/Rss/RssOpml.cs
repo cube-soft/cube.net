@@ -17,7 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Conversions;
 using Cube.FileSystem;
-using Cube.FileSystem.Files;
+using Cube.FileSystem.Mixin;
 using Cube.Xml;
 using System;
 using System.Collections.Generic;

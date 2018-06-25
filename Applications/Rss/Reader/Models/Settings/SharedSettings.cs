@@ -17,7 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using Cube.DataContract;
 using Cube.FileSystem;
-using Cube.FileSystem.Files;
+using Cube.FileSystem.Mixin;
 using System;
 using System.Runtime.Serialization;
 
