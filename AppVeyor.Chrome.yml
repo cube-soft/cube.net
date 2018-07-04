@@ -1,4 +1,4 @@
-version: 1.9.0.{build}
+version: 1.10.0.{build}
 branches:
     only:
         - chrome
@@ -23,7 +23,11 @@ build:
     parallel: true
     project: Cube.Net.Rss.sln
     publish_nuget: true
-    verbosity: normal
+    verbosity: minimal
+test:
+    assemblies:
+        only:
+            - Cube.Net.Rss.Tests.dll
 artifacts:
     - path: Applications\Rss\Reader\bin\x86\Release
       name: CubeRssReader.Chrome.x86
