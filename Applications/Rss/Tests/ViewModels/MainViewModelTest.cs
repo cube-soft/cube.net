@@ -20,6 +20,7 @@ using Cube.Xui;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -517,10 +518,11 @@ namespace Cube.Net.Rss.Tests
             IO.Copy(Example("Sample.json"), FeedsPath(), true);
             IO.CreateDirectory(CacheDirectory());
 
-            var n = 0;
+            var asm = Assembly.GetExecutingAssembly();
+            var n   = 0;
 
             using (var fw = new System.IO.FileSystemWatcher())
-            using (var vm = new MainViewModel(new SettingsFolder(RootDirectory(), IO)))
+            using (var vm = new MainViewModel(new SettingsFolder(asm, RootDirectory(), IO)))
             {
                 fw.Path = RootDirectory();
                 fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;

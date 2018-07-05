@@ -19,6 +19,7 @@ using Cube.Net.Rss.App.Reader;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,7 +53,8 @@ namespace Cube.Net.Rss.Tests
         public void Setup_Empty()
         {
             var ctx = SynchronizationContext.Current;
-            using (var m = new MainFacade(new SettingsFolder(Results, IO), ctx))
+            var asm = Assembly.GetExecutingAssembly();
+            using (var m = new MainFacade(new SettingsFolder(asm, Results, IO), ctx))
             {
                 m.Setup();
                 m.Stop();
@@ -190,7 +192,8 @@ namespace Cube.Net.Rss.Tests
         {
             Copy(name);
 
-            var settings = new SettingsFolder(RootDirectory(name), IO);
+            var asm      = Assembly.GetExecutingAssembly();
+            var settings = new SettingsFolder(asm, RootDirectory(name), IO);
             var context  = SynchronizationContext.Current;
             var dest     = new MainFacade(settings, context);
 

@@ -18,6 +18,7 @@
 using Cube.Log;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Cube.Net.Rss.App.Reader
 {
@@ -48,7 +49,8 @@ namespace Cube.Net.Rss.App.Reader
         public UpdateChecker(SettingsFolder settings)
         {
             var io  = settings.IO;
-            var dir = io.Get(AssemblyReader.Default.Location).DirectoryName;
+            var asm = Assembly.GetExecutingAssembly().GetReader();
+            var dir = io.Get(asm.Location).DirectoryName;
 
             FileName = io.Combine(dir, "UpdateChecker.exe");
             Settings = settings;

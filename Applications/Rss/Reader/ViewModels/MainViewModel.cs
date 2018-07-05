@@ -20,6 +20,7 @@ using Cube.Xui;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -48,7 +49,7 @@ namespace Cube.Net.Rss.App.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainViewModel() : this(new SettingsFolder()) { }
+        public MainViewModel() : this(new SettingsFolder(Assembly.GetExecutingAssembly())) { }
 
         /* ----------------------------------------------------------------- */
         ///

@@ -20,7 +20,7 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 
-namespace Cube.Net.Rss.Tests.Models
+namespace Cube.Net.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///

@@ -19,6 +19,7 @@ using Cube.Net.Rss.App.Reader;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -177,7 +178,7 @@ namespace Cube.Net.Rss.Tests
                 dest.Count = 0; // hack for tests.
                 src.Reschedule(dest);
 
-                var asm = AssemblyReader.Default;
+                var asm = Assembly.GetExecutingAssembly().GetReader();
                 src.UserAgent = $"{asm.Product}/{asm.Version}";
 
                 Assert.That(dest.Count, Is.EqualTo(0));

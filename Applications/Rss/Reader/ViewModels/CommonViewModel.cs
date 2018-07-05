@@ -124,7 +124,7 @@ namespace Cube.Net.Rss.App.Reader
             var ss = new System.Text.StringBuilder();
             if (!string.IsNullOrEmpty(message)) ss.AppendLine(message);
             ss.Append($"{err.Message} ({err.GetType().Name})");
-            Send(new DialogMessage(ss.ToString())
+            Send(new DialogMessage(ss.ToString(), Properties.Resources.TitleError)
             {
                 Button = System.Windows.MessageBoxButton.OK,
                 Image  = System.Windows.MessageBoxImage.Error,

@@ -20,6 +20,7 @@ using Cube.Xui;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 namespace Cube.Net.Rss.Tests
@@ -87,7 +88,8 @@ namespace Cube.Net.Rss.Tests
 
             Assert.That(IO.Exists(dest), Is.False);
 
-            var settings = new SettingsFolder(RootDirectory(), IO);
+            var asm      = Assembly.GetExecutingAssembly();
+            var settings = new SettingsFolder(asm, RootDirectory(), IO);
             settings.Load();
             Assert.That(settings.DataDirectory, Is.EqualTo(dest), nameof(SettingsFolder));
 

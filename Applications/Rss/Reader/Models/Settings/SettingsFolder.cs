@@ -20,6 +20,7 @@ using Cube.FileSystem;
 using Cube.Log;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Cube.Net.Rss.App.Reader
 {
@@ -44,12 +45,18 @@ namespace Cube.Net.Rss.App.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
+        /// <param name="assembly">アセンブリ情報</param>
+        ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder() : this(System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            AssemblyReader.Default.Company,
-            AssemblyReader.Default.Product
-        ), new IO()) { }
+        public SettingsFolder(Assembly assembly) : this(
+            assembly,
+            System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                assembly.GetReader().Company,
+                assembly.GetReader().Product
+            ),
+            new IO()
+        ) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -59,15 +66,16 @@ namespace Cube.Net.Rss.App.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
+        /// <param name="assembly">アセンブリ情報</param>
         /// <param name="root">設定用フォルダのルートパス</param>
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder(string root, IO io) : base(Format.Json)
+        public SettingsFolder(Assembly assembly, string root, IO io) :
+            base(assembly, Format.Json, io)
         {
             AutoSave       = true;
             Location       = io.Combine(root, LocalSettings.FileName);
-            IO             = io;
             RootDirectory  = root;
             DataDirectory  = root;
             Version.Digit  = 3;
@@ -99,17 +107,6 @@ namespace Cube.Net.Rss.App.Reader
         ///
         /* ----------------------------------------------------------------- */
         public SharedSettings Shared { get; private set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IO
-        ///
-        /// <summary>
-        /// 入出力用オブジェクトを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IO IO { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///

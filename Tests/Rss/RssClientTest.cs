@@ -19,6 +19,7 @@ using Cube.Net.Http;
 using Cube.Net.Rss;
 using NUnit.Framework;
 using System;
+using System.Reflection;
 
 namespace Cube.Net.Tests
 {
@@ -135,9 +136,9 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         private RssClient Create()
         {
-            var name = AssemblyReader.Default.Product;
-            var ver  = AssemblyReader.Default.Version;
-            return new RssClient(new HeaderHandler { UserAgent = $"{name}/{ver}" });
+            var asm = Assembly.GetExecutingAssembly().GetReader();
+            var h   = new HeaderHandler { UserAgent = $"{asm.Product}/{asm.Version}" };
+            return new RssClient(h);
         }
 
         #endregion

@@ -19,6 +19,7 @@ using Cube.Net.Rss;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 
 namespace Cube.Net.Tests
@@ -71,7 +72,8 @@ namespace Cube.Net.Tests
                 {
                     var count = 0;
                     var cts   = new CancellationTokenSource();
-                    var agent = $"CubeRssMonitorTest/{AssemblyReader.Default.Version}";
+                    var asm   = Assembly.GetExecutingAssembly().GetReader();
+                    var agent = $"CubeRssMonitorTest/{asm.Version}";
 
                     mon.Timeout = TimeSpan.FromSeconds(5);
                     mon.UserAgent = agent;
@@ -92,18 +94,17 @@ namespace Cube.Net.Tests
 
                 foreach (var item in src) Assert.That(item.Value, Is.Not.Null);
 
-                var feed = default(RssFeed);
-                Assert.That(src.TryGetValue(uris[0], out feed), Is.True);
-                Assert.That(feed.Title,       Is.EqualTo("CubeSoft Blog"));
-                Assert.That(feed.LastChecked, Is.GreaterThan(start), uris[0].ToString());
-                Assert.That(feed.Items.Count, Is.GreaterThan(0), uris[0].ToString());
+                Assert.That(src.TryGetValue(uris[0], out var feed0), Is.True);
+                Assert.That(feed0.Title,       Is.EqualTo("CubeSoft Blog"));
+                Assert.That(feed0.LastChecked, Is.GreaterThan(start), uris[0].ToString());
+                Assert.That(feed0.Items.Count, Is.GreaterThan(0), uris[0].ToString());
 
-                Assert.That(src.TryGetValue(uris[1], out feed), Is.True);
-                Assert.That(feed.Title,       Is.EqualTo(".NET Blog"));
-                Assert.That(feed.LastChecked, Is.GreaterThan(start), uris[1].ToString());
-                Assert.That(feed.Items.Count, Is.GreaterThan(0), uris[1].ToString());
+                Assert.That(src.TryGetValue(uris[1], out var feed1), Is.True);
+                Assert.That(feed1.Title,       Is.EqualTo(".NET Blog"));
+                Assert.That(feed1.LastChecked, Is.GreaterThan(start), uris[1].ToString());
+                Assert.That(feed1.Items.Count, Is.GreaterThan(0), uris[1].ToString());
 
-                Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out feed), Is.False);
+                Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out var feed2), Is.False);
             }
 
             Assert.That(IO.Get(Result(files[0])).Length, Is.GreaterThan(0), files[0]);
@@ -257,9 +258,8 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         private RssMonitor Create()
         {
-            var name = AssemblyReader.Default.Product;
-            var ver  = AssemblyReader.Default.Version;
-            return new RssMonitor { UserAgent = $"{name}/{ver}" };
+            var asm = Assembly.GetExecutingAssembly().GetReader();
+            return new RssMonitor { UserAgent = $"{asm.Product}/{asm.Version}" };
         }
 
         #endregion

@@ -18,6 +18,7 @@
 using Cube.Net.Rss.App.Reader;
 using NUnit.Framework;
 using System;
+using System.Reflection;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -48,7 +49,8 @@ namespace Cube.Net.Rss.Tests
         public void Load()
         {
             Copy();
-            var src = new SettingsFolder(RootDirectory(), IO);
+            var asm = Assembly.GetExecutingAssembly();
+            var src = new SettingsFolder(asm, RootDirectory(), IO);
             src.LoadOrDefault(new LocalSettings());
 
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
@@ -82,9 +84,10 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_Empty()
         {
-            IO.Copy(Example("SettingsEmpty.json"), LocalSettingsPath(), true);
+            IO.Copy(Example("SettingsEmpty.json"), LocalSettingsPath(),  true);
             IO.Copy(Example("SettingsEmpty.json"), SharedSettingsPath(), true);
-            var src = new SettingsFolder(RootDirectory(), IO);
+            var asm = Assembly.GetExecutingAssembly();
+            var src = new SettingsFolder(asm, RootDirectory(), IO);
             src.LoadOrDefault(new LocalSettings());
 
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
@@ -118,7 +121,8 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_NotFound()
         {
-            var src = new SettingsFolder(RootDirectory(), IO);
+            var asm = Assembly.GetExecutingAssembly();
+            var src = new SettingsFolder(asm, RootDirectory(), IO);
             src.LoadOrDefault(new LocalSettings());
 
             Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));
@@ -139,9 +143,10 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_Invalid()
         {
-            IO.Copy(Example("Dummy.txt"), LocalSettingsPath(), true);
+            IO.Copy(Example("Dummy.txt"), LocalSettingsPath(),  true);
             IO.Copy(Example("Dummy.txt"), SharedSettingsPath(), true);
-            var src = new SettingsFolder(RootDirectory(), IO);
+            var asm = Assembly.GetExecutingAssembly();
+            var src = new SettingsFolder(asm, RootDirectory(), IO);
             src.LoadOrDefault(new LocalSettings());
 
             Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));

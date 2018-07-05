@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Globalization;
+using System.Reflection;
 using System.Windows.Data;
 using System.Windows.Markup;
 
@@ -46,9 +47,10 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var ss = new System.Text.StringBuilder();
+            var asm = Assembly.GetExecutingAssembly().GetReader();
+            var ss  = new System.Text.StringBuilder();
             if (values[0] is RssItem src) ss.Append($"{src.Title} - ");
-            ss.Append(AssemblyReader.Default.Title);
+            ss.Append(asm.Title);
             if (values[1] is LockSettings x && x.IsReadOnly) ss.Append($" ({Properties.Resources.MessageReadOnly})");
             return ss.ToString();
         }

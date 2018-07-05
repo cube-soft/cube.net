@@ -20,6 +20,7 @@ using Cube.Xui.Converters;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using System;
+using System.Reflection;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -146,7 +147,7 @@ namespace Cube.Net.Rss.App.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Copyright => AssemblyReader.Default.Copyright;
+        public string Copyright { get; } = Assembly.GetExecutingAssembly().GetReader().Copyright;
 
         /* ----------------------------------------------------------------- */
         ///

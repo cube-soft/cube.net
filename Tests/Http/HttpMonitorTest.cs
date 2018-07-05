@@ -18,10 +18,11 @@
 using Cube.Net.Http;
 using NUnit.Framework;
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cube.Net.Tests.Http
+namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -255,8 +256,20 @@ namespace Cube.Net.Tests.Http
         {
             Interval  = TimeSpan.FromMinutes(1),
             Timeout   = TimeSpan.FromSeconds(2),
-            UserAgent = $"Cube.Net.Tests/{AssemblyReader.Default.Version}",
+            UserAgent = $"Cube.Net.Tests/{GetVersion()}",
         };
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        ///
+        /// <summary>
+        /// バージョン情報を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private Version GetVersion() =>
+            Assembly.GetExecutingAssembly().GetReader().Version;
 
         #endregion
     }

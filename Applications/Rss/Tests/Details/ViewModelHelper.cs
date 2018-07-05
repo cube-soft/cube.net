@@ -18,6 +18,7 @@
 using Cube.Net.Rss.App.Reader;
 using NUnit.Framework;
 using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -49,7 +50,8 @@ namespace Cube.Net.Rss.Tests
         {
             Copy(name);
 
-            var settings = new SettingsFolder(RootDirectory(name), IO);
+            var asm      = Assembly.GetExecutingAssembly();
+            var settings = new SettingsFolder(asm, RootDirectory(name), IO);
             var dest     = new MainViewModel(settings);
 
             settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
