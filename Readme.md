@@ -4,7 +4,6 @@ Cube.Net
 [![AppVeyor](https://img.shields.io/appveyor/ci/clown/cube-net/master.svg?label=master&logo=appveyor)](https://ci.appveyor.com/project/clown/cube-net)
 [![AppVeyor](https://img.shields.io/appveyor/ci/clown/cube-net-ftg7w/chrome.svg?label=chrome&logo=appveyor)](https://ci.appveyor.com/project/clown/cube-net-ftg7w)
 [![Codecov](https://codecov.io/gh/cube-soft/Cube.Net/branch/master/graph/badge.svg)](https://codecov.io/gh/cube-soft/Cube.Net)
-[![Codacy](https://api.codacy.com/project/badge/Grade/216dbc280bcb4b019df30825ea2293ba)](https://www.codacy.com/app/clown/Cube.Net)
 
 Cube.Net is a network library for CubeSoft applications.
 The repository also has some implemented applications based on the Cube.Net project as follows.
