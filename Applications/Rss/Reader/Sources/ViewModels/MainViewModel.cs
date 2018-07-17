@@ -157,7 +157,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Settings => _settings ?? (
             _settings = new RelayCommand(
-                () => Messenger.Send(new SettingsViewModel(Model.Settings))
+                () => Send(new SettingsViewModel(Model.Settings))
             )
         );
 
@@ -172,7 +172,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Import => _import ?? (
             _import = new BindableCommand(
-                () => Messenger.Send(MessageFactory.Import(e =>
+                () => Send(MessageFactory.Import(e =>
                 {
                     if (e.Result) Send(() => Model.Import(e.FileName));
                 })),
@@ -192,7 +192,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Export => _export ?? (
             _export = new RelayCommand(
-                () => Messenger.Send(MessageFactory.Export(e =>
+                () => Send(MessageFactory.Export(e =>
                 {
                     if (e.Result) Send(() => Model.Export(e.FileName));
                 }))
@@ -210,7 +210,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public ICommand NewEntry => _newEntry ?? (
             _newEntry = new BindableCommand(
-                () => Messenger.Send(new RegisterViewModel(e => Model.NewEntry(e))),
+                () => Send(new RegisterViewModel(e => Model.NewEntry(e))),
                 () => !Data.Lock.Value.IsReadOnly,
                 Data.Lock
             )
@@ -244,7 +244,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Remove => _remove ?? (
             _remove = new BindableCommand(
-                () => Messenger.Send(
+                () => Send(
                     MessageFactory.RemoveWarning(Data.Current.Value.Title, e =>
                     {
                         if (e.Result) Send(() => Model.Remove());
@@ -340,7 +340,7 @@ namespace Cube.Net.Rss.App.Reader
                 e => Send(() =>
                 {
                     Model.Select(e as IRssEntry);
-                    if (e is RssEntry) Messenger.Send<ScrollToTopMessage>();
+                    if (e is RssEntry) Send<ScrollToTopMessage>();
                 }),
                 e => e is IRssEntry
             )

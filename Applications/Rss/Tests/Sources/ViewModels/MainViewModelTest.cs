@@ -472,7 +472,7 @@ namespace Cube.Net.Rss.Tests
         [TestCase(false, 12)]
         public void VM_Import(bool done, int expected) => Execute(vm =>
         {
-            vm.Messenger.Register<OpenFileDialogMessage>(this,
+            vm.Messenger.Register<OpenFileMessage>(this,
                 e => ImportCommand(e, Example("Sample.opml"), done));
             vm.Import.Execute(null);
 
@@ -493,7 +493,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_Export(bool done, bool expected) => Execute(vm =>
         {
             var dest = Result($"{nameof(VM_Export)}_{done}.opml");
-            vm.Messenger.Register<SaveFileDialogMessage>(this, e => ExportCommand(e, dest, done));
+            vm.Messenger.Register<SaveFileMessage>(this, e => ExportCommand(e, dest, done));
             vm.Export.Execute(null);
 
             Assert.That(IO.Exists(dest), Is.EqualTo(expected));
@@ -575,7 +575,7 @@ namespace Cube.Net.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void ExportCommand(SaveFileDialogMessage e, string dest, bool result)
+        private void ExportCommand(SaveFileMessage e, string dest, bool result)
         {
             e.FileName = dest;
             e.Result   = result;
@@ -591,7 +591,7 @@ namespace Cube.Net.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void ImportCommand(OpenFileDialogMessage e, string src, bool result)
+        private void ImportCommand(OpenFileMessage e, string src, bool result)
         {
             e.FileName = src;
             e.Result   = result;

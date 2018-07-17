@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Net.Rss;
 using Cube.Xui.Converters;
 using System.Windows;
 
@@ -30,7 +29,7 @@ namespace Cube.Net.Rss.App.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ExpandConverter : BooleanToGeneric<string>
+    public class ExpandConverter : BooleanToValue<string>
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -80,7 +79,7 @@ namespace Cube.Net.Rss.App.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class TextWrappingConverter : BooleanToGeneric<TextWrapping>
+    public class TextWrappingConverter : BooleanToValue<TextWrapping>
     {
         /* ----------------------------------------------------------------- */
         ///

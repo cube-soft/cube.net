@@ -116,7 +116,7 @@ namespace Cube.Net.Rss.App.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void Invoke(DirectoryDialogMessage e)
+        protected override void Invoke(OpenDirectoryMessage e)
         {
             base.Invoke(e);
             if (e.Result && AssociatedObject is TextBox tb) tb.Text = e.FileName;

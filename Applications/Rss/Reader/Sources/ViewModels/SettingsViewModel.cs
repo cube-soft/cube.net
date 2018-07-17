@@ -175,7 +175,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public ICommand SelectDataDirectory => _selectDataDirectory ?? (
             _selectDataDirectory = new RelayCommand(
-                () => Messenger.Send(MessageFactory.DataDirectory(Local.Value.DataDirectory))
+                () => Send(MessageFactory.DataDirectory(Local.Value.DataDirectory))
             )
         );
 
@@ -191,7 +191,7 @@ namespace Cube.Net.Rss.App.Reader
         public ICommand Apply => _apply ?? (
             _apply = new RelayCommand(() =>
             {
-                Messenger.Send<UpdateSourcesMessage>();
+                Send<UpdateSourcesMessage>();
                 Close.Execute(null);
             })
         );

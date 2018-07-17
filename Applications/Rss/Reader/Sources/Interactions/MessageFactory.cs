@@ -69,8 +69,8 @@ namespace Cube.Net.Rss.App.Reader
         /// <returns>OpenFileDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static OpenFileDialogMessage Import(Action<OpenFileDialogMessage> e) =>
-            new OpenFileDialogMessage(e)
+        public static OpenFileMessage Import(OpenFileCallback e) =>
+            new OpenFileMessage(e)
             {
                 CheckPathExists = true,
                 Multiselect     = false,
@@ -91,8 +91,8 @@ namespace Cube.Net.Rss.App.Reader
         /// <returns>SaveFileDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static SaveFileDialogMessage Export(Action<SaveFileDialogMessage> e) =>
-            new SaveFileDialogMessage(e)
+        public static SaveFileMessage Export(SaveFileCallback e) =>
+            new SaveFileMessage(e)
             {
                 CheckPathExists = false,
                 OverwritePrompt = true,
@@ -113,8 +113,8 @@ namespace Cube.Net.Rss.App.Reader
         /// <returns>DirectoryDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DirectoryDialogMessage DataDirectory(string src) =>
-            new DirectoryDialogMessage(null)
+        public static OpenDirectoryMessage DataDirectory(string src) =>
+            new OpenDirectoryMessage(null)
             {
                 FileName  = src,
                 NewButton = true,

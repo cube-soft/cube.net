@@ -143,7 +143,7 @@ namespace Cube.Net.Rss.Tests
         {
             var dest = string.Empty;
 
-            vm.Messenger.Register<DirectoryDialogMessage>(this, e =>
+            vm.Messenger.Register<OpenDirectoryMessage>(this, e =>
             {
                 e.FileName = RootDirectory();
                 e.Result   = true;

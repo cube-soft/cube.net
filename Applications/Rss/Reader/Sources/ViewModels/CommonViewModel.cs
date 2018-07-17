@@ -15,9 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Log;
 using Cube.Xui;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using System;
@@ -34,7 +32,7 @@ namespace Cube.Net.Rss.App.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class CommonViewModel : ViewModelBase, IDisposable
+    public abstract class CommonViewModel : MessengerViewModel, IDisposable
     {
         #region Constructors
 
@@ -53,21 +51,6 @@ namespace Cube.Net.Rss.App.Reader
         {
             _dispose = new OnceAction<bool>(Dispose);
         }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Messenger
-        ///
-        /// <summary>
-        /// Messenger オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IMessenger Messenger => MessengerInstance;
 
         #endregion
 
@@ -90,80 +73,6 @@ namespace Cube.Net.Rss.App.Reader
         #endregion
 
         #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Send
-        ///
-        /// <summary>
-        /// メッセージを表示します。
-        /// </summary>
-        ///
-        /// <param name="message">メッセージ</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected void Send(DialogMessage message) => Messenger.Send(message);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Send
-        ///
-        /// <summary>
-        /// エラーメッセージを表示します。
-        /// </summary>
-        ///
-        /// <param name="err">例外オブジェクト</param>
-        /// <param name="message">例外発生時のメッセージ</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected void Send(Exception err, string message)
-        {
-            this.LogError(message);
-            this.LogError(err.ToString(), err);
-
-            var ss = new System.Text.StringBuilder();
-            if (!string.IsNullOrEmpty(message)) ss.AppendLine(message);
-            ss.Append($"{err.Message} ({err.GetType().Name})");
-            Send(new DialogMessage(ss.ToString(), Properties.Resources.TitleError)
-            {
-                Button = System.Windows.MessageBoxButton.OK,
-                Image  = System.Windows.MessageBoxImage.Error,
-                Result = true,
-            });
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Send
-        ///
-        /// <summary>
-        /// 例外発生時にエラーメッセージを表示します。
-        /// </summary>
-        ///
-        /// <param name="action">実行内容</param>
-        /// <param name="message">例外発生時のメッセージ</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected void Send(Action action, string message)
-        {
-            try { action(); }
-            catch (Exception err) { Send(err, message); }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Send
-        ///
-        /// <summary>
-        /// 例外発生時にエラーメッセージを表示します。
-        /// </summary>
-        ///
-        /// <param name="action">実行内容</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected void Send(Action action) => Send(action, string.Empty);
-
-        #region IDisposable
 
         /* ----------------------------------------------------------------- */
         ///
@@ -205,8 +114,6 @@ namespace Cube.Net.Rss.App.Reader
         ///
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing) { }
-
-        #endregion
 
         #endregion
 
