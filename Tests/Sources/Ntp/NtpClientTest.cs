@@ -104,13 +104,6 @@ namespace Cube.Net.Tests
             get
             {
                 yield return new TestCaseData(
-                    "ntp.nict.jp",
-                    3u,
-                    0u,
-                    Cube.Net.Ntp.Stratum.PrimaryReference
-                );
-
-                yield return new TestCaseData(
                     "ntp.cube-soft.jp",
                     3u,
                     4u,
