@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem.TestService;
 using Cube.Net.Rss;
 using NUnit.Framework;
 using System;
@@ -42,7 +43,7 @@ namespace Cube.Net.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssFeedTest : FileHelper
+    class RssFeedTest : FileFixture
     {
         #region Tests
 
@@ -59,7 +60,7 @@ namespace Cube.Net.Tests
         [TestCase("SampleNoRss.html", ExpectedResult = 0)]
         public int GetRssUris(string src)
         {
-            using (var stream = IO.OpenRead(Example(src)))
+            using (var stream = IO.OpenRead(GetExamplesWith(src)))
             {
                 return stream.GetRssUris().Count();
             }
@@ -77,7 +78,7 @@ namespace Cube.Net.Tests
         [TestCaseSource(nameof(TestCases))]
         public int ParseFeed(string src, RssFeed expected)
         {
-            using (var stream = File.OpenRead(Example(src)))
+            using (var stream = File.OpenRead(GetExamplesWith(src)))
             {
                 var actual = RssParser.Parse(stream);
 
@@ -103,7 +104,7 @@ namespace Cube.Net.Tests
         [TestCase("SampleAtom-01.xml",  ExpectedResult =  24)]
         public int ParseFeed_Content(string filename)
         {
-            using (var stream = File.OpenRead(Example(filename)))
+            using (var stream = File.OpenRead(GetExamplesWith(filename)))
             {
                 return RssParser.Parse(stream).Items.First().Content.Length;
             }
@@ -121,7 +122,7 @@ namespace Cube.Net.Tests
         [Test]
         public void ParseFeed_UnreadItems()
         {
-            using (var stream = File.OpenRead(Example("SampleRss20-01.xml")))
+            using (var stream = File.OpenRead(GetExamplesWith("SampleRss20-01.xml")))
             {
                 var feed  = RssParser.Parse(stream);
                 var count = feed.Items.Count();
@@ -144,7 +145,7 @@ namespace Cube.Net.Tests
         [Test]
         public void ParseFeed_Categories()
         {
-            using (var stream = File.OpenRead(Example("SampleRss20-01.xml")))
+            using (var stream = File.OpenRead(GetExamplesWith("SampleRss20-01.xml")))
             {
                 var feed = RssParser.Parse(stream);
                 var item = feed.Items[0];
@@ -165,7 +166,7 @@ namespace Cube.Net.Tests
         [Test]
         public void ParseFeed_NotRss()
         {
-            using (var stream = File.OpenRead(Example("Sample.xml")))
+            using (var stream = File.OpenRead(GetExamplesWith("Sample.xml")))
             {
                 Assert.That(RssParser.Parse(stream), Is.Null);
             }
@@ -183,7 +184,7 @@ namespace Cube.Net.Tests
         [Test]
         public void Strip_Summary()
         {
-            using (var stream = File.OpenRead(Example("SampleRss20-03.xml")))
+            using (var stream = File.OpenRead(GetExamplesWith("SampleRss20-03.xml")))
             {
                 var dest = RssParser.Parse(stream);
                 Assert.That(dest.Items[0].Summary, Is.EqualTo("この画像はテスト画像です。"));

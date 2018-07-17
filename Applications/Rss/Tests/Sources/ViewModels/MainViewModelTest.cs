@@ -15,6 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem.TestService;
+using Cube.Generics;
 using Cube.Net.Rss.App.Reader;
 using Cube.Xui;
 using NUnit.Framework;
@@ -34,7 +36,7 @@ namespace Cube.Net.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class MainViewModelTest : ViewModelHelper
+    class MainViewModelTest : ViewModelFixture
     {
         #region Tests
 
@@ -82,6 +84,7 @@ namespace Cube.Net.Rss.Tests
         {
             var dest = vm.Data.LastEntry.Value;
 
+            Assert.That(dest,                     Is.Not.Null);
             Assert.That(dest.Title,               Is.EqualTo("The GitHub Blog"));
             Assert.That(dest.Items.Count(),       Is.EqualTo(15));
             Assert.That(dest.Count,               Is.EqualTo(14));
@@ -307,8 +310,9 @@ namespace Cube.Net.Rss.Tests
         public void VM_Update() => Execute(vm =>
         {
             vm.Select.Execute(vm.Data.Root.OfType<RssCategory>().First());
-            var dest = vm.Data.Current.Value;
+            var dest  = vm.Data.Current.Value;
             var count = dest.Count;
+            var msg   = vm.Data.Message;
 
             Assert.That(count,                 Is.EqualTo(10));
             Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
@@ -316,11 +320,11 @@ namespace Cube.Net.Rss.Tests
             var changed = 0;
             vm.Data.Current.PropertyChanged += (s, e) => ++changed;
             vm.Update.Execute(null);
-            vm.Data.Message.Value = string.Empty;
+            msg.Value = string.Empty;
 
-            Assert.That(Wait(vm).Result,       Is.True, "Timeout");
-            Assert.That(dest.Count,            Is.GreaterThan(count));
-            Assert.That(changed,               Is.AtLeast(1));
+            Assert.That(Wait.For(() => msg.Value.HasValue()), "Timeout");
+            Assert.That(dest.Count, Is.GreaterThan(count));
+            Assert.That(changed,    Is.AtLeast(1));
         });
 
         /* ----------------------------------------------------------------- */
@@ -336,13 +340,15 @@ namespace Cube.Net.Rss.Tests
         public void VM_Reset() => Execute(vm =>
         {
             var src = vm.Data.Root.OfType<RssCategory>().First();
+            var msg = vm.Data.Message;
+
             vm.Select.Execute(src);
             vm.Reset.Execute(null);
             vm.Data.Message.Value = string.Empty;
 
-            Assert.That(src.Count,       Is.EqualTo(0));
-            Assert.That(Wait(vm).Result, Is.True, "Timeout");
-            Assert.That(src.Count,       Is.AtLeast(1));
+            Assert.That(src.Count, Is.EqualTo(0));
+            Assert.That(Wait.For(() => msg.Value.HasValue()), "Timeout");
+            Assert.That(src.Count, Is.AtLeast(1));
         });
 
         /* ----------------------------------------------------------------- */
@@ -473,7 +479,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_Import(bool done, int expected) => Execute(vm =>
         {
             vm.Messenger.Register<OpenFileMessage>(this,
-                e => ImportCommand(e, Example("Sample.opml"), done));
+                e => ImportCommand(e, GetExamplesWith("Sample.opml"), done));
             vm.Import.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(expected));
@@ -492,7 +498,7 @@ namespace Cube.Net.Rss.Tests
         [TestCase(false, false)]
         public void VM_Export(bool done, bool expected) => Execute(vm =>
         {
-            var dest = Result($"{nameof(VM_Export)}_{done}.opml");
+            var dest = GetResultsWith($"{nameof(VM_Export)}_{done}.opml");
             vm.Messenger.Register<SaveFileMessage>(this, e => ExportCommand(e, dest, done));
             vm.Export.Execute(null);
 
@@ -512,10 +518,10 @@ namespace Cube.Net.Rss.Tests
         public void VM_ReadOnly()
         {
             var dest = IO.Combine(RootDirectory(), LockSettings.FileName);
-            IO.Copy(Example("Sample.lockfile"), dest);
-            IO.Copy(Example("LocalSettings.json"), LocalSettingsPath(), true);
-            IO.Copy(Example("Settings.json"), SharedSettingsPath(), true);
-            IO.Copy(Example("Sample.json"), FeedsPath(), true);
+            IO.Copy(GetExamplesWith("Sample.lockfile"), dest);
+            IO.Copy(GetExamplesWith("LocalSettings.json"), LocalSettingsPath(), true);
+            IO.Copy(GetExamplesWith("Settings.json"), SharedSettingsPath(), true);
+            IO.Copy(GetExamplesWith("Sample.json"), FeedsPath(), true);
             IO.CreateDirectory(CacheDirectory());
 
             var asm = Assembly.GetExecutingAssembly();
@@ -531,7 +537,7 @@ namespace Cube.Net.Rss.Tests
 
                 vm.Data.Message.Value = "Test";
                 vm.Setup.Execute(null);
-                Assert.That(Wait(vm, true).Result, Is.True, "Timeout");
+                Assert.That(Wait.For(() => !vm.Data.Message.Value.HasValue()), "Timeout");
 
                 Assert.That(vm.Data.Lock.Value.IsReadOnly,   Is.True, nameof(vm.Data.Lock.Value.IsReadOnly));
                 Assert.That(vm.Data.Lock.Value.Sid,          Is.EqualTo("S-1-5-21-0123456789-0123456789-012345678-0123"));
@@ -553,7 +559,7 @@ namespace Cube.Net.Rss.Tests
                 Assert.That(vm.Reset.CanExecute(null),       Is.False, nameof(vm.Reset));
 
                 vm.Update.Execute(null);
-                Assert.That(Wait(vm).Result, Is.True, "Timeout");
+                Assert.That(Wait.For(() => vm.Data.Message.Value.HasValue()), "Timeout");
                 Assert.That(vm.Data.LastEntry.Value.Count, Is.AtLeast(1));
             }
 

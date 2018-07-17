@@ -15,25 +15,26 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem.TestService;
+using Cube.Generics;
 using Cube.Net.Rss.App.Reader;
 using NUnit.Framework;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace Cube.Net.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ViewModelHelper
+    /// ViewModelFixture
     ///
     /// <summary>
     /// 各種 ViewModel のテストを実行する際の補助クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ViewModelHelper : FileHelper
+    public class ViewModelFixture : ResourceFixture
     {
         #region Methods
 
@@ -53,14 +54,15 @@ namespace Cube.Net.Rss.Tests
             var asm      = Assembly.GetExecutingAssembly();
             var settings = new SettingsFolder(asm, RootDirectory(name), IO);
             var dest     = new MainViewModel(settings);
+            var msg      = dest.Data.Message;
 
             settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
             settings.Value.Width         = 1024;
             settings.Value.Height        = 768;
 
-            dest.Data.Message.Value = "Test";
+            msg.Value = "Test";
             dest.Setup.Execute(null);
-            Assert.That(Wait(dest, true).Result, Is.True, "Timeout");
+            Assert.That(Wait.For(() => !msg.Value.HasValue()), "Timeout");
             return dest;
         }
 
@@ -99,22 +101,9 @@ namespace Cube.Net.Rss.Tests
                 }
 
                 Assert.That(IO.Exists(l), Is.False, l);
-                for (var i = 0; n <= 0 && i < 20; ++i) Task.Delay(50).Wait();
-                Assert.That(n, Is.AtLeast(1), "Feeds.json is not changed");
+                Assert.That(Wait.For(() => n > 0), "Feeds.json is not changed");
             }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Wait
-        ///
-        /// <summary>
-        /// メッセージを受信するまで待機します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected Task<bool> Wait(MainViewModel vm, bool empty = false) =>
-            Wait(() => string.IsNullOrEmpty(vm.Data.Message.Value) == empty);
 
         #endregion
     }

@@ -35,7 +35,7 @@ namespace Cube.Net.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class SettingsViewModelTest : ViewModelHelper
+    class SettingsViewModelTest : ViewModelFixture
     {
         #region Tests
 
@@ -62,7 +62,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(shred.LightMode,            Is.True);
             Assert.That(shred.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
             Assert.That(shred.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
-            Assert.That(local.DataDirectory,        Is.EqualTo(Result(nameof(VM_Settings))));
+            Assert.That(local.DataDirectory,        Is.EqualTo(GetResultsWith(nameof(VM_Settings))));
         });
 
         /* ----------------------------------------------------------------- */

@@ -34,7 +34,7 @@ namespace Cube.Net.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssOpmlTest : FileHelper
+    class RssOpmlTest : ResourceFixture
     {
         #region Tests
 
@@ -54,7 +54,7 @@ namespace Cube.Net.Rss.Tests
         public int LoadOpml(string filename)
         {
             var dest = new RssOpml(new SynchronizationContext(), IO)
-                .Load(Example(filename), new Dictionary<Uri, RssFeed>())
+                .Load(GetExamplesWith(filename), new Dictionary<Uri, RssFeed>())
                 .Flatten();
 
             foreach (var item in dest)
@@ -89,7 +89,7 @@ namespace Cube.Net.Rss.Tests
             };
 
             var ctx  = new SynchronizationContext();
-            var dest = new RssOpml(ctx, IO).Load(Example("Sample.opml"), filter).ToList();
+            var dest = new RssOpml(ctx, IO).Load(GetExamplesWith("Sample.opml"), filter).ToList();
             Assert.That(dest.Count, Is.EqualTo(1));
 
             var root = dest[0] as RssCategory;

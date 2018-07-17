@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem.TestService;
 using Cube.Net.Rss;
 using NUnit.Framework;
 using System;
@@ -34,7 +35,7 @@ namespace Cube.Net.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssMonitorTest : FileHelper
+    class RssMonitorTest : FileFixture
     {
         #region Tests
 
@@ -88,7 +89,7 @@ namespace Cube.Net.Tests
                         if (++count >= 2) cts.Cancel();
                     });
                     mon.Start();
-                    Assert.That(cts.Wait().Result, Is.True, "Timeout");
+                    Assert.That(Wait.For(cts.Token), "Timeout");
                     mon.Stop();
                 }
 
@@ -107,8 +108,8 @@ namespace Cube.Net.Tests
                 Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out var feed2), Is.False);
             }
 
-            Assert.That(IO.Get(Result(files[0])).Length, Is.GreaterThan(0), files[0]);
-            Assert.That(IO.Get(Result(files[1])).Length, Is.GreaterThan(0), files[1]);
+            Assert.That(IO.Get(GetResultsWith(files[0])).Length, Is.GreaterThan(0), files[0]);
+            Assert.That(IO.Get(GetResultsWith(files[1])).Length, Is.GreaterThan(0), files[1]);
         }
 
         /* ----------------------------------------------------------------- */
@@ -134,7 +135,7 @@ namespace Cube.Net.Tests
                 mon.Register(src);
                 mon.Subscribe(e => { dest = e; cts.Cancel(); });
                 mon.Start();
-                Assert.That(cts.Wait().Result, Is.True, "Timeout");
+                Assert.That(Wait.For(cts.Token), "Timeout");
                 mon.Stop();
             }
 
@@ -174,7 +175,7 @@ namespace Cube.Net.Tests
                 mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
                 mon.Update(src[1]);
                 mon.Update(src[0]);
-                Assert.That(cts.Wait().Result, Is.True, "Timeout");
+                Assert.That(Wait.For(cts.Token), "Timeout");
             }
 
             Assert.That(dest.ContainsKey(src[0]), Is.True);
@@ -202,7 +203,7 @@ namespace Cube.Net.Tests
                 mon.Register(src);
                 mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
                 mon.Update(src);
-                Assert.That(cts.Wait().Result, Is.True, "Timeout");
+                Assert.That(Wait.For(cts.Token), "Timeout");
             }
 
             Assert.That(dest.ContainsKey(src), Is.True);

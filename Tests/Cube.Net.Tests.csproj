@@ -58,10 +58,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sources\Details\FileHelper.cs" />
     <Compile Include="Sources\Details\GlobalSetup.cs" />
     <Compile Include="Sources\Details\Person.cs" />
-    <Compile Include="Sources\Details\TaskOperator.cs" />
     <Compile Include="Sources\Http\HttpClientTest.cs" />
     <Compile Include="Sources\Http\HttpHandlerTest.cs" />
     <Compile Include="Sources\Http\HttpMonitorTest.cs" />

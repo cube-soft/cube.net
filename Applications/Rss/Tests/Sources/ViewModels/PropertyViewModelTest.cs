@@ -31,7 +31,7 @@ namespace Cube.Net.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class PropertyViewModelTest : ViewModelHelper
+    class PropertyViewModelTest : ViewModelFixture
     {
         #region Tests
 

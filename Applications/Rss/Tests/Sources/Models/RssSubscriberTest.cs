@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem.TestService;
 using Cube.Net.Rss.App.Reader;
 using NUnit.Framework;
 using System;
@@ -35,7 +36,7 @@ namespace Cube.Net.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class RssSubscriberTest : FileHelper
+    class RssSubscriberTest : ResourceFixture
     {
         #region Tests
 
@@ -84,7 +85,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_NotFound()
         {
-            using (var src = new RssSubscriber { FileName = Result("NotFound.json") })
+            using (var src = new RssSubscriber { FileName = GetResultsWith("NotFound.json") })
             {
                 src.Load();
                 Assert.That(src.Count, Is.EqualTo(0));
@@ -103,13 +104,13 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Backup_Delete()
         {
-            var dir  = Result($@"{nameof(Backup_Delete)}\Backup");
+            var dir  = GetResultsWith(nameof(Backup_Delete), "Backup");
             var open = IO.Combine(dir, "20010101.json");
 
             for (var d = new DateTime(2001, 1, 1); d.Month < 2; d = d.AddDays(1))
             {
                 var backup = IO.Combine(dir, $"{d.ToString("yyyyMMdd")}.json");
-                IO.Copy(Example("Sample.json"), backup, true);
+                IO.Copy(GetExamplesWith("Sample.json"), backup, true);
             }
 
             using (var _ = IO.OpenRead(open))
@@ -183,7 +184,7 @@ namespace Cube.Net.Rss.Tests
 
                 Assert.That(dest.Count, Is.EqualTo(0));
                 src.Update(dest);
-                Assert.That(Wait(dest).Result, Is.True, "Timeout");
+                Assert.That(Wait.For(() => dest.Count > 0), "Timeout");
                 Assert.That(dest.Count, Is.AtLeast(1));
             }
         }
@@ -206,17 +207,6 @@ namespace Cube.Net.Rss.Tests
             Copy(name);
             return new RssSubscriber { FileName = FeedsPath(name) };
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Wait
-        ///
-        /// <summary>
-        /// 新着記事を受信するまで待機します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private Task<bool> Wait(RssEntry src) => Wait(() => src.Count > 0);
 
         #endregion
     }

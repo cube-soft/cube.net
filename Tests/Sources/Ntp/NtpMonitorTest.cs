@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem.TestService;
 using NUnit.Framework;
 using System;
 using System.Threading;
@@ -64,7 +65,7 @@ namespace Cube.Net.Tests
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start();
                 mon.Start(); // ignore
-                Assert.That(cts.Wait().Result, Is.True, "Timeout");
+                Assert.That(Wait.For(cts.Token), "Timeout");
                 mon.Stop();
                 mon.Stop(); // ignore
 
@@ -146,7 +147,7 @@ namespace Cube.Net.Tests
                 mon.Subscribe(_ => { ++count; cts.Cancel(); });
                 mon.Start(mon.Interval);
                 mon.Reset();
-                Assert.That(cts.Wait().Result, Is.True, "Timeout");
+                Assert.That(Wait.For(cts.Token), "Timeout");
                 mon.Stop();
 
                 Assert.That(count, Is.EqualTo(1));

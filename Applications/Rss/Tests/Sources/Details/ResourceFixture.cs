@@ -15,23 +15,22 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem.TestService;
 using Cube.Net.Rss.App.Reader;
-using System;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace Cube.Net.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FileHelper
+    /// ResourceFixture
     ///
     /// <summary>
     /// 各種テストファイルを扱う際の補助クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class FileHelper : Cube.Net.Tests.FileHelper
+    public class ResourceFixture : FileFixture
     {
         #region Methods
 
@@ -45,7 +44,7 @@ namespace Cube.Net.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string RootDirectory([CallerMemberName] string name = null) =>
-            Result(name);
+            GetResultsWith(name);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -122,33 +121,14 @@ namespace Cube.Net.Rss.Tests
         /* ----------------------------------------------------------------- */
         protected void Copy([CallerMemberName] string name = null)
         {
-            IO.Copy(Example("LocalSettings.json"), LocalSettingsPath(name), true);
-            IO.Copy(Example("Settings.json"), SharedSettingsPath(name), true);
-            IO.Copy(Example("Sample.json"), FeedsPath(name), true);
+            IO.Copy(GetExamplesWith("LocalSettings.json"), LocalSettingsPath(name), true);
+            IO.Copy(GetExamplesWith("Settings.json"), SharedSettingsPath(name), true);
+            IO.Copy(GetExamplesWith("Sample.json"), FeedsPath(name), true);
 
-            foreach (var f in IO.GetFiles(Example("Cache")))
+            foreach (var f in IO.GetFiles(GetExamplesWith("Cache")))
             {
                 IO.Copy(f, CachePath(IO.Get(f).Name, name), true);
             }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Wait
-        ///
-        /// <summary>
-        /// 条件を満たすまで待機します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected async Task<bool> Wait(Func<bool> predicate)
-        {
-            for (var i = 0; i < 100; ++i)
-            {
-                if (predicate()) return true;
-                await Task.Delay(50).ConfigureAwait(false);
-            }
-            return false;
         }
 
         #endregion

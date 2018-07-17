@@ -36,7 +36,7 @@ namespace Cube.Net.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class MainFacadeTest : FileHelper
+    class MainFacadeTest : ResourceFixture
     {
         #region Tests
 

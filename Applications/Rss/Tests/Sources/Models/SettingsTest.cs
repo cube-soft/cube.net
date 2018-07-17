@@ -32,7 +32,7 @@ namespace Cube.Net.Rss.Tests
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class SettingsTest : FileHelper
+    class SettingsTest : ResourceFixture
     {
         #region Tests
 
@@ -84,8 +84,8 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_Empty()
         {
-            IO.Copy(Example("SettingsEmpty.json"), LocalSettingsPath(),  true);
-            IO.Copy(Example("SettingsEmpty.json"), SharedSettingsPath(), true);
+            IO.Copy(GetExamplesWith("SettingsEmpty.json"), LocalSettingsPath(),  true);
+            IO.Copy(GetExamplesWith("SettingsEmpty.json"), SharedSettingsPath(), true);
             var asm = Assembly.GetExecutingAssembly();
             var src = new SettingsFolder(asm, RootDirectory(), IO);
             src.LoadOrDefault(new LocalSettings());
@@ -143,8 +143,8 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_Invalid()
         {
-            IO.Copy(Example("Dummy.txt"), LocalSettingsPath(),  true);
-            IO.Copy(Example("Dummy.txt"), SharedSettingsPath(), true);
+            IO.Copy(GetExamplesWith("Dummy.txt"), LocalSettingsPath(),  true);
+            IO.Copy(GetExamplesWith("Dummy.txt"), SharedSettingsPath(), true);
             var asm = Assembly.GetExecutingAssembly();
             var src = new SettingsFolder(asm, RootDirectory(), IO);
             src.LoadOrDefault(new LocalSettings());
