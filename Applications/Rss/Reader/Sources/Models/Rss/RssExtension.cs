@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Collections;
+using Cube.Collections.Mixin;
 using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.FileSystem.Mixin;

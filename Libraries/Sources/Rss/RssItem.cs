@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Collections;
+using Cube.Collections.Mixin;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
