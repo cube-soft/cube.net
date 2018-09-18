@@ -34,6 +34,31 @@ namespace Cube.Net.Rss.App.Reader
     {
         /* ----------------------------------------------------------------- */
         ///
+        /// Error
+        ///
+        /// <summary>
+        /// Creates the DialogMessage object of the specified error
+        /// message.
+        /// </summary>
+        ///
+        /// <param name="err">Exception object.</param>
+        /// <param name="message">Error message.</param>
+        ///
+        /// <returns>DialogMessage object.</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static DialogMessage Error(Exception err, string message) =>
+            new DialogMessage(
+                $"{message} ({err.GetType().Name})",
+                Properties.Resources.TitleError
+            ) {
+                Button = MessageBoxButton.OK,
+                Image  = MessageBoxImage.Error,
+                Result = true,
+            };
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// RemoveWarning
         ///
         /// <summary>

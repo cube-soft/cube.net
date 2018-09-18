@@ -318,14 +318,11 @@ namespace Cube.Net.Rss.Tests
             Assert.That(count,                 Is.EqualTo(10));
             Assert.That(vm.Data.Message.Value, Is.Null.Or.Empty);
 
-            var changed = 0;
-            vm.Data.Current.PropertyChanged += (s, e) => ++changed;
             vm.Update.Execute(null);
             msg.Value = string.Empty;
 
             Assert.That(Wait.For(() => msg.Value.HasValue()), "Timeout");
             Assert.That(dest.Count, Is.GreaterThan(count));
-            Assert.That(changed,    Is.AtLeast(1));
         });
 
         /* ----------------------------------------------------------------- */
