@@ -55,7 +55,7 @@ namespace Cube.Net.Rss.App.Reader
         {
             _dispose = new OnceAction<bool>(Dispose);
             Context = context;
-            Children = new BindableCollection<IRssEntry>(context);
+            Children = new BindableCollection<IRssEntry> { Context = context };
             Children.CollectionChanged += WhenChildrenChanged;
         }
 

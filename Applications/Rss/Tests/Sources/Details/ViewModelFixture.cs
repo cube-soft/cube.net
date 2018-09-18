@@ -86,7 +86,7 @@ namespace Cube.Net.Rss.Tests
                 using (var vm = Create(name))
                 {
                     Assert.That(IO.Exists(l), Is.True, l);
-                    Assert.That(vm.Data.Lock.HasValue, Is.True, nameof(vm.Data.Lock));
+                    Assert.That(vm.Data.Lock.Value, Is.Not.Null, nameof(vm.Data.Lock));
                     Assert.That(vm.Data.Lock.Value.IsReadOnly, Is.False, nameof(vm.Data.Lock));
 
                     var f = IO.Get(FeedsPath(name));

@@ -48,13 +48,13 @@
     </Window.InputBindings>
 
     <i:Interaction.Behaviors>
-        <xb:CloseBehavior Messenger="{Binding Messenger}"/>
-        <xb:DialogBehavior Messenger="{Binding Messenger}"/>
-        <xb:OpenFileDialogBehavior Messenger="{Binding Messenger}"/>
-        <xb:SaveFileDialogBehavior Messenger="{Binding Messenger}"/>
-        <my:ShowRegisterWindowBehavior Messenger="{Binding Messenger}"/>
-        <my:ShowPropertyWindowBehavior Messenger="{Binding Messenger}"/>
-        <my:ShowSettingsWindowBehavior Messenger="{Binding Messenger}"/>
+        <xb:CloseBehavior />
+        <xb:DialogBehavior />
+        <xb:OpenFileDialogBehavior />
+        <xb:SaveFileDialogBehavior />
+        <my:ShowRegisterWindowBehavior />
+        <my:ShowPropertyWindowBehavior />
+        <my:ShowSettingsWindowBehavior />
     </i:Interaction.Behaviors>
 
     <i:Interaction.Triggers>
@@ -182,7 +182,7 @@
                 ScrollViewer.IsDeferredScrollingEnabled="{Binding Data.Shared.Value.LightMode}"
                 Grid.Row="2">
                 <i:Interaction.Behaviors>
-                    <my:ScrollToTopBehavior Messenger="{Binding Messenger}"/>
+                    <my:ScrollToTopBehavior />
                 </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">

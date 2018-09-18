@@ -69,7 +69,7 @@ namespace Cube.Net.Rss.App.Reader
             _dispose = new OnceAction<bool>(Dispose);
             _context = context;
 
-            _tree = new BindableCollection<IRssEntry>(context);
+            _tree = new BindableCollection<IRssEntry> { Context = context };
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();

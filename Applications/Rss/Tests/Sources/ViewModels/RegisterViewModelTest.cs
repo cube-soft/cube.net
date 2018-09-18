@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.FileSystem.TestService;
 using Cube.Net.Rss.App.Reader;
 using Cube.Xui;
 using NUnit.Framework;
@@ -55,7 +56,7 @@ namespace Cube.Net.Rss.Tests
             var src   = new Uri(host, "/feed");
             var count = vm.Data.Root.Flatten().Count();
 
-            vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
+            vm.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
             vm.NewEntry.Execute(null);
 
             var dest = vm.Data.Root.OfType<RssEntry>().FirstOrDefault(e => e.Uri == src);
@@ -80,7 +81,7 @@ namespace Cube.Net.Rss.Tests
         {
             var count = vm.Data.Root.Flatten().Count();
 
-            vm.Messenger.Register<RegisterViewModel>(this, e => RegisterError(e).Wait());
+            vm.Register<RegisterViewModel>(this, e => RegisterError(e).Wait());
             vm.NewEntry.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
@@ -101,7 +102,7 @@ namespace Cube.Net.Rss.Tests
             var src = new Uri("https://blog.cube-soft.jp/");
             var count = vm.Data.Root.Flatten().Count();
 
-            vm.Messenger.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
+            vm.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
             vm.NewEntry.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
@@ -128,13 +129,8 @@ namespace Cube.Net.Rss.Tests
 
             Assert.That(vm.Busy.Value, Is.False);
             vm.Execute.Execute(null);
-            Assert.That(vm.Busy.Value, Is.True);
-
-            for (var i = 0; i < 100 && vm.Busy.Value; ++i)
-            {
-                await Task.Delay(50).ConfigureAwait(false);
-            }
-            Assert.That(vm.Busy.Value, Is.False);
+            Assert.That(await Wait.ForAsync(() => vm.Busy.Value), Is.True);
+            Assert.That(await Wait.ForAsync(() => !vm.Busy.Value), Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -151,7 +147,7 @@ namespace Cube.Net.Rss.Tests
             var cts = new CancellationTokenSource();
 
             vm.Url.Value = "error";
-            vm.Messenger.Register<DialogMessage>(this, e =>
+            vm.Register<DialogMessage>(this, e =>
             {
                 e.Result = true;
                 cts.Cancel();

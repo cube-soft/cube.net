@@ -29,8 +29,8 @@
     </Window.BindingGroup>
 
     <i:Interaction.Behaviors>
-        <xb:CloseBehavior Messenger="{Binding Messenger}"/>
-        <xb:UpdateSourceBehavior Messenger="{Binding Messenger}"/>
+        <xb:CloseBehavior />
+        <xb:UpdateSourceBehavior />
     </i:Interaction.Behaviors>
 
     <Grid Background="{StaticResource MainBackgroundBrush}">
@@ -143,7 +143,7 @@
                             Style="{StaticResource InputStyle}"
                             Width="220">
                             <i:Interaction.Behaviors>
-                                <my:SelectDirectoryBehavior Messenger="{Binding Messenger}"/>
+                                <my:SelectDirectoryBehavior />
                             </i:Interaction.Behaviors>
                         </TextBox>
                         <Button

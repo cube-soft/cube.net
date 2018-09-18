@@ -90,18 +90,16 @@ namespace Cube.Net.Rss.App.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Execute =>
-            _execute = _execute ?? new BindableCommand(
-                async () =>
+            _execute = _execute ?? new BindableCommand(() => Post(() =>
                 {
                     try
                     {
                         Busy.Value = true;
-                        await _callback?.Invoke(Url.Value);
+                        _callback?.Invoke(Url.Value);
                         Close.Execute(null);
                     }
-                    catch (Exception err) { Send(err, Properties.Resources.ErrorRegister); }
                     finally { Busy.Value = false; }
-                },
+                }, e => Properties.Resources.ErrorRegister),
                 () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value,
                 Busy, Url
             );

@@ -19,6 +19,7 @@ using Cube.FileSystem.TestService;
 using Cube.Generics;
 using Cube.Net.Rss.App.Reader;
 using Cube.Xui;
+using Cube.Xui.Mixin;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -54,20 +55,20 @@ namespace Cube.Net.Rss.Tests
         {
             var vm = new MainViewModel();
 
-            Assert.That(vm.Property.CanExecute(null), Is.False);
-            Assert.That(vm.Remove.CanExecute(null),   Is.False);
-            Assert.That(vm.Rename.CanExecute(null),   Is.False);
-            Assert.That(vm.Read.CanExecute(null),     Is.False);
-            Assert.That(vm.Update.CanExecute(null),   Is.False);
-            Assert.That(vm.Reset.CanExecute(null),    Is.False);
+            Assert.That(vm.Property.CanExecute(), Is.False);
+            Assert.That(vm.Remove.CanExecute(),   Is.False);
+            Assert.That(vm.Rename.CanExecute(),   Is.False);
+            Assert.That(vm.Read.CanExecute(),     Is.False);
+            Assert.That(vm.Update.CanExecute(),   Is.False);
+            Assert.That(vm.Reset.CanExecute(),    Is.False);
 
-            Assert.That(vm.DropTarget,                Is.Not.Null);
-            Assert.That(vm.Data.Content.HasValue,     Is.False);
-            Assert.That(vm.Data.Current.HasValue,     Is.False);
-            Assert.That(vm.Data.LastEntry.HasValue,   Is.False);
-            Assert.That(vm.Data.Message.HasValue,     Is.False);
-            Assert.That(vm.Data.Shared.HasValue,      Is.True);
-            Assert.That(vm.Data.Lock.HasValue,        Is.True);
+            Assert.That(vm.DropTarget,            Is.Not.Null);
+            Assert.That(vm.Data.Content.Value,    Is.Null);
+            Assert.That(vm.Data.Current.Value,    Is.Null);
+            Assert.That(vm.Data.LastEntry.Value,  Is.Null);
+            Assert.That(vm.Data.Message.Value,    Is.Null);
+            Assert.That(vm.Data.Shared.Value,     Is.Not.Null);
+            Assert.That(vm.Data.Lock.Value,       Is.Not.Null);
         }
 
         /* ----------------------------------------------------------------- */
@@ -179,7 +180,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(dest.Count, Is.EqualTo(9));
 
             vm.SelectArticle.Execute(dest.UnreadItems.First());
-            Assert.That(vm.Data.Content.HasValue, Is.True);
+            Assert.That(vm.Data.Content.Value,    Is.Not.Null);
             Assert.That(dest.Count,               Is.EqualTo(8));
             Assert.That(dest.UnreadItems.Count(), Is.EqualTo(8));
         });
@@ -261,7 +262,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(src.Title,                      Is.EqualTo("The GitHub Blog"));
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-            vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+            vm.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
             vm.Remove.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(11));
@@ -290,7 +291,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(IO.Exists(dest),                Is.True);
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-            vm.Messenger.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+            vm.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
             vm.Remove.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(10));
@@ -478,7 +479,7 @@ namespace Cube.Net.Rss.Tests
         [TestCase(false, 12)]
         public void VM_Import(bool done, int expected) => Execute(vm =>
         {
-            vm.Messenger.Register<OpenFileMessage>(this,
+            vm.Register<OpenFileMessage>(this,
                 e => ImportCommand(e, GetExamplesWith("Sample.opml"), done));
             vm.Import.Execute(null);
 
@@ -499,7 +500,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_Export(bool done, bool expected) => Execute(vm =>
         {
             var dest = GetResultsWith($"{nameof(VM_Export)}_{done}.opml");
-            vm.Messenger.Register<SaveFileMessage>(this, e => ExportCommand(e, dest, done));
+            vm.Register<SaveFileMessage>(this, e => ExportCommand(e, dest, done));
             vm.Export.Execute(null);
 
             Assert.That(IO.Exists(dest), Is.EqualTo(expected));
@@ -544,19 +545,19 @@ namespace Cube.Net.Rss.Tests
                 Assert.That(vm.Data.Lock.Value.UserName,     Is.EqualTo("DummyName"));
                 Assert.That(vm.Data.Lock.Value.MachineName,  Is.EqualTo("DummyMachine"));
 
-                Assert.That(vm.Data.Current.HasValue,        Is.True,  nameof(vm.Data.Current));
-                Assert.That(vm.Data.LastEntry.HasValue,      Is.True,  nameof(vm.Data.LastEntry));
-                Assert.That(vm.Property.CanExecute(null),    Is.False, nameof(vm.Property));
-                Assert.That(vm.Settings.CanExecute(null),    Is.True,  nameof(vm.Settings));
-                Assert.That(vm.Import.CanExecute(null),      Is.False, nameof(vm.Import));
-                Assert.That(vm.Export.CanExecute(null),      Is.True,  nameof(vm.Export));
-                Assert.That(vm.NewEntry.CanExecute(null),    Is.False, nameof(vm.NewEntry));
-                Assert.That(vm.NewCategory.CanExecute(null), Is.False, nameof(vm.NewCategory));
-                Assert.That(vm.Remove.CanExecute(null),      Is.False, nameof(vm.Remove));
-                Assert.That(vm.Rename.CanExecute(null),      Is.False, nameof(vm.Rename));
-                Assert.That(vm.Read.CanExecute(null),        Is.True,  nameof(vm.Read));
-                Assert.That(vm.Update.CanExecute(null),      Is.True,  nameof(vm.Update));
-                Assert.That(vm.Reset.CanExecute(null),       Is.False, nameof(vm.Reset));
+                Assert.That(vm.Data.Current.Value,           Is.Not.Null, nameof(vm.Data.Current));
+                Assert.That(vm.Data.LastEntry.Value,         Is.Not.Null, nameof(vm.Data.LastEntry));
+                Assert.That(vm.Property.CanExecute(null),    Is.False,    nameof(vm.Property));
+                Assert.That(vm.Settings.CanExecute(null),    Is.True,     nameof(vm.Settings));
+                Assert.That(vm.Import.CanExecute(null),      Is.False,    nameof(vm.Import));
+                Assert.That(vm.Export.CanExecute(null),      Is.True,     nameof(vm.Export));
+                Assert.That(vm.NewEntry.CanExecute(null),    Is.False,    nameof(vm.NewEntry));
+                Assert.That(vm.NewCategory.CanExecute(null), Is.False,    nameof(vm.NewCategory));
+                Assert.That(vm.Remove.CanExecute(null),      Is.False,    nameof(vm.Remove));
+                Assert.That(vm.Rename.CanExecute(null),      Is.False,    nameof(vm.Rename));
+                Assert.That(vm.Read.CanExecute(null),        Is.True,     nameof(vm.Read));
+                Assert.That(vm.Update.CanExecute(null),      Is.True,     nameof(vm.Update));
+                Assert.That(vm.Reset.CanExecute(null),       Is.False,    nameof(vm.Reset));
 
                 vm.Update.Execute(null);
                 Assert.That(Wait.For(() => vm.Data.Message.Value.HasValue()), "Timeout");

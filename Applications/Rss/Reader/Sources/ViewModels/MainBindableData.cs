@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Xui;
+using Cube.Xui.Mixin;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -51,13 +52,13 @@ namespace Cube.Net.Rss.App.Reader
             SettingsFolder settings, SynchronizationContext context)
         {
             Root       = root;
-            Lock       = settings.Lock.ToBindable(true, context);
+            Lock       = settings.Lock.ToBindable(context);
             Local      = settings.Value.ToBindable(context);
             Shared     = settings.Shared.ToBindable(context);
-            Current    = new Bindable<IRssEntry>(null, true, context);
-            LastEntry  = new Bindable<RssEntry>(null, true, context);
-            Content    = new Bindable<object>(null, context);
-            Message    = new Bindable<string>(null, context);
+            Current    = new Bindable<IRssEntry> { Context = context };
+            LastEntry  = new Bindable<RssEntry> { Context = context };
+            Content    = new Bindable<object> { Context = context };
+            Message    = new Bindable<string> { Context = context };
         }
 
         #endregion

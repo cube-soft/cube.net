@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Xui;
 using Cube.Xui.Converters;
+using Cube.Xui.Mixin;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using System;

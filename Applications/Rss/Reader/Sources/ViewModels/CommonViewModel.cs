@@ -67,7 +67,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Close =>
             _close = _close ?? new RelayCommand(
-                () => Messenger.Send(new CloseMessage())
+                () => Send<CloseMessage>()
             );
 
         #endregion

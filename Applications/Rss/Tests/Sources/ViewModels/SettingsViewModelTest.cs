@@ -53,7 +53,7 @@ namespace Cube.Net.Rss.Tests
         {
             var local = vm.Data.Local.Value;
             var shred = vm.Data.Shared.Value;
-            vm.Messenger.Register<SettingsViewModel>(this, e => SettingsCommand(e));
+            vm.Register<SettingsViewModel>(this, e => SettingsCommand(e));
             vm.Settings.Execute(null);
 
             Assert.That(shred.CheckUpdate,          Is.False);
@@ -81,7 +81,7 @@ namespace Cube.Net.Rss.Tests
 
             Execute(vm =>
             {
-                vm.Messenger.Register<SettingsViewModel>(this, e => ChangeDataFolder(e));
+                vm.Register<SettingsViewModel>(this, e => ChangeDataFolder(e));
                 vm.Settings.Execute(null);
                 Assert.That(vm.Data.Local.Value.DataDirectory, Is.EqualTo(dest), nameof(SettingsViewModel));
             });
@@ -143,14 +143,14 @@ namespace Cube.Net.Rss.Tests
         {
             var dest = string.Empty;
 
-            vm.Messenger.Register<OpenDirectoryMessage>(this, e =>
+            vm.Register<OpenDirectoryMessage>(this, e =>
             {
                 e.FileName = RootDirectory();
                 e.Result   = true;
                 dest       = e.FileName;
             });
 
-            vm.Messenger.Register<UpdateSourcesMessage>(this,
+            vm.Register<UpdateSourcesMessage>(this,
                 e => vm.Local.Value.DataDirectory = dest
             );
 

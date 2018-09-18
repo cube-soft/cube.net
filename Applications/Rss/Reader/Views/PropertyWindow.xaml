@@ -26,8 +26,8 @@
     </Window.BindingGroup>
 
     <i:Interaction.Behaviors>
-        <xb:CloseBehavior Messenger="{Binding Messenger}"/>
-        <xb:UpdateSourceBehavior Messenger="{Binding Messenger}"/>
+        <xb:CloseBehavior />
+        <xb:UpdateSourceBehavior />
     </i:Interaction.Behaviors>
 
     <Grid>

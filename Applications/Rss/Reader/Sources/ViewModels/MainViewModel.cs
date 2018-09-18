@@ -136,7 +136,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Property => _property ?? (
             _property = new BindableCommand(
-                () => Messenger.Send(new PropertyViewModel(
+                () => Send(new PropertyViewModel(
                     Data.Current.Value as RssEntry,
                     e => Send(() => Model.Reschedule(e))
                 )),
@@ -250,7 +250,7 @@ namespace Cube.Net.Rss.App.Reader
                         if (e.Result) Send(() => Model.Remove());
                     })
                 ),
-                () => !Data.Lock.Value.IsReadOnly && Data.Current.HasValue,
+                () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null,
                 Data.Current,
                 Data.Lock
             )
@@ -268,7 +268,7 @@ namespace Cube.Net.Rss.App.Reader
         public ICommand Rename => _rename ?? (
             _rename = new BindableCommand(
                 () => Send(() => Model.Rename()),
-                () => !Data.Lock.Value.IsReadOnly && Data.Current.HasValue,
+                () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null,
                 Data.Current,
                 Data.Lock
             )
@@ -286,7 +286,7 @@ namespace Cube.Net.Rss.App.Reader
         public ICommand Read => _read ?? (
             _read = new BindableCommand(
                 () => Send(() => Model.Read()),
-                () => Data.Current.HasValue,
+                () => Data.Current.Value != null,
                 Data.Current
             )
         );
@@ -303,7 +303,7 @@ namespace Cube.Net.Rss.App.Reader
         public ICommand Update => _update ?? (
             _update = new BindableCommand(
                 () => Send(() => Model.Update()),
-                () => Data.Current.HasValue,
+                () => Data.Current.Value != null,
                 Data.Current
             )
         );
@@ -320,7 +320,7 @@ namespace Cube.Net.Rss.App.Reader
         public ICommand Reset => _reset ?? (
             _reset = new BindableCommand(
                 () => Send(() => Model.Reset()),
-                () => !Data.Lock.Value.IsReadOnly && Data.Current.HasValue,
+                () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null,
                 Data.Current,
                 Data.Lock
             )

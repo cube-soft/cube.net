@@ -101,7 +101,7 @@ namespace Cube.Net.Rss.App.Reader
         public ICommand Apply => _apply ?? (
             _apply = new RelayCommand(() =>
             {
-                Messenger.Send(new UpdateSourcesMessage());
+                Send<UpdateSourcesMessage>();
                 Close.Execute(null);
                 _callback?.Invoke(Entry.Value);
             })

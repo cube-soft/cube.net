@@ -292,7 +292,7 @@ namespace Cube.Net.Rss.App.Reader
         {
             if (src == null) return;
 
-            Debug.Assert(Data.LastEntry.HasValue);
+            Debug.Assert(Data.LastEntry.Value != null);
             var entry = Data.LastEntry.Value;
             Data.Content.Value = entry.SkipContent ? src.Link as object : src;
             entry.Read(src);
