@@ -24,6 +24,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -262,7 +263,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(src.Title,                      Is.EqualTo("The GitHub Blog"));
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-            vm.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+            vm.Register<DialogMessage>(this, e => DialogMessageCommand(e, MessageBoxResult.OK));
             vm.Remove.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(11));
@@ -291,7 +292,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(IO.Exists(dest),                Is.True);
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-            vm.Register<DialogMessage>(this, e => DialogMessageCommand(e, true));
+            vm.Register<DialogMessage>(this, e => DialogMessageCommand(e, MessageBoxResult.OK));
             vm.Remove.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(10));
@@ -611,7 +612,7 @@ namespace Cube.Net.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void DialogMessageCommand(DialogMessage e, bool result)
+        private void DialogMessageCommand(DialogMessage e, MessageBoxResult result)
         {
             Assert.That(e.Content, Is.Not.Null.And.Not.Empty);
             Assert.That(e.Title,   Is.Not.Null.And.Not.Empty);

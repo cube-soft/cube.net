@@ -23,6 +23,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -149,7 +150,7 @@ namespace Cube.Net.Rss.Tests
             vm.Url.Value = "error";
             vm.Register<DialogMessage>(this, e =>
             {
-                e.Result = true;
+                e.Result = MessageBoxResult.OK;
                 cts.Cancel();
             });
             vm.Execute.Execute(null);

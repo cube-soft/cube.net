@@ -23,6 +23,7 @@ using System;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Cube.Net.Rss.App.Reader
@@ -247,7 +248,7 @@ namespace Cube.Net.Rss.App.Reader
                 () => Send(
                     MessageFactory.RemoveWarning(Data.Current.Value.Title, e =>
                     {
-                        if (e.Result) Send(() => Model.Remove());
+                        if (e.Result == MessageBoxResult.OK) Send(() => Model.Remove());
                     })
                 ),
                 () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null,

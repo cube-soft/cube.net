@@ -54,7 +54,7 @@ namespace Cube.Net.Rss.App.Reader
             ) {
                 Button = MessageBoxButton.OK,
                 Image  = MessageBoxImage.Error,
-                Result = true,
+                Result = MessageBoxResult.OK,
             };
 
         /* ----------------------------------------------------------------- */
@@ -71,7 +71,7 @@ namespace Cube.Net.Rss.App.Reader
         /// <returns>DialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DialogMessage RemoveWarning(string name, Action<DialogMessage> e) =>
+        public static DialogMessage RemoveWarning(string name, DialogCallback e) =>
             new DialogMessage(
                 string.Format(Properties.Resources.MessageRemove, name),
                 Properties.Resources.TitleInformation,
