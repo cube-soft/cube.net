@@ -170,14 +170,14 @@
     <value>インポートするファイルを選択</value>
   </data>
   <data name="TitleWarning" xml:space="preserve">
-    <value>注意</value>
+    <value>CubeRSS Reader 注意</value>
   </data>
   <data name="MessageRemove" xml:space="preserve">
     <value>{0} を削除しますか？
 カテゴリを指定した場合、カテゴリ中の Web サイトも全て削除されます。</value>
   </data>
   <data name="TitleInformation" xml:space="preserve">
-    <value>確認</value>
+    <value>CubeRSS Reader 確認</value>
   </data>
   <data name="Loading" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Assets\Loading.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
@@ -197,5 +197,8 @@
   </data>
   <data name="MessageReadOnly" xml:space="preserve">
     <value>読み取り専用</value>
+  </data>
+  <data name="TitleError" xml:space="preserve">
+    <value>CubeRSS Reader エラー</value>
   </data>
 </root>
