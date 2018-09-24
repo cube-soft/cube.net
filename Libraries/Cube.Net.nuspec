@@ -10,8 +10,8 @@
     <description>Network library for CubeSoft applications.</description>
     <tags>Cube HTTP NTP RSS</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <licenseUrl>https://github.com/cube-soft/Cube.Net/blob/master/License.txt</licenseUrl>
     <projectUrl>https://github.com/cube-soft/Cube.Net</projectUrl>
+    <licenseUrl>https://github.com/cube-soft/Cube.Net/blob/master/License.txt</licenseUrl>
     <iconUrl>https://github.com/cube-soft/Cube.Net/blob/master/Icon.png?raw=true</iconUrl>
     <dependencies>
       <group targetFramework="net45">
