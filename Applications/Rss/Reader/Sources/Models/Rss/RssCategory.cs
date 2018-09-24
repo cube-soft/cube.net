@@ -54,7 +54,7 @@ namespace Cube.Net.Rss.App.Reader
         public RssCategory(SynchronizationContext context)
         {
             _dispose = new OnceAction<bool>(Dispose);
-            Context = context;
+            Context  = context;
             Children = new BindableCollection<IRssEntry> { Context = context };
             Children.CollectionChanged += WhenChildrenChanged;
         }
@@ -176,17 +176,6 @@ namespace Cube.Net.Rss.App.Reader
         ///
         /* ----------------------------------------------------------------- */
         public BindableCollection<IRssEntry> Children { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Context
-        ///
-        /// <summary>
-        /// 同期用コンテキストを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SynchronizationContext Context { get; }
 
         #endregion
 

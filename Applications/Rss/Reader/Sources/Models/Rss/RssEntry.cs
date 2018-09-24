@@ -221,17 +221,6 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public IEnumerable<RssItem> SafeItems => Items.Where(e => true);
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Context
-        ///
-        /// <summary>
-        /// 同期用コンテキストを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SynchronizationContext Context { get; }
-
         #endregion
 
         #region Methods
