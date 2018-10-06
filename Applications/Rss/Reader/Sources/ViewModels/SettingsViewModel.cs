@@ -104,7 +104,7 @@ namespace Cube.Net.Rss.App.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Product => Model.Product;
+        public string Product => Model.Assembly.Product;
 
         /* ----------------------------------------------------------------- */
         ///

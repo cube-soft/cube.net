@@ -208,7 +208,7 @@ namespace Cube.Net.Tests
 
         #endregion
 
-        #region Helper methods
+        #region Others
 
         /* ----------------------------------------------------------------- */
         ///
