@@ -19,7 +19,6 @@ using Cube.Collections;
 using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.FileSystem.Mixin;
-using Cube.Generics;
 using Cube.Log;
 using System;
 using System.Collections;
@@ -599,13 +598,11 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFeed Load(Uri uri)
-        {
-            var src = CacheName(uri);
-            return src.HasValue() ?
-                   IO.Load(src, e => Format.Json.Deserialize<RssFeed.Json>(e).Convert()) :
-                   default(RssFeed);
-        }
+        private RssFeed Load(Uri uri) => IO.LoadOrDefault(
+             CacheName(uri),
+             e => Format.Json.Deserialize<RssFeed.Json>(e).Convert(),
+             default(RssFeed)
+        );
 
         /* ----------------------------------------------------------------- */
         ///
