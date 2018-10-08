@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Net.NetworkInformation;
-using System.Threading.Tasks;
 
 namespace Cube.Net
 {
@@ -131,26 +130,6 @@ namespace Cube.Net
         #endregion
 
         #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// PublishAsync
-        ///
-        /// <summary>
-        /// モニタリングのための操作を実行するタイミングになった時に
-        /// 実行されます。
-        /// </summary>
-        ///
-        /// <remarks>
-        /// ネットワークが利用不可能な状態の場合 Suspend を実行します。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override async Task PublishAsync()
-        {
-            if (!Network.Available) Suspend();
-            else await base.PublishAsync();
-        }
 
         /* ----------------------------------------------------------------- */
         ///

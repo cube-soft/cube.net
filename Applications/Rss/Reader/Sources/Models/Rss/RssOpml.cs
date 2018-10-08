@@ -103,7 +103,7 @@ namespace Cube.Net.Rss.App.Reader
         ///
         /* ----------------------------------------------------------------- */
         public IEnumerable<IRssEntry> Load(string path,
-            IDictionary<Uri, RssFeed> filter) => IO.Load(
+            IDictionary<Uri, RssFeed> filter) => IO.LoadOrDefault(
             path,
             e =>
             {

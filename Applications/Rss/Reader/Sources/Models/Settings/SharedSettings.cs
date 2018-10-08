@@ -244,7 +244,7 @@ namespace Cube.Net.Rss.App.Reader
         /// <returns>SharedSettings オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static SharedSettings Load(string directory, IO io) => io.Load(
+        public static SharedSettings Load(string directory, IO io) => io.LoadOrDefault(
             io.Combine(directory, FileName),
             e => Format.Json.Deserialize<SharedSettings>(e),
             new SharedSettings()
