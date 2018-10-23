@@ -1,4 +1,4 @@
-version: 1.10.0.{build}
+version: 1.12.0.{build}
 branches:
     only:
         - master
@@ -22,33 +22,38 @@ build:
     project: Cube.Net.Rss.sln
     publish_nuget: true
     verbosity: minimal
-after_build:
-    - xcopy /Y /I Applications\Rss\Reader\bin\Release CubeRssReader
-artifacts:
-    - path: CubeRssReader
 test_script:
     - >
       ..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe
+      -log:Error
       -register:user
       -target:nunit3-console.exe
       -targetargs:Cube.Net.Tests.dll
       -targetdir:Tests\bin\Release
       -returntargetcode
       -hideskipped:All
-      -output:CoverResult.xml
-      -filter:"+[*]* -[*]*NativeMethods -[*]*Properties.*"
+      -output:CoverResults.xml
+      -filter:"+[Cube*]* -[*]*NativeMethods -[*]*Properties.*"
     - >
       ..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe
+      -log:Error
       -register:user
       -target:nunit3-console.exe
-      -targetargs:Cube.Net.Rss.Tests.dll
+      -targetargs:"Cube.Net.Rss.Tests.dll --workers=1"
       -targetdir:Applications\Rss\Tests\bin\Release
       -returntargetcode
       -hideskipped:All
       -mergeoutput
-      -output:CoverResult.xml
-      -filter:"+[*]* -[GalaSoft]* -[*]*NativeMethods -[*]*Properties.* -[*]*Window -[*]*Control -[*]*.App"
+      -output:CoverResults.xml
+      -filter:"+[Cube*]* -[*]*NativeMethods -[*]*Properties.* -[*]*Window -[*]*Control -[*]*.App"
 after_test:
+    - xcopy /q /Y /I Applications\Rss\Reader\bin\Release CubeRssReader
+    - xcopy /q /Y /I Tests\bin\Release\Cube.Net.Tests.log Tests\
+    - xcopy /q /Y /I Applications\Rss\Tests\bin\Release\Cube.Net.Rss.Tests.log Tests\
+    - xcopy /q /Y /I CoverResults.xml Tests\
     - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
     - pip install codecov
-    - codecov -f CoverResult.xml
+    - codecov -f CoverResults.xml
+artifacts:
+    - path: CubeRssReader
+    - path: Tests

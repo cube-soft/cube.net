@@ -10,8 +10,8 @@
 
 namespace Cube.Net.Rss.App.Reader.Properties {
     using System;
-
-
+    
+    
     /// <summary>
     ///   ローカライズされた文字列などを検索するための、厳密に型指定されたリソース クラスです。
     /// </summary>
@@ -23,15 +23,15 @@ namespace Cube.Net.Rss.App.Reader.Properties {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
-
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-
+        
         /// <summary>
         ///   このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
         /// </summary>
@@ -45,7 +45,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
         ///   現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
@@ -59,7 +59,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   RSS フィード取得中にエラーが発生しました ({0}) に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -68,7 +68,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("ErrorFeed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   URL は既に登録されています。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -77,7 +77,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("ErrorFeedExists", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   RSS または Atom フィードが見つかりません。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -86,7 +86,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("ErrorFeedNotFound", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   RSS フィードの登録に失敗しました。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -95,7 +95,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("ErrorRegister", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   OPML ファイル (*.opml, *.xml)|*.opml;*.OPML;*.xml;*.XML|すべてのファイル (*.*)|*.* に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -104,7 +104,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("FilterOpml", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   &lt;!DOCTYPE html&gt;
         ///&lt;html lang=&quot;ja&quot;&gt;
@@ -145,7 +145,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("Loading", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
@@ -155,7 +155,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-
+        
         /// <summary>
         ///   自動 に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -164,7 +164,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageAutoFrequency", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   データフォルダを選択して下さい。
         ///この設定はアプリケーションを再起動後に反映されます。 に類似しているローカライズされた文字列を検索します。
@@ -174,7 +174,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageDataDirectory", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   ファイル名を指定して保存 に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -183,7 +183,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageExport", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   高頻度 に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -192,7 +192,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageHighFrequency", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   インポートするファイルを選択 に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -201,7 +201,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageImport", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   最終チェック に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -210,7 +210,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageLastChecked", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   データを読み込んでいます... に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -219,7 +219,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageLoading", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   低頻度 に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -228,7 +228,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageLowFrequency", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   新しいフォルダー に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -237,7 +237,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageNewCategory", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   チェックしない に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -246,7 +246,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageNoneFrequency", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   新着記事はありません ({0}) に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -255,7 +255,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageNoReceived", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   読み取り専用 に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -264,7 +264,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageReadOnly", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   {0} 件の新着記事 ({1}) に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -273,7 +273,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageReceived", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   {0} を削除しますか？
         ///カテゴリを指定した場合、カテゴリ中の Web サイトも全て削除されます。 に類似しているローカライズされた文字列を検索します。
@@ -283,7 +283,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageRemove", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   RSS フィードを更新しています... に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -292,7 +292,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("MessageUpdating", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;
         ///&lt;html&gt;
@@ -319,7 +319,7 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("Skeleton", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   body {
         ///    margin          : 0;
@@ -354,18 +354,27 @@ namespace Cube.Net.Rss.App.Reader.Properties {
                 return ResourceManager.GetString("SkeletonStyle", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   確認 に類似しているローカライズされた文字列を検索します。
+        ///   CubeRSS Reader エラー に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string TitleError {
+            get {
+                return ResourceManager.GetString("TitleError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   CubeRSS Reader 確認 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string TitleInformation {
             get {
                 return ResourceManager.GetString("TitleInformation", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   注意 に類似しているローカライズされた文字列を検索します。
+        ///   CubeRSS Reader 注意 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string TitleWarning {
             get {

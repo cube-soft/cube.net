@@ -31,13 +31,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\..\..\packages\Cube.Core.1.10.0\lib\net45\Cube.Core.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Core.1.12.0\lib\net45\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\..\..\packages\Cube.FileSystem.1.10.0\lib\net45\Cube.FileSystem.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.FileSystem.1.12.0\lib\net45\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Xui">
-      <HintPath>..\..\..\..\packages\Cube.Xui.1.10.0\lib\net45\Cube.Xui.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Xui.1.12.0\lib\net45\Cube.Xui.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\..\..\..\packages\MvvmLightLibs.5.4.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -72,21 +72,21 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Details\FileHelper.cs" />
-    <Compile Include="Details\GlobalSetup.cs" />
-    <Compile Include="Details\ViewModelHelper.cs" />
-    <Compile Include="Interactions\DuplexConverterTest.cs" />
-    <Compile Include="Interactions\SimplexConverterTest.cs" />
-    <Compile Include="Interactions\TitleConverterTest.cs" />
-    <Compile Include="Models\RssEntryTest.cs" />
-    <Compile Include="Models\RssOpmlTest.cs" />
-    <Compile Include="Models\RssSubscriberTest.cs" />
-    <Compile Include="Models\SettingsTest.cs" />
-    <Compile Include="ViewModels\MainFacadeTest.cs" />
-    <Compile Include="ViewModels\MainViewModelTest.cs" />
-    <Compile Include="ViewModels\PropertyViewModelTest.cs" />
-    <Compile Include="ViewModels\RegisterViewModelTest.cs" />
-    <Compile Include="ViewModels\SettingsViewModelTest.cs" />
+    <Compile Include="Sources\Details\GlobalSetup.cs" />
+    <Compile Include="Sources\Details\ResourceFixture.cs" />
+    <Compile Include="Sources\Details\ViewModelFixture.cs" />
+    <Compile Include="Sources\Interactions\DuplexConverterTest.cs" />
+    <Compile Include="Sources\Interactions\SimplexConverterTest.cs" />
+    <Compile Include="Sources\Interactions\TitleConverterTest.cs" />
+    <Compile Include="Sources\Models\RssEntryTest.cs" />
+    <Compile Include="Sources\Models\RssOpmlTest.cs" />
+    <Compile Include="Sources\Models\RssSubscriberTest.cs" />
+    <Compile Include="Sources\Models\SettingsTest.cs" />
+    <Compile Include="Sources\ViewModels\MainFacadeTest.cs" />
+    <Compile Include="Sources\ViewModels\MainViewModelTest.cs" />
+    <Compile Include="Sources\ViewModels\PropertyViewModelTest.cs" />
+    <Compile Include="Sources\ViewModels\RegisterViewModelTest.cs" />
+    <Compile Include="Sources\ViewModels\SettingsViewModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -136,10 +136,6 @@
     <ProjectReference Include="..\..\..\Libraries\Cube.Net.csproj">
       <Project>{06edf5d3-6a49-445b-a605-b9a9ee2250e2}</Project>
       <Name>Cube.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Tests\Cube.Net.Tests.csproj">
-      <Project>{03db8859-93f8-4335-bba1-0c04981a970a}</Project>
-      <Name>Cube.Net.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\Reader\Cube.Net.Rss.App.Reader.csproj">
       <Project>{c7742724-1786-4fdb-86c1-10090245d25e}</Project>

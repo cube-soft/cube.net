@@ -42,19 +42,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\..\..\packages\Cube.Core.1.10.0\lib\net45\Cube.Core.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Core.1.12.0\lib\net45\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\..\..\packages\Cube.FileSystem.1.10.0\lib\net45\Cube.FileSystem.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.FileSystem.1.12.0\lib\net45\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Forms">
-      <HintPath>..\..\..\..\packages\Cube.Forms.1.10.0\lib\net45\Cube.Forms.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Forms.1.12.0\lib\net45\Cube.Forms.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Images">
-      <HintPath>..\..\..\..\packages\Cube.Images.1.10.0\lib\net45\Cube.Images.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Images.1.12.0\lib\net45\Cube.Images.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Xui">
-      <HintPath>..\..\..\..\packages\Cube.Xui.1.10.0\lib\net45\Cube.Xui.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Cube.Xui.1.12.0\lib\net45\Cube.Xui.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\..\..\..\packages\MvvmLightLibs.5.4.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -92,32 +92,32 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interactions\ContextMenuAction.cs" />
-    <Compile Include="Interactions\DuplexConverters.cs" />
-    <Compile Include="Interactions\MessageFactory.cs" />
-    <Compile Include="Interactions\OtherBehaviors.cs" />
-    <Compile Include="Interactions\RssDropTarget.cs" />
-    <Compile Include="Interactions\SimplexConverters.cs" />
-    <Compile Include="Interactions\TitleConverter.cs" />
-    <Compile Include="Interactions\WebBehavior.cs" />
-    <Compile Include="Models\Rss\IRssEntry.cs" />
-    <Compile Include="Models\Rss\RssCategory.cs" />
-    <Compile Include="Models\Rss\RssEntry.cs" />
-    <Compile Include="Models\Rss\RssExtension.cs" />
-    <Compile Include="Models\Rss\RssOpml.cs" />
-    <Compile Include="Models\Rss\RssSubscriber.cs" />
-    <Compile Include="Models\Settings\LocalSettings.cs" />
-    <Compile Include="Models\Settings\LockSettings.cs" />
-    <Compile Include="Models\Settings\SettingsFolder.cs" />
-    <Compile Include="Models\Settings\SharedSettings.cs" />
-    <Compile Include="Models\Settings\UpdateChecker.cs" />
-    <Compile Include="ViewModels\CommonViewModel.cs" />
-    <Compile Include="ViewModels\MainBindableData.cs" />
-    <Compile Include="ViewModels\MainFacade.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\PropertyViewModel.cs" />
-    <Compile Include="ViewModels\RegisterViewModel.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Sources\Interactions\ContextMenuAction.cs" />
+    <Compile Include="Sources\Interactions\DuplexConverters.cs" />
+    <Compile Include="Sources\Interactions\MessageFactory.cs" />
+    <Compile Include="Sources\Interactions\OtherBehaviors.cs" />
+    <Compile Include="Sources\Interactions\RssDropTarget.cs" />
+    <Compile Include="Sources\Interactions\SimplexConverters.cs" />
+    <Compile Include="Sources\Interactions\TitleConverter.cs" />
+    <Compile Include="Sources\Interactions\WebBehavior.cs" />
+    <Compile Include="Sources\Models\Rss\IRssEntry.cs" />
+    <Compile Include="Sources\Models\Rss\RssCategory.cs" />
+    <Compile Include="Sources\Models\Rss\RssEntry.cs" />
+    <Compile Include="Sources\Models\Rss\RssExtension.cs" />
+    <Compile Include="Sources\Models\Rss\RssOpml.cs" />
+    <Compile Include="Sources\Models\Rss\RssSubscriber.cs" />
+    <Compile Include="Sources\Models\Settings\LocalSettings.cs" />
+    <Compile Include="Sources\Models\Settings\LockSettings.cs" />
+    <Compile Include="Sources\Models\Settings\SettingsFolder.cs" />
+    <Compile Include="Sources\Models\Settings\SharedSettings.cs" />
+    <Compile Include="Sources\Models\Settings\UpdateChecker.cs" />
+    <Compile Include="Sources\ViewModels\CommonViewModel.cs" />
+    <Compile Include="Sources\ViewModels\MainBindableData.cs" />
+    <Compile Include="Sources\ViewModels\MainFacade.cs" />
+    <Compile Include="Sources\ViewModels\MainViewModel.cs" />
+    <Compile Include="Sources\ViewModels\PropertyViewModel.cs" />
+    <Compile Include="Sources\ViewModels\RegisterViewModel.cs" />
+    <Compile Include="Sources\ViewModels\SettingsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -41,10 +41,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.1.10.0\lib\net45\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.1.12.0\lib\net45\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\packages\Cube.FileSystem.1.10.0\lib\net45\Cube.FileSystem.dll</HintPath>
+      <HintPath>..\..\packages\Cube.FileSystem.1.12.0\lib\net45\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="SgmlReaderDll">
       <HintPath>..\..\packages\SgmlReader.1.8.11\lib\4.0\SgmlReaderDll.dll</HintPath>
@@ -61,35 +61,35 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\Converters\ContentConverter.cs" />
-    <Compile Include="Http\Converters\JsonConverter.cs" />
-    <Compile Include="Http\Converters\XmlConverter.cs" />
-    <Compile Include="Http\HttpClientFactory.cs" />
-    <Compile Include="Http\HttpExtension.cs" />
-    <Compile Include="Http\HttpHandlers.cs" />
-    <Compile Include="Http\HttpMonitor.cs" />
-    <Compile Include="Http\HttpMonitorBase.cs" />
-    <Compile Include="Http\HttpValueContent.cs" />
-    <Compile Include="NativeMethods\UrlMon.cs" />
-    <Compile Include="Ntp\NtpClient.cs" />
-    <Compile Include="Ntp\NtpParameters.cs" />
-    <Compile Include="Ntp\NtpMonitor.cs" />
-    <Compile Include="Ntp\NtpPacket.cs" />
-    <Compile Include="Rss\Details\AtomParser.cs" />
-    <Compile Include="Rss\Details\RssExtension.cs" />
-    <Compile Include="Rss\Details\RssParseCore.cs" />
-    <Compile Include="Rss\Details\RssParseOptions.cs" />
-    <Compile Include="Rss\RssCacheDictionary.cs" />
-    <Compile Include="Rss\RssClient.cs" />
-    <Compile Include="Rss\RssFeed.cs" />
-    <Compile Include="Rss\RssItem.cs" />
-    <Compile Include="Rss\RssMonitor.cs" />
-    <Compile Include="Rss\RssParser.cs" />
-    <Compile Include="Rss\RssVersion.cs" />
-    <Compile Include="BrowserSettings.cs" />
-    <Compile Include="Network.cs" />
-    <Compile Include="NetworkAwareTimer.cs" />
-    <Compile Include="NetworkMonitorBase.cs" />
+    <Compile Include="Sources\Http\Converters\ContentConverter.cs" />
+    <Compile Include="Sources\Http\Converters\JsonConverter.cs" />
+    <Compile Include="Sources\Http\Converters\XmlConverter.cs" />
+    <Compile Include="Sources\Http\HttpClientFactory.cs" />
+    <Compile Include="Sources\Http\HttpExtension.cs" />
+    <Compile Include="Sources\Http\HttpHandlers.cs" />
+    <Compile Include="Sources\Http\HttpMonitor.cs" />
+    <Compile Include="Sources\Http\HttpMonitorBase.cs" />
+    <Compile Include="Sources\Http\HttpValueContent.cs" />
+    <Compile Include="Sources\NativeMethods\UrlMon.cs" />
+    <Compile Include="Sources\Ntp\NtpClient.cs" />
+    <Compile Include="Sources\Ntp\NtpParameters.cs" />
+    <Compile Include="Sources\Ntp\NtpMonitor.cs" />
+    <Compile Include="Sources\Ntp\NtpPacket.cs" />
+    <Compile Include="Sources\Rss\Details\AtomParser.cs" />
+    <Compile Include="Sources\Rss\Details\RssExtension.cs" />
+    <Compile Include="Sources\Rss\Details\RssParseCore.cs" />
+    <Compile Include="Sources\Rss\Details\RssParseOptions.cs" />
+    <Compile Include="Sources\Rss\RssCacheDictionary.cs" />
+    <Compile Include="Sources\Rss\RssClient.cs" />
+    <Compile Include="Sources\Rss\RssFeed.cs" />
+    <Compile Include="Sources\Rss\RssItem.cs" />
+    <Compile Include="Sources\Rss\RssMonitor.cs" />
+    <Compile Include="Sources\Rss\RssParser.cs" />
+    <Compile Include="Sources\Rss\RssVersion.cs" />
+    <Compile Include="Sources\BrowserSettings.cs" />
+    <Compile Include="Sources\Network.cs" />
+    <Compile Include="Sources\NetworkAwareTimer.cs" />
+    <Compile Include="Sources\NetworkMonitorBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

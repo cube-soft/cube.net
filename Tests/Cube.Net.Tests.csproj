@@ -37,10 +37,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.1.10.0\lib\net45\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.1.12.0\lib\net45\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\packages\Cube.FileSystem.1.10.0\lib\net45\Cube.FileSystem.dll</HintPath>
+      <HintPath>..\..\packages\Cube.FileSystem.1.12.0\lib\net45\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -58,24 +58,22 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Details\FileHelper.cs" />
-    <Compile Include="Details\GlobalSetup.cs" />
-    <Compile Include="Details\Person.cs" />
-    <Compile Include="Details\TaskOperator.cs" />
-    <Compile Include="Http\HttpClientTest.cs" />
-    <Compile Include="Http\HttpHandlerTest.cs" />
-    <Compile Include="Http\HttpMonitorTest.cs" />
-    <Compile Include="Ntp\NtpClientTest.cs" />
-    <Compile Include="Ntp\NtpMonitorTest.cs" />
-    <Compile Include="Ntp\NtpPacketTest.cs" />
-    <Compile Include="Ntp\NtpTimestampTest.cs" />
-    <Compile Include="Rss\RssCacheDictionaryTest.cs" />
-    <Compile Include="Rss\RssClientTest.cs" />
-    <Compile Include="Rss\RssMonitorTest.cs" />
-    <Compile Include="Rss\RssFeedTest.cs" />
-    <Compile Include="Rss\RssVersionTest.cs" />
-    <Compile Include="BrowserSettingsTest.cs" />
-    <Compile Include="NetworkTest.cs" />
+    <Compile Include="Sources\Details\GlobalSetup.cs" />
+    <Compile Include="Sources\Details\Person.cs" />
+    <Compile Include="Sources\Http\HttpClientTest.cs" />
+    <Compile Include="Sources\Http\HttpHandlerTest.cs" />
+    <Compile Include="Sources\Http\HttpMonitorTest.cs" />
+    <Compile Include="Sources\Ntp\NtpClientTest.cs" />
+    <Compile Include="Sources\Ntp\NtpMonitorTest.cs" />
+    <Compile Include="Sources\Ntp\NtpPacketTest.cs" />
+    <Compile Include="Sources\Ntp\NtpTimestampTest.cs" />
+    <Compile Include="Sources\Rss\RssCacheDictionaryTest.cs" />
+    <Compile Include="Sources\Rss\RssClientTest.cs" />
+    <Compile Include="Sources\Rss\RssMonitorTest.cs" />
+    <Compile Include="Sources\Rss\RssFeedTest.cs" />
+    <Compile Include="Sources\Rss\RssVersionTest.cs" />
+    <Compile Include="Sources\BrowserSettingsTest.cs" />
+    <Compile Include="Sources\NetworkTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

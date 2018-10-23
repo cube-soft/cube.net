@@ -4,7 +4,7 @@ CubeRSS Reader
 Copyright (c) 2010 CubeSoft Inc.
 
 support@cube-soft.jp  
-http://www.cube-soft.jp/
+https://www.cube-soft.jp/
 
 ## はじめに
 
@@ -18,7 +18,7 @@ CubeRSS Reader を使用するためには、Microsoft .NET Framework 3.5 以上
 .NET Framework は、以下のURL からダウンロードして下さい。
 
 * Microsoft .NET Framework 3.5  
-  http://www.microsoft.com/ja-jp/download/details.aspx?id=22
+  https://www.microsoft.com/ja-jp/download/details.aspx?id=22
 * Microsoft .NET Framework 4.5.2  
   https://www.microsoft.com/ja-JP/download/details.aspx?id=42643
 
@@ -72,23 +72,23 @@ CubeRSS Reader は、以下のライブラリを利用しています。
 
 * AlphaFS
     - MIT License
-    - http://alphafs.alphaleonis.com/
+    - https://alphafs.alphaleonis.com/
     - https://www.nuget.org/packages/AlphaFS/
 * AsyncBridge
     - MIT License
-    - http://omermor.github.io/AsyncBridge/
-    - https://www.nuget.org/packages/AsyncBridge.Net35
+    - https://omermor.github.io/AsyncBridge/
+    - https://www.nuget.org/packages/AsyncBridge.Net35/
 * gong-wpf-dragdrop
     - BSD 3-Clause License
-    - https://github.com/punker76/gong-wpf-dragdrop
+    - https://github.com/punker76/gong-wpf-dragdrop/
     - https://www.nuget.org/packages/gong-wpf-dragdrop/
 * log4net
     - Apache License, Version 2.0
-    - http://logging.apache.org/log4net/
+    - https://logging.apache.org/log4net/
     - https://www.nuget.org/packages/log4net/
 * MVVM Light Toolkit
     - MIT License
-    - http://www.galasoft.ch/mvvm
+    - https://github.com/lbugnion/mvvmlight/
     - https://www.nuget.org/packages/MvvmLight/
 
 ## バージョン履歴
