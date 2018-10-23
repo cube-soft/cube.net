@@ -84,13 +84,14 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         public static IEnumerable<RssCategory> Load(string src,
             SynchronizationContext context, IO io) =>
+            io.Exists(src) ?
             io.Load(
                 src,
                 ss => Format.Json
                     .Deserialize<List<RssCategory.Json>>(ss)
-                    .Select(e => e.Convert(context)),
-                new RssCategory[0]
-            );
+                    .Select(e => e.Convert(context))
+            ) :
+            new RssCategory[0];
 
         /* ----------------------------------------------------------------- */
         ///

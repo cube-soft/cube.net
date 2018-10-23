@@ -411,7 +411,7 @@ namespace Cube.Net.Rss.App.Reader
                 })
             ));
 
-            if (!IsReadOnly && _feeds.Count > 0) TaskEx.Run(() => RssExtension.Backup(FileName, IO)).Forget();
+            if (!IsReadOnly && _feeds.Count > 0) RssExtension.Backup(FileName, IO);
         }
 
         /* ----------------------------------------------------------------- */

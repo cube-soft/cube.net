@@ -598,13 +598,11 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private RssFeed Load(Uri uri)
-        {
-            var src = CacheName(uri);
-            return !string.IsNullOrEmpty(src) ?
-                   IO.Load(src, e => Format.Json.Deserialize<RssFeed.Json>(e).Convert()) :
-                   default(RssFeed);
-        }
+        private RssFeed Load(Uri uri) => IO.LoadOrDefault(
+             CacheName(uri),
+             e => Format.Json.Deserialize<RssFeed.Json>(e).Convert(),
+             default(RssFeed)
+        );
 
         /* ----------------------------------------------------------------- */
         ///

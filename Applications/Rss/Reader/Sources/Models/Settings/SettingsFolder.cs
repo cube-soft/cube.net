@@ -228,7 +228,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         private DateTime? GetLastCheckUpdate() => this.LogWarn(() =>
         {
-            var name = $@"SOFTWARE\{Company}\{Product}";
+            var name = $@"SOFTWARE\{Assembly.Company}\{Assembly.Product}";
             using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false))
             {
                 if (key == null) return default(DateTime?);
@@ -249,7 +249,7 @@ namespace Cube.Net.Rss.App.Reader
         /* ----------------------------------------------------------------- */
         private string GetUserAgent()
         {
-            var app  = $"{Product}/{Version.Number}";
+            var app  = $"{Assembly.Product}/{Version.Number}";
             var win  = Environment.OSVersion.VersionString;
             var net  = $".NET {Environment.Version}";
             var view = BrowserSettings.Version;

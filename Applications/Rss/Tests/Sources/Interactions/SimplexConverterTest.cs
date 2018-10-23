@@ -252,7 +252,7 @@ namespace Cube.Net.Rss.Tests
 
         #endregion
 
-        #region Helper methods
+        #region Others
 
         /* ----------------------------------------------------------------- */
         ///
