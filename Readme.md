@@ -5,8 +5,9 @@ Cube.Net
 [![AppVeyor](https://img.shields.io/appveyor/ci/clown/cube-net-ftg7w/chrome.svg?label=chrome&logo=appveyor)](https://ci.appveyor.com/project/clown/cube-net-ftg7w)
 [![Codecov](https://codecov.io/gh/cube-soft/Cube.Net/branch/master/graph/badge.svg)](https://codecov.io/gh/cube-soft/Cube.Net)
 
-Cube.Net is a network library for CubeSoft applications.
+Cube.Net is a network library.
 The repository also has some implemented applications based on the Cube.Net project as follows.
+Libraries and applications are available for .NET Framework 3.5, 4.5 or more.
 
 ### CubeRSS Reader
 
@@ -36,7 +37,7 @@ Dependencies of [Libraries](https://github.com/cube-soft/Cube.Net/tree/master/Li
 
 ## License
 
-Copyright &copy; 2010 [CubeSoft, Inc.](https://www.cube-soft.jp/)
+Copyright © 2010 [CubeSoft, Inc.](https://www.cube-soft.jp/)
 
 The project is licensed under the [Apache 2.0](https://github.com/cube-soft/Cube.Net/blob/master/License.txt).
 Note that trade names, trademarks, service marks, or logo images distributed in CubeSoft applications are not allowed to reuse or modify all or parts of them.

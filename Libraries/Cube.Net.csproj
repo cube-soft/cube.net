@@ -41,10 +41,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.1.12.0\lib\net45\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.1.13.0\lib\net45\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\packages\Cube.FileSystem.1.12.0\lib\net45\Cube.FileSystem.dll</HintPath>
+      <HintPath>..\..\packages\Cube.FileSystem.1.13.0\lib\net45\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="SgmlReaderDll">
       <HintPath>..\..\packages\SgmlReader.1.8.11\lib\4.0\SgmlReaderDll.dll</HintPath>
