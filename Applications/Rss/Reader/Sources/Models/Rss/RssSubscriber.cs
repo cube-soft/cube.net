@@ -15,7 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Conversions;
 using Cube.FileSystem;
+using Cube.Log;
 using Cube.Tasks;
 using Cube.Xui;
 using System;
@@ -401,7 +403,7 @@ namespace Cube.Net.Rss.App.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Load() {
-            Add(RssExtension.Load(FileName, _context, IO).SelectMany(e =>
+            var dest = RssExtension.Load(FileName, _context, IO).SelectMany(e =>
                 !string.IsNullOrEmpty(e.Title) ?
                 new[] { e as IRssEntry } :
                 e.Entries.Select(re =>
@@ -409,8 +411,15 @@ namespace Cube.Net.Rss.App.Reader
                     re.Parent = null;
                     return re as IRssEntry;
                 })
+            );
+
+            this.LogDebug(string.Format("Load:{0} ({1}) -> {2}",
+                FileName,
+                IO.Get(FileName).Length.ToPrettyBytes(),
+                dest.Count()
             ));
 
+            Add(dest);
             if (!IsReadOnly && _feeds.Count > 0) RssExtension.Backup(FileName, IO);
         }
 
@@ -428,6 +437,9 @@ namespace Cube.Net.Rss.App.Reader
             var empty = new RssCategory(_context) { Title = string.Empty };
             foreach (var entry in Entries) empty.Children.Add(entry);
             Categories.Concat(new[] { empty }).Save(FileName, IO);
+            this.LogDebug(string.Format("Save:{0} ({1})",
+                FileName, IO.Get(FileName).Length.ToPrettyBytes()
+            ));
         }
 
         /* ----------------------------------------------------------------- */
