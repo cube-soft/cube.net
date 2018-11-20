@@ -52,9 +52,9 @@ namespace Cube.Net.Rss.App.Reader
                 $"{message} ({err.GetType().Name})",
                 Properties.Resources.TitleError
             ) {
-                Button = MessageBoxButton.OK,
-                Image  = MessageBoxImage.Error,
-                Result = MessageBoxResult.OK,
+                Buttons = MessageBoxButton.OK,
+                Image   = MessageBoxImage.Error,
+                Result  = MessageBoxResult.OK,
             };
 
         /* ----------------------------------------------------------------- */
@@ -77,8 +77,8 @@ namespace Cube.Net.Rss.App.Reader
                 Properties.Resources.TitleInformation,
                 e
             ) {
-                Button = MessageBoxButton.YesNo,
-                Image  = MessageBoxImage.Information,
+                Buttons = MessageBoxButton.YesNo,
+                Image   = MessageBoxImage.Information,
             };
 
         /* ----------------------------------------------------------------- */
