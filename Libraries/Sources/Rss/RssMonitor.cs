@@ -326,7 +326,7 @@ namespace Cube.Net.Rss
             foreach (var action in Subscriptions)
             {
                 try { await action(feed); }
-                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+                catch (Exception e) { this.LogWarn(e); }
             }
         }
 

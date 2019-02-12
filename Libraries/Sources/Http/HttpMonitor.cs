@@ -138,9 +138,9 @@ namespace Cube.Net.Http
                     await PublishAsync(uri);
                     break;
                 }
-                catch (Exception err)
+                catch (Exception e)
                 {
-                    this.LogWarn(err.ToString(), err);
+                    this.LogWarn(e);
                     await Task.Delay(RetryInterval).ConfigureAwait(false);
                     this.LogDebug($"Retry\tCount:{i + 1}\tUrl:{uri}");
                 }

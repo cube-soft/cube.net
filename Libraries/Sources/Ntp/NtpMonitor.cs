@@ -230,7 +230,7 @@ namespace Cube.Net.Ntp
             foreach (var action in Subscriptions)
             {
                 try { await action(value).ConfigureAwait(false); }
-                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+                catch (Exception e) { this.LogWarn(e); }
             }
         }
 
@@ -273,9 +273,9 @@ namespace Cube.Net.Ntp
                     else throw new ArgumentException("InvalidPacket");
                     break;
                 }
-                catch (Exception err)
+                catch (Exception e)
                 {
-                    this.LogWarn(err.ToString(), err);
+                    this.LogWarn(e);
                     await Task.Delay(RetryInterval).ConfigureAwait(false);
                     this.LogDebug($"Retry\tCount:{i + 1}\tServer:{Server}");
                 }
