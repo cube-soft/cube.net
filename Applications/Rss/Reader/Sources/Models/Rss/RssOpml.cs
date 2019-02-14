@@ -18,6 +18,7 @@
 using Cube.Conversions;
 using Cube.FileSystem;
 using Cube.FileSystem.Mixin;
+using Cube.Log;
 using Cube.Xml;
 using System;
 using System.Collections.Generic;
@@ -113,7 +114,7 @@ namespace Cube.Net.Rss.App.Reader
                 }
                 catch (Exception err)
                 {
-                    System.Diagnostics.Debug.WriteLine(err.ToString());
+                    this.LogWarn(err);
                     return new IRssEntry[0];
                 }
             },

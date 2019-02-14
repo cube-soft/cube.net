@@ -85,7 +85,7 @@ namespace Cube.Net.Rss.App.Reader
                 BrowserSettings.MaxConnections = 10;
                 BrowserSettings.NavigationSounds = false;
             }
-            catch (Exception error) { this.LogWarn(error); }
+            catch (Exception err) { this.LogWarn(err); }
 
             base.OnStartup(e);
         }

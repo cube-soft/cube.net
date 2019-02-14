@@ -70,9 +70,9 @@ namespace Cube.Net.Http
                     else client.LogWarn($"StatusCode:{response.StatusCode}");
                 }
             }
-            catch (Exception e)
+            catch (Exception err)
             {
-                if (converter.IgnoreException) client.LogWarn(e);
+                if (converter.IgnoreException) client.LogWarn(err);
                 else throw;
             }
             return default(T);

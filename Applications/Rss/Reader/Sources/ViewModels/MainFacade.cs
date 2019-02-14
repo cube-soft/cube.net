@@ -395,7 +395,7 @@ namespace Cube.Net.Rss.App.Reader
         {
             if (disposing)
             {
-                _core.Dispose();
+                _core?.Dispose();
                 Settings.Dispose();
             }
         }

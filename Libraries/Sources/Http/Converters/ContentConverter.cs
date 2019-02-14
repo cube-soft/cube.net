@@ -125,9 +125,9 @@ namespace Cube.Net.Http
         public TValue Convert(Stream src)
         {
             try { return OnConvert(src); }
-            catch (Exception e)
+            catch (Exception err)
             {
-                if (IgnoreException) this.LogWarn(e);
+                if (IgnoreException) this.LogWarn(err);
                 else throw;
             }
             return default(TValue);

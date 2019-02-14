@@ -156,7 +156,7 @@ namespace Cube.Net.Http
             foreach (var action in Subscriptions)
             {
                 try { await action(uri, value); }
-                catch (Exception e) { this.LogWarn(e); }
+                catch (Exception err) { this.LogWarn(err); }
             }
         }
 
