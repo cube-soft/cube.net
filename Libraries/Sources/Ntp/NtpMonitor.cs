@@ -230,7 +230,7 @@ namespace Cube.Net.Ntp
             foreach (var action in Subscriptions)
             {
                 try { await action(value).ConfigureAwait(false); }
-                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+                catch (Exception err) { this.LogWarn(err); }
             }
         }
 
@@ -275,7 +275,7 @@ namespace Cube.Net.Ntp
                 }
                 catch (Exception err)
                 {
-                    this.LogWarn(err.ToString(), err);
+                    this.LogWarn(err);
                     await Task.Delay(RetryInterval).ConfigureAwait(false);
                     this.LogDebug($"Retry\tCount:{i + 1}\tServer:{Server}");
                 }

@@ -73,7 +73,7 @@ namespace Cube.Net.Rss.App.Reader
             if (!Activate()) return;
 
             Logger.Configure();
-            Logger.Info(GetType(), Assembly.GetExecutingAssembly());
+            this.LogInfo(Assembly.GetExecutingAssembly());
 
             _resources.Add(Logger.ObserveTaskException());
             _resources.Add(this.ObserveUiException());
@@ -85,7 +85,7 @@ namespace Cube.Net.Rss.App.Reader
                 BrowserSettings.MaxConnections = 10;
                 BrowserSettings.NavigationSounds = false;
             }
-            catch (Exception err) { this.LogWarn(err.ToString(), err); }
+            catch (Exception err) { this.LogWarn(err); }
 
             base.OnStartup(e);
         }

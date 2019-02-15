@@ -305,7 +305,7 @@ namespace Cube.Net.Rss
             foreach (var uri in uris)
             {
                 try { await UpdateAsync(uri).ConfigureAwait(false); }
-                catch (Exception e) { await PublishErrorAsync(uri, e).ConfigureAwait(false); }
+                catch (Exception err) { await PublishErrorAsync(uri, err).ConfigureAwait(false); }
             }
             if (State == TimerState.Suspend) Start();
         }).Forget();
@@ -326,7 +326,7 @@ namespace Cube.Net.Rss
             foreach (var action in Subscriptions)
             {
                 try { await action(feed); }
-                catch (Exception err) { this.LogWarn(err.ToString(), err); }
+                catch (Exception err) { this.LogWarn(err); }
             }
         }
 

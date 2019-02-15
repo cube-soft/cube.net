@@ -126,7 +126,7 @@ namespace Cube.Net.Rss.App.Reader
         {
             Data.Message.Value = Properties.Resources.MessageLoading;
 
-            this.LogDebug("Load", () => _core.Load());
+            this.LogDebug(() => _core.Load());
 
             var entry = _core.Find(Settings.Shared.StartUri) ??
                         _core.Flatten<RssEntry>().FirstOrDefault();
@@ -312,7 +312,7 @@ namespace Cube.Net.Rss.App.Reader
             try
             {
                 _core.Stop();
-                this.LogDebug("Import", () => _core.Import(path));
+                this.LogDebug(() => _core.Import(path));
             }
             finally { _core.Start(TimeSpan.Zero); }
         }
@@ -395,7 +395,7 @@ namespace Cube.Net.Rss.App.Reader
         {
             if (disposing)
             {
-                _core.Dispose();
+                _core?.Dispose();
                 Settings.Dispose();
             }
         }
