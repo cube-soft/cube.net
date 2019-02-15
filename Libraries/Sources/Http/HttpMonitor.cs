@@ -140,7 +140,7 @@ namespace Cube.Net.Http
                 }
                 catch (Exception err)
                 {
-                    this.LogWarn(err.ToString(), err);
+                    this.LogWarn(err);
                     await TaskEx.Delay(RetryInterval).ConfigureAwait(false);
                     this.LogDebug($"Retry\tCount:{i + 1}\tUrl:{uri}");
                 }

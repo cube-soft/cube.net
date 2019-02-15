@@ -72,7 +72,7 @@ namespace Cube.Net.Http
             }
             catch (Exception err)
             {
-                if (converter.IgnoreException) client.LogWarn(err.ToString(), err);
+                if (converter.IgnoreException) client.LogWarn(err);
                 else throw;
             }
             return default(T);
