@@ -4,10 +4,10 @@ require 'rake/clean'
 # --------------------------------------------------------------------------- #
 # Configuration
 # --------------------------------------------------------------------------- #
-SOLUTION    = 'Cube.Net.Rss'
-PACKAGE     = 'Cube.Net'
-BRANCHES    = [ 'stable', 'net35' ]
-TESTCASES   = {
+SOLUTION  = 'Cube.Net'
+SUFFIX    = 'Rss'
+BRANCHES  = [ 'stable', 'net35' ]
+TESTCASES = {
     'Cube.Net.Tests'     => 'Tests',
     'Cube.Net.Rss.Tests' => 'Applications/Rss/Tests'
 }
@@ -15,12 +15,12 @@ TESTCASES   = {
 # --------------------------------------------------------------------------- #
 # Commands
 # --------------------------------------------------------------------------- #
-COPY        = 'cp -pf'
-CHECKOUT    = 'git checkout'
-BUILD       = 'msbuild /t:Clean,Build /m /verbosity:minimal /p:Configuration=Release;Platform="Any CPU";GeneratePackageOnBuild=false'
-RESTORE     = 'nuget restore'
-PACK        = 'nuget pack -Properties "Configuration=Release;Platform=AnyCPU"'
-TEST        = '../packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe'
+COPY     = 'cp -pf'
+CHECKOUT = 'git checkout'
+BUILD    = 'msbuild /t:Clean,Build /m /verbosity:minimal /p:Configuration=Release;Platform="Any CPU";GeneratePackageOnBuild=false'
+RESTORE  = 'nuget restore'
+PACK     = 'nuget pack -Properties "Configuration=Release;Platform=AnyCPU"'
+TEST     = '../packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe'
 
 # --------------------------------------------------------------------------- #
 # Tasks
@@ -37,8 +37,8 @@ end
 task :build do
     BRANCHES.each do |branch|
         sh("#{CHECKOUT} #{branch}")
-        sh("#{RESTORE} #{SOLUTION}.sln")
-        sh("#{BUILD} #{SOLUTION}.sln")
+        sh("#{RESTORE} #{SOLUTION}.#{SUFFIX}.sln")
+        sh("#{BUILD} #{SOLUTION}.#{SUFFIX}.sln")
     end
 end
 
@@ -47,7 +47,7 @@ end
 # --------------------------------------------------------------------------- #
 task :pack do
     sh("#{CHECKOUT} net35")
-    sh("#{PACK} Libraries/#{PACKAGE}.nuspec")
+    sh("#{PACK} Libraries/#{SOLUTION}.nuspec")
     sh("#{CHECKOUT} master")
 end
 
@@ -55,8 +55,8 @@ end
 # Test
 # --------------------------------------------------------------------------- #
 task :test do
-    sh("#{RESTORE} #{SOLUTION}.sln")
-    sh("#{BUILD} #{SOLUTION}.sln")
+    sh("#{RESTORE} #{SOLUTION}.#{SUFFIX}.sln")
+    sh("#{BUILD} #{SOLUTION}.#{SUFFIX}.sln")
 
     branch = `git symbolic-ref --short HEAD`.chomp
     TESTCASES.each { |proj, dir|
@@ -70,5 +70,5 @@ end
 # --------------------------------------------------------------------------- #
 # Clean
 # --------------------------------------------------------------------------- #
-CLEAN.include("#{PACKAGE}.*.nupkg")
+CLEAN.include("#{SOLUTION}.*.nupkg")
 CLEAN.include(%w{dll log}.map{ |e| "**/*.#{e}" })
