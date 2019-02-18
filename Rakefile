@@ -4,7 +4,8 @@ require 'rake/clean'
 # --------------------------------------------------------------------------- #
 # Configuration
 # --------------------------------------------------------------------------- #
-SOLUTION    = 'Cube.Net'
+SOLUTION    = 'Cube.Net.Rss'
+PACKAGE     = 'Cube.Net'
 BRANCHES    = [ 'stable', 'net35' ]
 TESTCASES   = {
     'Cube.Net.Tests'     => 'Tests',
@@ -46,7 +47,7 @@ end
 # --------------------------------------------------------------------------- #
 task :pack do
     sh("#{CHECKOUT} net35")
-    sh("#{PACK} Libraries/#{SOLUTION}.nuspec")
+    sh("#{PACK} Libraries/#{PACKAGE}.nuspec")
     sh("#{CHECKOUT} master")
 end
 
@@ -54,8 +55,8 @@ end
 # Test
 # --------------------------------------------------------------------------- #
 task :test do
-    sh("#{RESTORE} #{SOLUTION}.Rss.sln")
-    sh("#{BUILD} #{SOLUTION}.Rss.sln")
+    sh("#{RESTORE} #{SOLUTION}.sln")
+    sh("#{BUILD} #{SOLUTION}.sln")
 
     branch = `git symbolic-ref --short HEAD`.chomp
     TESTCASES.each { |proj, dir|
@@ -69,5 +70,5 @@ end
 # --------------------------------------------------------------------------- #
 # Clean
 # --------------------------------------------------------------------------- #
-CLEAN.include("#{SOLUTION}.*.nupkg")
+CLEAN.include("#{PACKAGE}.*.nupkg")
 CLEAN.include(%w{dll log}.map{ |e| "**/*.#{e}" })
