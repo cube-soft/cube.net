@@ -29,9 +29,9 @@ Dependencies of [Libraries](https://github.com/cube-soft/Cube.Net/tree/master/Li
 ## Contributing
 
 1. Fork [Cube.Net](https://github.com/cube-soft/Cube.Net/fork) repository.
-2. Create a feature branch from the [stable](https://github.com/cube-soft/Cube.Net/tree/stable) branch (git checkout -b my-new-feature origin/stable). The [master](https://github.com/cube-soft/Cube.Net/tree/master) branch may refer some pre-released NuGet packages. See [AppVeyor.yml](https://github.com/cube-soft/Cube.Net/blob/master/AppVeyor.yml) if you want to build and commit in the master branch.
+2. Create a feature branch from the master or stable branch (e.g. git checkout -b my-new-feature origin/master). Note that the master branch may refer some pre-released NuGet packages. Try the [rake clean](https://github.com/cube-soft/Cube.Net/blob/master/Rakefile) command when build errors occur.
 3. Commit your changes.
-4. Rebase your local changes against the stable (or master) branch.
+4. Rebase your local changes against the master or stable branch.
 5. Run test suite with the [NUnit](https://nunit.org/) console or the Visual Studio (NUnit 3 test adapter) and confirm that it passes.
 6. Create new Pull Request.
 
