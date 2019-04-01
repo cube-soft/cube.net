@@ -14,7 +14,7 @@ Libraries and applications are available for .NET Framework 3.5, 4.5 or more.
 
 [CubeRSS Reader](https://github.com/cube-soft/Cube.Net/tree/master/Applications/Rss) is an RSS/Atom feed reader that runs without receiving any assistance from servers for monitoring and crawling feeds.
 
-![Screenshot](https://github.com/cube-soft/Cube.Net/tree/master/Applications/Rss/Overview.png?raw=true)
+![Screenshot](https://github.com/cube-soft/Cube.Net/blob/master/Applications/Rss/Overview.png?raw=true)
 
 You can get the executable installer from the [download page](https://www.cube-soft.jp/cuberssreader/index.php) (Japanese), or [directly download link](https://www.cube-soft.jp/cuberssreader/dl.php).
 We currently show menus and other messages only in Japanese, and support for other languages are one of our future works...
