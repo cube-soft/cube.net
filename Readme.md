@@ -1,6 +1,7 @@
 Cube.Net
 ====
 
+[![NuGet](https://img.shields.io/nuget/v/Cube.Net.svg)](https://www.nuget.org/packages/Cube.Net/)
 [![AppVeyor](https://img.shields.io/appveyor/ci/clown/cube-net/master.svg?label=master&logo=appveyor)](https://ci.appveyor.com/project/clown/cube-net)
 [![AppVeyor](https://img.shields.io/appveyor/ci/clown/cube-net-ftg7w/chrome.svg?label=chrome&logo=appveyor)](https://ci.appveyor.com/project/clown/cube-net-ftg7w)
 [![Azure Pipelines](https://dev.azure.com/cube-soft-jp/Cube.Net/_apis/build/status/cube-soft.Cube.Net?branchName=master)](https://dev.azure.com/cube-soft-jp/Cube.Net/_build)
