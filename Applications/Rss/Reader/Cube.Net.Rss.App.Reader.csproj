@@ -13,13 +13,10 @@
         <LangVersion>latest</LangVersion>
         <IsPackable>false</IsPackable>
         <Optimize>true</Optimize>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+        <DefineConstants Condition=" '$(Configuration)' == 'Debug' ">DEBUG;TRACE</DefineConstants>
         <ApplicationIcon>App.ico</ApplicationIcon>
         <ApplicationManifest>App.manifest</ApplicationManifest>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DefineConstants>DEBUG;TRACE</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
         <OutputPath>bin\Any CPU\$(Configuration)\</OutputPath>
@@ -39,7 +36,7 @@
         <ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />
         <Page Include="Views\**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
         <Page Include="Themes\**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
-        <Compile Update="Views\**\*.xaml.cs" SubType="Designer" DependentUpon="%(Filename)" />
+        <Compile Update="Views\**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
         <Compile Update="Properties\Resources.Designer.cs" DependentUpon="Resources.resx" AutoGen="True" DesignTime="True" />
         <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
         <Resource Include="Assets\**\*" />
