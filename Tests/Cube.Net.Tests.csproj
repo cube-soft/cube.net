@@ -1,146 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{03DB8859-93F8-4335-BBA1-0C04981A970A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cube.Net.Tests</RootNamespace>
-    <AssemblyName>Cube.Net.Tests</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\net35\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>bin\net35\Debug\Cube.Net.Tests.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\net35\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>bin\net35\Release\Cube.Net.Tests.xml</DocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="AsyncBridge">
-      <HintPath>..\..\packages\AsyncBridge.0.3.1\lib\net35-client\AsyncBridge.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.Backwards">
-      <HintPath>..\..\packages\Cube.Backwards.1.5.0\lib\net35\Cube.Backwards.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.1.14.0\lib\net35\Cube.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\packages\Cube.FileSystem.1.14.0\lib\net35\Cube.FileSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.3.11.0\lib\net35\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Rackspace.Threading">
-      <HintPath>..\..\packages\Rackspace.Threading.2.0.0-alpha001\lib\net35-client\Rackspace.Threading.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading">
-      <HintPath>..\..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http">
-      <HintPath>..\..\resources\net35\System.Net.Http.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Sources\Details\GlobalSetup.cs" />
-    <Compile Include="Sources\Details\Person.cs" />
-    <Compile Include="Sources\Http\HttpClientTest.cs" />
-    <Compile Include="Sources\Http\HttpHandlerTest.cs" />
-    <Compile Include="Sources\Http\HttpMonitorTest.cs" />
-    <Compile Include="Sources\Ntp\NtpClientTest.cs" />
-    <Compile Include="Sources\Ntp\NtpMonitorTest.cs" />
-    <Compile Include="Sources\Ntp\NtpPacketTest.cs" />
-    <Compile Include="Sources\Ntp\NtpTimestampTest.cs" />
-    <Compile Include="Sources\Rss\RssCacheDictionaryTest.cs" />
-    <Compile Include="Sources\Rss\RssClientTest.cs" />
-    <Compile Include="Sources\Rss\RssMonitorTest.cs" />
-    <Compile Include="Sources\Rss\RssFeedTest.cs" />
-    <Compile Include="Sources\Rss\RssVersionTest.cs" />
-    <Compile Include="Sources\BrowserSettingsTest.cs" />
-    <Compile Include="Sources\NetworkTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Packages.config" />
-    <None Include="Examples\Sample.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleNoRss.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\Sample.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleAtom-01.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleAtom-02.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleRss091.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleRss092.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleRss10-01.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleRss10-02.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleRss20-01.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleRss20-02.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleRss20-03.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleUninitialized.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Libraries\Cube.Net.csproj">
-      <Project>{06edf5d3-6a49-445b-a605-b9a9ee2250e2}</Project>
-      <Name>Cube.Net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Version>1.15.0</Version>
+        <Authors>clown;cube-soft</Authors>
+        <Company>CubeSoft</Company>
+        <Copyright>Copyright © 2010 CubeSoft, Inc.</Copyright>
+        <TargetFramework>net35</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <IsPackable>false</IsPackable>
+        <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+        <DefineConstants Condition=" '$(Configuration)' == 'Debug' ">DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+        <OutputPath>bin\Any CPU\$(Configuration)\</OutputPath>
+        <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Libraries\Cube.Net.csproj" />
+        <PackageReference Include="NUnit" Version="3.11.0" />
+        <PackageReference Include="NUnit.ConsoleRunner" Version="3.10.0" />
+        <PackageReference Include="OpenCover" Version="4.7.922" />
+        <Reference Include="System.Net" />
+        <Reference Include="System.Net.Http" HintPath="..\..\resources\net35\System.Net.Http.dll" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="App.config" />
+        <None Include="Examples\**\*" CopyToOutputDirectory="Always" />
+    </ItemGroup>
 </Project>

@@ -1,59 +1,62 @@
-version: 1.14.0.{build}
+version: 1.15.0.{build}
+image: Visual Studio 2019 Preview
+platform: Any CPU
+configuration: Release
+environment:
+    PROJECT_NAME:   'Cube.Net'
+    PROJECT_APP:    'Rss'
+    PROJECT_BIN:    'bin\%PLATFORM%\%CONFIGURATION%\net45'
+    PROJECT_LIB:    '..\packages'
+    TEST_TOOL:      '$(PROJECT_LIB)\OpenCover\4.7.922\tools\OpenCover.Console.exe'
+    TEST_CORETOOL:  'nunit3-console.exe'
+    TEST_FILTERS:   '+[Cube*]* -[*]*NativeMethods -[*]*Properties.* -[*]*Form -[*]*.Program'
+    TEST_RESULT:    'TestResult.xml'
+    TEST_COVERAGE:  'CoverResults.xml'
+    TEST_LOG:       'TestResults'
 branches:
     only:
         - master
 skip_tags: true
-clone_folder: C:\Cube\Cube.Net
-image: Visual Studio 2017
 nuget:
     project_feed: true
     disable_publish_on_pr: true
-platform: Any CPU
-configuration: Release
+clone_folder: 'C:\Cube\%PROJECT_NAME%'
 before_build:
-    - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
-    - nuget sources add -name Cube.Core -source https://ci.appveyor.com/nuget/cube.core
-    - nuget sources add -name Cube.FileSystem -source https://ci.appveyor.com/nuget/cube.filesystem
-    - nuget sources add -name Cube.Images -source https://ci.appveyor.com/nuget/cube.images
-    - nuget sources add -name Cube.Forms -source https://ci.appveyor.com/nuget/cube.forms
-    - nuget sources add -name Cube.Xui -source https://ci.appveyor.com/nuget/cube.xui
-    - nuget restore Cube.Net.Rss.sln
+    - nuget restore "%PROJECT_NAME%.%PROJECT_APP%.sln"
 build:
+    project: '%PROJECT_NAME%.%PROJECT_APP%.sln'
     parallel: true
-    project: Cube.Net.Rss.sln
     publish_nuget: true
     verbosity: minimal
 test_script:
     - >
-      ..\packages\OpenCover.4.7.922\tools\OpenCover.Console.exe
+      "%TEST_TOOL%"
       -log:Error
       -register:user
-      -target:../packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe
-      -targetargs:Cube.Net.Tests.dll
-      -targetdir:Tests\bin\Release
+      -target:"%TEST_CORETOOL%"
+      -targetargs:"%PROJECT_NAME%.Tests.dll"
+      -targetdir:"Tests\%PROJECT_BIN%"
       -returntargetcode
       -hideskipped:All
-      -output:CoverResults.xml
-      -filter:"+[Cube*]* -[*]*NativeMethods -[*]*Properties.*"
+      -output:"%TEST_COVERAGE%"
+      -filter:"%TEST_FILTERS%"
     - >
-      ..\packages\OpenCover.4.7.922\tools\OpenCover.Console.exe
+      "%TEST_TOOL%"
       -log:Error
       -register:user
-      -target:../packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe
-      -targetargs:"Cube.Net.Rss.Tests.dll --workers=1"
-      -targetdir:Applications\Rss\Tests\bin\Release
+      -target:"%TEST_CORETOOL%"
+      -targetargs:"%PROJECT_NAME%.%PROJECT_APP%.Tests.dll"
+      -targetdir:"Applications\%PROJECT_APP%\Tests\%PROJECT_BIN%"
       -returntargetcode
       -hideskipped:All
       -mergeoutput
-      -output:CoverResults.xml
-      -filter:"+[Cube*]* -[*]*NativeMethods -[*]*Properties.* -[*]*Window -[*]*Control -[*]*.App"
+      -output:"%TEST_COVERAGE%"
+      -filter:"%TEST_FILTERS%"
 after_test:
-    - xcopy /q /Y /I Applications\Rss\Reader\bin\Release CubeRssReader
-    - xcopy /q /Y /I Tests\bin\Release\Cube.Net.Tests.log TestLog\
-    - xcopy /q /Y /I Applications\Rss\Tests\bin\Release\Cube.Net.Rss.Tests.log TestLog\
-    - xcopy /q /Y /I CoverResults.xml TestLog\
-    - pip install codecov
-    - codecov -f CoverResults.xml
+    - xcopy /q /Y /I "Applications\%PROJECT_APP%\Reader\%PROJECT_BIN%" "CubeRssReader"
+    - xcopy /q /Y /I "Tests\%PROJECT_BIN%\*.log" "%TEST_LOG%\"
+    - xcopy /q /Y /I "Applications\%PROJECT_APP%\Tests\%PROJECT_BIN%\*.log" "%TEST_LOG%\"
+    - xcopy /q /Y /I "%TEST_COVERAGE%" "%TEST_LOG%\"
 artifacts:
-    - path: CubeRssReader
-    - path: TestLog
+    - path: 'CubeRssReader'
+    - path: '%TEST_LOG%'

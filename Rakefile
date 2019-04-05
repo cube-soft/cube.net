@@ -1,74 +1,98 @@
+# --------------------------------------------------------------------------- #
+#
+# Copyright (c) 2010 CubeSoft, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# --------------------------------------------------------------------------- #
 require 'rake'
 require 'rake/clean'
 
 # --------------------------------------------------------------------------- #
-# Configuration
+# configuration
 # --------------------------------------------------------------------------- #
-SOLUTION  = 'Cube.Net'
-SUFFIX    = 'Rss'
-BRANCHES  = [ 'stable', 'net35' ]
-TESTCASES = {
+PROJECT     = 'Cube.Net'
+APPLICATION = 'Rss'
+LIBRARY     = '../packages'
+BRANCHES    = ['stable', 'net35']
+PACKAGES    = ["Libraries/#{PROJECT}.nuspec"]
+TESTCASES   = {
     'Cube.Net.Tests'     => 'Tests',
     'Cube.Net.Rss.Tests' => 'Applications/Rss/Tests'
 }
 
 # --------------------------------------------------------------------------- #
-# Commands
+# commands
 # --------------------------------------------------------------------------- #
-COPY     = 'cp -pf'
-CHECKOUT = 'git checkout'
-BUILD    = 'msbuild /t:Clean,Build /m /verbosity:minimal /p:Configuration=Release;Platform="Any CPU";GeneratePackageOnBuild=false'
-RESTORE  = 'nuget restore'
-PACK     = 'nuget pack -Properties "Configuration=Release;Platform=AnyCPU"'
-TEST     = '../packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe'
+BUILD = 'msbuild /t:Clean,Build /m /verbosity:minimal /p:Configuration=Release;Platform="Any CPU";GeneratePackageOnBuild=false'
+PACK  = 'nuget pack -Properties "Configuration=Release;Platform=AnyCPU"'
+TEST  = '../packages/NUnit.ConsoleRunner/3.10.0/tools/nunit3-console.exe'
 
 # --------------------------------------------------------------------------- #
-# Tasks
+# clean
 # --------------------------------------------------------------------------- #
-task :default do
-    Rake::Task[:clean].execute
-    Rake::Task[:build].execute
-    Rake::Task[:pack].execute
-end
+CLEAN.include("#{PROJECT}.*.nupkg")
+CLEAN.include("#{LIBRARY}/cube.*")
+CLEAN.include(%w{bin obj}.map{ |e| "**/#{e}" })
 
 # --------------------------------------------------------------------------- #
-# Build
+# default
 # --------------------------------------------------------------------------- #
-task :build do
-    BRANCHES.each do |branch|
-        sh("#{CHECKOUT} #{branch}")
-        sh("#{RESTORE} #{SOLUTION}.#{SUFFIX}.sln")
-        sh("#{BUILD} #{SOLUTION}.#{SUFFIX}.sln")
-    end
-end
+desc "Build the solution and create NuGet packages."
+task :default => [:clean_build, :pack]
 
 # --------------------------------------------------------------------------- #
-# Pack
+# pack
 # --------------------------------------------------------------------------- #
+desc "Create NuGet packages in the net35 branch."
 task :pack do
-    sh("#{CHECKOUT} net35")
-    sh("#{PACK} Libraries/#{SOLUTION}.nuspec")
-    sh("#{CHECKOUT} master")
+    sh("git checkout net35")
+    PACKAGES.each { |e| sh("#{PACK} #{e}") }
+    sh("git checkout master")
 end
 
 # --------------------------------------------------------------------------- #
-# Test
+# clean_build
 # --------------------------------------------------------------------------- #
-task :test do
-    sh("#{RESTORE} #{SOLUTION}.#{SUFFIX}.sln")
-    sh("#{BUILD} #{SOLUTION}.#{SUFFIX}.sln")
-
-    branch = `git symbolic-ref --short HEAD`.chomp
-    TESTCASES.each { |proj, dir|
-        src = branch == 'net35' ?
-              "#{dir}/bin/net35/Release/#{proj}.dll" :
-              "#{dir}/bin/Release/#{proj}.dll"
-        sh("#{TEST} #{src}")
+desc "Clean objects and build the solution in pre-defined branches."
+task :clean_build => [:clean] do
+    BRANCHES.each { |e|
+        sh("git checkout #{e}")
+        rm_rf("#{LIBRARY}/cube.*")
+        Rake::Task[:build].execute
     }
 end
 
 # --------------------------------------------------------------------------- #
-# Clean
+# build
 # --------------------------------------------------------------------------- #
-CLEAN.include("#{SOLUTION}.*.nupkg")
-CLEAN.include(%w{dll log}.map{ |e| "**/*.#{e}" })
+desc "Build the solution in the current branch."
+task :build do
+    sh("nuget restore #{PROJECT}.sln")
+    sh("#{BUILD} #{PROJECT}.sln")
+end
+
+# --------------------------------------------------------------------------- #
+# test
+# --------------------------------------------------------------------------- #
+desc "Build and test projects in the current branch."
+task :test => [:build] do
+    fw  = `git symbolic-ref --short HEAD`.chomp
+    fw  = 'net45' if (fw != 'net35')
+    bin = ['bin', 'Any CPU', 'Release', fw].join('/')
+
+    TESTCASES.each { |proj, root|
+        dir = "#{root}/#{bin}"
+        sh("#{TEST} \"#{dir}/#{proj}.dll\" --work=\"#{dir}\"")
+    }
+end

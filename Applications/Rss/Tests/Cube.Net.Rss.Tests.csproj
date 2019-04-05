@@ -1,160 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{91B9E559-B44B-4AF4-9401-13CA795AB9E8}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cube.Net.Rss.Tests</RootNamespace>
-    <AssemblyName>Cube.Net.Rss.Tests</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\net35\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\net35\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="AsyncBridge">
-      <HintPath>..\..\..\..\packages\AsyncBridge.0.3.1\lib\net35-client\AsyncBridge.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.Backwards">
-      <HintPath>..\..\..\..\packages\Cube.Backwards.1.5.0\lib\net35\Cube.Backwards.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.Core">
-      <HintPath>..\..\..\..\packages\Cube.Core.1.14.0\lib\net35\Cube.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\..\..\packages\Cube.FileSystem.1.14.0\lib\net35\Cube.FileSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.Xui">
-      <HintPath>..\..\..\..\packages\Cube.Xui.1.14.0\lib\net35\Cube.Xui.dll</HintPath>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight">
-      <HintPath>..\..\..\..\packages\MvvmLightLibs.5.4.1.1\lib\net35\GalaSoft.MvvmLight.dll</HintPath>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Extras">
-      <HintPath>..\..\..\..\packages\MvvmLightLibs.5.4.1.1\lib\net35\GalaSoft.MvvmLight.Extras.dll</HintPath>
-    </Reference>
-    <Reference Include="GongSolutions.Wpf.DragDrop">
-      <HintPath>..\..\..\..\packages\gong-wpf-dragdrop.1.1.0\lib\net35\GongSolutions.Wpf.DragDrop.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Rackspace.Threading">
-      <HintPath>..\..\..\..\packages\Rackspace.Threading.2.0.0-alpha001\lib\net35-client\Rackspace.Threading.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http">
-      <HintPath>..\..\..\..\resources\net35\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Interactivity">
-      <HintPath>..\..\..\..\packages\MvvmLightLibs.5.3.0.0\lib\net35\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading">
-      <HintPath>..\..\..\..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\packages\NUnit.3.11.0\lib\net35\nunit.framework.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Sources\Details\GlobalSetup.cs" />
-    <Compile Include="Sources\Details\ResourceFixture.cs" />
-    <Compile Include="Sources\Details\ViewModelFixture.cs" />
-    <Compile Include="Sources\Interactions\DuplexConverterTest.cs" />
-    <Compile Include="Sources\Interactions\SimplexConverterTest.cs" />
-    <Compile Include="Sources\Interactions\TitleConverterTest.cs" />
-    <Compile Include="Sources\Models\RssEntryTest.cs" />
-    <Compile Include="Sources\Models\RssOpmlTest.cs" />
-    <Compile Include="Sources\Models\RssSubscriberTest.cs" />
-    <Compile Include="Sources\Models\SettingsTest.cs" />
-    <Compile Include="Sources\ViewModels\MainFacadeTest.cs" />
-    <Compile Include="Sources\ViewModels\MainViewModelTest.cs" />
-    <Compile Include="Sources\ViewModels\PropertyViewModelTest.cs" />
-    <Compile Include="Sources\ViewModels\RegisterViewModelTest.cs" />
-    <Compile Include="Sources\ViewModels\SettingsViewModelTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Packages.config" />
-    <None Include="Examples\Cache\7ae34cce28b4272e1170fb1e4c2c87ad">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\Cache\872e24035276c7104afd116c2052172b">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\Dummy.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\Default.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\LocalSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\Sample.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\Sample.lockfile">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\Sample.opml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleNoLink.opml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleNoTitle.opml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SampleNoUri.opml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\Settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Examples\SettingsEmpty.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\Cube.Net.csproj">
-      <Project>{06edf5d3-6a49-445b-a605-b9a9ee2250e2}</Project>
-      <Name>Cube.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Reader\Cube.Net.Rss.App.Reader.csproj">
-      <Project>{c7742724-1786-4fdb-86c1-10090245d25e}</Project>
-      <Name>Cube.Net.Rss.App.Reader</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Version>0.2.1</Version>
+        <Authors>clown;cube-soft</Authors>
+        <Company>CubeSoft</Company>
+        <Copyright>Copyright © 2010 CubeSoft, Inc.</Copyright>
+        <TargetFramework>net35</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <IsPackable>false</IsPackable>
+        <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+        <DefineConstants Condition=" '$(Configuration)' == 'Debug' ">DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+        <OutputPath>bin\Any CPU\$(Configuration)\</OutputPath>
+        <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Reader\Cube.Net.Rss.App.Reader.csproj" />
+        <PackageReference Include="NUnit" Version="3.11.0" />
+        <PackageReference Include="NUnit.ConsoleRunner" Version="3.10.0" />
+        <PackageReference Include="OpenCover" Version="4.7.922" />
+        <Reference Include="PresentationCore" />
+        <Reference Include="PresentationFramework" />
+        <Reference Include="WindowsBase" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="App.config" />
+        <None Include="Examples\**\*" CopyToOutputDirectory="Always" />
+    </ItemGroup>
 </Project>

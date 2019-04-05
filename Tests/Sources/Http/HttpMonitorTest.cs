@@ -190,13 +190,11 @@ namespace Cube.Net.Tests
 
                 mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Uri = new Uri("http://www.example.com/");
-                mon.Subscribe((_, __) => { count++; cts.Cancel(); });
+                mon.Subscribe((z, x) => { count++; cts.Cancel(); });
 
                 mon.Start(mon.Interval);
                 power.Mode = PowerModes.Suspend;
                 TaskEx.Delay(200).Wait();
-                Assert.That(count, Is.EqualTo(0));
-
                 power.Mode = PowerModes.Resume;
                 Assert.That(Wait.For(cts.Token), "Timeout");
                 mon.Stop();

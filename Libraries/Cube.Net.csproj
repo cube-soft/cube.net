@@ -1,114 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cube.Net</RootNamespace>
-    <AssemblyName>Cube.Net</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\net35\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>bin\net35\Debug\Cube.Net.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\net35\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>bin\net35\Release\Cube.Net.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\Cube.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="AsyncBridge">
-      <HintPath>..\..\packages\AsyncBridge.0.3.1\lib\net35-client\AsyncBridge.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.Backwards">
-      <HintPath>..\..\packages\Cube.Backwards.1.5.0\lib\net35\Cube.Backwards.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.1.14.0\lib\net35\Cube.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\packages\Cube.FileSystem.1.14.0\lib\net35\Cube.FileSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="Rackspace.Threading">
-      <HintPath>..\..\packages\Rackspace.Threading.2.0.0-alpha001\lib\net35-client\Rackspace.Threading.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading">
-      <HintPath>..\..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http">
-      <HintPath>..\..\resources\net35\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="SgmlReaderDll">
-      <HintPath>..\..\packages\SgmlReader.1.8.11\lib\2.0\SgmlReaderDll.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Sources\Http\Converters\ContentConverter.cs" />
-    <Compile Include="Sources\Http\Converters\JsonConverter.cs" />
-    <Compile Include="Sources\Http\Converters\XmlConverter.cs" />
-    <Compile Include="Sources\Http\HttpClientFactory.cs" />
-    <Compile Include="Sources\Http\HttpExtension.cs" />
-    <Compile Include="Sources\Http\HttpHandlers.cs" />
-    <Compile Include="Sources\Http\HttpMonitor.cs" />
-    <Compile Include="Sources\Http\HttpMonitorBase.cs" />
-    <Compile Include="Sources\Http\HttpValueContent.cs" />
-    <Compile Include="Sources\NativeMethods\UrlMon.cs" />
-    <Compile Include="Sources\Ntp\NtpClient.cs" />
-    <Compile Include="Sources\Ntp\NtpParameters.cs" />
-    <Compile Include="Sources\Ntp\NtpMonitor.cs" />
-    <Compile Include="Sources\Ntp\NtpPacket.cs" />
-    <Compile Include="Sources\Rss\Details\AtomParser.cs" />
-    <Compile Include="Sources\Rss\Details\RssExtension.cs" />
-    <Compile Include="Sources\Rss\Details\RssParseCore.cs" />
-    <Compile Include="Sources\Rss\Details\RssParseOptions.cs" />
-    <Compile Include="Sources\Rss\RssCacheDictionary.cs" />
-    <Compile Include="Sources\Rss\RssClient.cs" />
-    <Compile Include="Sources\Rss\RssFeed.cs" />
-    <Compile Include="Sources\Rss\RssItem.cs" />
-    <Compile Include="Sources\Rss\RssMonitor.cs" />
-    <Compile Include="Sources\Rss\RssParser.cs" />
-    <Compile Include="Sources\Rss\RssVersion.cs" />
-    <Compile Include="Sources\BrowserSettings.cs" />
-    <Compile Include="Sources\Network.cs" />
-    <Compile Include="Sources\NetworkAwareTimer.cs" />
-    <Compile Include="Sources\NetworkMonitorBase.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Cube.snk" />
-    <None Include="Packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Version>1.15.0</Version>
+        <Authors>clown;cube-soft</Authors>
+        <Company>CubeSoft</Company>
+        <Description>Network library.</Description>
+        <Copyright>Copyright © 2010 CubeSoft, Inc.</Copyright>
+        <PackageTags>Cube;Net;HTTP;NTP;RSS;Atom</PackageTags>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/cube-soft/$(AssemblyName)</PackageProjectUrl>
+        <PackageIconUrl>https://github.com/cube-soft/$(AssemblyName)/blob/master/Icon.png?raw=true</PackageIconUrl>
+        <TargetFramework>net35</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Optimize>true</Optimize>
+        <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+        <DefineConstants Condition=" '$(Configuration)' == 'Debug' ">DEBUG;TRACE</DefineConstants>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\Cube.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+        <OutputPath>bin\Any CPU\$(Configuration)\</OutputPath>
+        <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Cube.FileSystem" Version="1.15.0" />
+        <PackageReference Include="SgmlReader" Version="1.8.11" />
+        <PackageReference Include="Rackspace.Threading" Version="2.0.0-alpha001" />
+        <Reference Include="System.Net" />
+        <Reference Include="System.Net.Http" HintPath="..\..\resources\net35\System.Net.Http.dll" />
+        <Reference Include="System.ServiceModel.Web" />
+    </ItemGroup>
 </Project>
