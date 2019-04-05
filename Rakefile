@@ -23,7 +23,9 @@ require 'rake/clean'
 # --------------------------------------------------------------------------- #
 PROJECT     = 'Cube.Net'
 APPLICATION = 'Rss'
+LIBRARY     = '../packages'
 BRANCHES    = ['stable', 'net35']
+PACKAGES    = ["Libraries/#{PROJECT}.nuspec"]
 TESTCASES   = {
     'Cube.Net.Tests'     => 'Tests',
     'Cube.Net.Rss.Tests' => 'Applications/Rss/Tests'
@@ -32,32 +34,52 @@ TESTCASES   = {
 # --------------------------------------------------------------------------- #
 # commands
 # --------------------------------------------------------------------------- #
-BUILD   = 'msbuild /t:Clean,Build /m /verbosity:minimal /p:Configuration=Release;Platform="Any CPU";GeneratePackageOnBuild=false'
-PACK    = 'nuget pack -Properties "Configuration=Release;Platform=AnyCPU"'
-TEST    = '../packages/NUnit.ConsoleRunner/3.10.0/tools/nunit3-console.exe'
+BUILD = 'msbuild /t:Clean,Build /m /verbosity:minimal /p:Configuration=Release;Platform="Any CPU";GeneratePackageOnBuild=false'
+PACK  = 'nuget pack -Properties "Configuration=Release;Platform=AnyCPU"'
+TEST  = '../packages/NUnit.ConsoleRunner/3.10.0/tools/nunit3-console.exe'
 
 # --------------------------------------------------------------------------- #
 # clean
 # --------------------------------------------------------------------------- #
 CLEAN.include("#{PROJECT}.*.nupkg")
-CLEAN.include("../packages/cube.*")
+CLEAN.include("#{LIBRARY}/cube.*")
 CLEAN.include(%w{bin obj}.map{ |e| "**/#{e}" })
 
 # --------------------------------------------------------------------------- #
 # default
 # --------------------------------------------------------------------------- #
-desc "Clean objects and pack nupkg."
-task :default => [:clean, :pack]
+desc "Build the solution and create NuGet packages."
+task :default => [:clean_build, :pack]
 
 # --------------------------------------------------------------------------- #
 # pack
 # --------------------------------------------------------------------------- #
-desc "Pack nupkg in the net35 branch."
+desc "Create NuGet packages in the net35 branch."
 task :pack do
-    BRANCHES.each { |e| Rake::Task[:build].invoke(e) }
     sh("git checkout net35")
-    sh("#{PACK} Libraries/#{PROJECT}.nuspec")
+    PACKAGES.each { |e| sh("#{PACK} #{e}") }
     sh("git checkout master")
+end
+
+# --------------------------------------------------------------------------- #
+# clean_build
+# --------------------------------------------------------------------------- #
+desc "Clean objects and build the solution in pre-defined branches."
+task :clean_build => [:clean] do
+    BRANCHES.each { |e|
+        sh("git checkout #{e}")
+        rm_rf("#{LIBRARY}/cube.*")
+        Rake::Task[:build].execute
+    }
+end
+
+# --------------------------------------------------------------------------- #
+# build
+# --------------------------------------------------------------------------- #
+desc "Build the solution in the current branch."
+task :build do
+    sh("nuget restore #{PROJECT}.sln")
+    sh("#{BUILD} #{PROJECT}.sln")
 end
 
 # --------------------------------------------------------------------------- #
@@ -67,22 +89,10 @@ desc "Build and test projects in the current branch."
 task :test => [:build] do
     fw  = `git symbolic-ref --short HEAD`.chomp
     fw  = 'net45' if (fw != 'net35')
-    bin = ['bin', PLATFORMS[0], CONFIGS[0], fw].join('/')
+    bin = ['bin', 'Any CPU', 'Release', fw].join('/')
 
-    Rake::Task[:copy].invoke(fw)
     TESTCASES.each { |proj, root|
         dir = "#{root}/#{bin}"
         sh("#{TEST} \"#{dir}/#{proj}.dll\" --work=\"#{dir}\"")
     }
-end
-
-# --------------------------------------------------------------------------- #
-# build
-# --------------------------------------------------------------------------- #
-desc "Build the solution in the specified branch."
-task :build, [:branch] do |_, e|
-    e.with_defaults(branch: '')
-    sh("git checkout #{e.branch}") if (!e.branch.empty?)
-    sh("nuget restore #{PROJECT}.#{APPLICATION}.sln")
-    sh("#{BUILD} #{PROJECT}.#{APPLICATION}.sln")
 end

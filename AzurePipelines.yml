@@ -3,18 +3,18 @@ trigger:
 pool:
     vmImage: 'Windows-2019'
 variables:
-    PROJECT_NAME:     'Cube.Net'
-    PROJECT_APP:      'Rss'
-    PROJECT_PLATFORM: 'Any CPU'
-    PROJECT_CONFIG:   'Release'
-    PROJECT_BIN:      'bin\$(PROJECT_PLATFORM)\$(PROJECT_CONFIG)\net45'
-    PROJECT_PACKAGE:  '..\packages'
-    TEST_TOOL:        '$(PROJECT_PACKAGE)\OpenCover\4.7.922\tools\OpenCover.Console.exe'
-    TEST_CORETOOL:    '$(PROJECT_PACKAGE)\NUnit.ConsoleRunner\3.10.0\tools\nunit3-console.exe'
-    TEST_FILTERS:     '+[Cube*]* -[*]*NativeMethods -[*]*Properties.*'
-    TEST_RESULT:      'TestResult.xml'
-    TEST_COVERAGE:    'CoverResults.xml'
-    TEST_LOG:         '$(Build.ArtifactStagingDirectory)\TestResults'
+    PROJECT_NAME:   'Cube.Net'
+    PROJECT_APP:    'Rss'
+    PROJECT_ARCH:   'Any CPU'
+    PROJECT_CONFIG: 'Release'
+    PROJECT_BIN:    'bin\$(PROJECT_ARCH)\$(PROJECT_CONFIG)\net45'
+    PROJECT_LIB:    '..\packages'
+    TEST_TOOL:      '$(PROJECT_LIB)\OpenCover\4.7.922\tools\OpenCover.Console.exe'
+    TEST_CORETOOL:  '$(PROJECT_LIB)\NUnit.ConsoleRunner\3.10.0\tools\nunit3-console.exe'
+    TEST_FILTERS:   '+[Cube*]* -[*]*NativeMethods -[*]*Properties.*'
+    TEST_RESULT:    'TestResult.xml'
+    TEST_COVERAGE:  'CoverResults.xml'
+    TEST_LOG:       '$(Build.ArtifactStagingDirectory)\TestResults'
 
 steps:
 - task: NuGetToolInstaller@0
@@ -29,7 +29,7 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(PROJECT_NAME).$(PROJECT_APP).sln'
-    platform: '$(PROJECT_PLATFORM)'
+    platform: '$(PROJECT_ARCH)'
     configuration: '$(PROJECT_CONFIG)'
   displayName: 'Build solution'
 
