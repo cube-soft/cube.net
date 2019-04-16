@@ -21,7 +21,7 @@ using System.Reflection;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace Cube.Net.Rss.App.Reader
+namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

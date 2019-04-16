@@ -25,7 +25,7 @@ using System.Reflection;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace Cube.Net.Rss.App.Reader
+namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

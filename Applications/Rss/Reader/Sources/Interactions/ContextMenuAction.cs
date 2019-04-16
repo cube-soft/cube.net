@@ -18,7 +18,7 @@
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 
-namespace Cube.Net.Rss.App.Reader
+namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

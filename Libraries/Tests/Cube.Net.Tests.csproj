@@ -8,6 +8,7 @@
         <LangVersion>latest</LangVersion>
         <IsPackable>false</IsPackable>
         <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DefineConstants Condition=" '$(Configuration)' == 'Debug' ">DEBUG;TRACE</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
@@ -15,12 +16,12 @@
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Libraries\Cube.Net.csproj" />
+        <ProjectReference Include="..\Core\Cube.Net.csproj" />
         <PackageReference Include="NUnit" Version="3.11.0" />
         <PackageReference Include="NUnit.ConsoleRunner" Version="3.10.0" />
         <PackageReference Include="OpenCover" Version="4.7.922" />
         <Reference Include="System.Net" />
-        <Reference Include="System.Net.Http" HintPath="..\..\resources\net35\System.Net.Http.dll" />
+        <Reference Include="System.Net.Http" HintPath="..\..\..\resources\net35\System.Net.Http.dll" />
     </ItemGroup>
     <ItemGroup>
         <None Include="App.config" />

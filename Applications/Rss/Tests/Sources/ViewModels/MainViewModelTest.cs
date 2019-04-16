@@ -17,7 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using Cube.FileSystem.TestService;
 using Cube.Generics;
-using Cube.Net.Rss.App.Reader;
+using Cube.Net.Rss.Reader;
 using Cube.Xui;
 using Cube.Xui.Mixin;
 using NUnit.Framework;

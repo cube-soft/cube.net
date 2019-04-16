@@ -18,7 +18,7 @@
 using Cube.Xui.Converters;
 using System.Windows;
 
-namespace Cube.Net.Rss.App.Reader
+namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

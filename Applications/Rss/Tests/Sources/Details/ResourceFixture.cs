@@ -16,7 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.FileSystem.TestService;
-using Cube.Net.Rss.App.Reader;
+using Cube.Net.Rss.Reader;
 using System.Runtime.CompilerServices;
 
 namespace Cube.Net.Rss.Tests

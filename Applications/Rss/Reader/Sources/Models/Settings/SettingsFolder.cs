@@ -22,7 +22,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Cube.Net.Rss.App.Reader
+namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

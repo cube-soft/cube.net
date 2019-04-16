@@ -13,9 +13,10 @@
         <LangVersion>latest</LangVersion>
         <Optimize>true</Optimize>
         <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DefineConstants Condition=" '$(Configuration)' == 'Debug' ">DEBUG;TRACE</DefineConstants>
         <SignAssembly>true</SignAssembly>
-        <AssemblyOriginatorKeyFile>..\Cube.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>..\..\Cube.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
         <OutputPath>bin\Any CPU\$(Configuration)\</OutputPath>
@@ -26,7 +27,7 @@
         <PackageReference Include="SgmlReader" Version="1.8.11" />
         <PackageReference Include="Rackspace.Threading" Version="2.0.0-alpha001" />
         <Reference Include="System.Net" />
-        <Reference Include="System.Net.Http" HintPath="..\..\resources\net35\System.Net.Http.dll" />
+        <Reference Include="System.Net.Http" HintPath="..\..\..\resources\net35\System.Net.Http.dll" />
         <Reference Include="System.ServiceModel.Web" />
     </ItemGroup>
 </Project>
