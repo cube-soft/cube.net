@@ -24,7 +24,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 
-namespace Cube.Net.Rss.App.Reader
+namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///

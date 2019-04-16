@@ -16,7 +16,7 @@
 
 *************************************************************************** -->
 <Window
-    x:Class="Cube.Net.Rss.App.Reader.PropertyWindow"
+    x:Class="Cube.Net.Rss.Reader.PropertyWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -24,7 +24,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xc="clr-namespace:Cube.Xui.Converters;assembly=Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
-    xmlns:my="clr-namespace:Cube.Net.Rss.App.Reader"
+    xmlns:my="clr-namespace:Cube.Net.Rss.Reader"
     mc:Ignorable="d"
 
     Style="{StaticResource Dialog}"

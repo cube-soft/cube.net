@@ -1,4 +1,4 @@
-﻿<Application x:Class="Cube.Net.Rss.App.Reader.App"
+﻿<Application x:Class="Cube.Net.Rss.Reader.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="Views/MainWindow.xaml">

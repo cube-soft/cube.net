@@ -21,7 +21,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:s="clr-namespace:System;assembly=mscorlib"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
-    xmlns:my="clr-namespace:Cube.Net.Rss.App.Reader">
+    xmlns:my="clr-namespace:Cube.Net.Rss.Reader">
 
     <Style x:Key="RssEntriesStyle" TargetType="TreeView">
         <Setter Property="Background" Value="Transparent"/>

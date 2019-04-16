@@ -20,7 +20,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:rss="clr-namespace:Cube.Net.Rss;assembly=Cube.Net"
-    xmlns:my="clr-namespace:Cube.Net.Rss.App.Reader">
+    xmlns:my="clr-namespace:Cube.Net.Rss.Reader">
 
     <Style x:Key="RssFeedsStyle" TargetType="ListView" BasedOn="{StaticResource {x:Type ListView}}">
         <Setter Property="Background" Value="Transparent"/>

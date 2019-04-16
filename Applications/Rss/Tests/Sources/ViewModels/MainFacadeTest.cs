@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Net.Rss.App.Reader;
+using Cube.Net.Rss.Reader;
 using NUnit.Framework;
 using System;
 using System.Linq;

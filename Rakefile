@@ -22,16 +22,13 @@ require 'rake/clean'
 # configuration
 # --------------------------------------------------------------------------- #
 PROJECT     = 'Cube.Net'
-APPLICATION = 'Rss'
 LIBRARY     = '../packages'
 CONFIG      = 'Release'
 BRANCHES    = ['stable', 'net35']
 PLATFORMS   = ['Any CPU']
 PACKAGES    = ["Libraries/#{PROJECT}.nuspec"]
-TESTCASES   = {
-    'Cube.Net.Tests'     => 'Tests',
-    'Cube.Net.Rss.Tests' => 'Applications/Rss/Tests'
-}
+TESTCASES   = {'Cube.Net.Tests'     => 'Libraries/Tests',
+               'Cube.Net.Rss.Tests' => 'Applications/Rss/Tests'}
 
 # --------------------------------------------------------------------------- #
 # commands
@@ -82,8 +79,8 @@ end
 desc "Build the solution in the current branch."
 task :build, [:platform] do |_, e|
     e.with_defaults(:platform => PLATFORMS[0])
-    sh("nuget restore #{PROJECT}.sln")
-    sh(%(#{BUILD} -p:Platform="#{e.platform}" #{PROJECT}.sln))
+    sh("nuget restore #{PROJECT}.Apps.sln")
+    sh(%(#{BUILD} -p:Platform="#{e.platform}" #{PROJECT}.Apps.sln))
 end
 
 # --------------------------------------------------------------------------- #
@@ -91,7 +88,7 @@ end
 # --------------------------------------------------------------------------- #
 desc "Build and test projects in the current branch."
 task :test => [:build] do
-    fw  = `git symbolic-ref --short HEAD`.chomp
+    fw  = %x(git symbolic-ref --short HEAD).chomp
     fw  = 'net45' if (fw != 'net35')
     bin = ['bin', PLATFORMS[0], CONFIG, fw].join('/')
 
