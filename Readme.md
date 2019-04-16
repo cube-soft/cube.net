@@ -9,11 +9,11 @@ Cube.Net
 
 Cube.Net is a network library.
 The repository also has some implemented applications based on the Cube.Net project as follows.
-Libraries and applications are available for .NET Framework 3.5, 4.5 or more.
+Libraries and applications are available for .NET Framework 3.5, 4.5 or higher.
 
 ### CubeRSS Reader
 
-[CubeRSS Reader](https://github.com/cube-soft/Cube.Net/tree/master/Applications/Rss) is an RSS/Atom feed reader that runs without receiving any assistance from servers for monitoring and crawling feeds.
+[CubeRSS Reader](https://github.com/cube-soft/Cube.Net/blob/master/Applications/Rss) is an RSS/Atom feed reader that runs without receiving any assistance from servers for monitoring and crawling feeds.
 
 ![Screenshot](https://github.com/cube-soft/Cube.Net/blob/master/Applications/Rss/Overview.png?raw=true)
 
@@ -22,7 +22,7 @@ We currently show menus and other messages only in Japanese, and support for oth
 
 ## Dependencies
 
-Dependencies of [Libraries](https://github.com/cube-soft/Cube.Net/tree/master/Libraries) are as follows. [Applications](https://github.com/cube-soft/Cube.Net/tree/master/Applications) may use some other third-party libraries.
+Dependencies of [Libraries](https://github.com/cube-soft/Cube.Net/blob/master/Libraries) are as follows. [Applications](https://github.com/cube-soft/Cube.Net/blob/master/Applications) may use some other third-party libraries.
 
 * [Cube.Core](https://github.com/cube-soft/Cube.Core)
 * [Cube.FileSystem](https://github.com/cube-soft/Cube.FileSystem)
