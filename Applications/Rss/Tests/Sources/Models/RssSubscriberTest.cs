@@ -15,8 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem.TestService;
+using Cube.Mixin.Assembly;
 using Cube.Net.Rss.Reader;
+using Cube.Tests;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -85,8 +86,9 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_NotFound()
         {
-            using (var src = new RssSubscriber { FileName = GetResultsWith("NotFound.json") })
+            using (var src = new RssSubscriber(Dispatcher.Vanilla))
             {
+                src.FileName = GetSource("NotFound.json");
                 src.Load();
                 Assert.That(src.Count, Is.EqualTo(0));
             }
@@ -104,13 +106,13 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Backup_Delete()
         {
-            var dir  = GetResultsWith(nameof(Backup_Delete), "Backup");
+            var dir  = Get(nameof(Backup_Delete), "Backup");
             var open = IO.Combine(dir, "20010101.json");
 
             for (var d = new DateTime(2001, 1, 1); d.Month < 2; d = d.AddDays(1))
             {
                 var backup = IO.Combine(dir, $"{d.ToString("yyyyMMdd")}.json");
-                IO.Copy(GetExamplesWith("Sample.json"), backup, true);
+                IO.Copy(GetSource("Sample.json"), backup, true);
             }
 
             using (var _ = IO.OpenRead(open))
@@ -144,7 +146,7 @@ namespace Cube.Net.Rss.Tests
 
                 Assert.That(src.Find(new Uri("https://github.com/blog.atom")), Is.Not.Null);
                 Assert.That(src.Find(new Uri("http://www.example.com/")), Is.Null);
-                Assert.That(src.Find(default(Uri)), Is.Null);
+                Assert.That(src.Find(default), Is.Null);
             }
         }
 
@@ -179,8 +181,8 @@ namespace Cube.Net.Rss.Tests
                 dest.Count = 0; // hack for tests.
                 src.Reschedule(dest);
 
-                var asm = Assembly.GetExecutingAssembly().GetReader();
-                src.UserAgent = $"{asm.Product}/{asm.Version}";
+                var asm = Assembly.GetExecutingAssembly();
+                src.UserAgent = $"{asm.GetProduct()}/{asm.GetVersion()}";
 
                 Assert.That(dest.Count, Is.EqualTo(0));
                 src.Update(dest);
@@ -205,7 +207,7 @@ namespace Cube.Net.Rss.Tests
         private RssSubscriber Create([CallerMemberName] string name = null)
         {
             Copy(name);
-            return new RssSubscriber { FileName = FeedsPath(name) };
+            return new RssSubscriber(Dispatcher.Vanilla) { FileName = FeedsPath(name) };
         }
 
         #endregion

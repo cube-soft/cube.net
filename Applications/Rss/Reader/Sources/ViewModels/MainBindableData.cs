@@ -16,9 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Xui;
-using Cube.Xui.Mixin;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Cube.Net.Rss.Reader
 {
@@ -45,20 +43,20 @@ namespace Cube.Net.Rss.Reader
         ///
         /// <param name="root">ルートオブジェクト</param>
         /// <param name="settings">設定用オブジェクト</param>
-        /// <param name="context">同期用コンテキスト</param>
+        /// <param name="dispatcher">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
         public MainBindableData(IEnumerable<IRssEntry> root,
-            SettingsFolder settings, SynchronizationContext context)
+            SettingsFolder settings, IDispatcher dispatcher)
         {
             Root       = root;
-            Lock       = settings.Lock.ToBindable(context);
-            Local      = settings.Value.ToBindable(context);
-            Shared     = settings.Shared.ToBindable(context);
-            Current    = new Bindable<IRssEntry> { Context = context };
-            LastEntry  = new Bindable<RssEntry> { Context = context };
-            Content    = new Bindable<object> { Context = context };
-            Message    = new Bindable<string> { Context = context };
+            Lock       = new Bindable<LockSettings>(settings.Lock, dispatcher);
+            Local      = new Bindable<LocalSettings>(settings.Value, dispatcher);
+            Shared     = new Bindable<SharedSettings>(settings.Shared, dispatcher);
+            Current    = new Bindable<IRssEntry>(dispatcher);
+            LastEntry  = new Bindable<RssEntry>(dispatcher);
+            Content    = new Bindable<object>(dispatcher);
+            Message    = new Bindable<string>(dispatcher);
         }
 
         #endregion

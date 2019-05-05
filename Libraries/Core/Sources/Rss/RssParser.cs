@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Conversions;
+using Cube.Mixin.Uri;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,7 +96,7 @@ namespace Cube.Net.Rss
                 case RssVersion.Rss200: return Rss200Parser.Parse(root);
                 default: break;
             }
-            return default(RssFeed);
+            return default;
         }
 
         #endregion

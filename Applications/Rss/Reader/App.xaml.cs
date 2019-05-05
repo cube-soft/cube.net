@@ -16,8 +16,8 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Forms.Processes;
-using Cube.Log;
-using Cube.Xui;
+using Cube.Mixin.Assembly;
+using Cube.Mixin.Logger;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -172,8 +172,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private bool Activate()
         {
-            var asm  = Assembly.GetExecutingAssembly().GetReader();
-            var name = $"{Environment.UserName}@{asm.Product}";
+            var asm  = Assembly.GetExecutingAssembly();
+            var name = $"{Environment.UserName}@{asm.GetProduct()}";
             _mutex = new Mutex(true, name, out bool dest);
             if (!dest)
             {

@@ -51,8 +51,8 @@ namespace Cube.Net.Rss.Tests
             Copy();
             var asm = Assembly.GetExecutingAssembly();
             var src = new SettingsFolder(asm, RootDirectory(), IO);
-            src.LoadOrDefault(new LocalSettings());
 
+            Assert.That(src.TryLoad(),                   Is.True);
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
             Assert.That(src.Value.Height,                Is.EqualTo(650));
             Assert.That(src.Value.DataDirectory,         Is.EqualTo(RootDirectory()));
@@ -84,12 +84,12 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_Empty()
         {
-            IO.Copy(GetExamplesWith("SettingsEmpty.json"), LocalSettingsPath(),  true);
-            IO.Copy(GetExamplesWith("SettingsEmpty.json"), SharedSettingsPath(), true);
+            IO.Copy(GetSource("SettingsEmpty.json"), LocalSettingsPath(),  true);
+            IO.Copy(GetSource("SettingsEmpty.json"), SharedSettingsPath(), true);
             var asm = Assembly.GetExecutingAssembly();
             var src = new SettingsFolder(asm, RootDirectory(), IO);
-            src.LoadOrDefault(new LocalSettings());
 
+            Assert.That(src.TryLoad(),                   Is.True);
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
             Assert.That(src.Value.Height,                Is.EqualTo(650));
             Assert.That(src.Value.DataDirectory,         Is.EqualTo(RootDirectory()));
@@ -123,8 +123,8 @@ namespace Cube.Net.Rss.Tests
         {
             var asm = Assembly.GetExecutingAssembly();
             var src = new SettingsFolder(asm, RootDirectory(), IO);
-            src.LoadOrDefault(new LocalSettings());
 
+            Assert.That(src.TryLoad(),     Is.False);
             Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));
             Assert.That(src.Value,         Is.Not.Null, nameof(src.Value));
             Assert.That(src.Shared,        Is.Not.Null, nameof(src.Shared));
@@ -143,12 +143,12 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_Invalid()
         {
-            IO.Copy(GetExamplesWith("Dummy.txt"), LocalSettingsPath(),  true);
-            IO.Copy(GetExamplesWith("Dummy.txt"), SharedSettingsPath(), true);
+            IO.Copy(GetSource("Dummy.txt"), LocalSettingsPath(),  true);
+            IO.Copy(GetSource("Dummy.txt"), SharedSettingsPath(), true);
             var asm = Assembly.GetExecutingAssembly();
             var src = new SettingsFolder(asm, RootDirectory(), IO);
-            src.LoadOrDefault(new LocalSettings());
 
+            Assert.That(src.TryLoad(),     Is.False);
             Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));
             Assert.That(src.Value,         Is.Not.Null, nameof(src.Value));
             Assert.That(src.Shared,        Is.Not.Null, nameof(src.Shared));

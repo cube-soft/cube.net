@@ -20,7 +20,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -53,8 +52,8 @@ namespace Cube.Net.Rss.Tests
         [TestCase("Dummy.txt",          ExpectedResult = 0)]
         public int LoadOpml(string filename)
         {
-            var dest = new RssOpml(new SynchronizationContext(), IO)
-                .Load(GetExamplesWith(filename), new Dictionary<Uri, RssFeed>())
+            var dest = new RssOpml(Dispatcher.Vanilla, IO)
+                .Load(GetSource(filename), new Dictionary<Uri, RssFeed>())
                 .Flatten();
 
             foreach (var item in dest)
@@ -88,8 +87,8 @@ namespace Cube.Net.Rss.Tests
                 { new Uri("https://blogs.msdn.microsoft.com/dotnet/feed/"), new RssFeed() },
             };
 
-            var ctx  = new SynchronizationContext();
-            var dest = new RssOpml(ctx, IO).Load(GetExamplesWith("Sample.opml"), filter).ToList();
+            var ctx  = Dispatcher.Vanilla;
+            var dest = new RssOpml(ctx, IO).Load(GetSource("Sample.opml"), filter).ToList();
             Assert.That(dest.Count, Is.EqualTo(1));
 
             var root = dest[0] as RssCategory;

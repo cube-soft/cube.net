@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Mixin.Xml;
 using Cube.Net.Rss.Parsing;
-using Cube.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +53,7 @@ namespace Cube.Net.Rss
         public static RssFeed Parse(XElement root)
         {
             var e = root.GetElement("channel");
-            if (e == null) return default(RssFeed);
+            if (e == null) return default;
 
             var items = ParseItems(root);
             return new RssFeed(items)
@@ -130,7 +130,7 @@ namespace Cube.Net.Rss
         public static RssFeed Parse(XElement root)
         {
             var e = root.Element("channel");
-            if (e == null) return default(RssFeed);
+            if (e == null) return default;
 
             var items = ParseItems(e);
             return new RssFeed(items)

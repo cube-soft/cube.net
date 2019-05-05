@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Collections.Mixin;
+using Cube.Mixin.Collections;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -31,7 +31,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssItem : ObservableProperty
+    public class RssItem : ObservableBase
     {
         #region Properties
 
@@ -179,7 +179,7 @@ namespace Cube.Net.Rss
                     Status      = Status,
                 };
 
-                foreach(var c in Categories.GetOrDefault()) Categories.Add(c);
+                foreach(var c in Categories.GetOrEmpty()) Categories.Add(c);
                 return dest;
             }
         }

@@ -232,9 +232,9 @@ namespace Cube.Net.Rss
 
             content.Seek(0, System.IO.SeekOrigin.Begin);
             var cvt = content.GetRssUris().FirstOrDefault();
-            if (cvt == null) return default(RssFeed);
+            if (cvt == null) return default;
 
-            OnRedirected(ValueChangedEventArgs.Create(uri, cvt));
+            OnRedirected(ValueEventArgs.Create(uri, cvt));
             return await GetAsync(cvt).ConfigureAwait(false);
         }
 

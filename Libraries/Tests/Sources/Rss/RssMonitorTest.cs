@@ -15,8 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem.TestService;
+using Cube.Mixin.Assembly;
 using Cube.Net.Rss;
+using Cube.Tests;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -67,14 +68,14 @@ namespace Cube.Net.Tests
             using (var src = new RssCacheDictionary())
             {
                 src.Directory = Results;
-                foreach (var uri in uris) src.Add(uri, default(RssFeed));
+                foreach (var uri in uris) src.Add(uri, default);
 
                 using (var mon = Create())
                 {
                     var count = 0;
                     var cts   = new CancellationTokenSource();
-                    var asm   = Assembly.GetExecutingAssembly().GetReader();
-                    var agent = $"CubeRssMonitorTest/{asm.Version}";
+                    var asm   = Assembly.GetExecutingAssembly();
+                    var agent = $"CubeRssMonitorTest/{asm.GetVersion()}";
 
                     mon.Timeout = TimeSpan.FromSeconds(5);
                     mon.UserAgent = agent;
@@ -108,8 +109,8 @@ namespace Cube.Net.Tests
                 Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out var feed2), Is.False);
             }
 
-            Assert.That(IO.Get(GetResultsWith(files[0])).Length, Is.GreaterThan(0), files[0]);
-            Assert.That(IO.Get(GetResultsWith(files[1])).Length, Is.GreaterThan(0), files[1]);
+            Assert.That(IO.Get(Get(files[0])).Length, Is.GreaterThan(0), files[0]);
+            Assert.That(IO.Get(Get(files[1])).Length, Is.GreaterThan(0), files[1]);
         }
 
         /* ----------------------------------------------------------------- */
@@ -259,8 +260,8 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         private RssMonitor Create()
         {
-            var asm = Assembly.GetExecutingAssembly().GetReader();
-            return new RssMonitor { UserAgent = $"{asm.Product}/{asm.Version}" };
+            var asm = Assembly.GetExecutingAssembly();
+            return new RssMonitor { UserAgent = $"{asm.GetProduct()}/{asm.GetVersion()}" };
         }
 
         #endregion

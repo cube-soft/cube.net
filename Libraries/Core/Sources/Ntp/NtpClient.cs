@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Tasks;
+using Cube.Mixin.Tasks;
 using System;
 using System.Linq;
 using System.Net;

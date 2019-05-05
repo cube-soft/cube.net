@@ -15,13 +15,12 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Tasks;
+using Cube.Mixin.Tasks;
 using Cube.Xui;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -50,7 +49,9 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainViewModel() : this(new SettingsFolder(Assembly.GetExecutingAssembly())) { }
+        public MainViewModel() : this(new SettingsFolder(
+            Assembly.GetExecutingAssembly()) { Dispatcher = new Dispatcher(false) }
+        ) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -63,7 +64,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public MainViewModel(SettingsFolder settings) : base(new Messenger())
         {
-            Model      = new MainFacade(settings, SynchronizationContext.Current);
+            Model      = new MainFacade(settings, settings.Dispatcher);
             DropTarget = new RssDropTarget((s, d, i) => Model.Move(s, d, i))
             {
                 IsReadOnly = Data.Lock.Value.IsReadOnly

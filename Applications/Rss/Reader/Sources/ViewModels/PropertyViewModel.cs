@@ -54,7 +54,7 @@ namespace Cube.Net.Rss.Reader
             base(new Messenger())
         {
             System.Diagnostics.Debug.Assert(entry != null);
-            Entry     = new Bindable<RssEntry>(entry);
+            Entry = new Bindable<RssEntry>(entry, entry.Dispatcher);
             _callback = callback;
         }
 

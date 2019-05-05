@@ -15,15 +15,14 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Collections.Mixin;
 using Cube.DataContract;
 using Cube.FileSystem;
-using Cube.FileSystem.Mixin;
-using Cube.Log;
+using Cube.Mixin.Collections;
+using Cube.Mixin.IO;
+using Cube.Mixin.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Cube.Net.Rss.Reader
 {
@@ -76,20 +75,20 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="src">ファイルのパス</param>
-        /// <param name="context">同期用コンテキスト</param>
+        /// <param name="dispatcher">同期用コンテキスト</param>
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /// <returns>RSS エントリ情報</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static IEnumerable<RssCategory> Load(string src,
-            SynchronizationContext context, IO io) =>
+            IDispatcher dispatcher, IO io) =>
             io.Exists(src) ?
             io.Load(
                 src,
                 ss => Format.Json
                     .Deserialize<List<RssCategory.Json>>(ss)
-                    .Select(e => e.Convert(context))
+                    .Select(e => e.Convert(dispatcher))
             ) :
             new RssCategory[0];
 

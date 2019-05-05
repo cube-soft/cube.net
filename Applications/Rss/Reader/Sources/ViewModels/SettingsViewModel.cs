@@ -15,9 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Mixin.Assembly;
 using Cube.Xui;
 using Cube.Xui.Converters;
-using Cube.Xui.Mixin;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using System;
@@ -52,8 +52,8 @@ namespace Cube.Net.Rss.Reader
         public SettingsViewModel(SettingsFolder settings) : base(new Messenger())
         {
             Model  = settings;
-            Local  = settings.Value.ToBindable();
-            Shared = settings.Shared.ToBindable();
+            Local  = new Bindable<LocalSettings>(settings.Value, settings.Dispatcher);
+            Shared = new Bindable<SharedSettings>(settings.Shared, settings.Dispatcher);
         }
 
         #endregion
@@ -104,7 +104,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Product => Model.Assembly.Product;
+        public string Product => Model.Assembly.GetProduct();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -148,7 +148,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Copyright { get; } = Assembly.GetExecutingAssembly().GetReader().Copyright;
+        public string Copyright { get; } = Assembly.GetExecutingAssembly().GetCopyright();
 
         /* ----------------------------------------------------------------- */
         ///

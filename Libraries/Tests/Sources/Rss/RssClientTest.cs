@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Mixin.Assembly;
 using Cube.Net.Http;
 using Cube.Net.Rss;
 using NUnit.Framework;
@@ -136,8 +137,8 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         private RssClient Create()
         {
-            var asm = Assembly.GetExecutingAssembly().GetReader();
-            var h   = new HeaderHandler { UserAgent = $"{asm.Product}/{asm.Version}" };
+            var asm = Assembly.GetExecutingAssembly();
+            var h   = new HeaderHandler { UserAgent = $"{asm.GetProduct()}/{asm.GetVersion()}" };
             return new RssClient(h);
         }
 

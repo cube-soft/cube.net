@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Mixin.Assembly;
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -47,10 +48,10 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var asm = Assembly.GetExecutingAssembly().GetReader();
+            var asm = Assembly.GetExecutingAssembly();
             var ss  = new System.Text.StringBuilder();
             if (values[0] is RssItem src) ss.Append($"{src.Title} - ");
-            ss.Append(asm.Title);
+            ss.Append(asm.GetTitle());
             if (values[1] is LockSettings x && x.IsReadOnly) ss.Append($" ({Properties.Resources.MessageReadOnly})");
             return ss.ToString();
         }

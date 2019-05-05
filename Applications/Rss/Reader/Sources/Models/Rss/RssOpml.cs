@@ -15,15 +15,14 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Conversions;
 using Cube.FileSystem;
-using Cube.FileSystem.Mixin;
-using Cube.Log;
-using Cube.Xml;
+using Cube.Mixin.IO;
+using Cube.Mixin.Logger;
+using Cube.Mixin.Uri;
+using Cube.Mixin.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Xml.Linq;
 
 namespace Cube.Net.Rss.Reader
@@ -49,14 +48,14 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="context">同期用コンテキスト</param>
+        /// <param name="dispatcher">同期用コンテキスト</param>
         /// <param name="io">入出力用のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssOpml(SynchronizationContext context, IO io)
+        public RssOpml(IDispatcher dispatcher, IO io)
         {
-            Context = context;
-            IO      = io;
+            Dispatcher = dispatcher;
+            IO = io;
         }
 
         #endregion
@@ -65,14 +64,14 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Context
+        /// Dispatcher
         ///
         /// <summary>
         /// 同期用コンテキストを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SynchronizationContext Context { get; }
+        public IDispatcher Dispatcher { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -191,7 +190,7 @@ namespace Cube.Net.Rss.Reader
             var uri = GetUri(src, "xmlUrl", null);
             return uri == null ?
                    default(IRssEntry) :
-                   new RssEntry(Context)
+                   new RssEntry(Dispatcher)
                    {
                        Parent = parent,
                        Uri    = uri,
@@ -212,7 +211,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private IRssEntry ToCategory(XElement src, IRssEntry parent, IDictionary<Uri, RssFeed> filter)
         {
-            var dest = new RssCategory(Context)
+            var dest = new RssCategory(Dispatcher)
             {
                 Parent = parent,
                 Title  = GetTitle(src, Properties.Resources.MessageNewCategory),

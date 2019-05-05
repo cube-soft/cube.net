@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Version>1.15.0</Version>
+        <Version>1.16.0</Version>
         <Authors>clown;cube-soft</Authors>
         <Company>CubeSoft</Company>
         <Description>Network library.</Description>
@@ -23,7 +23,7 @@
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Cube.FileSystem" Version="1.15.0" />
+        <PackageReference Include="Cube.FileSystem" Version="1.16.0" />
         <PackageReference Include="SgmlReader" Version="1.8.11" />
         <Reference Include="System.Net" />
         <Reference Include="System.Net.Http" />

@@ -15,11 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem.TestService;
-using Cube.Generics;
+using Cube.Mixin.Command;
+using Cube.Mixin.String;
 using Cube.Net.Rss.Reader;
+using Cube.Tests;
 using Cube.Xui;
-using Cube.Xui.Mixin;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -54,7 +54,8 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void VM_Default()
         {
-            var vm = new MainViewModel();
+            var s  = new SettingsFolder(Assembly.GetExecutingAssembly()) { AutoSave = false };
+            var vm = new MainViewModel(s);
 
             Assert.That(vm.Property.CanExecute(), Is.False);
             Assert.That(vm.Remove.CanExecute(),   Is.False);
@@ -411,7 +412,8 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void VM_NewCategory_Empty()
         {
-            var vm = new MainViewModel();
+            var s  = new SettingsFolder(Assembly.GetExecutingAssembly()) { AutoSave = false };
+            var vm = new MainViewModel(s);
             vm.NewCategory.Execute(null);
             var dest = vm.Data.Current.Value as RssCategory;
 
@@ -478,7 +480,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_Import(bool done, int expected) => Execute(vm =>
         {
             vm.Register<OpenFileMessage>(this,
-                e => ImportCommand(e, GetExamplesWith("Sample.opml"), done));
+                e => ImportCommand(e, GetSource("Sample.opml"), done));
             vm.Import.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(expected));
@@ -497,7 +499,7 @@ namespace Cube.Net.Rss.Tests
         [TestCase(false, false)]
         public void VM_Export(bool done, bool expected) => Execute(vm =>
         {
-            var dest = GetResultsWith($"{nameof(VM_Export)}_{done}.opml");
+            var dest = Get($"{nameof(VM_Export)}_{done}.opml");
             vm.Register<SaveFileMessage>(this, e => ExportCommand(e, dest, done));
             vm.Export.Execute(null);
 
@@ -517,10 +519,10 @@ namespace Cube.Net.Rss.Tests
         public void VM_ReadOnly()
         {
             var dest = IO.Combine(RootDirectory(), LockSettings.FileName);
-            IO.Copy(GetExamplesWith("Sample.lockfile"), dest);
-            IO.Copy(GetExamplesWith("LocalSettings.json"), LocalSettingsPath(), true);
-            IO.Copy(GetExamplesWith("Settings.json"), SharedSettingsPath(), true);
-            IO.Copy(GetExamplesWith("Sample.json"), FeedsPath(), true);
+            IO.Copy(GetSource("Sample.lockfile"), dest);
+            IO.Copy(GetSource("LocalSettings.json"), LocalSettingsPath(), true);
+            IO.Copy(GetSource("Settings.json"), SharedSettingsPath(), true);
+            IO.Copy(GetSource("Sample.json"), FeedsPath(), true);
             IO.CreateDirectory(CacheDirectory());
 
             var asm = Assembly.GetExecutingAssembly();

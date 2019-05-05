@@ -15,17 +15,16 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Conversions;
 using Cube.FileSystem;
-using Cube.Log;
-using Cube.Tasks;
+using Cube.Mixin.ByteFormat;
+using Cube.Mixin.Logger;
+using Cube.Mixin.Tasks;
 using Cube.Xui;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cube.Net.Rss.Reader
@@ -52,26 +51,15 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /* ----------------------------------------------------------------- */
-        public RssSubscriber() : this(SynchronizationContext.Current) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RssSubscriber
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /// <param name="context">同期用オブジェクト</param>
+        /// <param name="dispatcher">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscriber(SynchronizationContext context)
+        public RssSubscriber(IDispatcher dispatcher)
         {
             _dispose = new OnceAction<bool>(Dispose);
-            _context = context;
+            _context = dispatcher;
 
-            _tree = new BindableCollection<IRssEntry> { Context = context };
+            _tree = new BindableCollection<IRssEntry>(dispatcher);
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();
@@ -857,7 +845,7 @@ namespace Cube.Net.Rss.Reader
         private readonly RssCacheDictionary _feeds = new RssCacheDictionary();
         private readonly RssMonitor[] _monitors = new RssMonitor[3];
         private readonly RssClient _client = new RssClient();
-        private readonly SynchronizationContext _context;
+        private readonly IDispatcher _context;
         private readonly System.Timers.Timer _autosaver = new System.Timers.Timer();
         #endregion
     }
