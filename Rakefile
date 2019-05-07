@@ -24,11 +24,11 @@ require 'rake/clean'
 PROJECT     = 'Cube.Net'
 LIBRARY     = '../packages'
 CONFIG      = 'Release'
-BRANCHES    = ['stable', 'net35']
+BRANCHES    = ['master', 'net35']
 PLATFORMS   = ['Any CPU']
 PACKAGES    = ["Libraries/#{PROJECT}.nuspec"]
-TESTCASES   = {'Cube.Net.Tests'     => 'Libraries/Tests',
-               'Cube.Net.Rss.Tests' => 'Applications/Rss/Tests'}
+TESTCASES   = {"#{PROJECT}.Tests"     => 'Libraries/Tests',
+               "#{PROJECT}.Rss.Tests" => 'Applications/Rss/Tests'}
 
 # --------------------------------------------------------------------------- #
 # commands
