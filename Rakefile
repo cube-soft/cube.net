@@ -26,7 +26,7 @@ LIBRARY     = '../packages'
 CONFIG      = 'Release'
 BRANCHES    = ['master', 'net35']
 PLATFORMS   = ['Any CPU']
-PACKAGES    = ["Libraries/#{PROJECT}.nuspec"]
+PACKAGES    = ["Libraries/Core/#{PROJECT}.nuspec"]
 TESTCASES   = {"#{PROJECT}.Tests"     => 'Libraries/Tests',
                "#{PROJECT}.Rss.Tests" => 'Applications/Rss/Tests'}
 
