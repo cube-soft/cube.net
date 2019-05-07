@@ -34,6 +34,8 @@ namespace Cube.Net.Rss.Tests
     [TestFixture]
     class RssEntryTest
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
         /// Entry_Expanded
@@ -46,9 +48,9 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Entry_Expanded()
         {
-            var dest = new RssEntry(new SynchronizationContext());
-            Assert.That(dest.Context,  Is.Not.Null);
-            Assert.That(dest.Expanded, Is.False);
+            var dest = new RssEntry(GetDispatcher());
+            Assert.That(dest.Dispatcher, Is.Not.Null);
+            Assert.That(dest.Expanded,   Is.False);
             dest.Expanded = true;
             Assert.That(dest.Expanded, Is.False);
         }
@@ -66,7 +68,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Entry_Update_Error()
         {
-            var dest = new RssEntry(new SynchronizationContext())
+            var dest = new RssEntry(GetDispatcher())
             {
                 Uri       = new Uri("https://blog.cube-soft.jp/?feed=rss2"),
                 Link      = new Uri("https://blog.cube-soft.jp/"),
@@ -90,15 +92,35 @@ namespace Cube.Net.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Entry_Expanded
+        /// Category_Count
         ///
         /// <summary>
-        /// RssEntry.Expanded プロパティの挙動を確認します。
+        /// Confirms the Count property.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Category_Count() =>
-            Assert.That(new RssCategory(new SynchronizationContext()).Count, Is.EqualTo(0));
+        public void Category_Count()
+        {
+            var src = new RssCategory(GetDispatcher());
+            Assert.That(src.Count, Is.EqualTo(0));
+        }
+
+        #endregion
+
+        #region Others
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetDispatcher
+        ///
+        /// <summary>
+        /// Gets a dispatcher object.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private IDispatcher GetDispatcher() => new Dispatcher(new SynchronizationContext(), false);
+
+        #endregion
     }
 }

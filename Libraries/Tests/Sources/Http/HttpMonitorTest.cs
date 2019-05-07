@@ -15,8 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem.TestService;
+using Cube.Mixin.Assembly;
 using Cube.Net.Http;
+using Cube.Tests;
 using NUnit.Framework;
 using System;
 using System.Reflection;
@@ -267,8 +268,7 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Version GetVersion() =>
-            Assembly.GetExecutingAssembly().GetReader().Version;
+        private Version GetVersion() => Assembly.GetExecutingAssembly().GetVersion();
 
         #endregion
     }

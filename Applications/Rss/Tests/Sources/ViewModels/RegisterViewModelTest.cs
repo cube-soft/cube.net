@@ -15,8 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem.TestService;
+using Cube.Mixin.Command;
 using Cube.Net.Rss.Reader;
+using Cube.Tests;
 using Cube.Xui;
 using NUnit.Framework;
 using System;
@@ -58,7 +59,7 @@ namespace Cube.Net.Rss.Tests
             var count = vm.Data.Root.Flatten().Count();
 
             vm.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
-            vm.NewEntry.Execute(null);
+            vm.NewEntry.Execute();
 
             var dest = vm.Data.Root.OfType<RssEntry>().FirstOrDefault(e => e.Uri == src);
 
@@ -112,6 +113,21 @@ namespace Cube.Net.Rss.Tests
         #endregion
 
         #region Others
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Setup
+        ///
+        /// <summary>
+        /// Setup some resources.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [SetUp]
+        public void Setup()
+        {
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+        }
 
         /* ----------------------------------------------------------------- */
         ///

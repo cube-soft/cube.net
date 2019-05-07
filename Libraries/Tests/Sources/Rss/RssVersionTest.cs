@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem.TestService;
 using Cube.Net.Rss;
+using Cube.Tests;
 using NUnit.Framework;
 using System.Xml.Linq;
 
@@ -50,7 +50,7 @@ namespace Cube.Net.Tests
         [TestCase("SampleAtom-01.xml",  ExpectedResult = RssVersion.Atom)]
         [TestCase("Sample.xml",         ExpectedResult = RssVersion.Unknown)]
         public RssVersion GetRssVersion(string filename) => XDocument
-            .Load(GetExamplesWith(filename))
+            .Load(GetSource(filename))
             .Root
             .GetRssVersion();
     }

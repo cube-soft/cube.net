@@ -21,7 +21,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cube.Net.Rss.Tests
@@ -52,7 +51,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Setup_Empty()
         {
-            var ctx = SynchronizationContext.Current;
+            var ctx = Dispatcher.Vanilla;
             var asm = Assembly.GetExecutingAssembly();
             using (var m = new MainFacade(new SettingsFolder(asm, Results, IO), ctx))
             {
@@ -192,10 +191,10 @@ namespace Cube.Net.Rss.Tests
         {
             Copy(name);
 
-            var asm      = Assembly.GetExecutingAssembly();
-            var settings = new SettingsFolder(asm, RootDirectory(name), IO);
-            var context  = SynchronizationContext.Current;
-            var dest     = new MainFacade(settings, context);
+            var asm        = Assembly.GetExecutingAssembly();
+            var settings   = new SettingsFolder(asm, RootDirectory(name), IO);
+            var dispatcher = Dispatcher.Vanilla;
+            var dest       = new MainFacade(settings, dispatcher);
 
             settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
 

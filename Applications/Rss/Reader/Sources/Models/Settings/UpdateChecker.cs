@@ -15,7 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Log;
+using Cube.Mixin.Assembly;
+using Cube.Mixin.Logger;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -49,8 +50,7 @@ namespace Cube.Net.Rss.Reader
         public UpdateChecker(SettingsFolder settings)
         {
             var io  = settings.IO;
-            var asm = Assembly.GetExecutingAssembly().GetReader();
-            var dir = io.Get(asm.Location).DirectoryName;
+            var dir = Assembly.GetExecutingAssembly().GetDirectoryName();
 
             FileName = io.Combine(dir, "UpdateChecker.exe");
             Settings = settings;
@@ -137,7 +137,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void WhenTick()
         {
-            try { Process.Start(FileName, Settings.Assembly.Product); }
+            try { Process.Start(FileName, Settings.Assembly.GetProduct()); }
             catch (Exception err) { this.LogWarn($"{FileName} ({err.Message})"); }
             finally { Settings.Shared.LastCheckUpdate = DateTime.Now; }
         }

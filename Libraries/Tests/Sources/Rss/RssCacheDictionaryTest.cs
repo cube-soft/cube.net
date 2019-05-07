@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem.TestService;
 using Cube.Net.Rss;
+using Cube.Tests;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -117,7 +117,7 @@ namespace Cube.Net.Tests
         public void Contains()
         {
             var feeds = Create();
-            var cache = GetResultsWith(nameof(Contains), "Cache");
+            var cache = Get(nameof(Contains), "Cache");
 
             using (var src = new RssCacheDictionary { Directory = cache })
             {
@@ -143,7 +143,7 @@ namespace Cube.Net.Tests
         public void Stash()
         {
             var feeds = Create();
-            var cache = GetResultsWith(nameof(Stash), "Cache");
+            var cache = Get(nameof(Stash), "Cache");
 
             using (var src = new RssCacheDictionary { Directory = cache })
             {
@@ -168,7 +168,7 @@ namespace Cube.Net.Tests
         public void Remove()
         {
             var feeds = Create();
-            var cache = GetResultsWith(nameof(Remove), "Cache");
+            var cache = Get(nameof(Remove), "Cache");
 
             using (var src = new RssCacheDictionary { Directory = cache })
             {
@@ -199,7 +199,7 @@ namespace Cube.Net.Tests
         [Test]
         public void Delete_Null() => Assert.DoesNotThrow(() =>
         {
-            var cache = GetResultsWith(nameof(Delete_Null), "Cache");
+            var cache = Get(nameof(Delete_Null), "Cache");
             using (var src = new RssCacheDictionary { Directory = cache})
             {
                 src.Delete(null);

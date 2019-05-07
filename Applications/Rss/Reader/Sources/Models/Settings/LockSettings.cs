@@ -17,7 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using Cube.DataContract;
 using Cube.FileSystem;
-using Cube.FileSystem.Mixin;
+using Cube.Mixin.IO;
 using Microsoft.Win32;
 using System;
 using System.Runtime.Serialization;
@@ -35,7 +35,7 @@ namespace Cube.Net.Rss.Reader
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class LockSettings : ObservableProperty
+    public class LockSettings : ObservableBase
     {
         #region Constructors
 
@@ -206,7 +206,7 @@ namespace Cube.Net.Rss.Reader
             _sid         = GetCurrentUserSid();
             _userName    = Environment.UserName;
             _machineName = Environment.MachineName;
-            _isReadOnly  = default(bool?);
+            _isReadOnly  = default;
         }
 
         /* ----------------------------------------------------------------- */

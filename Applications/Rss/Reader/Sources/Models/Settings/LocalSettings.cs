@@ -29,7 +29,7 @@ namespace Cube.Net.Rss.Reader
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class LocalSettings : ObservableProperty
+    public class LocalSettings : ObservableBase
     {
         #region Constructors
 

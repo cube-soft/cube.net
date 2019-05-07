@@ -17,7 +17,10 @@
 /* ------------------------------------------------------------------------- */
 using Cube.DataContract;
 using Cube.FileSystem;
-using Cube.Log;
+using Cube.Mixin.Assembly;
+using Cube.Mixin.Environment;
+using Cube.Mixin.Logger;
+using Cube.Mixin.String;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -52,7 +55,7 @@ namespace Cube.Net.Rss.Reader
             assembly,
             System.IO.Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                $@"{assembly.GetReader().Company}\{assembly.GetReader().Product}"
+                $@"{assembly.GetCompany()}\{assembly.GetProduct()}"
             ),
             new IO()
         ) { }
@@ -79,6 +82,7 @@ namespace Cube.Net.Rss.Reader
             DataDirectory  = root;
             Version.Digit  = 3;
             Version.Suffix = "β";
+            Reset(root);
         }
 
         #endregion
@@ -185,19 +189,11 @@ namespace Cube.Net.Rss.Reader
             Debug.Assert(e.NewValue != null);
             var min  = 100;
             var dest = e.NewValue;
-            if (string.IsNullOrEmpty(dest.DataDirectory)) dest.DataDirectory = RootDirectory;
+            if (!dest.DataDirectory.HasValue()) dest.DataDirectory = RootDirectory;
             dest.EntryColumn = Math.Min(dest.EntryColumn, dest.Width - min * 2);
             dest.ArticleColumn = Math.Min(dest.ArticleColumn, dest.Width - dest.EntryColumn - min);
             DataDirectory = dest.DataDirectory;
-
-            Lock = LockSettings.Load(DataDirectory, IO);
-            Debug.Assert(Lock != null);
-            Lock.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
-
-            Shared = SharedSettings.Load(DataDirectory, IO);
-            Debug.Assert(Shared != null);
-            Shared.LastCheckUpdate = GetLastCheckUpdate();
-            Shared.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
+            Reset(DataDirectory);
 
             base.OnLoaded(e);
         }
@@ -228,12 +224,12 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private DateTime? GetLastCheckUpdate() => this.LogWarn(() =>
         {
-            var name = $@"SOFTWARE\{Assembly.Company}\{Assembly.Product}";
+            var name = $@"Software\{Assembly.GetCompany()}\{Assembly.GetProduct()}";
             using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false))
             {
-                if (key == null) return default(DateTime?);
+                if (key == null) return default;
                 var s = key.GetValue("LastCheckUpdate") as string;
-                if (string.IsNullOrEmpty(s)) return default(DateTime?);
+                if (string.IsNullOrEmpty(s)) return default;
                 return DateTime.Parse(s).ToLocalTime();
             }
         });
@@ -249,11 +245,32 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private string GetUserAgent()
         {
-            var app  = $"{Assembly.Product}/{Version.Number}";
+            var app  = $"{Assembly.GetProduct()}/{Version.Number}";
             var win  = Environment.OSVersion.VersionString;
             var net  = $".NET {Environment.Version}";
             var view = BrowserSettings.Version;
             return $"{app} ({win}; {net}; {view})";
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Reset
+        ///
+        /// <summary>
+        /// Reloads the additional settings.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private void Reset(string directory)
+        {
+            Lock = LockSettings.Load(directory, IO);
+            Debug.Assert(Lock != null);
+            Lock.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
+
+            Shared = SharedSettings.Load(directory, IO);
+            Debug.Assert(Shared != null);
+            Shared.LastCheckUpdate = GetLastCheckUpdate();
+            Shared.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
         }
 
         #endregion

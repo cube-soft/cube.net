@@ -231,9 +231,9 @@ namespace Cube.Net.Rss
             catch { /* try redirect */ }
 
             var cvt = RssParser.GetRssUris(content).FirstOrDefault();
-            if (cvt == null) return default(RssFeed);
+            if (cvt == null) return default;
 
-            OnRedirected(ValueChangedEventArgs.Create(uri, cvt));
+            OnRedirected(ValueEventArgs.Create(uri, cvt));
             return await GetAsync(cvt).ConfigureAwait(false);
         }
 

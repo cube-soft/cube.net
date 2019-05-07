@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Collections.Mixin;
+using Cube.Mixin.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssFeed : ObservableProperty
+    public class RssFeed : ObservableBase
     {
         #region Constructors
 
@@ -234,7 +234,7 @@ namespace Cube.Net.Rss
                     LastPublished = LastPublished,
                 };
 
-                foreach (var i in Items.GetOrDefault()) dest.Items.Add(i.Convert());
+                foreach (var i in Items.GetOrEmpty()) dest.Items.Add(i.Convert());
                 return dest;
             }
         }

@@ -15,13 +15,12 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Conversions;
-using Cube.Log;
+using Cube.Mixin.Logger;
+using Cube.Mixin.Uri;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cube.Net.Rss.Reader
@@ -48,14 +47,14 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="src">設定用オブジェクト</param>
-        /// <param name="context">同期用オブジェクト</param>
+        /// <param name="dispatcher">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MainFacade(SettingsFolder src, SynchronizationContext context)
+        public MainFacade(SettingsFolder src, IDispatcher dispatcher)
         {
             _dispose = new OnceAction<bool>(Dispose);
 
-            src.LoadOrDefault(new LocalSettings());
+            src.TryLoad();
             this.LogInfo($"Owner:{src.Lock.UserName}@{src.Lock.MachineName} ({src.Lock.Sid})");
             this.LogInfo($"User-Agent:{src.UserAgent}");
 
@@ -66,7 +65,7 @@ namespace Cube.Net.Rss.Reader
             var feeds = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.FeedFileName);
             var cache = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.CacheDirectoryName);
 
-            _core = new RssSubscriber(context)
+            _core = new RssSubscriber(dispatcher)
             {
                 IO             = Settings.IO,
                 FileName       = feeds,
@@ -80,7 +79,7 @@ namespace Cube.Net.Rss.Reader
             _core.Received += WhenReceived;
 
             _checker = new UpdateChecker(Settings);
-            Data = new MainBindableData(_core, Settings, context);
+            Data = new MainBindableData(_core, Settings, dispatcher);
         }
 
         #endregion

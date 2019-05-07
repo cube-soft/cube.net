@@ -15,12 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Collections.Mixin;
+using Cube.Mixin.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Threading;
 
 namespace Cube.Net.Rss.Reader
 {
@@ -45,7 +44,7 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="context">同期用コンテキスト</param>
+        /// <param name="dispatcher">同期用コンテキスト</param>
         ///
         /// <remarks>
         /// 将来的に Items に対して ObservableCollection(T) を指定する
@@ -55,10 +54,10 @@ namespace Cube.Net.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(SynchronizationContext context)
+        public RssEntry(IDispatcher dispatcher)
         {
-            _dispose = new OnceAction<bool>(Dispose);
-            Context  = context;
+            _dispose   = new OnceAction<bool>(Dispose);
+            Dispatcher = dispatcher;
         }
 
         /* ----------------------------------------------------------------- */
@@ -70,10 +69,10 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="cp">コピー元オブジェクト</param>
-        /// <param name="context">同期用コンテキスト</param>
+        /// <param name="dispatcher">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(RssFeed cp, SynchronizationContext context) : this(context)
+        public RssEntry(RssFeed cp, IDispatcher dispatcher) : this(dispatcher)
         {
             Title         = cp.Title;
             Uri           = cp.Uri;
@@ -83,7 +82,7 @@ namespace Cube.Net.Rss.Reader
             LastChecked   = cp.LastChecked;
             LastPublished = cp.LastPublished;
 
-            foreach (var i in cp.Items.GetOrDefault()) Items.Add(i);
+            foreach (var i in cp.Items.GetOrEmpty()) Items.Add(i);
         }
 
         #endregion
@@ -136,7 +135,7 @@ namespace Cube.Net.Rss.Reader
             {
                 if (SetProperty(ref _count, value) && Parent is RssCategory rc)
                 {
-                    rc.RaisePropertyChanged(nameof(Count));
+                    rc.Refresh(nameof(Count));
                 }
             }
         }
@@ -299,7 +298,7 @@ namespace Cube.Net.Rss.Reader
                 SkipContent = src.SkipContent;
             }
 
-            public RssEntry Convert(RssCategory src) => new RssEntry(src.Context)
+            public RssEntry Convert(RssCategory src) => new RssEntry(src.Dispatcher)
             {
                 Title       = Title,
                 Uri         = Uri,

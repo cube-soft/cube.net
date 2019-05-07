@@ -15,9 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Log;
+using Cube.Collections;
+using Cube.Mixin.Logger;
+using Cube.Mixin.Tasks;
 using Cube.Net.Http;
-using Cube.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -189,7 +190,7 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         public void Register(IEnumerable<Uri> items) => Register(
-            items.Select(e => new KeyValuePair<Uri, DateTime?>(e, default(DateTime?)))
+            items.Select(e => KeyValuePair.Create(e, default(DateTime?)))
         );
 
         /* ----------------------------------------------------------------- */

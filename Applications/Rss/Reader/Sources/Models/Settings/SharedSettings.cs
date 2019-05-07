@@ -17,7 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using Cube.DataContract;
 using Cube.FileSystem;
-using Cube.FileSystem.Mixin;
+using Cube.Mixin.IO;
 using System;
 using System.Runtime.Serialization;
 
@@ -33,7 +33,7 @@ namespace Cube.Net.Rss.Reader
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class SharedSettings : ObservableProperty
+    public class SharedSettings : ObservableBase
     {
         #region Constructors
 

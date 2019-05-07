@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Collections.Mixin;
+using Cube.Mixin.Collections;
 using Cube.Xui;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Threading;
 
 namespace Cube.Net.Rss.Reader
 {
@@ -36,7 +35,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssCategory : ObservableProperty, IRssEntry
+    public class RssCategory : ObservableBase, IRssEntry
     {
         #region Constructors
 
@@ -48,14 +47,14 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="context">同期用コンテキスト</param>
+        /// <param name="dispatcher">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssCategory(SynchronizationContext context)
+        public RssCategory(IDispatcher dispatcher)
         {
-            _dispose = new OnceAction<bool>(Dispose);
-            Context  = context;
-            Children = new BindableCollection<IRssEntry> { Context = context };
+            _dispose   = new OnceAction<bool>(Dispose);
+            Dispatcher = dispatcher;
+            Children   = new BindableCollection<IRssEntry>(dispatcher);
             Children.CollectionChanged += WhenChildrenChanged;
         }
 
@@ -243,7 +242,7 @@ namespace Cube.Net.Rss.Reader
             if (e.PropertyName == nameof(Count))
             {
                 _count = null;
-                if (Parent is RssCategory rc) rc.RaisePropertyChanged(nameof(Count));
+                if (Parent is RssCategory rc) rc.Refresh(nameof(Count));
             }
             base.OnPropertyChanged(e);
         }
@@ -258,7 +257,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         private void WhenChildrenChanged(object s, NotifyCollectionChangedEventArgs e) =>
-            RaisePropertyChanged(nameof(Count));
+            Refresh(nameof(Count));
 
         #region Json
 
@@ -285,11 +284,11 @@ namespace Cube.Net.Rss.Reader
                 Categories = src.Categories?.Select(e => new Json(e));
             }
 
-            public  RssCategory Convert(SynchronizationContext context) => Convert(null, context);
-            public  RssCategory Convert(RssCategory src) => Convert(src, src.Context);
-            private RssCategory Convert(RssCategory src, SynchronizationContext context)
+            public  RssCategory Convert(IDispatcher dispatcher) => Convert(null, dispatcher);
+            public  RssCategory Convert(RssCategory src) => Convert(src, src.Dispatcher);
+            private RssCategory Convert(RssCategory src, IDispatcher dispatcher)
             {
-                var dest = new RssCategory(context)
+                var dest = new RssCategory(dispatcher)
                 {
                     Title  = Title,
                     Parent = src,
@@ -302,7 +301,7 @@ namespace Cube.Net.Rss.Reader
             private void Add(RssCategory dest, IEnumerable<IRssEntry> items)
             {
                 System.Diagnostics.Debug.Assert(dest != null);
-                foreach (var item in items.GetOrDefault()) dest.Children.Add(item);
+                foreach (var item in items.GetOrEmpty()) dest.Children.Add(item);
             }
         }
 

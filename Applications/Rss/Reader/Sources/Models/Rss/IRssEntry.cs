@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.ComponentModel;
-using System.Threading;
 
 namespace Cube.Net.Rss.Reader
 {
@@ -80,14 +79,14 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Context
+        /// Dispatcher
         ///
         /// <summary>
-        /// 同期用コンテキストを取得します。
+        /// Gets the dispatcher.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        SynchronizationContext Context { get; }
+        IDispatcher Dispatcher { get; }
 
         #endregion
     }

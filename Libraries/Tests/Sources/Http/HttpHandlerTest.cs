@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Mixin.Assembly;
 using NUnit.Framework;
 using System;
 using System.Net;
@@ -111,8 +112,8 @@ namespace Cube.Net.Tests
         /* ----------------------------------------------------------------- */
         private string GetUserAgent()
         {
-            var asm = new AssemblyReader(Assembly.GetExecutingAssembly());
-            var app = $"{asm.Product}/{asm.Version}";
+            var asm = Assembly.GetExecutingAssembly();
+            var app = $"{asm.GetProduct()}/{asm.GetVersion()}";
             var win = Environment.OSVersion.VersionString;
             var net = $".NET {Environment.Version}";
             return $"{app} ({win}; {net})";

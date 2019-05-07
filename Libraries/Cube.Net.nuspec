@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <version>1.15.0</version>
+        <version>1.16.0</version>
         <id>Cube.Net</id>
         <title>Cube.Net</title>
         <authors>clown,cube-soft</authors>
@@ -14,7 +14,7 @@
         <iconUrl>https://github.com/cube-soft/Cube.Net/blob/master/Icon.png?raw=true</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <dependencies>
-            <dependency id="Cube.FileSystem" version="1.15.0" />
+            <dependency id="Cube.FileSystem" version="1.16.0" />
             <dependency id="SgmlReader" version="1.8.11" />
         </dependencies>
     </metadata>

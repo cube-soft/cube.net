@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xml;
+using Cube.Mixin.Xml;
 using System;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -171,9 +171,9 @@ namespace Cube.Net.Rss.Parsing
             try
             {
                 var value = e.GetValueOrAttribute(ns, name, "href");
-                return !string.IsNullOrEmpty(value) ? new Uri(value.Trim()) : default(Uri);
+                return !string.IsNullOrEmpty(value) ? new Uri(value.Trim()) : default;
             }
-            catch { return default(Uri); }
+            catch { return default; }
         }
 
         /* ----------------------------------------------------------------- */

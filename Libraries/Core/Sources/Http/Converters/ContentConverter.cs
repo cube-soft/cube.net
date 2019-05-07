@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Log;
+using Cube.Mixin.Logger;
 using System;
 using System.IO;
 
@@ -130,7 +130,7 @@ namespace Cube.Net.Http
                 if (IgnoreException) this.LogWarn(err);
                 else throw;
             }
-            return default(TValue);
+            return default;
         }
 
         /* ----------------------------------------------------------------- */

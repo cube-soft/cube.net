@@ -21,7 +21,6 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -62,7 +61,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(shred.LightMode,            Is.True);
             Assert.That(shred.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
             Assert.That(shred.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
-            Assert.That(local.DataDirectory,        Is.EqualTo(GetResultsWith(nameof(VM_Settings))));
+            Assert.That(local.DataDirectory,        Is.EqualTo(Get(nameof(VM_Settings))));
         });
 
         /* ----------------------------------------------------------------- */
@@ -93,7 +92,7 @@ namespace Cube.Net.Rss.Tests
             settings.Load();
             Assert.That(settings.DataDirectory, Is.EqualTo(dest), nameof(SettingsFolder));
 
-            var facade = new MainFacade(settings, SynchronizationContext.Current);
+            var facade = new MainFacade(settings, Dispatcher.Vanilla);
             Assert.That(facade.Data.Root.Flatten().Count(), Is.EqualTo(0));
         }
 

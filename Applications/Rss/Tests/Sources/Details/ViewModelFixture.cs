@@ -15,9 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem.TestService;
-using Cube.Generics;
+using Cube.Mixin.String;
 using Cube.Net.Rss.Reader;
+using Cube.Tests;
 using NUnit.Framework;
 using System;
 using System.Reflection;

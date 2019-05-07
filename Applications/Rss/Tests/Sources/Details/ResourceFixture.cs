@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.FileSystem.TestService;
 using Cube.Net.Rss.Reader;
+using Cube.Tests;
 using System.Runtime.CompilerServices;
 
 namespace Cube.Net.Rss.Tests
@@ -43,8 +43,7 @@ namespace Cube.Net.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected string RootDirectory([CallerMemberName] string name = null) =>
-            GetResultsWith(name);
+        protected string RootDirectory([CallerMemberName] string name = null) => Get(name);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -121,11 +120,11 @@ namespace Cube.Net.Rss.Tests
         /* ----------------------------------------------------------------- */
         protected void Copy([CallerMemberName] string name = null)
         {
-            IO.Copy(GetExamplesWith("LocalSettings.json"), LocalSettingsPath(name), true);
-            IO.Copy(GetExamplesWith("Settings.json"), SharedSettingsPath(name), true);
-            IO.Copy(GetExamplesWith("Sample.json"), FeedsPath(name), true);
+            IO.Copy(GetSource("LocalSettings.json"), LocalSettingsPath(name), true);
+            IO.Copy(GetSource("Settings.json"), SharedSettingsPath(name), true);
+            IO.Copy(GetSource("Sample.json"), FeedsPath(name), true);
 
-            foreach (var f in IO.GetFiles(GetExamplesWith("Cache")))
+            foreach (var f in IO.GetFiles(GetSource("Cache")))
             {
                 IO.Copy(f, CachePath(IO.Get(f).Name, name), true);
             }

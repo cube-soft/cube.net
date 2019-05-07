@@ -63,7 +63,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<bool> Busy { get; } = new Bindable<bool>(false);
+        public Bindable<bool> Busy { get; } = new Bindable<bool>(new Dispatcher(false));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -74,7 +74,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<string> Url { get; } = new Bindable<string>();
+        public Bindable<string> Url { get; } = new Bindable<string>(new Dispatcher(false));
 
         #endregion
 
