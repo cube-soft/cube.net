@@ -35,7 +35,7 @@ namespace Cube.Net
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class NetworkMonitorBase : IDisposable
+    public abstract class NetworkMonitorBase : DisposableBase
     {
         #region Constructors
 
@@ -48,10 +48,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected NetworkMonitorBase()
-        {
-            _dispose = new OnceAction<bool>(Dispose);
-        }
+        protected NetworkMonitorBase() { }
 
         #endregion
 
@@ -136,7 +133,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected NetworkAwareTimer Timer { get; } = new NetworkAwareTimer();
+        protected WakeableTimer Timer { get; } = new WakeableTimer();
 
         #endregion
 
@@ -220,34 +217,6 @@ namespace Cube.Net
             }
         }
 
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~NetworkMonitorBase
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~NetworkMonitorBase() { _dispose.Invoke(false); }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
@@ -261,17 +230,11 @@ namespace Cube.Net
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing) Timer.Dispose();
         }
 
-        #endregion
-
-        #endregion
-
-        #region Fields
-        private readonly OnceAction<bool> _dispose;
         #endregion
     }
 }
