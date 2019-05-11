@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Tasks;
 using System;
 using System.Linq;
 using System.Net;
@@ -148,7 +147,11 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Task<NtpPacket> GetAsync() => GetAsyncCore().Timeout(Timeout);
+        public Task<NtpPacket> GetAsync() => Task.Run(() =>
+        {
+            SendTo();
+            return ReceiveFrom();
+        });
 
         #region IDisposable
 
@@ -207,21 +210,6 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsyncCore
-        ///
-        /// <summary>
-        /// NTP サーバと通信を行い、NTP パケットを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private Task<NtpPacket> GetAsyncCore() => Task.Run(() =>
-        {
-            SendTo();
-            return ReceiveFrom();
-        });
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// SendTo
         ///
         /// <summary>
@@ -231,10 +219,12 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private void SendTo()
         {
-            var addr = Host.AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
-            var endpoint = new IPEndPoint(addr, Port);
+            var addr   = Host.AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+            var ep     = new IPEndPoint(addr, Port);
             var packet = new Ntp.NtpPacket();
-            var sent = _socket.SendTo(packet.RawData, endpoint);
+
+            _socket.SendTimeout = (int)Timeout.TotalMilliseconds;
+            var sent = _socket.SendTo(packet.RawData, ep);
             if (sent != packet.RawData.Length) throw new SocketException();
         }
 
@@ -249,9 +239,12 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private NtpPacket ReceiveFrom()
         {
-            var endpoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
+            var ep  = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
             var raw = new byte[48 + (32 + 128) / 8];
-            var bytes = _socket.ReceiveFrom(raw, ref endpoint);
+
+            _socket.ReceiveTimeout = (int)Timeout.TotalMilliseconds;
+            _socket.ReceiveFrom(raw, ref ep);
+
             return new NtpPacket(raw);
         }
 

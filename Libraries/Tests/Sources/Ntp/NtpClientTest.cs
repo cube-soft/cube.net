@@ -15,10 +15,12 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Net.Ntp;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 
 namespace Cube.Net.Tests
 {
@@ -48,7 +50,7 @@ namespace Cube.Net.Tests
         [Test]
         public void Properties_Default()
         {
-            using (var client = new Ntp.NtpClient())
+            using (var client = new NtpClient())
             {
                 Assert.That(client.Host.HostName, Is.EqualTo("www268.ziyu.net"));
                 Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
@@ -69,7 +71,7 @@ namespace Cube.Net.Tests
         [TestCaseSource(nameof(GetAsync_TestCases))]
         public async Task GetAsync(string src, uint version, uint poll, Cube.Net.Ntp.Stratum stratum)
         {
-            using (var client = new Ntp.NtpClient(src))
+            using (var client = new NtpClient(src))
             {
                 var pkt = await client.GetAsync();
                 Assert.That(pkt.IsValid,            Is.True);
@@ -114,7 +116,7 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// NotFound_Throws
+        /// NotFound_SocketException
         ///
         /// <summary>
         /// 存在しない NTP サーバを指定した時のテストを行います。
@@ -122,14 +124,15 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void NotFound_Throws() => Assert.That(
-            () => new Ntp.NtpClient("404.not.found"),
-            Throws.TypeOf<System.Net.Sockets.SocketException>()
-        );
+        public void NotFound_SocketException()
+        {
+            var src = "404.not.found";
+            Assert.That(() => new NtpClient(src), Throws.TypeOf<SocketException>());
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Timeout_Throws
+        /// Timeout_SocketException
         ///
         /// <summary>
         /// タイムアウト処理のテストを行います。
@@ -137,20 +140,14 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Timeout_Throws() => Assert.That(
-            () =>
+        public void Timeout_SocketException()
+        {
+            using (var client = new Ntp.NtpClient())
             {
-                using (var client = new Ntp.NtpClient())
-                {
-                    client.Timeout = TimeSpan.FromMilliseconds(1);
-                    client.GetAsync().Wait();
-                }
-            },
-            Throws.TypeOf<AggregateException>()
-                  .And
-                  .InnerException
-                  .TypeOf<TimeoutException>()
-        );
+                client.Timeout = TimeSpan.FromMilliseconds(1);
+                Assert.That(() => client.GetAsync(), Throws.TypeOf<SocketException>());
+            }
+        }
 
         #endregion
     }
