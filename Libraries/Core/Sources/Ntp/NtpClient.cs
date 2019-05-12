@@ -32,7 +32,7 @@ namespace Cube.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class NtpClient : IDisposable
+    public class NtpClient : DisposableBase
     {
         #region Constructors
 
@@ -72,7 +72,6 @@ namespace Cube.Net.Ntp
             Timeout  = TimeSpan.FromSeconds(5);
             Host     = Dns.GetHostEntry(server);
             Port     = port;
-            _dispose = new OnceAction<bool>(Dispose);
         }
 
         #endregion
@@ -153,37 +152,6 @@ namespace Cube.Net.Ntp
             return ReceiveFrom();
         });
 
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~Client
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~NtpClient()
-        {
-            _dispose.Invoke(false);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを開放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
@@ -197,12 +165,10 @@ namespace Cube.Net.Ntp
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing) _socket.Dispose();
         }
-
-        #endregion
 
         #endregion
 
@@ -251,7 +217,6 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Fields
-        private readonly OnceAction<bool> _dispose;
         private readonly Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         #endregion
     }

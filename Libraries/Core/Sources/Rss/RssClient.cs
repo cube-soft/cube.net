@@ -33,7 +33,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssClient : IDisposable
+    public class RssClient : DisposableBase
     {
         #region Constructors
 
@@ -61,8 +61,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public RssClient(HttpClientHandler handler)
         {
-            _dispose = new OnceAction<bool>(Dispose);
-            _http    = HttpClientFactory.Create(handler, TimeSpan.FromSeconds(10));
+            _http = HttpClientFactory.Create(handler, TimeSpan.FromSeconds(10));
         }
 
         #endregion
@@ -150,34 +149,6 @@ namespace Cube.Net.Rss
             }
         }
 
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~RssClient
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~RssClient() { _dispose.Invoke(false); }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
@@ -189,13 +160,10 @@ namespace Cube.Net.Rss
         /// <param name="disposing">マネージリソースを解放するか</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing) _http.Dispose();
         }
-
-
-        #endregion
 
         #endregion
 
@@ -241,7 +209,6 @@ namespace Cube.Net.Rss
         #endregion
 
         #region Fields
-        private readonly OnceAction<bool> _dispose;
         private readonly HttpClient _http;
         #endregion
     }

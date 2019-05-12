@@ -34,7 +34,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public sealed class MainFacade : IDisposable
+    public sealed class MainFacade : DisposableBase
     {
         #region Constructors
 
@@ -52,8 +52,6 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public MainFacade(SettingsFolder src, IDispatcher dispatcher)
         {
-            _dispose = new OnceAction<bool>(Dispose);
-
             src.TryLoad();
             this.LogInfo($"Owner:{src.Lock.UserName}@{src.Lock.MachineName} ({src.Lock.Sid})");
             this.LogInfo($"User-Agent:{src.UserAgent}");
@@ -353,19 +351,6 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Stop() => _core.Stop();
 
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~RssFacade
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~MainFacade() { _dispose.Invoke(false); }
-
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
@@ -375,22 +360,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -398,8 +368,6 @@ namespace Cube.Net.Rss.Reader
                 Settings.Dispose();
             }
         }
-
-        #endregion
 
         #endregion
 
@@ -461,7 +429,6 @@ namespace Cube.Net.Rss.Reader
         #endregion
 
         #region Fields
-        private readonly OnceAction<bool> _dispose;
         private readonly RssSubscriber _core;
         private readonly UpdateChecker _checker;
         #endregion

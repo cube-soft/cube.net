@@ -18,7 +18,6 @@
 using Cube.Xui;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using System;
 using System.Windows.Input;
 
 namespace Cube.Net.Rss.Reader
@@ -32,7 +31,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class CommonViewModel : MessengerViewModel, IDisposable
+    public abstract class CommonViewModel : MessengerViewModel
     {
         #region Constructors
 
@@ -47,10 +46,7 @@ namespace Cube.Net.Rss.Reader
         /// <param name="messenger">メッセージ伝搬用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected CommonViewModel(IMessenger messenger) : base(messenger)
-        {
-            _dispose = new OnceAction<bool>(Dispose);
-        }
+        protected CommonViewModel(IMessenger messenger) : base(messenger) { }
 
         #endregion
 
@@ -73,7 +69,6 @@ namespace Cube.Net.Rss.Reader
         #endregion
 
         #region Fields
-        private readonly OnceAction<bool> _dispose;
         private ICommand _close;
         #endregion
     }
