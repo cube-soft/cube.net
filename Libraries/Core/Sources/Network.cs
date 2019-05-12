@@ -49,10 +49,12 @@ namespace Cube.Net
         {
             get
             {
-                var ns   = GetNetworkInterfaces();
-                var dest = ns.FirstOrDefault(e => e.OperationalStatus == OperationalStatus.Up) ??
-                           ns.FirstOrDefault(e => e.OperationalStatus == OperationalStatus.Testing);
-                return dest?.OperationalStatus ?? OperationalStatus.Down;
+                var src = GetStatus();
+                var ns0 = OperationalStatus.Up;
+                var ns1 = OperationalStatus.Testing;
+                var ns2 = OperationalStatus.Down;
+                return src.Any(e => e == ns0) ? ns0 :
+                       src.Any(e => e == ns1) ? ns1 : ns2;
             }
         }
 
@@ -65,8 +67,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static bool Available =>
-            GetNetworkInterfaces().Any(e => e.OperationalStatus == OperationalStatus.Up);
+        public static bool Available => GetStatus().Any(e => e == OperationalStatus.Up);
 
         #endregion
 
@@ -94,7 +95,19 @@ namespace Cube.Net
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetNetworkInterfaces
+        /// GetStatus
+        ///
+        /// <summary>
+        /// Gets the collection of network status.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IEnumerable<OperationalStatus> GetStatus() =>
+            GetInterfaces().Select(e => e.OperationalStatus);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetInterfaces
         ///
         /// <summary>
         /// Gets the collection of network interfaces in the current
@@ -102,7 +115,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static IEnumerable<NetworkInterface> GetNetworkInterfaces() =>
+        private static IEnumerable<NetworkInterface> GetInterfaces() =>
             NetworkInterface.GetAllNetworkInterfaces().Where(e =>
                 e.NetworkInterfaceType != NetworkInterfaceType.Tunnel &&
                 e.NetworkInterfaceType != NetworkInterfaceType.Loopback &&

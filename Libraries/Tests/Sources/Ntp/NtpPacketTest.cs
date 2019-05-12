@@ -32,9 +32,11 @@ namespace Cube.Net.Tests
     [TestFixture]
     class NtpPacketTest
     {
+        #region Tests
+
         /* ----------------------------------------------------------------- */
         ///
-        /// TooManyBytes_Throws
+        /// Create_ArgumentException
         ///
         /// <summary>
         /// NTP パケットの初期化に失敗するテストを行います。
@@ -42,9 +44,11 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void TooManyBytes_Throws() => Assert.That(
-            () => new Ntp.NtpPacket(new byte[47]),
-            Throws.TypeOf<ArgumentException>()
-        );
+        public void Create_ArgumentException()
+        {
+            Assert.That(() => new Ntp.NtpPacket(new byte[47]), Throws.ArgumentException);
+        }
+
+        #endregion
     }
 }

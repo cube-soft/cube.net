@@ -85,11 +85,11 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [TestCaseSource(nameof(TestCases))]
-        public async Task GetAsync(string src, uint version, uint poll, Stratum stratum)
+        public void GetAsync(string src, uint version, uint poll, Stratum stratum)
         {
             using (var client = new NtpClient(src))
             {
-                var pkt = await client.GetAsync();
+                var pkt = client.GetAsync().Result;
                 Assert.That(pkt.IsValid,            Is.True);
                 Assert.That(pkt.LeapIndicator,      Is.EqualTo(LeapIndicator.NoWarning));
                 Assert.That(pkt.Version,            Is.EqualTo(version));

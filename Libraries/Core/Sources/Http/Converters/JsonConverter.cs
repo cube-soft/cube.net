@@ -44,7 +44,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public JsonContentConverter() : base(s =>
         {
-            if (s == null) return default(TValue);
+            if (s == null) return default;
             var json = new DataContractJsonSerializer(typeof(TValue));
             return json.ReadObject(s) as TValue;
         }) { }
