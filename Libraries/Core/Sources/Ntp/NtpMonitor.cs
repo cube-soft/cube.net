@@ -256,6 +256,11 @@ namespace Cube.Net.Ntp
         private async Task WhenTick()
         {
             if (Subscriptions.Count <= 0) return;
+            if (!Network.Available)
+            {
+                this.LogDebug("Network not available");
+                return;
+            }
 
             await Task.Delay(500).ConfigureAwait(false); // see ramarks
 
@@ -271,13 +276,12 @@ namespace Cube.Net.Ntp
                         await PublishAsync(packet.LocalClockOffset).ConfigureAwait(false);
                     }
                     else throw new ArgumentException("InvalidPacket");
-                    break;
+                    return;
                 }
                 catch (Exception err)
                 {
-                    this.LogWarn(err);
+                    this.LogWarn(Server, $"{err.Message} ({i + 1}/{RetryCount})");
                     await Task.Delay(RetryInterval).ConfigureAwait(false);
-                    this.LogDebug($"Retry\tCount:{i + 1}\tServer:{Server}");
                 }
             }
         }
