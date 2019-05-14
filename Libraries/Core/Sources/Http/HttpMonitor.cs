@@ -127,6 +127,11 @@ namespace Cube.Net.Http
         private async Task WhenTick()
         {
             if (Subscriptions.Count <= 0) return;
+            if (!Network.Available)
+            {
+                this.LogDebug("Network not available");
+                return;
+            }
 
             var uri = GetRequestUri();
 
@@ -136,13 +141,12 @@ namespace Cube.Net.Http
                 {
                     if (State != TimerState.Run) return;
                     await PublishAsync(uri);
-                    break;
+                    return;
                 }
                 catch (Exception err)
                 {
-                    this.LogWarn(err);
+                    this.LogWarn($"{uri}", $"{err.Message} ({i + 1}/{RetryCount}");
                     await TaskEx.Delay(RetryInterval).ConfigureAwait(false);
-                    this.LogDebug($"Retry\tCount:{i + 1}\tUrl:{uri}");
                 }
             }
         }

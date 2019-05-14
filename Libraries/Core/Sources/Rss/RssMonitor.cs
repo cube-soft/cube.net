@@ -461,6 +461,13 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private async Task WhenTick()
         {
+            if (Subscriptions.Count <= 0) return;
+            if (!Network.Available)
+            {
+                this.LogDebug("Network not available");
+                return;
+            }
+
             var src    = Feeds.OrderBy(e => e.Value).Select(e => e.Key).ToList();
             var errors = new Dictionary<Uri, Exception>();
             await RunAsync(src, errors).ConfigureAwait(false);

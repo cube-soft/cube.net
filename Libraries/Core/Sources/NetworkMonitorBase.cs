@@ -25,14 +25,8 @@ namespace Cube.Net
     /// NetworkMonitorBase
     ///
     /// <summary>
-    /// 定期的にネットワーク通信を実行するための基底クラスです。
+    /// Represents the base class to invoke the transmission constantly.
     /// </summary>
-    ///
-    /// <remarks>
-    /// このクラスは NetworkAwareTimer の簡易ラッパークラスとなります。
-    /// 実際に何らかの処理を実装する場合はこのクラスを継承し、
-    /// Timer.Subscribe() に必要な処理を登録して下さい。
-    /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
     public abstract class NetworkMonitorBase : DisposableBase
@@ -44,7 +38,7 @@ namespace Cube.Net
         /// NetworkMonitorBase
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the NetworkMonitorBase class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -59,7 +53,7 @@ namespace Cube.Net
         /// State
         ///
         /// <summary>
-        /// オブジェクトの状態を取得します。
+        /// Gets the monitor state.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -70,7 +64,7 @@ namespace Cube.Net
         /// LastPublished
         ///
         /// <summary>
-        /// 最後に Publish が実行された日時を取得します。
+        /// Gets the value of date-time when Publish method was last called.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -81,7 +75,7 @@ namespace Cube.Net
         /// Interval
         ///
         /// <summary>
-        /// 実行間隔を取得または設定します。
+        /// Gets or sets the transmission interval.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -96,7 +90,7 @@ namespace Cube.Net
         /// RetryCount
         ///
         /// <summary>
-        /// 通信失敗時に再試行する最大回数を取得または設定します。
+        /// Gets or sets the retry count when the transmission was failed.
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
@@ -107,18 +101,18 @@ namespace Cube.Net
         /// RetryInterval
         ///
         /// <summary>
-        /// 通信失敗時に再試行する間隔を取得または設定します。
+        /// Gets or sets the retry interval when the transmission was failed.
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
+        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(10);
 
         /* --------------------------------------------------------------------- */
         ///
         /// Timeout
         ///
         /// <summary>
-        /// タイムアウト時間を取得または設定します。
+        /// Gets or sets the timeout of the transmission.
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
@@ -129,7 +123,7 @@ namespace Cube.Net
         /// Timer
         ///
         /// <summary>
-        /// 内部用タイマーを取得します。
+        /// Gets the timer object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -144,7 +138,7 @@ namespace Cube.Net
         /// Start
         ///
         /// <summary>
-        /// 監視を実行します。
+        /// Starts to monitor.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -155,10 +149,10 @@ namespace Cube.Net
         /// Start
         ///
         /// <summary>
-        /// 監視を実行します。
+        /// Starts to monitor after waiting for the specified time.
         /// </summary>
         ///
-        /// <param name="delay">初期遅延時間</param>
+        /// <param name="delay">Initial delay.</param>
         ///
         /* ----------------------------------------------------------------- */
         public virtual void Start(TimeSpan delay)
@@ -166,7 +160,7 @@ namespace Cube.Net
             var state = Timer.State;
             Timer.Start(delay);
             if (state != TimerState.Stop) return;
-            this.LogDebug($"Start\tInterval:{Interval}\tInitialDelay:{delay}");
+            this.LogDebug(nameof(Start), $"Interval:{Interval}", $"Delay:{delay}");
         }
 
         /* ----------------------------------------------------------------- */
@@ -174,7 +168,7 @@ namespace Cube.Net
         /// Stop
         ///
         /// <summary>
-        /// 監視を停止します。
+        /// Stops to monitor.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -183,7 +177,7 @@ namespace Cube.Net
             var state = Timer.State;
             Timer.Stop();
             if (state == TimerState.Stop) return;
-            this.LogDebug($"Stop\tLastPublished:{Timer.LastPublished}");
+            this.LogDebug(nameof(Stop), $"LastPublished:{Timer.LastPublished}");
         }
 
         /* ----------------------------------------------------------------- */
@@ -191,7 +185,7 @@ namespace Cube.Net
         /// Suspend
         ///
         /// <summary>
-        /// 監視を一時停止します。
+        /// Suspends to monitor.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -202,7 +196,7 @@ namespace Cube.Net
         /// Reset
         ///
         /// <summary>
-        /// リセットします。
+        /// Resets some properties.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -222,11 +216,13 @@ namespace Cube.Net
         /// Dispose
         ///
         /// <summary>
-        /// リソースを解放します。
+        /// Releases the unmanaged resources used by the object and
+        /// optionally releases the managed resources.
         /// </summary>
         ///
         /// <param name="disposing">
-        /// マネージリソースを解放するかどうかを示す値
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
         /// </param>
         ///
         /* ----------------------------------------------------------------- */

@@ -44,7 +44,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public XmlContentConverter() : base(s =>
         {
-            if (s == null) return default(TValue);
+            if (s == null) return default;
             var xml = new XmlSerializer(typeof(TValue));
             return xml.Deserialize(s) as TValue;
         }) { }

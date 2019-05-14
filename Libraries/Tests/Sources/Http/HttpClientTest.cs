@@ -196,10 +196,7 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private readonly Func<Stream, long> Throws = (_) =>
-        {
-            throw new ArgumentException("ErrorTest");
-        };
+        private readonly Func<Stream, long> Throws = e => throw new ArgumentException("ErrorTest");
 
         #endregion
     }

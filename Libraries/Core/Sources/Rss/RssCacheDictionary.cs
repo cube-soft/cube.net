@@ -21,7 +21,6 @@ using Cube.FileSystem;
 using Cube.Mixin.IO;
 using Cube.Mixin.Logger;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -37,7 +36,7 @@ namespace Cube.Net.Rss
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssCacheDictionary : IDictionary<Uri, RssFeed>, IDisposable
+    public class RssCacheDictionary : EnumerableBase<KeyValuePair<Uri, RssFeed>>, IDictionary<Uri, RssFeed>
     {
         #region Constructors
 
@@ -65,8 +64,7 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         public RssCacheDictionary(IDictionary<Uri, RssFeed> inner)
         {
-            _dispose = new OnceAction<bool>(Dispose);
-            _inner   = inner;
+            _inner = inner;
         }
 
         #endregion
@@ -435,7 +433,7 @@ namespace Cube.Net.Rss
         /// <returns>列挙子</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerator<KeyValuePair<Uri, RssFeed>> GetEnumerator()
+        public override IEnumerator<KeyValuePair<Uri, RssFeed>> GetEnumerator()
         {
             foreach (var kv in _inner)
             {
@@ -444,48 +442,11 @@ namespace Cube.Net.Rss
             }
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetEnumerator
-        ///
-        /// <summary>
-        /// コレクションを反復処理する列挙子を取得します。
-        /// </summary>
-        ///
-        /// <returns>列挙子</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        #endregion
 
         #endregion
 
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~RssCacheCollection
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~RssCacheDictionary() { _dispose.Invoke(false); }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを開放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
@@ -500,7 +461,7 @@ namespace Cube.Net.Rss
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!IsReadOnlyCache)
             {
@@ -508,12 +469,6 @@ namespace Cube.Net.Rss
                 _memory.Clear();
             }
         }
-
-        #endregion
-
-        #endregion
-
-        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
@@ -663,7 +618,6 @@ namespace Cube.Net.Rss
         #endregion
 
         #region Fields
-        private readonly OnceAction<bool> _dispose;
         private readonly IDictionary<Uri, RssFeed> _inner;
         private readonly OrderedDictionary<Uri, bool> _memory = new OrderedDictionary<Uri, bool>();
         private int _capacity = 100;

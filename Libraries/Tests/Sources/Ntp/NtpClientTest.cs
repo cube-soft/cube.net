@@ -15,10 +15,12 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Net.Ntp;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 
 namespace Cube.Net.Tests
 {
@@ -27,7 +29,7 @@ namespace Cube.Net.Tests
     /// NtpClientTest
     ///
     /// <summary>
-    /// NtpClient のテスト用クラスです。
+    /// Tests the NtpClient class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -38,17 +40,17 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Properties_Default
+        /// Create
         ///
         /// <summary>
-        /// 各種プロパティの初期値を確認します。
+        /// Tests the default constructor and confirms values of properties.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Properties_Default()
+        public void Create()
         {
-            using (var client = new Ntp.NtpClient())
+            using (var client = new NtpClient())
             {
                 Assert.That(client.Host.HostName, Is.EqualTo("www268.ziyu.net"));
                 Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
@@ -59,23 +61,39 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsync
+        /// Create_SocketException
         ///
         /// <summary>
-        /// 非同期で NTP サーバと通信するテストを実行します。
+        /// Tests the constructor with the non-existent NTP server.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TestCaseSource(nameof(GetAsync_TestCases))]
-        public async void GetAsync(string src, uint version, uint poll, Cube.Net.Ntp.Stratum stratum)
+        [Test]
+        public void Create_SocketException()
         {
-            using (var client = new Ntp.NtpClient(src))
+            var src = "404.not.found";
+            Assert.That(() => new NtpClient(src), Throws.TypeOf<SocketException>());
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync
+        ///
+        /// <summary>
+        /// Tests the GetAsync method.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [TestCaseSource(nameof(TestCases))]
+        public void GetAsync(string src, uint version, uint poll, Stratum stratum)
+        {
+            using (var client = new NtpClient(src))
             {
-                var pkt = await client.GetAsync();
+                var pkt = client.GetAsync().Result;
                 Assert.That(pkt.IsValid,            Is.True);
-                Assert.That(pkt.LeapIndicator,      Is.EqualTo(Cube.Net.Ntp.LeapIndicator.NoWarning));
+                Assert.That(pkt.LeapIndicator,      Is.EqualTo(LeapIndicator.NoWarning));
                 Assert.That(pkt.Version,            Is.EqualTo(version));
-                Assert.That(pkt.Mode,               Is.EqualTo(Cube.Net.Ntp.Mode.Server));
+                Assert.That(pkt.Mode,               Is.EqualTo(NtpMode.Server));
                 Assert.That(pkt.Stratum,            Is.EqualTo(stratum));
                 Assert.That(pkt.PollInterval,       Is.EqualTo(poll));
                 Assert.That(pkt.Precision,          Is.GreaterThan(0.0).And.LessThan(1.0));
@@ -92,14 +110,45 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetAsync_TestCases
+        /// GetAsync_Timeout
         ///
         /// <summary>
-        /// GetAsync のテスト用データを取得します。
+        /// Tests the GetAsync method with a very short timeout.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static IEnumerable<TestCaseData> GetAsync_TestCases
+        [Test]
+        public void GetAsync_Timeout()
+        {
+            using (var client = new NtpClient())
+            {
+                try
+                {
+                    client.Timeout = TimeSpan.FromMilliseconds(1);
+                    client.GetAsync().Wait();
+                    Assert.Ignore("GetAsync success bofore timeout");
+                }
+                catch (AggregateException err)
+                {
+                    Assert.That(err.InnerException, Is.TypeOf<SocketException>());
+                }
+            }
+        }
+
+        #endregion
+
+        #region TestCases
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TestCases
+        ///
+        /// <summary>
+        /// Gets the test cases.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private static IEnumerable<TestCaseData> TestCases
         {
             get
             {
@@ -107,50 +156,10 @@ namespace Cube.Net.Tests
                     "ntp.cube-soft.jp",
                     3u,
                     4u,
-                    Cube.Net.Ntp.Stratum.SecondaryReference
+                    Stratum.SecondaryReference
                 );
             }
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// NotFound_Throws
-        ///
-        /// <summary>
-        /// 存在しない NTP サーバを指定した時のテストを行います。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void NotFound_Throws() => Assert.That(
-            () => new Ntp.NtpClient("404.not.found"),
-            Throws.TypeOf<System.Net.Sockets.SocketException>()
-        );
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Timeout_Throws
-        ///
-        /// <summary>
-        /// タイムアウト処理のテストを行います。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Timeout_Throws() => Assert.That(
-            () =>
-            {
-                using (var client = new Ntp.NtpClient())
-                {
-                    client.Timeout = TimeSpan.FromMilliseconds(1);
-                    client.GetAsync().Wait();
-                }
-            },
-            Throws.TypeOf<AggregateException>()
-                  .And
-                  .InnerException
-                  .TypeOf<TimeoutException>()
-        );
 
         #endregion
     }

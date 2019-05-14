@@ -121,24 +121,24 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Mode Mode
+        public NtpMode Mode
         {
             get
             {
                 var value = (byte)(RawData[0] & 0x7);
                 switch (value)
                 {
-                    case 0: return Ntp.Mode.Unknown;
-                    case 1: return Ntp.Mode.SymmetricActive;
-                    case 2: return Ntp.Mode.SymmetricPassive;
-                    case 3: return Ntp.Mode.Client;
-                    case 4: return Ntp.Mode.Server;
-                    case 5: return Ntp.Mode.Broadcast;
-                    case 6: return Ntp.Mode.Unknown;
-                    case 7: return Ntp.Mode.Unknown;
+                    case 0: return Ntp.NtpMode.Unknown;
+                    case 1: return Ntp.NtpMode.SymmetricActive;
+                    case 2: return Ntp.NtpMode.SymmetricPassive;
+                    case 3: return Ntp.NtpMode.Client;
+                    case 4: return Ntp.NtpMode.Server;
+                    case 5: return Ntp.NtpMode.Broadcast;
+                    case 6: return Ntp.NtpMode.Unknown;
+                    case 7: return Ntp.NtpMode.Unknown;
                     default: break;
                 }
-                return Ntp.Mode.Unknown;
+                return Ntp.NtpMode.Unknown;
             }
         }
 

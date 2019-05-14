@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Tasks;
 using System;
 using System.Linq;
 using System.Net;
@@ -33,7 +32,7 @@ namespace Cube.Net.Ntp
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class NtpClient : IDisposable
+    public class NtpClient : DisposableBase
     {
         #region Constructors
 
@@ -73,7 +72,6 @@ namespace Cube.Net.Ntp
             Timeout  = TimeSpan.FromSeconds(5);
             Host     = Dns.GetHostEntry(server);
             Port     = port;
-            _dispose = new OnceAction<bool>(Dispose);
         }
 
         #endregion
@@ -148,38 +146,11 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Task<NtpPacket> GetAsync() => GetAsyncCore().Timeout(Timeout);
-
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~Client
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~NtpClient()
+        public Task<NtpPacket> GetAsync() => TaskEx.Run(() =>
         {
-            _dispose.Invoke(false);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを開放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
+            SendTo();
+            return ReceiveFrom();
+        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -194,31 +165,14 @@ namespace Cube.Net.Ntp
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             //if (disposing) _socket.Dispose();
         }
 
         #endregion
 
-        #endregion
-
         #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsyncCore
-        ///
-        /// <summary>
-        /// NTP サーバと通信を行い、NTP パケットを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private Task<NtpPacket> GetAsyncCore() => TaskEx.Run(() =>
-        {
-            SendTo();
-            return ReceiveFrom();
-        });
 
         /* ----------------------------------------------------------------- */
         ///
@@ -231,10 +185,12 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private void SendTo()
         {
-            var addr = Host.AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
-            var endpoint = new IPEndPoint(addr, Port);
+            var addr   = Host.AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+            var ep     = new IPEndPoint(addr, Port);
             var packet = new Ntp.NtpPacket();
-            var sent = _socket.SendTo(packet.RawData, endpoint);
+
+            _socket.SendTimeout = (int)Timeout.TotalMilliseconds;
+            var sent = _socket.SendTo(packet.RawData, ep);
             if (sent != packet.RawData.Length) throw new SocketException();
         }
 
@@ -249,16 +205,18 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         private NtpPacket ReceiveFrom()
         {
-            var endpoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
+            var ep  = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
             var raw = new byte[48 + (32 + 128) / 8];
-            var bytes = _socket.ReceiveFrom(raw, ref endpoint);
+
+            _socket.ReceiveTimeout = (int)Timeout.TotalMilliseconds;
+            _socket.ReceiveFrom(raw, ref ep);
+
             return new NtpPacket(raw);
         }
 
         #endregion
 
         #region Fields
-        private readonly OnceAction<bool> _dispose;
         private readonly Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         #endregion
     }

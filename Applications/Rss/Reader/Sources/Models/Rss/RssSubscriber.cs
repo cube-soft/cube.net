@@ -15,13 +15,13 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Collections;
 using Cube.FileSystem;
 using Cube.Mixin.ByteFormat;
 using Cube.Mixin.Logger;
 using Cube.Mixin.Tasks;
 using Cube.Xui;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -38,8 +38,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public sealed class RssSubscriber :
-        IEnumerable<IRssEntry>, INotifyCollectionChanged, IDisposable
+    public sealed class RssSubscriber : EnumerableBase<IRssEntry>, INotifyCollectionChanged
     {
         #region Constructors
 
@@ -56,7 +55,6 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssSubscriber(IDispatcher dispatcher)
         {
-            _dispose = new OnceAction<bool>(Dispose);
             _context = dispatcher;
 
             _tree = new BindableCollection<IRssEntry>(dispatcher);
@@ -634,8 +632,6 @@ namespace Cube.Net.Rss.Reader
 
         #endregion
 
-        #region IEnumarable<IRssEntry>
-
         /* ----------------------------------------------------------------- */
         ///
         /// GetEnumerator
@@ -647,35 +643,7 @@ namespace Cube.Net.Rss.Reader
         /// <returns>反復用オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerator<IRssEntry> GetEnumerator() => _tree.GetEnumerator();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetEnumerator
-        ///
-        /// <summary>
-        /// 反復用オブジェクトを取得します。
-        /// </summary>
-        ///
-        /// <returns>反復用オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        #endregion
-
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~RssSubscribeCollection
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~RssSubscriber() { _dispose.Invoke(false); }
+        public override IEnumerator<IRssEntry> GetEnumerator() => _tree.GetEnumerator();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -686,22 +654,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -714,8 +667,6 @@ namespace Cube.Net.Rss.Reader
 
             if (!IsReadOnly) Save();
         }
-
-        #endregion
 
         #endregion
 
@@ -840,7 +791,6 @@ namespace Cube.Net.Rss.Reader
         #endregion
 
         #region Fields
-        private readonly OnceAction<bool> _dispose;
         private readonly BindableCollection<IRssEntry> _tree;
         private readonly RssCacheDictionary _feeds = new RssCacheDictionary();
         private readonly RssMonitor[] _monitors = new RssMonitor[3];

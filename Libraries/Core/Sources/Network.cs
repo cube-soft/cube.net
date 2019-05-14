@@ -15,13 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Threading.Tasks;
 
 namespace Cube.Net
 {
@@ -30,30 +28,12 @@ namespace Cube.Net
     /// Network
     ///
     /// <summary>
-    /// ネットワーク状況を検証するためのクラスです。
+    /// Represents the condition of the network in the current machine.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public static class Network
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Network
-        ///
-        /// <summary>
-        /// 静的オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        static Network()
-        {
-            NetworkChange.NetworkAvailabilityChanged += WhenChanged;
-        }
-
-        #endregion
-
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -61,7 +41,7 @@ namespace Cube.Net
         /// Status
         ///
         /// <summary>
-        /// ネットワーク状況を示す値を取得します。
+        /// Gets the network status.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -69,10 +49,12 @@ namespace Cube.Net
         {
             get
             {
-                var ns = GetNetworkInterfaces();
-                var dest = ns.FirstOrDefault(n => n.OperationalStatus == OperationalStatus.Up) ??
-                           ns.FirstOrDefault(n => n.OperationalStatus == OperationalStatus.Testing);
-                return dest?.OperationalStatus ?? OperationalStatus.Down;
+                var src = GetStatus();
+                var ns0 = OperationalStatus.Up;
+                var ns1 = OperationalStatus.Testing;
+                var ns2 = OperationalStatus.Down;
+                return src.Any(e => e == ns0) ? ns0 :
+                       src.Any(e => e == ns1) ? ns1 : ns2;
             }
         }
 
@@ -81,34 +63,11 @@ namespace Cube.Net
         /// Available
         ///
         /// <summary>
-        /// ネットワークが利用可能かどうかを示す値を取得します。
+        /// Gets a value indicating whether the network is available.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static bool Available
-        {
-            get
-            {
-                var ns   = GetNetworkInterfaces();
-                var dest = ns.FirstOrDefault(n => n.OperationalStatus == OperationalStatus.Up);
-                return dest != null;
-            }
-        }
-
-        #endregion
-
-        #region Events
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// AvailabilityChanged
-        ///
-        /// <summary>
-        /// ネットワークの利用可能状況が変化した時に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static event NetworkAvailabilityChangedEventHandler AvailabilityChanged;
+        public static bool Available => GetStatus().Any(e => e == OperationalStatus.Up);
 
         #endregion
 
@@ -119,7 +78,7 @@ namespace Cube.Net
         /// DisableOptions
         ///
         /// <summary>
-        /// ネットワークに関連するオプションを無効化します。
+        /// Disables some network options.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -136,57 +95,32 @@ namespace Cube.Net
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetNetworkInterfaces
+        /// GetStatus
         ///
         /// <summary>
-        /// ネットワークインターフェースの一覧を取得します。
+        /// Gets the collection of network status.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static IEnumerable<NetworkInterface> GetNetworkInterfaces() =>
-            NetworkInterface.GetAllNetworkInterfaces().Where(n =>
-                n.NetworkInterfaceType != NetworkInterfaceType.Tunnel &&
-                n.NetworkInterfaceType != NetworkInterfaceType.Loopback &&
-               !n.Description.Equals("Microsoft Loopback Adapter", StringComparison.OrdinalIgnoreCase)
-            );
+        private static IEnumerable<OperationalStatus> GetStatus() =>
+            GetInterfaces().Select(e => e.OperationalStatus);
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WhenChanged
+        /// GetInterfaces
         ///
         /// <summary>
-        /// ネットワークの利用可能状況が変化した時に実行されるハンドラです。
+        /// Gets the collection of network interfaces in the current
+        /// machine.
         /// </summary>
         ///
-        /// <remarks>
-        /// IsAvailable が true に変化した直後は、実際にはまだ通信可能な
-        /// 状態になっていない事があります。Network クラスでは、
-        /// IsAvailable が true になってからいずれかのネットワーク
-        /// インターフェースの状態が Up になるまで、最大 2 分の待機時間を
-        /// 設けています。
-        /// </remarks>
-        ///
         /* ----------------------------------------------------------------- */
-        private static void WhenChanged(object s, NetworkAvailabilityEventArgs e)
-        {
-            if (!e.IsAvailable) AvailabilityChanged?.Invoke(s, e);
-            else TaskEx.Run(async () =>
-            {
-                var type = typeof(Network);
-                for (var i = 0; i < 24; ++i) // 5 sec * 24 = 2 min
-                {
-                    if (Status == OperationalStatus.Up)
-                    {
-                        Logger.Debug(type, ($"Status:Up ({i * 5} sec)"));
-                        AvailabilityChanged?.Invoke(s, e);
-                        return;
-                    }
-                    await TaskEx.Delay(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
-                }
-                Logger.Debug(type, $"Status:{Status} (Timeout)");
-                AvailabilityChanged?.Invoke(s, e);
-            }).Forget();
-        }
+        private static IEnumerable<NetworkInterface> GetInterfaces() =>
+            NetworkInterface.GetAllNetworkInterfaces().Where(e =>
+                e.NetworkInterfaceType != NetworkInterfaceType.Tunnel &&
+                e.NetworkInterfaceType != NetworkInterfaceType.Loopback &&
+               !e.Description.Equals("Microsoft Loopback Adapter", StringComparison.OrdinalIgnoreCase)
+            );
 
         #endregion
     }

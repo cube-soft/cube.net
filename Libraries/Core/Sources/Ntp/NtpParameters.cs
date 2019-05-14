@@ -21,6 +21,31 @@ namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
+    /// NtpMode
+    ///
+    /// <summary>
+    /// 動作モードの状態を定義した列挙型です。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public enum NtpMode
+    {
+        /// <summary>不明 (Reserved)</summary>
+        Unknown = 0,   // 0, 6, 7 - Reserved
+        /// <summary>Symmetric active</summary>
+        SymmetricActive = 1,
+        /// <summary>Symmetric pasive</summary>
+        SymmetricPassive = 2,
+        /// <summary>クライアント</summary>
+        Client = 3,
+        /// <summary>サーバ</summary>
+        Server = 4,
+        /// <summary>ブロードキャスト</summary>
+        Broadcast = 5,
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
     /// LeapIndicator
     ///
     /// <summary>
@@ -38,31 +63,6 @@ namespace Cube.Net.Ntp
         LastMinute59 = 2,
         /// <summary>警告</summary>
         Alarm = 3,
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// Mode
-    ///
-    /// <summary>
-    /// 動作モードの状態を定義した列挙型です。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public enum Mode : uint
-    {
-        /// <summary>不明 (Reserved)</summary>
-        Unknown = 0,   // 0, 6, 7 - Reserved
-        /// <summary>Symmetric active</summary>
-        SymmetricActive = 1,
-        /// <summary>Symmetric pasive</summary>
-        SymmetricPassive = 2,
-        /// <summary>クライアント</summary>
-        Client = 3,
-        /// <summary>サーバ</summary>
-        Server = 4,
-        /// <summary>ブロードキャスト</summary>
-        Broadcast = 5,
     }
 
     /* --------------------------------------------------------------------- */

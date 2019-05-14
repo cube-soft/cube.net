@@ -113,7 +113,7 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Monitor_NoSubscriptions() => Assert.DoesNotThrow(() =>
+        public void Monitor_NoSubscriptions()
         {
             using (var mon = new Ntp.NtpMonitor())
             {
@@ -121,7 +121,7 @@ namespace Cube.Net.Tests
                 TaskEx.Delay(150).Wait();
                 mon.Stop();
             }
-        });
+        }
 
         /* ----------------------------------------------------------------- */
         ///
