@@ -21,14 +21,15 @@ require 'rake/clean'
 # --------------------------------------------------------------------------- #
 # configuration
 # --------------------------------------------------------------------------- #
-PROJECT     = 'Cube.Net'
-LIBRARY     = '../packages'
-CONFIG      = 'Release'
-BRANCHES    = ['master', 'net35']
-PLATFORMS   = ['Any CPU']
+PROJECT     = "Cube.Net"
+MAIN        = "#{PROJECT}.Apps"
+LIB         = "../packages"
+CONFIG      = "Release"
+BRANCHES    = ["master", "net35"]
+PLATFORMS   = ["Any CPU"]
 PACKAGES    = ["Libraries/Core/#{PROJECT}.nuspec"]
-TESTCASES   = {"#{PROJECT}.Tests"     => 'Libraries/Tests',
-               "#{PROJECT}.Rss.Tests" => 'Applications/Rss/Tests'}
+TESTCASES   = {"#{PROJECT}.Tests"     => "Libraries/Tests",
+               "#{PROJECT}.Rss.Tests" => "Applications/Rss/Tests"}
 
 # --------------------------------------------------------------------------- #
 # commands
@@ -41,14 +42,14 @@ TEST  = "../packages/NUnit.ConsoleRunner/3.10.0/tools/nunit3-console.exe"
 # clean
 # --------------------------------------------------------------------------- #
 CLEAN.include("#{PROJECT}.*.nupkg")
-CLEAN.include("#{LIBRARY}/cube.*")
+CLEAN.include("#{LIB}/cube.*")
 CLEAN.include(['bin', 'obj'].map{ |e| "**/#{e}" })
 
 # --------------------------------------------------------------------------- #
 # default
 # --------------------------------------------------------------------------- #
-desc "Build the solution and create NuGet packages."
-task :default => [:clean_build, :pack]
+desc "Clean, build, test, and create NuGet packages."
+task :default => [:clean, :build_all, :test_all, :pack]
 
 # --------------------------------------------------------------------------- #
 # pack
@@ -61,39 +62,53 @@ task :pack do
 end
 
 # --------------------------------------------------------------------------- #
-# clean_build
+# build
 # --------------------------------------------------------------------------- #
-desc "Clean objects and build the solution in pre-defined branches and platforms."
-task :clean_build => [:clean] do
-    BRANCHES.product(PLATFORMS).each { |e|
-        sh("git checkout #{e[0]}")
-        RakeFileUtils::rm_rf(FileList.new("#{LIBRARY}/cube.*"))
-        Rake::Task[:build].reenable
-        Rake::Task[:build].invoke(e[1])
-    }
+desc "Build projects in the current branch."
+task :build, [:platform] do |_, e|
+    e.with_defaults(:platform => PLATFORMS[0])
+    sh("nuget restore #{MAIN}.sln")
+    sh(%(#{BUILD} -p:Platform="#{e.platform}" #{MAIN}.sln))
 end
 
 # --------------------------------------------------------------------------- #
-# build
+# build_all
 # --------------------------------------------------------------------------- #
-desc "Build the solution in the current branch."
-task :build, [:platform] do |_, e|
-    e.with_defaults(:platform => PLATFORMS[0])
-    sh("nuget restore #{PROJECT}.Apps.sln")
-    sh(%(#{BUILD} -p:Platform="#{e.platform}" #{PROJECT}.Apps.sln))
+desc "Build projects in pre-defined branches and platforms."
+task :build_all do
+    BRANCHES.product(PLATFORMS).each { |e|
+        sh("git checkout #{e[0]}")
+        Rake::Task[:build].reenable
+        Rake::Task[:build].invoke(e[1])
+    }
+    sh("git checkout master")
 end
+
+# --------------------------------------------------------------------------- #
+# build_test
+# --------------------------------------------------------------------------- #
+desc "Build and test projects in the current branch."
+task :build_test => [:build, :test]
 
 # --------------------------------------------------------------------------- #
 # test
 # --------------------------------------------------------------------------- #
-desc "Build and test projects in the current branch."
-task :test => [:build] do
+desc "Test projects in the current branch."
+task :test do
     fw  = %x(git symbolic-ref --short HEAD).chomp
     fw  = 'net45' if (fw != 'net35')
     bin = ['bin', PLATFORMS[0], CONFIG, fw].join('/')
+    TESTCASES.each { |p, d| sh(%(#{TEST} "#{d}/#{bin}/#{p}.dll" --work="#{d}/#{bin}")) }
+end
 
-    TESTCASES.each { |proj, root|
-        dir = "#{root}/#{bin}"
-        sh(%(#{TEST} "#{dir}/#{proj}.dll" --work="#{dir}"))
+# --------------------------------------------------------------------------- #
+# test_all
+# --------------------------------------------------------------------------- #
+desc "Test projects in pre-defined branches."
+task :test_all do
+    BRANCHES.each { |e|
+        sh("git checkout #{e}")
+        Rake::Task[:test].execute
     }
+    sh("git checkout master")
 end
