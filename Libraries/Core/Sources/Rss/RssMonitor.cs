@@ -16,7 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Collections;
-using Cube.Mixin.Logger;
+using Cube.Mixin.Logging;
 using Cube.Mixin.Tasks;
 using Cube.Net.Http;
 using System;

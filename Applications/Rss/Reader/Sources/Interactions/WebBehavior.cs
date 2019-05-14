@@ -16,7 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Forms;
-using Cube.Mixin.Logger;
+using Cube.Mixin.Logging;
 using Cube.Xui.Behaviors;
 using System;
 using System.Web;

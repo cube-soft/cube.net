@@ -19,7 +19,7 @@ using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.Mixin.Collections;
 using Cube.Mixin.IO;
-using Cube.Mixin.Logger;
+using Cube.Mixin.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
