@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Command;
+using Cube.Mixin.Commands;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
 using Cube.Xui;

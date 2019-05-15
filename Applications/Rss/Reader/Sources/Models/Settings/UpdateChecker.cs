@@ -16,7 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Mixin.Assembly;
-using Cube.Mixin.Logger;
+using Cube.Mixin.Logging;
 using System;
 using System.Diagnostics;
 using System.Reflection;

@@ -18,7 +18,7 @@
 using Cube.Collections;
 using Cube.FileSystem;
 using Cube.Mixin.ByteFormat;
-using Cube.Mixin.Logger;
+using Cube.Mixin.Logging;
 using Cube.Mixin.Tasks;
 using Cube.Xui;
 using System;
