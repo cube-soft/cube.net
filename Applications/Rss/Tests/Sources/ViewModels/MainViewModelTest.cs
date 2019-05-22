@@ -264,7 +264,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(src.Title,                      Is.EqualTo("The GitHub Blog"));
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-            vm.Register<DialogMessage>(this, e => DialogMessageCommand(e, MessageBoxResult.OK));
+            vm.Subscribe<DialogMessage>(e => DialogMessageCommand(e, DialogStatus.Ok));
             vm.Remove.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(11));
@@ -293,7 +293,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(IO.Exists(dest),                Is.True);
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-            vm.Register<DialogMessage>(this, e => DialogMessageCommand(e, MessageBoxResult.OK));
+            vm.Subscribe<DialogMessage>(e => DialogMessageCommand(e, DialogStatus.Ok));
             vm.Remove.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(10));
@@ -479,8 +479,7 @@ namespace Cube.Net.Rss.Tests
         [TestCase(false, 12)]
         public void VM_Import(bool done, int expected) => Execute(vm =>
         {
-            vm.Register<OpenFileMessage>(this,
-                e => ImportCommand(e, GetSource("Sample.opml"), done));
+            vm.Subscribe<OpenFileMessage>(e => ImportCommand(e, GetSource("Sample.opml"), done));
             vm.Import.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(expected));
@@ -500,7 +499,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_Export(bool done, bool expected) => Execute(vm =>
         {
             var dest = Get($"{nameof(VM_Export)}_{done}.opml");
-            vm.Register<SaveFileMessage>(this, e => ExportCommand(e, dest, done));
+            vm.Subscribe<SaveFileMessage>(e => ExportCommand(e, dest, done));
             vm.Export.Execute(null);
 
             Assert.That(IO.Exists(dest), Is.EqualTo(expected));
@@ -582,11 +581,10 @@ namespace Cube.Net.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void ExportCommand(SaveFileMessage e, string dest, bool result)
+        private void ExportCommand(SaveFileMessage e, string dest, bool ok)
         {
-            e.FileName = dest;
-            e.Result   = result;
-            e.Callback(e);
+            e.Value  = dest;
+            e.Cancel = !ok;
         }
 
         /* ----------------------------------------------------------------- */
@@ -598,11 +596,10 @@ namespace Cube.Net.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void ImportCommand(OpenFileMessage e, string src, bool result)
+        private void ImportCommand(OpenFileMessage e, string src, bool ok)
         {
-            e.FileName = src;
-            e.Result   = result;
-            e.Callback(e);
+            e.Value  = new[] { src };
+            e.Cancel = !ok;
         }
 
         /* ----------------------------------------------------------------- */
@@ -614,13 +611,12 @@ namespace Cube.Net.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void DialogMessageCommand(DialogMessage e, MessageBoxResult result)
+        private void DialogMessageCommand(DialogMessage e, DialogStatus status)
         {
-            Assert.That(e.Content, Is.Not.Null.And.Not.Empty);
-            Assert.That(e.Title,   Is.Not.Null.And.Not.Empty);
+            Assert.That(e.Value, Is.Not.Null.And.Not.Empty);
+            Assert.That(e.Title, Is.Not.Null.And.Not.Empty);
 
-            e.Result = result;
-            e.Callback(e);
+            e.Status = status;
         }
 
         #endregion

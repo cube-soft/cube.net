@@ -15,9 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xui;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
+using System;
 using System.Windows.Input;
 
 namespace Cube.Net.Rss.Reader
@@ -31,7 +30,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class CommonViewModel : MessengerViewModel
+    public abstract class CommonViewModel : PresentableBase
     {
         #region Constructors
 
@@ -43,10 +42,10 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="messenger">メッセージ伝搬用オブジェクト</param>
+        /// <param name="aggregator">Message aggregator.</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected CommonViewModel(IMessenger messenger) : base(messenger) { }
+        protected CommonViewModel(Aggregator aggregator) : base(aggregator) { }
 
         #endregion
 
@@ -62,6 +61,45 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Close => _close ?? (_close = new RelayCommand(() => Send<CloseMessage>()));
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// Releases the unmanaged resources used by the object and
+        /// optionally releases the managed resources.
+        /// </summary>
+        ///
+        /// <param name="disposing">
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TrackSync
+        ///
+        /// <summary>
+        /// 指定された処理を実行し、例外が発生した場合には DialogMessage を
+        /// 送信します。
+        /// </summary>
+        ///
+        /// <param name="action">実行内容</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected void TrackSync(Action action)
+        {
+            try { action(); }
+            catch (Exception err) { Send(MessageFactory.Error(err, err.Message)); }
+        }
 
         #endregion
 

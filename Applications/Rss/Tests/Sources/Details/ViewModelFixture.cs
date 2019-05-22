@@ -22,6 +22,7 @@ using NUnit.Framework;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -103,6 +104,21 @@ namespace Cube.Net.Rss.Tests
                 Assert.That(IO.Exists(l), Is.False, l);
                 Assert.That(Wait.For(() => n > 0), "Feeds.json is not changed");
             }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SetUp
+        ///
+        /// <summary>
+        /// テスト前処理を実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [SetUp]
+        protected void SetUp()
+        {
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
         }
 
         #endregion

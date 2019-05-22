@@ -51,7 +51,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public PropertyViewModel(RssEntry entry, Action<RssEntry> callback) :
-            base(new Messenger())
+            base(new Aggregator())
         {
             System.Diagnostics.Debug.Assert(entry != null);
             Entry = new Bindable<RssEntry>(entry, entry.Dispatcher);
