@@ -95,11 +95,7 @@ namespace Cube.Net.Rss.Reader
         /// <param name="action">実行内容</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected void TrackSync(Action action)
-        {
-            try { action(); }
-            catch (Exception err) { Send(MessageFactory.Error(err, err.Message)); }
-        }
+        protected void TrackSync(Action action) => Track(action, DialogMessage.Create, true);
 
         #endregion
 
