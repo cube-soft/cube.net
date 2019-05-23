@@ -45,7 +45,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RegisterViewModel(Func<string, Task> callback) : base(new Messenger())
+        public RegisterViewModel(Func<string, Task> callback) : base(new Aggregator())
         {
             _callback = callback;
         }

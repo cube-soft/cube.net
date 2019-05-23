@@ -51,7 +51,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_Property(RssCheckFrequency src) => Execute(vm =>
         {
             var dest = vm.Data.Current.Value as RssEntry;
-            vm.Register<PropertyViewModel>(this, e => PropertyCommand(e, src));
+            vm.Subscribe<PropertyViewModel>(e => PropertyCommand(e, src));
             vm.Property.Execute(null);
 
             Assert.That(dest.Title, Is.EqualTo(nameof(PropertyCommand)));

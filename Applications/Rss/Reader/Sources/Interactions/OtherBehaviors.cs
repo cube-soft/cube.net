@@ -78,7 +78,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ScrollToTopBehavior : MessengerBehavior<ScrollToTopMessage>
+    public class ScrollToTopBehavior : SubscribeBehavior<ScrollToTopMessage>
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -119,7 +119,7 @@ namespace Cube.Net.Rss.Reader
         protected override void Invoke(OpenDirectoryMessage e)
         {
             base.Invoke(e);
-            if (e.Result && AssociatedObject is TextBox tb) tb.Text = e.FileName;
+            if (!e.Cancel && AssociatedObject is TextBox tb) tb.Text = e.Value;
         }
     }
 }

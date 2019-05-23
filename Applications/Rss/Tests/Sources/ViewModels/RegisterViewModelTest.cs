@@ -58,7 +58,7 @@ namespace Cube.Net.Rss.Tests
             var src   = new Uri(host, "/feed");
             var count = vm.Data.Root.Flatten().Count();
 
-            vm.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
+            vm.Subscribe<RegisterViewModel>(e => RegisterCommand(e, src).Wait());
             vm.NewEntry.Execute();
 
             var dest = vm.Data.Root.OfType<RssEntry>().FirstOrDefault(e => e.Uri == src);
@@ -83,7 +83,7 @@ namespace Cube.Net.Rss.Tests
         {
             var count = vm.Data.Root.Flatten().Count();
 
-            vm.Register<RegisterViewModel>(this, e => RegisterError(e).Wait());
+            vm.Subscribe<RegisterViewModel>(e => RegisterError(e).Wait());
             vm.NewEntry.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
@@ -104,7 +104,7 @@ namespace Cube.Net.Rss.Tests
             var src = new Uri("https://blog.cube-soft.jp/");
             var count = vm.Data.Root.Flatten().Count();
 
-            vm.Register<RegisterViewModel>(this, e => RegisterCommand(e, src).Wait());
+            vm.Subscribe<RegisterViewModel>(e => RegisterCommand(e, src).Wait());
             vm.NewEntry.Execute(null);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
@@ -164,9 +164,9 @@ namespace Cube.Net.Rss.Tests
             var cts = new CancellationTokenSource();
 
             vm.Url.Value = "error";
-            vm.Register<DialogMessage>(this, e =>
+            vm.Subscribe<DialogMessage>(e =>
             {
-                e.Result = MessageBoxResult.OK;
+                e.Status = DialogStatus.Ok;
                 cts.Cancel();
             });
             vm.Execute.Execute(null);

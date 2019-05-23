@@ -49,7 +49,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsViewModel(SettingsFolder settings) : base(new Messenger())
+        public SettingsViewModel(SettingsFolder settings) : base(new Aggregator())
         {
             Model  = settings;
             Local  = new Bindable<LocalSettings>(settings.Value, settings.Dispatcher);

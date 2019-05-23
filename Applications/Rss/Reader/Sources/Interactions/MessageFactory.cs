@@ -47,15 +47,14 @@ namespace Cube.Net.Rss.Reader
         /// <returns>DialogMessage object.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DialogMessage Error(Exception err, string message) =>
-            new DialogMessage(
-                $"{message} ({err.GetType().Name})",
-                Properties.Resources.TitleError
-            ) {
-                Buttons = MessageBoxButton.OK,
-                Image   = MessageBoxImage.Error,
-                Result  = MessageBoxResult.OK,
-            };
+        public static DialogMessage Error(Exception err, string message) => new DialogMessage
+        {
+            Value   = $"{message} ({err.GetType().Name})",
+            Title   = Properties.Resources.TitleError,
+            Buttons = DialogButtons.Ok,
+            Icon    = DialogIcon.Error,
+            Status  = DialogStatus.Ok,
+        };
 
         /* ----------------------------------------------------------------- */
         ///
@@ -66,20 +65,17 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="name">削除名</param>
-        /// <param name="e">コールバック関数</param>
         ///
         /// <returns>DialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DialogMessage RemoveWarning(string name, DialogCallback e) =>
-            new DialogMessage(
-                string.Format(Properties.Resources.MessageRemove, name),
-                Properties.Resources.TitleInformation,
-                e
-            ) {
-                Buttons = MessageBoxButton.YesNo,
-                Image   = MessageBoxImage.Information,
-            };
+        public static DialogMessage RemoveWarning(string name) => new DialogMessage
+        {
+            Value   = string.Format(Properties.Resources.MessageRemove, name),
+            Title   = Properties.Resources.TitleInformation,
+            Buttons = DialogButtons.YesNo,
+            Icon    = DialogIcon.Information,
+        };
 
         /* ----------------------------------------------------------------- */
         ///
@@ -89,19 +85,16 @@ namespace Cube.Net.Rss.Reader
         /// インポート用メッセージを生成します。
         /// </summary>
         ///
-        /// <param name="e">コールバック関数</param>
-        ///
         /// <returns>OpenFileDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static OpenFileMessage Import(OpenFileCallback e) =>
-            new OpenFileMessage(e)
-            {
-                CheckPathExists = true,
-                Multiselect     = false,
-                Title           = Properties.Resources.MessageImport,
-                Filter          = Properties.Resources.FilterOpml,
-            };
+        public static OpenFileMessage Import() => new OpenFileMessage
+        {
+            CheckPathExists = true,
+            Multiselect     = false,
+            Title           = Properties.Resources.MessageImport,
+            Filter          = Properties.Resources.FilterOpml,
+        };
 
         /* ----------------------------------------------------------------- */
         ///
@@ -111,19 +104,16 @@ namespace Cube.Net.Rss.Reader
         /// エクスポート用メッセージを生成します。
         /// </summary>
         ///
-        /// <param name="e">コールバック関数</param>
-        ///
         /// <returns>SaveFileDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static SaveFileMessage Export(SaveFileCallback e) =>
-            new SaveFileMessage(e)
-            {
-                CheckPathExists = false,
-                OverwritePrompt = true,
-                Title           = Properties.Resources.MessageExport,
-                Filter          = Properties.Resources.FilterOpml,
-            };
+        public static SaveFileMessage Export() => new SaveFileMessage
+        {
+            CheckPathExists = false,
+            OverwritePrompt = true,
+            Title           = Properties.Resources.MessageExport,
+            Filter          = Properties.Resources.FilterOpml,
+        };
 
         /* ----------------------------------------------------------------- */
         ///
@@ -138,12 +128,11 @@ namespace Cube.Net.Rss.Reader
         /// <returns>DirectoryDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static OpenDirectoryMessage DataDirectory(string src) =>
-            new OpenDirectoryMessage(null)
-            {
-                FileName  = src,
-                NewButton = true,
-                Title     = Properties.Resources.MessageDataDirectory,
-            };
+        public static OpenDirectoryMessage DataDirectory(string src) => new OpenDirectoryMessage
+        {
+            Value     = src,
+            NewButton = true,
+            Title     = Properties.Resources.MessageDataDirectory,
+        };
     }
 }
