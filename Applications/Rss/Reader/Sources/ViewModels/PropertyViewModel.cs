@@ -15,9 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Mixin.Commands;
 using Cube.Xui;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,20 +97,17 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Apply => _apply ?? (
-            _apply = new RelayCommand(() =>
-            {
-                Send<UpdateSourcesMessage>();
-                Close.Execute(null);
-                _callback?.Invoke(Entry.Value);
-            })
-        );
+        public ICommand Apply => Get(() => new BindableCommand(() =>
+        {
+            Send<UpdateSourcesMessage>();
+            Close.Execute();
+            _callback?.Invoke(Entry.Value);
+        }));
 
         #endregion
 
         #region Fields
         private readonly Action<RssEntry> _callback;
-        private ICommand _apply;
         #endregion
     }
 }

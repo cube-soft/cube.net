@@ -16,10 +16,9 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Mixin.Assembly;
+using Cube.Mixin.Commands;
 using Cube.Xui;
 using Cube.Xui.Converters;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Reflection;
 using System.Windows.Input;
@@ -174,11 +173,9 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand SelectDataDirectory => _selectDataDirectory ?? (
-            _selectDataDirectory = new RelayCommand(
-                () => Send(MessageFactory.DataDirectory(Local.Value.DataDirectory))
-            )
-        );
+        public ICommand SelectDataDirectory => Get(() => new BindableCommand(
+            () => Send(MessageFactory.DataDirectory(Local.Value.DataDirectory))
+        ));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -189,20 +186,16 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Apply => _apply ?? (
-            _apply = new RelayCommand(() =>
-            {
-                Send<UpdateSourcesMessage>();
-                Close.Execute(null);
-            })
-        );
+        public ICommand Apply => Get(() => new BindableCommand(() =>
+        {
+            Send<UpdateSourcesMessage>();
+            Close.Execute();
+        }));
 
         #endregion
 
         #region Fields
         private BitmapImage _logo;
-        private ICommand _apply;
-        private ICommand _selectDataDirectory;
         #endregion
     }
 }
