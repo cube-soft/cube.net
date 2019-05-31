@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Xui;
-using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -89,28 +88,25 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Execute =>
-            _execute = _execute ?? new BindableCommand(
-                async () =>
+        public ICommand Execute => Get(() => new BindableCommand(
+            async () =>
+            {
+                try
                 {
-                    try
-                    {
-                        Busy.Value = true;
-                        await _callback?.Invoke(Url.Value);
-                        Close.Execute(null);
-                    }
-                    catch (Exception err) { Send(MessageFactory.Error(err, Properties.Resources.ErrorRegister)); }
-                    finally { Busy.Value = false; }
-                },
-                () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value,
-                Busy, Url
-            );
+                    Busy.Value = true;
+                    await _callback?.Invoke(Url.Value);
+                    Close.Execute(null);
+                }
+                catch (Exception err) { Send(MessageFactory.Error(err, Properties.Resources.ErrorRegister)); }
+                finally { Busy.Value = false; }
+            },
+            () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value
+        ).Observe(Url).Observe(Busy));
 
         #endregion
 
         #region Fields
         private readonly Func<string, Task> _callback;
-        private ICommand _execute;
         #endregion
     }
 }

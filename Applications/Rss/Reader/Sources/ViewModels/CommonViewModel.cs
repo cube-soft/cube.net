@@ -15,8 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using GalaSoft.MvvmLight.Command;
+using Cube.Xui;
 using System;
+using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace Cube.Net.Rss.Reader
@@ -60,7 +62,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Close => _close ?? (_close = new RelayCommand(() => Send<CloseMessage>()));
+        public ICommand Close => Get(() => new BindableCommand(() => Send<CloseMessage>()));
 
         #endregion
 
@@ -97,10 +99,27 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected void TrackSync(Action action) => Track(action, DialogMessage.Create, true);
 
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Get
+        ///
+        /// <summary>
+        /// Gets a ICommand object of the specified property name.
+        /// </summary>
+        ///
+        /// <param name="creator">Function to create an object.</param>
+        /// <param name="name">Property name.</param>
+        ///
+        /// <returns>ICommand object.</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected ICommand Get(Func<ICommand> creator, [CallerMemberName] string name = null) =>
+            _commands.GetOrAdd(name, e => creator());
+
         #endregion
 
         #region Fields
-        private ICommand _close;
+        private readonly ConcurrentDictionary<string, ICommand> _commands = new ConcurrentDictionary<string, ICommand>();
         #endregion
     }
 }
