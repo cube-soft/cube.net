@@ -117,7 +117,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Setup => Get(() => new BindableCommand(() => Track(() => Model.Setup())));
+        public ICommand Setup => Get(() => new DelegateCommand(() => Track(() => Model.Setup())));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -128,7 +128,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Property => Get(() => new BindableCommand(
+        public ICommand Property => Get(() => new DelegateCommand(
             () => Send(new PropertyViewModel(
                 Data.Current.Value as RssEntry,
                 e => TrackSync(() => Model.Reschedule(e))
@@ -145,7 +145,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Settings => Get(() => new BindableCommand(() =>
+        public ICommand Settings => Get(() => new DelegateCommand(() =>
             Send(new SettingsViewModel(Model.Settings))
         ));
 
@@ -158,7 +158,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Import => Get(() => new BindableCommand(
+        public ICommand Import => Get(() => new DelegateCommand(
             () =>
             {
                 var e = MessageFactory.Import();
@@ -177,7 +177,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Export =>Get(() => new BindableCommand(
+        public ICommand Export =>Get(() => new DelegateCommand(
             () =>
             {
                 var e = MessageFactory.Export();
@@ -195,7 +195,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand NewEntry => Get(() => new BindableCommand(
+        public ICommand NewEntry => Get(() => new DelegateCommand(
             () => Send(new RegisterViewModel(e => Model.NewEntry(e))),
             () => !Data.Lock.Value.IsReadOnly
         ).Observe(Data.Lock));
@@ -209,7 +209,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand NewCategory => Get(() => new BindableCommand(
+        public ICommand NewCategory => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.NewCategory()),
             () => !Data.Lock.Value.IsReadOnly
         ).Observe(Data.Lock));
@@ -223,7 +223,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Remove => Get(() => new BindableCommand(
+        public ICommand Remove => Get(() => new DelegateCommand(
             () =>
             {
                 var e = MessageFactory.RemoveWarning(Data.Current.Value.Title);
@@ -242,7 +242,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Rename => Get(() => new BindableCommand(
+        public ICommand Rename => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.Rename()),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
         ).Observe(Data.Current).Observe(Data.Lock));
@@ -256,7 +256,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Read => Get(() => new BindableCommand(
+        public ICommand Read => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.Read()),
             () => Data.Current.Value != null
         ).Observe(Data.Current));
@@ -270,7 +270,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Update => Get(() => new BindableCommand(
+        public ICommand Update => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.Update()),
             () => Data.Current.Value != null
         ).Observe(Data.Current));
@@ -284,7 +284,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Reset => Get(() => new BindableCommand(
+        public ICommand Reset => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.Reset()),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
         ).Observe(Data.Current).Observe(Data.Lock));
@@ -298,7 +298,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Select => Get(() => new BindableCommand<object>(
+        public ICommand Select => Get(() => new DelegateCommand<object>(
             e => TrackSync(() =>
             {
                 Model.Select(e as IRssEntry);
@@ -316,7 +316,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand SelectArticle => Get(() => new BindableCommand<object>(
+        public ICommand SelectArticle => Get(() => new DelegateCommand<object>(
             e => TrackSync(() => Model.Select(e as RssItem)),
             e => e is RssItem
         ));
@@ -330,7 +330,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Hover => Get(() => new BindableCommand<object>(
+        public ICommand Hover => Get(() => new DelegateCommand<object>(
             e => Data.Message.Value = e.ToString(),
             e => e != null
         ));
@@ -344,7 +344,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Navigate => Get(() => new BindableCommand<Uri>(e => Data.Content.Value = e));
+        public ICommand Navigate => Get(() => new DelegateCommand<Uri>(e => Data.Content.Value = e));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -355,7 +355,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Stop => Get(() => new BindableCommand(() => TrackSync(() => Model.Stop())));
+        public ICommand Stop => Get(() => new DelegateCommand(() => TrackSync(() => Model.Stop())));
 
         #endregion
 

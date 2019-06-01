@@ -24,8 +24,6 @@ We currently show menus and other messages only in Japanese, and support for oth
 
 Dependencies of [Libraries](https://github.com/cube-soft/Cube.Net/blob/master/Libraries) are as follows. [Applications](https://github.com/cube-soft/Cube.Net/blob/master/Applications) may use some other third-party libraries.
 
-* [Cube.Core](https://github.com/cube-soft/Cube.Core)
-* [Cube.FileSystem](https://github.com/cube-soft/Cube.FileSystem)
 * [SgmlReader](https://github.com/MindTouch/SGMLReader)
 
 ## Contributing

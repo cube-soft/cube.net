@@ -68,6 +68,7 @@
 
     <i:Interaction.Behaviors>
         <xb:CloseBehavior />
+        <xb:DisposeBehavior />
         <xb:DialogBehavior />
         <xb:OpenFileDialogBehavior />
         <xb:SaveFileDialogBehavior />
@@ -79,9 +80,6 @@
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <xb:InvokeCommandAction Command="{Binding Setup}"/>
-        </i:EventTrigger>
-        <i:EventTrigger EventName="Closed">
-            <xb:DisposeAction/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
