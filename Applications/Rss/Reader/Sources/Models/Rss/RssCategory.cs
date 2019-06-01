@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using Cube.Mixin.Collections;
 using Cube.Xui;
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -52,7 +51,6 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssCategory(IDispatcher dispatcher)
         {
-            _dispose   = new OnceAction<bool>(Dispose);
             Dispatcher = dispatcher;
             Children   = new BindableCollection<IRssEntry>(dispatcher);
             Children.CollectionChanged += WhenChildrenChanged;
@@ -182,44 +180,20 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ~RssCategory
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~RssCategory() { _dispose.Invoke(false); }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// Dispose
         ///
         /// <summary>
-        /// リソースを開放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを開放します。
+        /// Releases the unmanaged resources used by the object and
+        /// optionally releases the managed resources.
         /// </summary>
         ///
         /// <param name="disposing">
-        /// マネージオブジェクトを開放するかどうか
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing) Children.CollectionChanged -= WhenChildrenChanged;
         }
@@ -310,7 +284,6 @@ namespace Cube.Net.Rss.Reader
         #endregion
 
         #region Fields
-        private readonly OnceAction<bool> _dispose;
         private string _title;
         private int? _count;
         private IRssEntry _parent;
