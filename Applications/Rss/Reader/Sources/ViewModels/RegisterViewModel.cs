@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Mixin.Observer;
 using Cube.Xui;
 using System;
 using System.Threading.Tasks;
@@ -101,7 +102,7 @@ namespace Cube.Net.Rss.Reader
                 finally { Busy.Value = false; }
             },
             () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value
-        ).Observe(Url).Observe(Busy));
+        ).Associate(Url).Associate(Busy));
 
         #endregion
 
