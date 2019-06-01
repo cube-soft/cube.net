@@ -173,7 +173,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand SelectDataDirectory => Get(() => new BindableCommand(
+        public ICommand SelectDataDirectory => Get(() => new DelegateCommand(
             () => Send(MessageFactory.DataDirectory(Local.Value.DataDirectory))
         ));
 
@@ -186,7 +186,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Apply => Get(() => new BindableCommand(() =>
+        public ICommand Apply => Get(() => new DelegateCommand(() =>
         {
             Send<UpdateSourcesMessage>();
             Close.Execute();

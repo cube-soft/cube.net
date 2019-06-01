@@ -88,7 +88,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Execute => Get(() => new BindableCommand(
+        public ICommand Execute => Get(() => new DelegateCommand(
             async () =>
             {
                 try

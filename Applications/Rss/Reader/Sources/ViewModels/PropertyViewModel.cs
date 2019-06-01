@@ -97,7 +97,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Apply => Get(() => new BindableCommand(() =>
+        public ICommand Apply => Get(() => new DelegateCommand(() =>
         {
             Send<UpdateSourcesMessage>();
             Close.Execute();
