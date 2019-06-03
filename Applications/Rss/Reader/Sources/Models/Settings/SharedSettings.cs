@@ -33,7 +33,7 @@ namespace Cube.Net.Rss.Reader
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class SharedSettings : ObservableBase
+    public class SharedSettings : SerializableBase
     {
         #region Constructors
 

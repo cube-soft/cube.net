@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Mixin.Observing;
 using Cube.Xui;
 using System;
 using System.Linq;
@@ -134,7 +135,7 @@ namespace Cube.Net.Rss.Reader
                 e => TrackSync(() => Model.Reschedule(e))
             )),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value is RssEntry
-        ).Observe(Data.Current).Observe(Data.Lock));
+        ).Associate(Data.Current).Associate(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -166,7 +167,7 @@ namespace Cube.Net.Rss.Reader
                 if (!e.Cancel) TrackSync(() => Model.Import(e.Value.First()));
             },
             () => !Data.Lock.Value.IsReadOnly
-        ).Observe(Data.Lock));
+        ).Associate(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -198,7 +199,7 @@ namespace Cube.Net.Rss.Reader
         public ICommand NewEntry => Get(() => new DelegateCommand(
             () => Send(new RegisterViewModel(e => Model.NewEntry(e))),
             () => !Data.Lock.Value.IsReadOnly
-        ).Observe(Data.Lock));
+        ).Associate(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -212,7 +213,7 @@ namespace Cube.Net.Rss.Reader
         public ICommand NewCategory => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.NewCategory()),
             () => !Data.Lock.Value.IsReadOnly
-        ).Observe(Data.Lock));
+        ).Associate(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -231,7 +232,7 @@ namespace Cube.Net.Rss.Reader
                 if (e.Status == DialogStatus.Ok) TrackSync(() => Model.Remove());
             },
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
-        ).Observe(Data.Current).Observe(Data.Lock));
+        ).Associate(Data.Current).Associate(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -245,7 +246,7 @@ namespace Cube.Net.Rss.Reader
         public ICommand Rename => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.Rename()),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
-        ).Observe(Data.Current).Observe(Data.Lock));
+        ).Associate(Data.Current).Associate(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -259,7 +260,7 @@ namespace Cube.Net.Rss.Reader
         public ICommand Read => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.Read()),
             () => Data.Current.Value != null
-        ).Observe(Data.Current));
+        ).Associate(Data.Current));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -273,7 +274,7 @@ namespace Cube.Net.Rss.Reader
         public ICommand Update => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.Update()),
             () => Data.Current.Value != null
-        ).Observe(Data.Current));
+        ).Associate(Data.Current));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -287,7 +288,7 @@ namespace Cube.Net.Rss.Reader
         public ICommand Reset => Get(() => new DelegateCommand(
             () => TrackSync(() => Model.Reset()),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
-        ).Observe(Data.Current).Observe(Data.Lock));
+        ).Associate(Data.Current).Associate(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///

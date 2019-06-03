@@ -56,7 +56,6 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public RssEntry(IDispatcher dispatcher)
         {
-            _dispose   = new OnceAction<bool>(Dispose);
             Dispatcher = dispatcher;
         }
 
@@ -222,51 +221,6 @@ namespace Cube.Net.Rss.Reader
 
         #endregion
 
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~RssEntry
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~RssEntry() { _dispose.Invoke(false); }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを開放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを開放します。
-        /// </summary>
-        ///
-        /// <param name="disposing">
-        /// マネージオブジェクトを開放するかどうか
-        /// </param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing) { }
-
-        #endregion
-
         #region Json
 
         /* ----------------------------------------------------------------- */
@@ -313,7 +267,6 @@ namespace Cube.Net.Rss.Reader
         #endregion
 
         #region Fields
-        private readonly OnceAction<bool> _dispose;
         private IRssEntry _parent;
         private RssCheckFrequency _frequency = RssCheckFrequency.Auto;
         private int _count = 0;

@@ -35,7 +35,7 @@ namespace Cube.Net.Rss.Reader
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class LockSettings : ObservableBase
+    public class LockSettings : SerializableBase
     {
         #region Constructors
 
