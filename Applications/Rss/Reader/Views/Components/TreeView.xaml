@@ -154,7 +154,7 @@
                 Visibility="Collapsed"
                 Grid.Column="1">
                 <i:Interaction.Behaviors>
-                    <xb:EditBehavior Editing="{Binding Editing, Mode=TwoWay}"/>
+                    <my:EditBehavior Editing="{Binding Editing, Mode=TwoWay}"/>
                 </i:Interaction.Behaviors>
             </TextBox>
 
@@ -213,7 +213,7 @@
                     Visibility="Collapsed"
                     Grid.Column="1">
                     <i:Interaction.Behaviors>
-                        <xb:EditBehavior Editing="{Binding Editing, Mode=TwoWay}"/>
+                        <my:EditBehavior Editing="{Binding Editing, Mode=TwoWay}"/>
                     </i:Interaction.Behaviors>
                 </TextBox>
 
