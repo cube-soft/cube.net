@@ -44,7 +44,7 @@
 
     <i:Interaction.Behaviors>
         <xb:CloseBehavior />
-        <xb:UpdateSourceBehavior />
+        <xb:UpdateSourcesBehavior />
     </i:Interaction.Behaviors>
 
     <Grid>

@@ -68,8 +68,8 @@
         <xb:CloseBehavior />
         <xb:DisposeBehavior />
         <xb:DialogBehavior />
-        <xb:OpenFileDialogBehavior />
-        <xb:SaveFileDialogBehavior />
+        <xb:OpenFileBehavior />
+        <xb:SaveFileBehavior />
         <my:ShowRegisterWindowBehavior />
         <my:ShowPropertyWindowBehavior />
         <my:ShowSettingsWindowBehavior />

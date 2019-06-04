@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xui;
 using Cube.Xui.Behaviors;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -78,7 +77,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ScrollToTopBehavior : SubscribeBehavior<ScrollToTopMessage>
+    public class ScrollToTopBehavior : MessageBehavior<ScrollToTopMessage>
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -105,7 +104,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class SelectDirectoryBehavior : DirectoryDialogBehavior
+    public class SelectDirectoryBehavior : OpenDirectoryBehavior
     {
         /* ----------------------------------------------------------------- */
         ///
