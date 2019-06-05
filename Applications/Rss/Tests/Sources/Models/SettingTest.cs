@@ -24,15 +24,15 @@ namespace Cube.Net.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SettingsTest
+    /// SettingTest
     ///
     /// <summary>
-    /// Settings および SettingsFolder のテスト用クラスです。
+    /// Setting および SettingFolder のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class SettingsTest : ResourceFixture
+    class SettingTest : ResourceFixture
     {
         #region Tests
 
@@ -50,7 +50,7 @@ namespace Cube.Net.Rss.Tests
         {
             Copy();
             var asm = Assembly.GetExecutingAssembly();
-            var src = new SettingsFolder(asm, RootDirectory(), IO);
+            var src = new SettingFolder(asm, RootDirectory(), IO);
 
             Assert.That(src.TryLoad(),                   Is.True);
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
@@ -84,10 +84,10 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_Empty()
         {
-            IO.Copy(GetSource("SettingsEmpty.json"), LocalSettingsPath(),  true);
-            IO.Copy(GetSource("SettingsEmpty.json"), SharedSettingsPath(), true);
+            IO.Copy(GetSource("SettingsEmpty.json"), LocalSettingPath(),  true);
+            IO.Copy(GetSource("SettingsEmpty.json"), SharedSettingPath(), true);
             var asm = Assembly.GetExecutingAssembly();
-            var src = new SettingsFolder(asm, RootDirectory(), IO);
+            var src = new SettingFolder(asm, RootDirectory(), IO);
 
             Assert.That(src.TryLoad(),                   Is.True);
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
@@ -122,7 +122,7 @@ namespace Cube.Net.Rss.Tests
         public void Load_NotFound()
         {
             var asm = Assembly.GetExecutingAssembly();
-            var src = new SettingsFolder(asm, RootDirectory(), IO);
+            var src = new SettingFolder(asm, RootDirectory(), IO);
 
             Assert.That(src.TryLoad(),     Is.False);
             Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));
@@ -143,10 +143,10 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_Invalid()
         {
-            IO.Copy(GetSource("Dummy.txt"), LocalSettingsPath(),  true);
-            IO.Copy(GetSource("Dummy.txt"), SharedSettingsPath(), true);
+            IO.Copy(GetSource("Dummy.txt"), LocalSettingPath(),  true);
+            IO.Copy(GetSource("Dummy.txt"), SharedSettingPath(), true);
             var asm = Assembly.GetExecutingAssembly();
-            var src = new SettingsFolder(asm, RootDirectory(), IO);
+            var src = new SettingFolder(asm, RootDirectory(), IO);
 
             Assert.That(src.TryLoad(),     Is.False);
             Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));

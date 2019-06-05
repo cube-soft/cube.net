@@ -55,7 +55,7 @@ namespace Cube.Net.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string CacheDirectory([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), LocalSettings.CacheDirectoryName);
+            IO.Combine(RootDirectory(name), LocalSetting.CacheDirectoryName);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -67,31 +67,31 @@ namespace Cube.Net.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string FeedsPath([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), LocalSettings.FeedFileName);
+            IO.Combine(RootDirectory(name), LocalSetting.FeedFileName);
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LocalSettingsPath
+        /// LocalSettingPath
         ///
         /// <summary>
         /// ローカル設定情報を保持するファイルのパスを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected string LocalSettingsPath([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), LocalSettings.FileName);
+        protected string LocalSettingPath([CallerMemberName] string name = null) =>
+            IO.Combine(RootDirectory(name), LocalSetting.FileName);
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SharedSettingsPath
+        /// SharedSettingPath
         ///
         /// <summary>
         /// 設定情報を保持するファイルのパスを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected string SharedSettingsPath([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), SharedSettings.FileName);
+        protected string SharedSettingPath([CallerMemberName] string name = null) =>
+            IO.Combine(RootDirectory(name), SharedSetting.FileName);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -120,8 +120,8 @@ namespace Cube.Net.Rss.Tests
         /* ----------------------------------------------------------------- */
         protected void Copy([CallerMemberName] string name = null)
         {
-            IO.Copy(GetSource("LocalSettings.json"), LocalSettingsPath(name), true);
-            IO.Copy(GetSource("Settings.json"), SharedSettingsPath(name), true);
+            IO.Copy(GetSource("LocalSettings.json"), LocalSettingPath(name), true);
+            IO.Copy(GetSource("Settings.json"), SharedSettingPath(name), true);
             IO.Copy(GetSource("Sample.json"), FeedsPath(name), true);
 
             foreach (var f in IO.GetFiles(GetSource("Cache")))

@@ -53,7 +53,7 @@ namespace Cube.Net.Rss.Tests
         {
             var ctx = Dispatcher.Vanilla;
             var asm = Assembly.GetExecutingAssembly();
-            using (var m = new MainFacade(new SettingsFolder(asm, Results, IO), ctx))
+            using (var m = new MainFacade(new SettingFolder(asm, Results, IO), ctx))
             {
                 m.Setup();
                 m.Stop();
@@ -192,11 +192,11 @@ namespace Cube.Net.Rss.Tests
             Copy(name);
 
             var asm        = Assembly.GetExecutingAssembly();
-            var settings   = new SettingsFolder(asm, RootDirectory(name), IO);
+            var setting    = new SettingFolder(asm, RootDirectory(name), IO);
             var dispatcher = Dispatcher.Vanilla;
-            var dest       = new MainFacade(settings, dispatcher);
+            var dest       = new MainFacade(setting, dispatcher);
 
-            settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
+            setting.Shared.InitialDelay = TimeSpan.FromMinutes(1);
 
             dest.Setup();
             return dest;

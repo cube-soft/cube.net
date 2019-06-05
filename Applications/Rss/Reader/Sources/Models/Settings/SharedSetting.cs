@@ -25,7 +25,7 @@ namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SharedSettings
+    /// SharedSetting
     ///
     /// <summary>
     /// ユーザ設定を保持するためのクラスです。
@@ -33,20 +33,20 @@ namespace Cube.Net.Rss.Reader
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class SharedSettings : SerializableBase
+    public class SharedSetting : SerializableBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
+        /// Setting
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SharedSettings() { Reset(); }
+        public SharedSetting() { Reset(); }
 
         #endregion
 
@@ -241,13 +241,13 @@ namespace Cube.Net.Rss.Reader
         /// <param name="directory">ディレクトリ</param>
         /// <param name="io">入出力用オブジェクト</param>
         ///
-        /// <returns>SharedSettings オブジェクト</returns>
+        /// <returns>SharedSetting オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static SharedSettings Load(string directory, IO io) => io.LoadOrDefault(
+        public static SharedSetting Load(string directory, IO io) => io.LoadOrDefault(
             io.Combine(directory, FileName),
-            e => Format.Json.Deserialize<SharedSettings>(e),
-            new SharedSettings()
+            e => Format.Json.Deserialize<SharedSetting>(e),
+            new SharedSetting()
         );
 
         /* ----------------------------------------------------------------- */

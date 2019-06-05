@@ -15,45 +15,34 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Assembly;
-using Cube.Mixin.Commands;
-using Cube.Mixin.Drawing;
-using Cube.Xui;
-using System;
-using System.Reflection;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.Runtime.Serialization;
 
 namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SettingsViewModel
+    /// LocalSetting
     ///
     /// <summary>
-    /// 設定画面とモデルを関連付けるためのクラスです。
+    /// ユーザ設定を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class SettingsViewModel : CommonViewModel
+    [DataContract]
+    public class LocalSetting : SerializableBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SettingsViewModel
+        /// Setting
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsViewModel(SettingsFolder settings) : base(new Aggregator())
-        {
-            Model  = settings;
-            Local  = new Bindable<LocalSettings>(settings.Value, settings.Dispatcher);
-            Shared = new Bindable<SharedSettings>(settings.Shared, settings.Dispatcher);
-        }
+        public LocalSetting() { Reset(); }
 
         #endregion
 
@@ -61,141 +50,159 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Local
+        /// FileName
         ///
         /// <summary>
-        /// ローカル設定を取得します。
+        /// 設定を保持するファイルの名前を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<LocalSettings> Local { get; }
+        public static string FileName => "LocalSettings.json";
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Data
+        /// FeedFileName
         ///
         /// <summary>
-        /// ユーザ設定を取得します。
+        /// 購読フィード一覧を保持するためのファイルの名前を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<SharedSettings> Shared { get; }
+        public static string FeedFileName => "Feeds.json";
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Logo
+        /// CacheDirectoryName
         ///
         /// <summary>
-        /// アプリケーションのロゴ画像を取得します。
+        /// キャッシュファイルを格納するディレクトリの名前を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BitmapImage Logo => _logo ?? (
-            _logo = Properties.Resources.Logo.ToBitmapImage()
-        );
+        public static string CacheDirectoryName => "Cache";
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Product
+        /// Width
         ///
         /// <summary>
-        /// アプリケーション名を取得します。
+        /// メイン画面の幅を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Product => Model.Assembly.GetProduct();
+        [DataMember]
+        public int Width
+        {
+            get => _width;
+            set => SetProperty(ref _width, value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Version
+        /// Height
         ///
         /// <summary>
-        /// バージョンを表す文字列を取得します。
+        /// メイン画面の高さを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Version => $"Version {Model.Version.ToString(true)}";
+        [DataMember]
+        public int Height
+        {
+            get => _height;
+            set => SetProperty(ref _height, value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Windows
+        /// EntryColumn
         ///
         /// <summary>
-        /// Windows のバージョンを表す文字列を取得します。
+        /// RSS エントリ一覧部分の幅を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Windows => Environment.OSVersion.ToString();
+        [DataMember]
+        public int EntryColumn
+        {
+            get => _entryColumn;
+            set => SetProperty(ref _entryColumn, value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Framework
+        /// ArticleColumn
         ///
         /// <summary>
-        /// .NET Framework のバージョンを表す文字列を取得します。
+        /// 新着記事一覧部分の幅を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Framework => $"Microsoft .NET Framework {Environment.Version}";
+        [DataMember]
+        public int ArticleColumn
+        {
+            get => _articleColumn;
+            set => SetProperty(ref _articleColumn, value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Copyright
+        /// DataDirectory
         ///
         /// <summary>
-        /// コピーライト表記を取得します。
+        /// データ格納用ディレクトリのパスを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Copyright { get; } = Assembly.GetExecutingAssembly().GetCopyright();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Model
-        ///
-        /// <summary>
-        /// ユーザ設定を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private SettingsFolder Model { get; }
+        [DataMember]
+        public string DataDirectory
+        {
+            get => _dataDirectory;
+            set => SetProperty(ref _dataDirectory, value);
+        }
 
         #endregion
 
-        #region Commands
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SelectDataDirectory
+        /// OnDeserializing
         ///
         /// <summary>
-        /// データディレクトリを選択するコマンドです。
+        /// デシリアライズ直前に実行されます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand SelectDataDirectory => Get(() => new DelegateCommand(
-            () => Send(MessageFactory.DataDirectory(Local.Value.DataDirectory))
-        ));
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context) => Reset();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Apply
+        /// Reset
         ///
         /// <summary>
-        /// 内容を適用するコマンドです。
+        /// 値をリセットします。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Apply => Get(() => new DelegateCommand(() =>
+        private void Reset()
         {
-            Send<UpdateSourcesMessage>();
-            Close.Execute();
-        }));
+            _width         = 1100;
+            _height        = 650;
+            _entryColumn   = 230;
+            _articleColumn = 270;
+            _dataDirectory = null;
+        }
 
         #endregion
 
         #region Fields
-        private BitmapImage _logo;
+        private int _width;
+        private int _height;
+        private int _entryColumn;
+        private int _articleColumn;
+        private string _dataDirectory;
         #endregion
     }
 }

@@ -47,7 +47,7 @@ namespace Cube.Net.Rss.Tests
         /* ----------------------------------------------------------------- */
         [Test]
         public void Convert_Title() => Assert.That(
-            Convert(new RssItem { Title = "TitleTest" }, new LockSettings()),
+            Convert(new RssItem { Title = "TitleTest" }, new LockSetting()),
             Is.EqualTo("TitleTest - CubeRSS Reader")
         );
 
@@ -62,7 +62,7 @@ namespace Cube.Net.Rss.Tests
         /* ----------------------------------------------------------------- */
         [Test]
         public void Convert_Title_Null() => Assert.That(
-            Convert(null, new LockSettings()),
+            Convert(null, new LockSetting()),
             Is.EqualTo("CubeRSS Reader")
         );
 
@@ -115,9 +115,9 @@ namespace Cube.Net.Rss.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private string Convert(RssItem src, LockSettings settings) =>
+        private string Convert(RssItem src, LockSetting setting) =>
             new TitleConverter().Convert(
-                new object[] { src, settings },
+                new object[] { src, setting },
                 typeof(string),
                 null,
                 CultureInfo.CurrentCulture

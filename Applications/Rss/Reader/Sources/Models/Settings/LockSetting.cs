@@ -15,34 +15,43 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.DataContract;
+using Cube.FileSystem;
+using Cube.Mixin.IO;
+using Microsoft.Win32;
+using System;
 using System.Runtime.Serialization;
+using System.Security;
 
 namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// LocalSettings
+    /// LockSetting
     ///
     /// <summary>
-    /// ユーザ設定を保持するためのクラスです。
+    /// ロック情報を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
-    public class LocalSettings : SerializableBase
+    public class LockSetting : SerializableBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
+        /// LockSetting
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public LocalSettings() { Reset(); }
+        public LockSetting()
+        {
+            Reset();
+        }
 
         #endregion
 
@@ -57,108 +66,114 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static string FileName => "LocalSettings.json";
+        public static string FileName => ".lockfile";
 
         /* ----------------------------------------------------------------- */
         ///
-        /// FeedFileName
+        /// Sid
         ///
         /// <summary>
-        /// 購読フィード一覧を保持するためのファイルの名前を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static string FeedFileName => "Feeds.json";
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CacheDirectoryName
-        ///
-        /// <summary>
-        /// キャッシュファイルを格納するディレクトリの名前を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static string CacheDirectoryName => "Cache";
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Width
-        ///
-        /// <summary>
-        /// メイン画面の幅を取得または設定します。
+        /// 識別子を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public int Width
+        public string Sid
         {
-            get => _width;
-            set => SetProperty(ref _width, value);
+            get => _sid;
+            set => SetProperty(ref _sid, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Height
+        /// UserName
         ///
         /// <summary>
-        /// メイン画面の高さを取得または設定します。
+        /// ユーザ名を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public int Height
+        public string UserName
         {
-            get => _height;
-            set => SetProperty(ref _height, value);
+            get => _userName;
+            set => SetProperty(ref _userName, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// EntryColumn
+        /// MachineName
         ///
         /// <summary>
-        /// RSS エントリ一覧部分の幅を取得または設定します。
+        /// マシン名を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public int EntryColumn
+        public string MachineName
         {
-            get => _entryColumn;
-            set => SetProperty(ref _entryColumn, value);
+            get => _machineName;
+            set => SetProperty(ref _machineName, value);
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ArticleColumn
+        /// IsReadOnly
         ///
         /// <summary>
-        /// 新着記事一覧部分の幅を取得または設定します。
+        /// 読み取り専用モードかどうかを示す値を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
-        public int ArticleColumn
+        public bool IsReadOnly => _isReadOnly ?? (
+            _isReadOnly = !Sid.Equals(GetCurrentUserSid())
+        ).Value;
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Load
+        ///
+        /// <summary>
+        /// 設定情報を読み込みます。
+        /// </summary>
+        ///
+        /// <param name="directory">ディレクトリ</param>
+        /// <param name="io">入出力用オブジェクト</param>
+        ///
+        /// <returns>LockSetting オブジェクト</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static LockSetting Load(string directory, IO io)
         {
-            get => _articleColumn;
-            set => SetProperty(ref _articleColumn, value);
+            var src = io.Combine(directory, FileName);
+            if (io.Exists(src)) return io.Load(src, e => Format.Json.Deserialize<LockSetting>(e));
+
+            var dest = new LockSetting();
+            io.Save(src, e => Format.Json.Serialize(e, dest));
+            io.SetAttributes(src, System.IO.FileAttributes.ReadOnly | System.IO.FileAttributes.Hidden);
+            return dest;
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DataDirectory
+        /// Release
         ///
         /// <summary>
-        /// データ格納用ディレクトリのパスを取得または設定します。
+        /// ロックを解除します。
         /// </summary>
         ///
+        /// <param name="directory">ディレクトリ</param>
+        /// <param name="io">入出力用オブジェクト</param>
+        ///
         /* ----------------------------------------------------------------- */
-        [DataMember]
-        public string DataDirectory
+        public void Release(string directory, IO io)
         {
-            get => _dataDirectory;
-            set => SetProperty(ref _dataDirectory, value);
+            if (IsReadOnly) return;
+            io.Delete(io.Combine(directory, FileName));
         }
 
         #endregion
@@ -188,21 +203,50 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Reset()
         {
-            _width         = 1100;
-            _height        = 650;
-            _entryColumn   = 230;
-            _articleColumn = 270;
-            _dataDirectory = null;
+            _sid         = GetCurrentUserSid();
+            _userName    = Environment.UserName;
+            _machineName = Environment.MachineName;
+            _isReadOnly  = default;
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetCurrentUserSid
+        ///
+        /// <summary>
+        /// ログオン中のユーザの SID を初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private string GetCurrentUserSid()
+        {
+            var keyword = "Volatile Environment";
+            var cmp     = Environment.UserName;
+            var option  = StringComparison.CurrentCultureIgnoreCase;
+
+            foreach (var dest in Registry.Users.GetSubKeyNames())
+            {
+                try
+                {
+                    using (var key = Registry.Users.OpenSubKey($@"{dest}\{keyword}", false))
+                    {
+                        if (key == null) continue;
+                        var user = key.GetValue("UserName", string.Empty) as string;
+                        if (user.Equals(cmp, option)) return dest;
+                    }
+                }
+                catch (SecurityException) { /* Other's profile */ }
+            }
+            return string.Empty;
         }
 
         #endregion
 
         #region Fields
-        private int _width;
-        private int _height;
-        private int _entryColumn;
-        private int _articleColumn;
-        private string _dataDirectory;
+        private string _sid;
+        private string _userName;
+        private string _machineName;
+        private bool? _isReadOnly;
         #endregion
     }
 }

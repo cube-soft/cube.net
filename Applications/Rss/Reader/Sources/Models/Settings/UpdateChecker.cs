@@ -44,21 +44,21 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="settings">設定用オブジェクト</param>
+        /// <param name="src">設定用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public UpdateChecker(SettingsFolder settings)
+        public UpdateChecker(SettingFolder src)
         {
-            var io  = settings.IO;
+            var io  = src.IO;
             var dir = Assembly.GetExecutingAssembly().GetDirectoryName();
 
             FileName = io.Combine(dir, "UpdateChecker.exe");
-            Settings = settings;
+            Setting  = src;
 
             _timer.Interval = TimeSpan.FromDays(1);
             _timer.Subscribe(WhenTick);
 
-            if (settings.Shared.CheckUpdate) Start();
+            if (Setting.Shared.CheckUpdate) Start();
         }
 
         #endregion
@@ -67,14 +67,14 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
+        /// Setting
         ///
         /// <summary>
         /// 設定用オブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder Settings { get; }
+        public SettingFolder Setting { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -102,7 +102,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Start()
         {
-            var time  = Settings.Shared.LastCheckUpdate ?? DateTime.MinValue;
+            var time  = Setting.Shared.LastCheckUpdate ?? DateTime.MinValue;
             var past  = DateTime.Now - time;
             var delta = past < _timer.Interval ?
                         _timer.Interval - past :
@@ -137,9 +137,9 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void WhenTick()
         {
-            try { Process.Start(FileName, Settings.Assembly.GetProduct()); }
+            try { Process.Start(FileName, Setting.Assembly.GetProduct()); }
             catch (Exception err) { this.LogWarn($"{FileName} ({err.Message})"); }
-            finally { Settings.Shared.LastCheckUpdate = DateTime.Now; }
+            finally { Setting.Shared.LastCheckUpdate = DateTime.Now; }
         }
 
         #endregion

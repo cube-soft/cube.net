@@ -21,15 +21,15 @@ namespace Cube.Net.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// BrowserSettingsTest
+    /// BrowserSettingTest
     ///
     /// <summary>
-    /// BrowserSettings のテスト用クラスです。
+    /// BrowserSetting のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class BrowserSettingsTest
+    class BrowserSettingTest
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -46,8 +46,8 @@ namespace Cube.Net.Tests
         [TestCase(BrowserVersion.Latest,    ExpectedResult = BrowserVersion.IE11)]
         public BrowserVersion Version(BrowserVersion src)
         {
-            BrowserSettings.Version = src;
-            return BrowserSettings.Version;
+            BrowserSetting.Version = src;
+            return BrowserSetting.Version;
         }
 
         /* ----------------------------------------------------------------- */
@@ -63,8 +63,8 @@ namespace Cube.Net.Tests
         [TestCase(false)]
         public void GpuRendering(bool src)
         {
-            BrowserSettings.GpuRendering = src;
-            Assert.That(BrowserSettings.GpuRendering, Is.EqualTo(src));
+            BrowserSetting.GpuRendering = src;
+            Assert.That(BrowserSetting.GpuRendering, Is.EqualTo(src));
         }
 
         /* ----------------------------------------------------------------- */
@@ -80,8 +80,8 @@ namespace Cube.Net.Tests
         [TestCase(false)]
         public void NavigationSounds(bool src)
         {
-            BrowserSettings.NavigationSounds = src;
-            Assert.That(BrowserSettings.NavigationSounds, Is.EqualTo(src));
+            BrowserSetting.NavigationSounds = src;
+            Assert.That(BrowserSetting.NavigationSounds, Is.EqualTo(src));
         }
 
         /* ----------------------------------------------------------------- */
@@ -101,9 +101,9 @@ namespace Cube.Net.Tests
         [TestCase(129, ExpectedResult = 6)]
         public int MaxConnections(int src)
         {
-            BrowserSettings.MaxConnections = 6;
-            BrowserSettings.MaxConnections = src;
-            return BrowserSettings.MaxConnections;
+            BrowserSetting.MaxConnections = 6;
+            BrowserSetting.MaxConnections = src;
+            return BrowserSetting.MaxConnections;
         }
     }
 }

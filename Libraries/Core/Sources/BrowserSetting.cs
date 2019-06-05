@@ -54,7 +54,7 @@ namespace Cube.Net
 
     /* --------------------------------------------------------------------- */
     ///
-    /// BrowserSettings
+    /// BrowserSetting
     ///
     /// <summary>
     /// Web ブラウザ用コントロールに関する各種設定情報を取得または
@@ -62,7 +62,7 @@ namespace Cube.Net
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class BrowserSettings
+    public static class BrowserSetting
     {
         #region Properties
 
