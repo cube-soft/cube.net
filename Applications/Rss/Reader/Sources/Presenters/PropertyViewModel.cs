@@ -53,7 +53,7 @@ namespace Cube.Net.Rss.Reader
             base(new Aggregator())
         {
             System.Diagnostics.Debug.Assert(entry != null);
-            Entry = new Bindable<RssEntry>(entry, entry.Dispatcher);
+            Entry = new BindableValue<RssEntry>(entry, entry.Dispatcher);
             _callback = callback;
         }
 
@@ -70,7 +70,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssEntry> Entry { get; }
+        public BindableValue<RssEntry> Entry { get; }
 
         /* ----------------------------------------------------------------- */
         ///

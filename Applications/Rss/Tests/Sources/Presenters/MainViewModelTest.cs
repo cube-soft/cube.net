@@ -19,12 +19,10 @@ using Cube.Mixin.Commands;
 using Cube.Mixin.String;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
-using Cube.Xui;
 using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -54,7 +52,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void VM_Default()
         {
-            var s  = new SettingsFolder(Assembly.GetExecutingAssembly()) { AutoSave = false };
+            var s  = new SettingFolder(Assembly.GetExecutingAssembly()) { AutoSave = false };
             var vm = new MainViewModel(s);
 
             Assert.That(vm.Property.CanExecute(), Is.False);
@@ -412,7 +410,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void VM_NewCategory_Empty()
         {
-            var s  = new SettingsFolder(Assembly.GetExecutingAssembly()) { AutoSave = false };
+            var s  = new SettingFolder(Assembly.GetExecutingAssembly()) { AutoSave = false };
             var vm = new MainViewModel(s);
             vm.NewCategory.Execute(null);
             var dest = vm.Data.Current.Value as RssCategory;
@@ -517,10 +515,10 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void VM_ReadOnly()
         {
-            var dest = IO.Combine(RootDirectory(), LockSettings.FileName);
+            var dest = IO.Combine(RootDirectory(), LockSetting.FileName);
             IO.Copy(GetSource("Sample.lockfile"), dest);
-            IO.Copy(GetSource("LocalSettings.json"), LocalSettingsPath(), true);
-            IO.Copy(GetSource("Settings.json"), SharedSettingsPath(), true);
+            IO.Copy(GetSource("LocalSettings.json"), LocalSettingPath(), true);
+            IO.Copy(GetSource("Settings.json"), SharedSettingPath(), true);
             IO.Copy(GetSource("Sample.json"), FeedsPath(), true);
             IO.CreateDirectory(CacheDirectory());
 
@@ -528,7 +526,7 @@ namespace Cube.Net.Rss.Tests
             var n   = 0;
 
             using (var fw = new System.IO.FileSystemWatcher())
-            using (var vm = new MainViewModel(new SettingsFolder(asm, RootDirectory(), IO)))
+            using (var vm = new MainViewModel(new SettingFolder(asm, RootDirectory(), IO)))
             {
                 fw.Path = RootDirectory();
                 fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
@@ -547,7 +545,7 @@ namespace Cube.Net.Rss.Tests
                 Assert.That(vm.Data.Current.Value,           Is.Not.Null, nameof(vm.Data.Current));
                 Assert.That(vm.Data.LastEntry.Value,         Is.Not.Null, nameof(vm.Data.LastEntry));
                 Assert.That(vm.Property.CanExecute(null),    Is.False,    nameof(vm.Property));
-                Assert.That(vm.Settings.CanExecute(null),    Is.True,     nameof(vm.Settings));
+                Assert.That(vm.Setting.CanExecute(null),     Is.True,     nameof(vm.Setting));
                 Assert.That(vm.Import.CanExecute(null),      Is.False,    nameof(vm.Import));
                 Assert.That(vm.Export.CanExecute(null),      Is.True,     nameof(vm.Export));
                 Assert.That(vm.NewEntry.CanExecute(null),    Is.False,    nameof(vm.NewEntry));

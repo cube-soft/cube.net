@@ -46,7 +46,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainViewModel() : this(new SettingsFolder(
+        public MainViewModel() : this(new SettingFolder(
             Assembly.GetExecutingAssembly()) { Dispatcher = new Dispatcher(false) }
         ) { }
 
@@ -59,9 +59,9 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainViewModel(SettingsFolder settings) : base(new Aggregator())
+        public MainViewModel(SettingFolder Setting) : base(new Aggregator())
         {
-            Model      = new MainFacade(settings, settings.Dispatcher);
+            Model      = new MainFacade(Setting, Setting.Dispatcher);
             DropTarget = new RssDropTarget((s, d, i) => Model.Move(s, d, i))
             {
                 IsReadOnly = Data.Lock.Value.IsReadOnly
@@ -139,15 +139,15 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
+        /// Setting
         ///
         /// <summary>
         /// 設定画面表示時に実行されるコマンドです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Settings => Get(() => new DelegateCommand(() =>
-            Send(new SettingsViewModel(Model.Settings))
+        public ICommand Setting => Get(() => new DelegateCommand(() =>
+            Send(new SettingViewModel(Model.Setting))
         ));
 
         /* ----------------------------------------------------------------- */

@@ -21,14 +21,14 @@ namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SettingsWindow
+    /// SettingWindow
     ///
     /// <summary>
     /// 設定画面を表すクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public partial class SettingsWindow : Window
+    public partial class SettingWindow : Window
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -39,7 +39,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsWindow()
+        public SettingWindow()
         {
             InitializeComponent();
         }

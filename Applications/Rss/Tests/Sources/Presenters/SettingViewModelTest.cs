@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Net.Rss.Reader;
-using Cube.Xui;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -26,21 +25,21 @@ namespace Cube.Net.Rss.Tests
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SettingsViewModelTest
+    /// SettingViewModelTest
     ///
     /// <summary>
-    /// SettingsViewModel のテスト用クラスです。
+    /// SettingViewModel のテスト用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TestFixture]
-    class SettingsViewModelTest : ViewModelFixture
+    class SettingViewModelTest : ViewModelFixture
     {
         #region Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// VM_Settings
+        /// VM_Setting
         ///
         /// <summary>
         /// ユーザ設定を編集するテストを実行します。
@@ -48,12 +47,12 @@ namespace Cube.Net.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void VM_Settings() => Execute(vm =>
+        public void VM_Setting() => Execute(vm =>
         {
             var local = vm.Data.Local.Value;
             var shred = vm.Data.Shared.Value;
-            vm.Subscribe<SettingsViewModel>(e => SettingsCommand(e));
-            vm.Settings.Execute(null);
+            vm.Subscribe<SettingViewModel>(e => SettingCommand(e));
+            vm.Setting.Execute(null);
 
             Assert.That(shred.CheckUpdate,          Is.False);
             Assert.That(shred.EnableNewWindow,      Is.False);
@@ -61,7 +60,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(shred.LightMode,            Is.True);
             Assert.That(shred.HighInterval,         Is.EqualTo(TimeSpan.FromHours(2)));
             Assert.That(shred.LowInterval,          Is.EqualTo(TimeSpan.FromHours(12)));
-            Assert.That(local.DataDirectory,        Is.EqualTo(Get(nameof(VM_Settings))));
+            Assert.That(local.DataDirectory,        Is.EqualTo(Get(nameof(VM_Setting))));
         });
 
         /* ----------------------------------------------------------------- */
@@ -80,19 +79,19 @@ namespace Cube.Net.Rss.Tests
 
             Execute(vm =>
             {
-                vm.Subscribe<SettingsViewModel>(e => ChangeDataFolder(e));
-                vm.Settings.Execute(null);
-                Assert.That(vm.Data.Local.Value.DataDirectory, Is.EqualTo(dest), nameof(SettingsViewModel));
+                vm.Subscribe<SettingViewModel>(e => ChangeDataFolder(e));
+                vm.Setting.Execute(null);
+                Assert.That(vm.Data.Local.Value.DataDirectory, Is.EqualTo(dest), nameof(SettingViewModel));
             });
 
             Assert.That(IO.Exists(dest), Is.False);
 
-            var asm      = Assembly.GetExecutingAssembly();
-            var settings = new SettingsFolder(asm, RootDirectory(), IO);
-            settings.Load();
-            Assert.That(settings.DataDirectory, Is.EqualTo(dest), nameof(SettingsFolder));
+            var asm     = Assembly.GetExecutingAssembly();
+            var setting = new SettingFolder(asm, RootDirectory(), IO);
+            setting.Load();
+            Assert.That(setting.DataDirectory, Is.EqualTo(dest), nameof(SettingFolder));
 
-            var facade = new MainFacade(settings, Dispatcher.Vanilla);
+            var facade = new MainFacade(setting, Dispatcher.Vanilla);
             Assert.That(facade.Data.Root.Flatten().Count(), Is.EqualTo(0));
         }
 
@@ -102,14 +101,14 @@ namespace Cube.Net.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SettingsCommand
+        /// SettingCommand
         ///
         /// <summary>
-        /// Settings コマンドを実行します。
+        /// Setting コマンドを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SettingsCommand(SettingsViewModel vm)
+        private void SettingCommand(SettingViewModel vm)
         {
             Assert.That(vm.Logo,      Is.Not.Null);
             Assert.That(vm.Copyright, Does.StartWith("Copyright"));
@@ -134,11 +133,11 @@ namespace Cube.Net.Rss.Tests
         /// ChangeDataFolder
         ///
         /// <summary>
-        /// Settings コマンドを実行します。
+        /// Setting コマンドを実行します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void ChangeDataFolder(SettingsViewModel vm)
+        private void ChangeDataFolder(SettingViewModel vm)
         {
             var dest = string.Empty;
 

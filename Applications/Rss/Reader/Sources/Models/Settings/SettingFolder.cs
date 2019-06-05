@@ -29,20 +29,20 @@ namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// SettingsFolder
+    /// SettingFolder
     ///
     /// <summary>
     /// ユーザ設定を保持するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class SettingsFolder : SettingsFolder<LocalSettings>
+    public class SettingFolder : SettingFolder<LocalSetting>
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SettingsFolder
+        /// SettingFolder
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -51,7 +51,7 @@ namespace Cube.Net.Rss.Reader
         /// <param name="assembly">アセンブリ情報</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder(Assembly assembly) : this(
+        public SettingFolder(Assembly assembly) : this(
             assembly,
             System.IO.Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -62,7 +62,7 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SettingsFolder
+        /// SettingFolder
         ///
         /// <summary>
         /// オブジェクトを初期化します。
@@ -73,11 +73,11 @@ namespace Cube.Net.Rss.Reader
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder(Assembly assembly, string root, IO io) :
+        public SettingFolder(Assembly assembly, string root, IO io) :
             base(assembly, Format.Json, io)
         {
             AutoSave       = true;
-            Location       = io.Combine(root, LocalSettings.FileName);
+            Location       = io.Combine(root, LocalSetting.FileName);
             RootDirectory  = root;
             DataDirectory  = root;
             Version.Digit  = 3;
@@ -98,7 +98,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public LockSettings Lock { get; private set; }
+        public LockSetting Lock { get; private set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -109,7 +109,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SharedSettings Shared { get; private set; }
+        public SharedSetting Shared { get; private set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -132,8 +132,8 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <remarks>
-        /// LocalSettings.DataDirectory プロパティは GUI によるユーザ操作で
-        /// 値が変更される事があります。SettingsFolder の初期化後、または
+        /// LocalSetting.DataDirectory プロパティは GUI によるユーザ操作で
+        /// 値が変更される事があります。SettingFolder の初期化後、または
         /// ローカル設定ファイルの読み込み後はこのプロパティから 取得して
         /// 下さい。
         /// </remarks>
@@ -184,7 +184,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnLoaded(ValueChangedEventArgs<LocalSettings> e)
+        protected override void OnLoaded(ValueChangedEventArgs<LocalSetting> e)
         {
             Debug.Assert(e.NewValue != null);
             var min  = 100;
@@ -248,7 +248,7 @@ namespace Cube.Net.Rss.Reader
             var app  = $"{Assembly.GetProduct()}/{Version.Number}";
             var win  = Environment.OSVersion.VersionString;
             var net  = $".NET {Environment.Version}";
-            var view = BrowserSettings.Version;
+            var view = BrowserSetting.Version;
             return $"{app} ({win}; {net}; {view})";
         }
 
@@ -257,17 +257,17 @@ namespace Cube.Net.Rss.Reader
         /// Reset
         ///
         /// <summary>
-        /// Reloads the additional settings.
+        /// Reloads the additional Setting.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         private void Reset(string directory)
         {
-            Lock = LockSettings.Load(directory, IO);
+            Lock = LockSetting.Load(directory, IO);
             Debug.Assert(Lock != null);
             Lock.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
 
-            Shared = SharedSettings.Load(directory, IO);
+            Shared = SharedSetting.Load(directory, IO);
             Debug.Assert(Shared != null);
             Shared.LastCheckUpdate = GetLastCheckUpdate();
             Shared.PropertyChanged += (s, ev) => OnPropertyChanged(ev);

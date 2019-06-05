@@ -52,7 +52,7 @@ namespace Cube.Net.Rss.Reader
             var ss  = new System.Text.StringBuilder();
             if (values[0] is RssItem src) ss.Append($"{src.Title} - ");
             ss.Append(asm.GetTitle());
-            if (values[1] is LockSettings x && x.IsReadOnly) ss.Append($" ({Properties.Resources.MessageReadOnly})");
+            if (values[1] is LockSetting x && x.IsReadOnly) ss.Append($" ({Properties.Resources.MessageReadOnly})");
             return ss.ToString();
         }
 

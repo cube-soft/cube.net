@@ -73,7 +73,7 @@
         <xb:SaveFileBehavior />
         <my:ShowRegisterWindowBehavior />
         <my:ShowPropertyWindowBehavior />
-        <my:ShowSettingsWindowBehavior />
+        <my:ShowSettingWindowBehavior />
     </i:Interaction.Behaviors>
 
     <i:Interaction.Triggers>
@@ -221,10 +221,10 @@
             </Grid.RowDefinitions>
 
             <Button
-                x:Name="Settings"
+                x:Name="Setting"
                 Content="&#xe905;"
                 Style="{StaticResource MenuButtonStyle}"
-                ContextMenu="{StaticResource SettingsMenu}"
+                ContextMenu="{StaticResource SettingMenu}"
                 ContextMenuService.IsEnabled="False"
                 HorizontalAlignment="Right">
                 <i:Interaction.Triggers>

@@ -52,14 +52,14 @@ namespace Cube.Net.Rss.Tests
         {
             Copy(name);
 
-            var asm      = Assembly.GetExecutingAssembly();
-            var settings = new SettingsFolder(asm, RootDirectory(name), IO);
-            var dest     = new MainViewModel(settings);
-            var msg      = dest.Data.Message;
+            var asm     = Assembly.GetExecutingAssembly();
+            var setting = new SettingFolder(asm, RootDirectory(name), IO);
+            var dest    = new MainViewModel(setting);
+            var msg     = dest.Data.Message;
 
-            settings.Shared.InitialDelay = TimeSpan.FromMinutes(1);
-            settings.Value.Width         = 1024;
-            settings.Value.Height        = 768;
+            setting.Shared.InitialDelay = TimeSpan.FromMinutes(1);
+            setting.Value.Width         = 1024;
+            setting.Value.Height        = 768;
 
             msg.Value = "Test";
             dest.Setup.Execute(null);
@@ -81,7 +81,7 @@ namespace Cube.Net.Rss.Tests
         {
             using (var fw = new System.IO.FileSystemWatcher())
             {
-                var l = IO.Combine(RootDirectory(name), LockSettings.FileName);
+                var l = IO.Combine(RootDirectory(name), LockSetting.FileName);
                 var n = 0;
 
                 using (var vm = Create(name))

@@ -50,34 +50,34 @@ namespace Cube.Net.Rss.Reader
         /// <param name="dispatcher">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MainFacade(SettingsFolder src, IDispatcher dispatcher)
+        public MainFacade(SettingFolder src, IDispatcher dispatcher)
         {
             src.TryLoad();
             this.LogInfo($"Owner:{src.Lock.UserName}@{src.Lock.MachineName} ({src.Lock.Sid})");
             this.LogInfo($"User-Agent:{src.UserAgent}");
 
-            Settings = src;
-            Settings.PropertyChanged += WhenSettingsChanged;
-            Settings.AutoSave = true;
+            Setting = src;
+            Setting.PropertyChanged += WhenSettingChanged;
+            Setting.AutoSave = true;
 
-            var feeds = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.FeedFileName);
-            var cache = Settings.IO.Combine(Settings.DataDirectory, LocalSettings.CacheDirectoryName);
+            var feeds = Setting.IO.Combine(Setting.DataDirectory, LocalSetting.FeedFileName);
+            var cache = Setting.IO.Combine(Setting.DataDirectory, LocalSetting.CacheDirectoryName);
 
             _core = new RssSubscriber(dispatcher)
             {
-                IO             = Settings.IO,
+                IO             = Setting.IO,
                 FileName       = feeds,
                 CacheDirectory = cache,
-                Capacity       = Settings.Shared.Capacity,
-                IsReadOnly     = Settings.Lock.IsReadOnly,
-                UserAgent      = Settings.UserAgent
+                Capacity       = Setting.Shared.Capacity,
+                IsReadOnly     = Setting.Lock.IsReadOnly,
+                UserAgent      = Setting.UserAgent
             };
-            _core.Set(RssCheckFrequency.High, Settings.Shared.HighInterval);
-            _core.Set(RssCheckFrequency.Low, Settings.Shared.LowInterval);
+            _core.Set(RssCheckFrequency.High, Setting.Shared.HighInterval);
+            _core.Set(RssCheckFrequency.Low, Setting.Shared.LowInterval);
             _core.Received += WhenReceived;
 
-            _checker = new UpdateChecker(Settings);
-            Data = new MainBindableData(_core, Settings, dispatcher);
+            _checker = new UpdateChecker(Setting);
+            Data = new MainBindableData(_core, Setting, dispatcher);
         }
 
         #endregion
@@ -97,14 +97,14 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Settings
+        /// Setting
         ///
         /// <summary>
         /// ユーザ設定を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingsFolder Settings { get; }
+        public SettingFolder Setting { get; }
 
         #endregion
 
@@ -125,7 +125,7 @@ namespace Cube.Net.Rss.Reader
 
             this.LogDebug(() => _core.Load());
 
-            var entry = _core.Find(Settings.Shared.StartUri) ??
+            var entry = _core.Find(Setting.Shared.StartUri) ??
                         _core.Flatten<RssEntry>().FirstOrDefault();
             if (entry != null)
             {
@@ -133,8 +133,8 @@ namespace Cube.Net.Rss.Reader
                 entry.Parent.Expand();
             }
 
-            Debug.Assert(Settings.Shared.InitialDelay.HasValue);
-            _core.Start(Settings.Shared.InitialDelay.Value);
+            Debug.Assert(Setting.Shared.InitialDelay.HasValue);
+            _core.Start(Setting.Shared.InitialDelay.Value);
 
             Data.Message.Value = string.Empty;
         }
@@ -270,7 +270,7 @@ namespace Cube.Net.Rss.Reader
                 current.Selected = true;
                 Data.LastEntry.Value = current;
                 Select(current.Items.FirstOrDefault());
-                Settings.Shared.StartUri = current.Uri;
+                Setting.Shared.StartUri = current.Uri;
             }
         }
 
@@ -365,7 +365,7 @@ namespace Cube.Net.Rss.Reader
             if (disposing)
             {
                 _core?.Dispose();
-                Settings.Dispose();
+                Setting.Dispose();
             }
         }
 
@@ -393,32 +393,32 @@ namespace Cube.Net.Rss.Reader
 
             var count = dest.Update(src);
 
-            Data.Message.Value = Settings.Shared.EnableMonitorMessage ?
+            Data.Message.Value = Setting.Shared.EnableMonitorMessage ?
                                  src.ToMessage(count) :
                                  string.Empty;
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WhenSettingsChanged
+        /// WhenSettingChanged
         ///
         /// <summary>
         /// 設定内容変更時に実行されるハンドラです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenSettingsChanged(object s, PropertyChangedEventArgs e)
+        private void WhenSettingChanged(object s, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
-                case nameof(Settings.Shared.HighInterval):
-                    _core.Set(RssCheckFrequency.High, Settings.Shared.HighInterval);
+                case nameof(Setting.Shared.HighInterval):
+                    _core.Set(RssCheckFrequency.High, Setting.Shared.HighInterval);
                     break;
-                case nameof(Settings.Shared.LowInterval):
-                    _core.Set(RssCheckFrequency.Low, Settings.Shared.LowInterval);
+                case nameof(Setting.Shared.LowInterval):
+                    _core.Set(RssCheckFrequency.Low, Setting.Shared.LowInterval);
                     break;
-                case nameof(Settings.Shared.CheckUpdate):
-                    if (Settings.Shared.CheckUpdate) _checker.Start();
+                case nameof(Setting.Shared.CheckUpdate):
+                    if (Setting.Shared.CheckUpdate) _checker.Start();
                     else _checker.Stop();
                     break;
                 default:

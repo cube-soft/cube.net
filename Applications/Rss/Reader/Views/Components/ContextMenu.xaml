@@ -35,13 +35,13 @@
     </ContextMenu>
 
     <!-- **********************************************************************
-      SettingsMenu
+      SettingMenu
     *********************************************************************** -->
-    <ContextMenu x:Key="SettingsMenu">
+    <ContextMenu x:Key="SettingMenu">
         <MenuItem Command="{Binding Import}"      Header="インポート"/>
         <MenuItem Command="{Binding Export}"      Header="エクスポート"/>
         <Separator/>
-        <MenuItem Command="{Binding Settings}"    Header="設定"/>
+        <MenuItem Command="{Binding Setting}"     Header="設定"/>
         <Separator/>
         <MenuItem Command="{Binding Close}"       Header="終了"/>
     </ContextMenu>

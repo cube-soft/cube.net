@@ -47,15 +47,15 @@ namespace Cube.Net.Rss.Reader
 
     /* --------------------------------------------------------------------- */
     ///
-    /// ShowSettingsWindowAction
+    /// ShowSettingWindowAction
     ///
     /// <summary>
-    /// SettingsWindow を表示するための Behavior です。
+    /// SettingWindow を表示するための Behavior です。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ShowSettingsWindowBehavior :
-        ShowDialogBehavior<SettingsWindow, SettingsViewModel> { }
+    public class ShowSettingWindowBehavior :
+        ShowDialogBehavior<SettingWindow, SettingViewModel> { }
 
     /* --------------------------------------------------------------------- */
     ///

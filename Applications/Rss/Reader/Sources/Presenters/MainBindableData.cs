@@ -42,21 +42,21 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="root">ルートオブジェクト</param>
-        /// <param name="settings">設定用オブジェクト</param>
+        /// <param name="setting">設定用オブジェクト</param>
         /// <param name="dispatcher">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
         public MainBindableData(IEnumerable<IRssEntry> root,
-            SettingsFolder settings, IDispatcher dispatcher)
+            SettingFolder setting, IDispatcher dispatcher)
         {
             Root       = root;
-            Lock       = new Bindable<LockSettings>(settings.Lock, dispatcher);
-            Local      = new Bindable<LocalSettings>(settings.Value, dispatcher);
-            Shared     = new Bindable<SharedSettings>(settings.Shared, dispatcher);
-            Current    = new Bindable<IRssEntry>(dispatcher);
-            LastEntry  = new Bindable<RssEntry>(dispatcher);
-            Content    = new Bindable<object>(dispatcher);
-            Message    = new Bindable<string>(dispatcher);
+            Lock       = new BindableValue<LockSetting>(setting.Lock, dispatcher);
+            Local      = new BindableValue<LocalSetting>(setting.Value, dispatcher);
+            Shared     = new BindableValue<SharedSetting>(setting.Shared, dispatcher);
+            Current    = new BindableValue<IRssEntry>(dispatcher);
+            LastEntry  = new BindableValue<RssEntry>(dispatcher);
+            Content    = new BindableValue<object>(dispatcher);
+            Message    = new BindableValue<string>(dispatcher);
         }
 
         #endregion
@@ -84,7 +84,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<LockSettings> Lock { get; }
+        public BindableValue<LockSetting> Lock { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -95,7 +95,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<LocalSettings> Local { get; }
+        public BindableValue<LocalSetting> Local { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -106,7 +106,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<SharedSettings> Shared { get; }
+        public BindableValue<SharedSetting> Shared { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -117,7 +117,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<IRssEntry> Current { get; }
+        public BindableValue<IRssEntry> Current { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -135,7 +135,7 @@ namespace Cube.Net.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<RssEntry> LastEntry { get; }
+        public BindableValue<RssEntry> LastEntry { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -146,7 +146,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<object> Content { get; }
+        public BindableValue<object> Content { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -157,7 +157,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Bindable<string> Message { get; }
+        public BindableValue<string> Message { get; }
 
         #endregion
     }
