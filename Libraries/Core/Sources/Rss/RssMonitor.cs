@@ -56,7 +56,7 @@ namespace Cube.Net.Rss
             Timeout    = _http.Timeout;
             RetryCount = 2;
 
-            Timer.SubscribeAsync(WhenTick);
+            Timer.Subscribe(WhenTick);
         }
 
         #endregion

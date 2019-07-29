@@ -18,13 +18,11 @@
 using Cube.Mixin.Commands;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
-using Cube.Xui;
 using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -166,7 +164,7 @@ namespace Cube.Net.Rss.Tests
             vm.Url.Value = "error";
             vm.Subscribe<DialogMessage>(e =>
             {
-                e.Status = DialogStatus.Ok;
+                e.Value = DialogStatus.Ok;
                 cts.Cancel();
             });
             vm.Execute.Execute(null);

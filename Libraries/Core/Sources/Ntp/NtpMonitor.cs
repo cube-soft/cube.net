@@ -79,7 +79,7 @@ namespace Cube.Net.Ntp
             _server  = server;
             _port    = port;
 
-            Timer.SubscribeAsync(WhenTick);
+            Timer.Subscribe(WhenTick);
             SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
         }
 

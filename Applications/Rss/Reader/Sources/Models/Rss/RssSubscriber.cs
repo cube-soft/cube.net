@@ -50,14 +50,14 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="dispatcher">同期用オブジェクト</param>
+        /// <param name="invoker">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscriber(IDispatcher dispatcher)
+        public RssSubscriber(Invoker invoker)
         {
-            _context = dispatcher;
+            _context = invoker;
 
-            _tree = new BindableCollection<IRssEntry>(dispatcher);
+            _tree = new BindableCollection<IRssEntry>(invoker);
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();
@@ -795,7 +795,7 @@ namespace Cube.Net.Rss.Reader
         private readonly RssCacheDictionary _feeds = new RssCacheDictionary();
         private readonly RssMonitor[] _monitors = new RssMonitor[3];
         private readonly RssClient _client = new RssClient();
-        private readonly IDispatcher _context;
+        private readonly Invoker _context;
         private readonly System.Timers.Timer _autosaver = new System.Timers.Timer();
         #endregion
     }

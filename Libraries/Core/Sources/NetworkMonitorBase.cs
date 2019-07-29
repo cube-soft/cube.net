@@ -68,7 +68,7 @@ namespace Cube.Net
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public DateTime? LastPublished => Timer.LastPublished;
+        public DateTime? Last => Timer.Last;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -177,7 +177,7 @@ namespace Cube.Net
             var state = Timer.State;
             Timer.Stop();
             if (state == TimerState.Stop) return;
-            this.LogDebug(nameof(Stop), $"LastPublished:{Timer.LastPublished}");
+            this.LogDebug(nameof(Stop), $"{nameof(Timer.Last)}:{Timer.Last}");
         }
 
         /* ----------------------------------------------------------------- */

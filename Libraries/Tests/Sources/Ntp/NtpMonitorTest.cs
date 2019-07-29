@@ -70,7 +70,7 @@ namespace Cube.Net.Tests
                 mon.Stop(); // ignore
 
                 Assert.That(count, Is.AtLeast(1));
-                Assert.That(mon.LastPublished.Value, Is.GreaterThan(start));
+                Assert.That(mon.Last.Value, Is.GreaterThan(start));
             }
         }
 

@@ -44,7 +44,7 @@
 
     <i:Interaction.Behaviors>
         <xb:CloseBehavior />
-        <xb:UpdateSourcesBehavior />
+        <xb:ApplyBehavior />
     </i:Interaction.Behaviors>
 
     <Grid>
@@ -78,7 +78,7 @@
                 Grid.Column="0"/>
 
             <TextBox
-                Text="{Binding Entry.Value.Title,
+                Text="{Binding Value.Title,
                     Mode=TwoWay,
                     BindingGroupName=SourceBindings,
                     UpdateSourceTrigger=Explicit}"
@@ -94,7 +94,7 @@
 
             <ComboBox
                 ItemsSource="{Binding Frequencies}"
-                SelectedItem="{Binding Entry.Value.Frequency,
+                SelectedItem="{Binding Value.Frequency,
                     Mode=TwoWay,
                     BindingGroupName=SourceBindings,
                     UpdateSourceTrigger=Explicit}"
@@ -116,7 +116,7 @@
                 Grid.Column="0"/>
 
             <CheckBox
-                IsChecked="{Binding Entry.Value.SkipContent,
+                IsChecked="{Binding Value.SkipContent,
                     Mode=TwoWay,
                     BindingGroupName=SourceBindings,
                     UpdateSourceTrigger=Explicit}"
@@ -133,7 +133,7 @@
                 Grid.Column="0"/>
 
             <TextBox
-                Text="{Binding Entry.Value.Link, Converter={xc:ValueToString}}"
+                Text="{Binding Value.Link}"
                 Style="{StaticResource CopyableSummaryStyle}"
                 Grid.Row="4"
                 Grid.Column="1"/>
@@ -145,7 +145,7 @@
                 Grid.Column="0"/>
 
             <TextBox
-                Text="{Binding Entry.Value.Uri, Converter={xc:ValueToString}}"
+                Text="{Binding Value.Uri}"
                 Style="{StaticResource CopyableSummaryStyle}"
                 Grid.Row="5"
                 Grid.Column="1"/>
@@ -157,7 +157,7 @@
                 Grid.Column="0"/>
 
             <TextBox
-                Text="{Binding Entry.Value.LastPublished, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                Text="{Binding Value.LastPublished, StringFormat=yyyy/MM/dd HH:mm:ss}"
                 ToolTip="最新記事が投稿された日時を表します"
                 Style="{StaticResource CopyableSummaryStyle}"
                 Grid.Row="6"
@@ -170,7 +170,7 @@
                 Grid.Column="0"/>
 
             <TextBox
-                Text="{Binding Entry.Value.LastChecked, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                Text="{Binding Value.LastChecked, StringFormat=yyyy/MM/dd HH:mm:ss}"
                 ToolTip="CubeRSS Reader が最後にチェックした日時を表します"
                 Style="{StaticResource CopyableSummaryStyle}"
                 Grid.Row="7"

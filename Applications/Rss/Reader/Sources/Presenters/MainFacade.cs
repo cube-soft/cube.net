@@ -47,10 +47,10 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="src">設定用オブジェクト</param>
-        /// <param name="dispatcher">同期用オブジェクト</param>
+        /// <param name="invoker">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MainFacade(SettingFolder src, IDispatcher dispatcher)
+        public MainFacade(SettingFolder src, Invoker invoker)
         {
             src.TryLoad();
             this.LogInfo($"Owner:{src.Lock.UserName}@{src.Lock.MachineName} ({src.Lock.Sid})");
@@ -63,7 +63,7 @@ namespace Cube.Net.Rss.Reader
             var feeds = Setting.IO.Combine(Setting.DataDirectory, LocalSetting.FeedFileName);
             var cache = Setting.IO.Combine(Setting.DataDirectory, LocalSetting.CacheDirectoryName);
 
-            _core = new RssSubscriber(dispatcher)
+            _core = new RssSubscriber(invoker)
             {
                 IO             = Setting.IO,
                 FileName       = feeds,
@@ -77,7 +77,7 @@ namespace Cube.Net.Rss.Reader
             _core.Received += WhenReceived;
 
             _checker = new UpdateChecker(Setting);
-            Data = new MainBindableData(_core, Setting, dispatcher);
+            Data = new MainBindableData(_core, Setting, invoker);
         }
 
         #endregion

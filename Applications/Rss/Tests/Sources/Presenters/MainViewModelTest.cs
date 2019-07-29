@@ -23,6 +23,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -53,7 +54,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_Default()
         {
             var s  = new SettingFolder(Assembly.GetExecutingAssembly()) { AutoSave = false };
-            var vm = new MainViewModel(s);
+            var vm = new MainViewModel(s, new SynchronizationContext());
 
             Assert.That(vm.Property.CanExecute(), Is.False);
             Assert.That(vm.Remove.CanExecute(),   Is.False);
@@ -262,11 +263,11 @@ namespace Cube.Net.Rss.Tests
             Assert.That(src.Title,                      Is.EqualTo("The GitHub Blog"));
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-            vm.Subscribe<DialogMessage>(e => DialogMessageCommand(e, DialogStatus.Ok));
+            vm.Subscribe<DialogMessage>(e => DialogMessageCommand(e, DialogStatus.Yes));
             vm.Remove.Execute(null);
 
-            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(11));
-            Assert.That(IO.Exists(dest),                Is.False);
+            Assert.That(Wait.For(() => vm.Data.Root.Flatten().Count() == 11), "Timeout");
+            Assert.That(IO.Exists(dest), Is.False);
         });
 
         /* ----------------------------------------------------------------- */
@@ -291,11 +292,11 @@ namespace Cube.Net.Rss.Tests
             Assert.That(IO.Exists(dest),                Is.True);
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
-            vm.Subscribe<DialogMessage>(e => DialogMessageCommand(e, DialogStatus.Ok));
+            vm.Subscribe<DialogMessage>(e => DialogMessageCommand(e, DialogStatus.Yes));
             vm.Remove.Execute(null);
 
-            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(10));
-            Assert.That(IO.Exists(dest),                Is.False);
+            Assert.That(Wait.For(() => vm.Data.Root.Flatten().Count() == 10), "Timeout");
+            Assert.That(IO.Exists(dest), Is.False);
         });
 
         /* ----------------------------------------------------------------- */
@@ -411,7 +412,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_NewCategory_Empty()
         {
             var s  = new SettingFolder(Assembly.GetExecutingAssembly()) { AutoSave = false };
-            var vm = new MainViewModel(s);
+            var vm = new MainViewModel(s, new SynchronizationContext());
             vm.NewCategory.Execute(null);
             var dest = vm.Data.Current.Value as RssCategory;
 
@@ -480,7 +481,7 @@ namespace Cube.Net.Rss.Tests
             vm.Subscribe<OpenFileMessage>(e => ImportCommand(e, GetSource("Sample.opml"), done));
             vm.Import.Execute(null);
 
-            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(expected));
+            Assert.That(Wait.For(() => vm.Data.Root.Flatten().Count() == expected), "Timeout");
         });
 
         /* ----------------------------------------------------------------- */
@@ -500,7 +501,7 @@ namespace Cube.Net.Rss.Tests
             vm.Subscribe<SaveFileMessage>(e => ExportCommand(e, dest, done));
             vm.Export.Execute(null);
 
-            Assert.That(IO.Exists(dest), Is.EqualTo(expected));
+            Assert.That(Wait.For(() => IO.Exists(dest) == expected), "Timeout");
         });
 
         /* ----------------------------------------------------------------- */
@@ -526,7 +527,7 @@ namespace Cube.Net.Rss.Tests
             var n   = 0;
 
             using (var fw = new System.IO.FileSystemWatcher())
-            using (var vm = new MainViewModel(new SettingFolder(asm, RootDirectory(), IO)))
+            using (var vm = new MainViewModel(new SettingFolder(asm, RootDirectory(), IO), new SynchronizationContext()))
             {
                 fw.Path = RootDirectory();
                 fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
@@ -611,10 +612,10 @@ namespace Cube.Net.Rss.Tests
         /* ----------------------------------------------------------------- */
         private void DialogMessageCommand(DialogMessage e, DialogStatus status)
         {
-            Assert.That(e.Value, Is.Not.Null.And.Not.Empty);
+            Assert.That(e.Text,  Is.Not.Null.And.Not.Empty);
             Assert.That(e.Title, Is.Not.Null.And.Not.Empty);
 
-            e.Status = status;
+            e.Value = status;
         }
 
         #endregion

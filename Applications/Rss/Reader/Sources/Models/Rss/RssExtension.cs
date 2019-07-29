@@ -75,20 +75,20 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="src">ファイルのパス</param>
-        /// <param name="dispatcher">同期用コンテキスト</param>
+        /// <param name="invoker">同期用コンテキスト</param>
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /// <returns>RSS エントリ情報</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static IEnumerable<RssCategory> Load(string src,
-            IDispatcher dispatcher, IO io) =>
+            Invoker invoker, IO io) =>
             io.Exists(src) ?
             io.Load(
                 src,
                 ss => Format.Json
                     .Deserialize<List<RssCategory.Json>>(ss)
-                    .Select(e => e.Convert(dispatcher))
+                    .Select(e => e.Convert(invoker))
             ) :
             new RssCategory[0];
 

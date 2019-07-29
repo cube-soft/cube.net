@@ -15,9 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xui;
 using System;
-using System.Windows;
 
 namespace Cube.Net.Rss.Reader
 {
@@ -49,11 +47,11 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static DialogMessage Error(Exception err, string message) => new DialogMessage
         {
-            Value   = $"{message} ({err.GetType().Name})",
+            Text    = $"{message} ({err.GetType().Name})",
             Title   = Properties.Resources.TitleError,
             Buttons = DialogButtons.Ok,
             Icon    = DialogIcon.Error,
-            Status  = DialogStatus.Ok,
+            Value   = DialogStatus.Ok,
         };
 
         /* ----------------------------------------------------------------- */
@@ -71,7 +69,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static DialogMessage RemoveWarning(string name) => new DialogMessage
         {
-            Value   = string.Format(Properties.Resources.MessageRemove, name),
+            Text    = string.Format(Properties.Resources.MessageRemove, name),
             Title   = Properties.Resources.TitleInformation,
             Buttons = DialogButtons.YesNo,
             Icon    = DialogIcon.Information,
@@ -92,7 +90,7 @@ namespace Cube.Net.Rss.Reader
         {
             CheckPathExists = true,
             Multiselect     = false,
-            Title           = Properties.Resources.MessageImport,
+            Text            = Properties.Resources.MessageImport,
             Filter          = Properties.Resources.FilterOpml,
         };
 
@@ -111,7 +109,7 @@ namespace Cube.Net.Rss.Reader
         {
             CheckPathExists = false,
             OverwritePrompt = true,
-            Title           = Properties.Resources.MessageExport,
+            Text            = Properties.Resources.MessageExport,
             Filter          = Properties.Resources.FilterOpml,
         };
 
@@ -132,7 +130,7 @@ namespace Cube.Net.Rss.Reader
         {
             Value     = src,
             NewButton = true,
-            Title     = Properties.Resources.MessageDataDirectory,
+            Text      = Properties.Resources.MessageDataDirectory,
         };
     }
 }

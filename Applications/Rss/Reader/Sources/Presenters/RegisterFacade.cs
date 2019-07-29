@@ -15,54 +15,70 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xui;
-using System;
-using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
 
 namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// CommonViewModel
+    /// RegisterFacade
     ///
     /// <summary>
-    /// ViewModel の既定となるクラスです。一般的なコマンドを実装します。
+    /// Provides functionality to communicate with the RegisterViewModel
+    /// and other model classes.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class CommonViewModel : PresentableBase
+    public sealed class RegisterFacade : ObservableBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// MainViewModel
+        /// RegisterFacade
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RegisterFacade class.
         /// </summary>
         ///
-        /// <param name="aggregator">Message aggregator.</param>
+        /// <param name="invoker">Invoker object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected CommonViewModel(Aggregator aggregator) : base(aggregator) { }
+        public RegisterFacade(Invoker invoker) : base(invoker) { }
 
         #endregion
 
-        #region Commands
+        #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Close
+        /// Url
         ///
         /// <summary>
-        /// 画面を閉じるコマンドです。
+        /// Gets or sets the URL string to register.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Close => Get(() => new DelegateCommand(() => Send<CloseMessage>()));
+        public string Url
+        {
+            get => GetProperty<string>();
+            set => SetProperty(value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Busy
+        ///
+        /// <summary>
+        /// Gets or sets a value indicating whether any operations are
+        /// in progress.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool Busy
+        {
+            get => GetProperty<bool>();
+            set => SetProperty(value);
+        }
 
         #endregion
 
@@ -85,41 +101,6 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing) { }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// TrackSync
-        ///
-        /// <summary>
-        /// 指定された処理を実行し、例外が発生した場合には DialogMessage を
-        /// 送信します。
-        /// </summary>
-        ///
-        /// <param name="action">実行内容</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected void TrackSync(Action action) => Track(action, DialogMessage.Create, true);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Get
-        ///
-        /// <summary>
-        /// Gets a ICommand object of the specified property name.
-        /// </summary>
-        ///
-        /// <param name="creator">Function to create an object.</param>
-        /// <param name="name">Property name.</param>
-        ///
-        /// <returns>ICommand object.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected ICommand Get(Func<ICommand> creator, [CallerMemberName] string name = null) =>
-            _commands.GetOrAdd(name, e => creator());
-
-        #endregion
-
-        #region Fields
-        private readonly ConcurrentDictionary<string, ICommand> _commands = new ConcurrentDictionary<string, ICommand>();
         #endregion
     }
 }

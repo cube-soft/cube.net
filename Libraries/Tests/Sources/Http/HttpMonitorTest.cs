@@ -18,6 +18,7 @@
 using Cube.Mixin.Assembly;
 using Cube.Net.Http;
 using Cube.Tests;
+using Microsoft.Win32;
 using NUnit.Framework;
 using System;
 using System.Reflection;
@@ -70,8 +71,8 @@ namespace Cube.Net.Tests
                 mon.Uri = new Uri("http://www.example.com/");
 
                 var cts = new CancellationTokenSource();
-                mon.Subscribe((u, x) => throw new ArgumentException("Test"));
-                mon.Subscribe((u, x) =>
+                _ = mon.Subscribe((u, x) => throw new ArgumentException("Test"));
+                _ = mon.Subscribe((u, x) =>
                 {
                     count++;
                     if (count >= 3) cts.Cancel();
@@ -83,7 +84,7 @@ namespace Cube.Net.Tests
                 mon.Stop();
                 mon.Stop(); // ignore
 
-                Assert.That(mon.LastPublished.Value, Is.GreaterThan(start));
+                Assert.That(mon.Last.Value, Is.GreaterThan(start));
                 Assert.That(count, Is.AtLeast(3));
             }
         }
@@ -132,7 +133,7 @@ namespace Cube.Net.Tests
                 mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
                 mon.RetryCount = 0;
-                mon.Subscribe((_, __) => count++);
+                _ = mon.Subscribe((e, n) => count++);
 
                 mon.Start();
                 Task.Delay(mon.Timeout).Wait();
@@ -160,7 +161,7 @@ namespace Cube.Net.Tests
                 mon.Timeout = TimeSpan.FromMilliseconds(200);
                 mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.example.com/");
-                mon.Subscribe((_, __) => count++);
+                _ = mon.Subscribe((e, n) => count++);
 
                 mon.Start();
                 Task.Delay(mon.Timeout).Wait();
@@ -191,7 +192,7 @@ namespace Cube.Net.Tests
 
                 mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Uri = new Uri("http://www.example.com/");
-                mon.Subscribe((z, x) => { count++; cts.Cancel(); });
+                _ = mon.Subscribe((e, n) => { count++; cts.Cancel(); });
 
                 mon.Start(mon.Interval);
                 power.Mode = PowerModes.Suspend;
@@ -222,7 +223,7 @@ namespace Cube.Net.Tests
 
                 mon.Interval = TimeSpan.FromMinutes(1);
                 mon.Uri = new Uri("http://www.example.com/");
-                mon.Subscribe((u, v) => { ++count; cts.Cancel(); });
+                _ = mon.Subscribe((e, n) => { ++count; cts.Cancel(); });
 
                 mon.Reset();
                 mon.Start(mon.Interval);

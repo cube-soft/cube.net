@@ -43,20 +43,20 @@ namespace Cube.Net.Rss.Reader
         ///
         /// <param name="root">ルートオブジェクト</param>
         /// <param name="setting">設定用オブジェクト</param>
-        /// <param name="dispatcher">同期用コンテキスト</param>
+        /// <param name="invoker">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
         public MainBindableData(IEnumerable<IRssEntry> root,
-            SettingFolder setting, IDispatcher dispatcher)
+            SettingFolder setting, Invoker invoker)
         {
             Root       = root;
-            Lock       = new BindableValue<LockSetting>(setting.Lock, dispatcher);
-            Local      = new BindableValue<LocalSetting>(setting.Value, dispatcher);
-            Shared     = new BindableValue<SharedSetting>(setting.Shared, dispatcher);
-            Current    = new BindableValue<IRssEntry>(dispatcher);
-            LastEntry  = new BindableValue<RssEntry>(dispatcher);
-            Content    = new BindableValue<object>(dispatcher);
-            Message    = new BindableValue<string>(dispatcher);
+            Lock       = new BindableValue<LockSetting>(setting.Lock, invoker);
+            Local      = new BindableValue<LocalSetting>(setting.Value, invoker);
+            Shared     = new BindableValue<SharedSetting>(setting.Shared, invoker);
+            Current    = new BindableValue<IRssEntry>(invoker);
+            LastEntry  = new BindableValue<RssEntry>(invoker);
+            Content    = new BindableValue<object>(invoker);
+            Message    = new BindableValue<string>(invoker);
         }
 
         #endregion
