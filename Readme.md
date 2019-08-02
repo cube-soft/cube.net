@@ -8,8 +8,8 @@ Cube.Net
 [![Codecov](https://codecov.io/gh/cube-soft/Cube.Net/branch/master/graph/badge.svg)](https://codecov.io/gh/cube-soft/Cube.Net)
 
 Cube.Net is a network library.
-The repository also has some implemented applications based on the Cube.Net project as follows.
-Libraries and applications are available for .NET Framework 3.5, 4.5 or higher.
+The repository also has some implemented applications based on the Cube.Net project.
+Libraries and applications are available for .NET Framework 3.5, 4.5, or later.
 
 ### CubeRSS Reader
 
@@ -24,12 +24,14 @@ We currently show menus and other messages only in Japanese, and support for oth
 
 Dependencies of [Libraries](https://github.com/cube-soft/Cube.Net/blob/master/Libraries) are as follows. [Applications](https://github.com/cube-soft/Cube.Net/blob/master/Applications) may use some other third-party libraries.
 
+* [Cube.Core](https://github.com/cube-soft/Cube.Core)
+* [Cube.FileSystem](https://github.com/cube-soft/Cube.FileSystem)
 * [SgmlReader](https://github.com/MindTouch/SGMLReader)
 
 ## Contributing
 
 1. Fork [Cube.Net](https://github.com/cube-soft/Cube.Net/fork) repository.
-2. Create a feature branch from the master or stable branch (e.g. git checkout -b my-new-feature origin/master). Note that the master branch may refer some pre-released NuGet packages. Try the [rake clean](https://github.com/cube-soft/Cube.Net/blob/master/Rakefile) command when build errors occur.
+2. Create a feature branch from the master or stable branch (e.g. git checkout -b my-new-feature origin/master). Note that the master branch may refer some pre-released NuGet packages. Try the [rake clobber](https://github.com/cube-soft/Cube.Net/blob/master/Rakefile) command when build errors occur.
 3. Commit your changes.
 4. Rebase your local changes against the master or stable branch.
 5. Run test suite with the [NUnit](https://nunit.org/) console or the Visual Studio (NUnit 3 test adapter) and confirm that it passes.
