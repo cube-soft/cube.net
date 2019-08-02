@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <version>1.16.0</version>
+        <version>1.17.0</version>
         <id>Cube.Net</id>
         <title>Cube.Net</title>
         <authors>clown,cube-soft</authors>
         <owners>clown,cube-soft</owners>
-        <description>Network library for CubeSoft libraries and applications.</description>
+        <description>Network library available for .NET Framework 3.5, 4.5, or later.</description>
         <copyright>Copyright © 2010 CubeSoft, Inc.</copyright>
         <tags>Cube Net HTTP NTP RSS Atom</tags>
         <license type="expression">Apache-2.0</license>
@@ -14,7 +14,7 @@
         <iconUrl>https://github.com/cube-soft/Cube.Net/blob/master/Icon.png?raw=true</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <dependencies>
-            <dependency id="Cube.FileSystem" version="1.16.0" />
+            <dependency id="Cube.FileSystem" version="1.17.0" />
             <dependency id="SgmlReader" version="1.8.11" />
         </dependencies>
     </metadata>
