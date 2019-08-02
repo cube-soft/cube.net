@@ -86,7 +86,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_NotFound()
         {
-            using (var src = new RssSubscriber(Dispatcher.Vanilla))
+            using (var src = new RssSubscriber(Invoker.Vanilla))
             {
                 src.FileName = GetSource("NotFound.json");
                 src.Load();
@@ -207,7 +207,7 @@ namespace Cube.Net.Rss.Tests
         private RssSubscriber Create([CallerMemberName] string name = null)
         {
             Copy(name);
-            return new RssSubscriber(Dispatcher.Vanilla) { FileName = FeedsPath(name) };
+            return new RssSubscriber(Invoker.Vanilla) { FileName = FeedsPath(name) };
         }
 
         #endregion

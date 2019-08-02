@@ -48,13 +48,13 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="dispatcher">同期用コンテキスト</param>
+        /// <param name="invoker">同期用コンテキスト</param>
         /// <param name="io">入出力用のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssOpml(IDispatcher dispatcher, IO io)
+        public RssOpml(Invoker invoker, IO io)
         {
-            Dispatcher = dispatcher;
+            Invoker = invoker;
             IO = io;
         }
 
@@ -64,14 +64,14 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Dispatcher
+        /// Invoker
         ///
         /// <summary>
         /// 同期用コンテキストを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IDispatcher Dispatcher { get; }
+        public Invoker Invoker { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -191,7 +191,7 @@ namespace Cube.Net.Rss.Reader
             var uri = GetUri(src, "xmlUrl", null);
             return uri == null ?
                    default(IRssEntry) :
-                   new RssEntry(Dispatcher)
+                   new RssEntry(Invoker)
                    {
                        Parent = parent,
                        Uri    = uri,
@@ -212,7 +212,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private IRssEntry ToCategory(XElement src, IRssEntry parent, IDictionary<Uri, RssFeed> filter)
         {
-            var dest = new RssCategory(Dispatcher)
+            var dest = new RssCategory(Invoker)
             {
                 Parent = parent,
                 Title  = GetTitle(src, Properties.Resources.MessageNewCategory),

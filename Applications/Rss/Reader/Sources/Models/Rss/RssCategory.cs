@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Mixin.Collections;
-using Cube.Xui;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -46,13 +45,13 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="dispatcher">同期用コンテキスト</param>
+        /// <param name="invoker">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssCategory(IDispatcher dispatcher)
+        public RssCategory(Invoker invoker)
         {
-            Dispatcher = dispatcher;
-            Children   = new BindableCollection<IRssEntry>(dispatcher);
+            Invoker = invoker;
+            Children   = new BindableCollection<IRssEntry>(invoker);
             Children.CollectionChanged += WhenChildrenChanged;
         }
 
@@ -180,6 +179,20 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
+        /// CreateEntry
+        ///
+        /// <summary>
+        /// Creates a new instance of the RssEntry class that the Parent
+        /// property is set to the object.
+        /// </summary>
+        ///
+        /// <returns>New RssEntry object.</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssEntry CreateEntry() => new RssEntry(Invoker) { Parent = this };
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Dispose
         ///
         /// <summary>
@@ -258,11 +271,11 @@ namespace Cube.Net.Rss.Reader
                 Categories = src.Categories?.Select(e => new Json(e));
             }
 
-            public  RssCategory Convert(IDispatcher dispatcher) => Convert(null, dispatcher);
-            public  RssCategory Convert(RssCategory src) => Convert(src, src.Dispatcher);
-            private RssCategory Convert(RssCategory src, IDispatcher dispatcher)
+            public  RssCategory Convert(Invoker invoker) => Convert(null, invoker);
+            public  RssCategory Convert(RssCategory src) => Convert(src, src.Invoker);
+            private RssCategory Convert(RssCategory src, Invoker invoker)
             {
-                var dest = new RssCategory(dispatcher)
+                var dest = new RssCategory(invoker)
                 {
                     Title  = Title,
                     Parent = src,

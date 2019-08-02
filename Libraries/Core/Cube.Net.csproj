@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Version>1.16.0</Version>
+        <Version>1.17.0</Version>
         <Authors>clown;cube-soft</Authors>
         <Company>CubeSoft</Company>
-        <Description>Network library for CubeSoft libraries and applications.</Description>
+        <Description>Network library available for .NET Framework 3.5, 4.5, or later.</Description>
         <Copyright>Copyright © 2010 CubeSoft, Inc.</Copyright>
         <PackageTags>Cube;Net;HTTP;NTP;RSS;Atom</PackageTags>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -23,7 +23,7 @@
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Cube.FileSystem" Version="1.16.0" />
+        <PackageReference Include="Cube.FileSystem" Version="1.17.0" />
         <PackageReference Include="SgmlReader" Version="1.8.11" />
         <PackageReference Include="Rackspace.Threading" Version="2.0.0-alpha001" />
         <Reference Include="System.Net" />

@@ -76,7 +76,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public HttpMonitor(ContentHandler<TValue> handler) : base(handler)
         {
-            Timer.SubscribeAsync(WhenTick);
+            Timer.Subscribe(WhenTick);
         }
 
         #endregion

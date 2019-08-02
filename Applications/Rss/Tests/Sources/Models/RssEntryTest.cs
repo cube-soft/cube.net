@@ -48,8 +48,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Entry_Expanded()
         {
-            var dest = new RssEntry(GetDispatcher());
-            Assert.That(dest.Dispatcher, Is.Not.Null);
+            var dest = new RssEntry(GetInvoker());
             Assert.That(dest.Expanded,   Is.False);
             dest.Expanded = true;
             Assert.That(dest.Expanded, Is.False);
@@ -68,7 +67,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Entry_Update_Error()
         {
-            var dest = new RssEntry(GetDispatcher())
+            var dest = new RssEntry(GetInvoker())
             {
                 Uri       = new Uri("https://blog.cube-soft.jp/?feed=rss2"),
                 Link      = new Uri("https://blog.cube-soft.jp/"),
@@ -102,7 +101,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Category_Count()
         {
-            var src = new RssCategory(GetDispatcher());
+            var src = new RssCategory(GetInvoker());
             Assert.That(src.Count, Is.EqualTo(0));
         }
 
@@ -112,14 +111,14 @@ namespace Cube.Net.Rss.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetDispatcher
+        /// GetInvoker
         ///
         /// <summary>
-        /// Gets a dispatcher object.
+        /// Gets a invoker object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private IDispatcher GetDispatcher() => new Dispatcher(new SynchronizationContext(), false);
+        private Invoker GetInvoker() => new ContextInvoker(new SynchronizationContext(), false);
 
         #endregion
     }

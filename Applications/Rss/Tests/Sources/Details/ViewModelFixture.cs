@@ -54,7 +54,7 @@ namespace Cube.Net.Rss.Tests
 
             var asm     = Assembly.GetExecutingAssembly();
             var setting = new SettingFolder(asm, RootDirectory(name), IO);
-            var dest    = new MainViewModel(setting);
+            var dest    = new MainViewModel(setting, new SynchronizationContext());
             var msg     = dest.Data.Message;
 
             setting.Shared.InitialDelay = TimeSpan.FromMinutes(1);

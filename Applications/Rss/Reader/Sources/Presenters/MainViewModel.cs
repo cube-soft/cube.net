@@ -20,6 +20,7 @@ using Cube.Xui;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Input;
 
 namespace Cube.Net.Rss.Reader
@@ -33,7 +34,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public sealed class MainViewModel : CommonViewModel
+    public sealed class MainViewModel : GenericViewModel<MainFacade>
     {
         #region Constructors
 
@@ -46,8 +47,9 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainViewModel() : this(new SettingFolder(
-            Assembly.GetExecutingAssembly()) { Dispatcher = new Dispatcher(false) }
+        public MainViewModel() : this(
+            new SettingFolder(Assembly.GetExecutingAssembly()),
+            SynchronizationContext.Current
         ) { }
 
         /* ----------------------------------------------------------------- */
@@ -59,10 +61,12 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainViewModel(SettingFolder Setting) : base(new Aggregator())
-        {
-            Model      = new MainFacade(Setting, Setting.Dispatcher);
-            DropTarget = new RssDropTarget((s, d, i) => Model.Move(s, d, i))
+        public MainViewModel(SettingFolder settings, SynchronizationContext context) : base(
+            new MainFacade(settings, new ContextInvoker(context, false)),
+            new Aggregator(),
+            context
+        ) {
+            DropTarget = new RssDropTarget((s, d, i) => Facade.Move(s, d, i))
             {
                 IsReadOnly = Data.Lock.Value.IsReadOnly
             };
@@ -81,7 +85,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MainBindableData Data => Model.Data;
+        public MainBindableData Data => Facade.Data;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -93,17 +97,6 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public RssDropTarget DropTarget { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Model
-        ///
-        /// <summary>
-        /// Model オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private MainFacade Model { get; }
 
         #endregion
 
@@ -118,7 +111,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Setup => Get(() => new DelegateCommand(() => Track(() => Model.Setup())));
+        public ICommand Setup => Get(() => new DelegateCommand(() => Track(Facade.Setup)));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -131,8 +124,9 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Property => Get(() => new DelegateCommand(
             () => Send(new PropertyViewModel(
+                e => Sync(() => Facade.Reschedule(e)),
                 Data.Current.Value as RssEntry,
-                e => TrackSync(() => Model.Reschedule(e))
+                Context
             )),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value is RssEntry
         ).Associate(Data.Current).Associate(Data.Lock));
@@ -147,7 +141,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Setting => Get(() => new DelegateCommand(() =>
-            Send(new SettingViewModel(Model.Setting))
+            Send(new SettingViewModel(Facade.Setting, Context))
         ));
 
         /* ----------------------------------------------------------------- */
@@ -160,12 +154,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Import => Get(() => new DelegateCommand(
-            () =>
-            {
-                var e = MessageFactory.Import();
-                Send(e);
-                if (!e.Cancel) TrackSync(() => Model.Import(e.Value.First()));
-            },
+            () => Send(MessageFactory.Import(), e => Facade.Import(e.First())),
             () => !Data.Lock.Value.IsReadOnly
         ).Associate(Data.Lock));
 
@@ -179,12 +168,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Export =>Get(() => new DelegateCommand(
-            () =>
-            {
-                var e = MessageFactory.Export();
-                Send(e);
-                if (!e.Cancel) TrackSync(() => Model.Export(e.Value));
-            }
+            () => Send(MessageFactory.Export(), e => Facade.Export(e))
         ));
 
         /* ----------------------------------------------------------------- */
@@ -197,7 +181,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand NewEntry => Get(() => new DelegateCommand(
-            () => Send(new RegisterViewModel(e => Model.NewEntry(e))),
+            () => Send(new RegisterViewModel(e => Facade.NewEntry(e), Context)),
             () => !Data.Lock.Value.IsReadOnly
         ).Associate(Data.Lock));
 
@@ -211,7 +195,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand NewCategory => Get(() => new DelegateCommand(
-            () => TrackSync(() => Model.NewCategory()),
+            () => Sync(Facade.NewCategory),
             () => !Data.Lock.Value.IsReadOnly
         ).Associate(Data.Lock));
 
@@ -225,12 +209,9 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Remove => Get(() => new DelegateCommand(
-            () =>
-            {
-                var e = MessageFactory.RemoveWarning(Data.Current.Value.Title);
-                Send(e);
-                if (e.Status == DialogStatus.Ok) TrackSync(() => Model.Remove());
-            },
+            () => Send(MessageFactory.RemoveWarning(Data.Current.Value.Title),
+                e => Facade.Remove(),
+                e => e == DialogStatus.Yes),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
         ).Associate(Data.Current).Associate(Data.Lock));
 
@@ -244,7 +225,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Rename => Get(() => new DelegateCommand(
-            () => TrackSync(() => Model.Rename()),
+            () => Sync(Facade.Rename),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
         ).Associate(Data.Current).Associate(Data.Lock));
 
@@ -258,7 +239,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Read => Get(() => new DelegateCommand(
-            () => TrackSync(() => Model.Read()),
+            () => Sync(Facade.Read),
             () => Data.Current.Value != null
         ).Associate(Data.Current));
 
@@ -272,7 +253,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Update => Get(() => new DelegateCommand(
-            () => TrackSync(() => Model.Update()),
+            () => Sync(Facade.Update),
             () => Data.Current.Value != null
         ).Associate(Data.Current));
 
@@ -286,7 +267,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Reset => Get(() => new DelegateCommand(
-            () => TrackSync(() => Model.Reset()),
+            () => Sync(Facade.Reset),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
         ).Associate(Data.Current).Associate(Data.Lock));
 
@@ -300,9 +281,9 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Select => Get(() => new DelegateCommand<object>(
-            e => TrackSync(() =>
+            e => Sync(() =>
             {
-                Model.Select(e as IRssEntry);
+                Facade.Select(e as IRssEntry);
                 if (e is RssEntry) Send<ScrollToTopMessage>();
             }),
             e => e is IRssEntry
@@ -318,7 +299,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand SelectArticle => Get(() => new DelegateCommand<object>(
-            e => TrackSync(() => Model.Select(e as RssItem)),
+            e => Sync(() => Facade.Select(e as RssItem)),
             e => e is RssItem
         ));
 
@@ -356,7 +337,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Stop => Get(() => new DelegateCommand(() => TrackSync(() => Model.Stop())));
+        public ICommand Stop => Get(() => new DelegateCommand(() => Sync(Facade.Stop)));
 
         #endregion
 
@@ -373,7 +354,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
         {
-            if (disposing) Model.Dispose();
+            if (disposing) Facade.Dispose();
             base.Dispose(disposing);
         }
 

@@ -56,7 +56,7 @@ namespace Cube.Net.Rss.Reader
             Setting  = src;
 
             _timer.Interval = TimeSpan.FromDays(1);
-            _timer.Subscribe(WhenTick);
+            _timer.Subscribe(Synchronous.AsTask(WhenTick));
 
             if (Setting.Shared.CheckUpdate) Start();
         }

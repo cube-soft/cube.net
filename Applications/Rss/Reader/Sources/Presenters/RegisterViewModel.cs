@@ -16,8 +16,10 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Mixin.Observing;
+using Cube.Mixin.String;
 using Cube.Xui;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -32,7 +34,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RegisterViewModel : CommonViewModel
+    public class RegisterViewModel : GenericViewModel<RegisterFacade>
     {
         #region Constructors
 
@@ -45,9 +47,24 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RegisterViewModel(Func<string, Task> callback) : base(new Aggregator())
-        {
-            _callback = callback;
+        public RegisterViewModel(Func<string, Task> callback, SynchronizationContext context) : base(
+            new RegisterFacade(new ContextInvoker(context, false)),
+            new Aggregator(),
+            context
+        ) {
+            Execute = Get(() => new DelegateCommand(
+                async () => {
+                    try
+                    {
+                        Facade.Busy = true;
+                        await callback?.Invoke(Url.Value);
+                        Close.Execute(null);
+                    }
+                    catch (Exception err) { Send(MessageFactory.Error(err, Properties.Resources.ErrorRegister)); }
+                    finally { Facade.Busy = false; }
+                },
+                () => Facade.Url.HasValue() && !Facade.Busy
+            ).Associate(Facade, nameof(Facade.Busy), nameof(Facade.Url)), nameof(Execute));
         }
 
         #endregion
@@ -63,7 +80,11 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableValue<bool> Busy { get; } = new BindableValue<bool>(new Dispatcher(false));
+        public IElement<bool> Busy => Get(() => new BindableElement<bool>(
+            () => string.Empty,
+            () => Facade.Busy,
+            GetInvoker(false)
+        ));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -74,7 +95,12 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableValue<string> Url { get; } = new BindableValue<string>(new Dispatcher(false));
+        public IElement<string> Url => Get(() => new BindableElement<string>(
+           () => string.Empty,
+           () => Facade.Url,
+           e  => Facade.Url = e,
+           GetInvoker(false)
+        ));
 
         #endregion
 
@@ -89,25 +115,8 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Execute => Get(() => new DelegateCommand(
-            async () =>
-            {
-                try
-                {
-                    Busy.Value = true;
-                    await _callback?.Invoke(Url.Value);
-                    Close.Execute(null);
-                }
-                catch (Exception err) { Send(MessageFactory.Error(err, Properties.Resources.ErrorRegister)); }
-                finally { Busy.Value = false; }
-            },
-            () => !string.IsNullOrEmpty(Url.Value) && !Busy.Value
-        ).Associate(Url).Associate(Busy));
+        public ICommand Execute { get; }
 
-        #endregion
-
-        #region Fields
-        private readonly Func<string, Task> _callback;
         #endregion
     }
 }

@@ -20,6 +20,7 @@ using Cube.Xui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Input;
 
 namespace Cube.Net.Rss.Reader
@@ -33,7 +34,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class PropertyViewModel : CommonViewModel
+    public class PropertyViewModel : GenericViewModel<RssEntry>
     {
         #region Constructors
 
@@ -47,14 +48,20 @@ namespace Cube.Net.Rss.Reader
         ///
         /// <param name="entry">RssEntry オブジェクト</param>
         /// <param name="callback">コールバック関数</param>
+        /// <param name="context">Synchronization context.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public PropertyViewModel(RssEntry entry, Action<RssEntry> callback) :
-            base(new Aggregator())
+        public PropertyViewModel(Action<RssEntry> callback,
+            RssEntry entry,
+            SynchronizationContext context
+        ) : base(entry, new Aggregator(), context)
         {
-            System.Diagnostics.Debug.Assert(entry != null);
-            Entry = new BindableValue<RssEntry>(entry, entry.Dispatcher);
-            _callback = callback;
+            Apply = Get(() => new DelegateCommand(() =>
+            {
+                Send<ApplyMessage>();
+                Close.Execute();
+                callback?.Invoke(Value);
+            }), nameof(Apply));
         }
 
         #endregion
@@ -63,14 +70,14 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Entry
+        /// Value
         ///
         /// <summary>
         /// 対象となる RssEntry オブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableValue<RssEntry> Entry { get; }
+        public RssEntry Value => Facade;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -93,21 +100,12 @@ namespace Cube.Net.Rss.Reader
         /// Apply
         ///
         /// <summary>
-        /// 内容を適用するコマンドです。
+        /// Gets the apply command.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Apply => Get(() => new DelegateCommand(() =>
-        {
-            Send<UpdateSourcesMessage>();
-            Close.Execute();
-            _callback?.Invoke(Entry.Value);
-        }));
+        public ICommand Apply { get; }
 
-        #endregion
-
-        #region Fields
-        private readonly Action<RssEntry> _callback;
         #endregion
     }
 }

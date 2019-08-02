@@ -44,7 +44,7 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="dispatcher">同期用コンテキスト</param>
+        /// <param name="invoker">同期用コンテキスト</param>
         ///
         /// <remarks>
         /// 将来的に Items に対して ObservableCollection(T) を指定する
@@ -54,9 +54,9 @@ namespace Cube.Net.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(IDispatcher dispatcher)
+        public RssEntry(Invoker invoker)
         {
-            Dispatcher = dispatcher;
+            Invoker = invoker;
         }
 
         /* ----------------------------------------------------------------- */
@@ -68,10 +68,10 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="cp">コピー元オブジェクト</param>
-        /// <param name="dispatcher">同期用コンテキスト</param>
+        /// <param name="invoker">同期用コンテキスト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(RssFeed cp, IDispatcher dispatcher) : this(dispatcher)
+        public RssEntry(RssFeed cp, Invoker invoker) : this(invoker)
         {
             Title         = cp.Title;
             Uri           = cp.Uri;
@@ -252,16 +252,17 @@ namespace Cube.Net.Rss.Reader
                 SkipContent = src.SkipContent;
             }
 
-            public RssEntry Convert(RssCategory src) => new RssEntry(src.Dispatcher)
+            public RssEntry Convert(RssCategory src)
             {
-                Title       = Title,
-                Uri         = Uri,
-                Link        = Link,
-                Count       = Count,
-                Frequency   = Frequency,
-                SkipContent = SkipContent,
-                Parent      = src,
-            };
+                var dest = src.CreateEntry();
+                dest.Title       = Title;
+                dest.Uri         = Uri;
+                dest.Link        = Link;
+                dest.Count       = Count;
+                dest.Frequency   = Frequency;
+                dest.SkipContent = SkipContent;
+                return dest;
+            }
         }
 
         #endregion

@@ -21,6 +21,7 @@ using Cube.Mixin.Drawing;
 using Cube.Xui;
 using System;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -35,7 +36,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class SettingViewModel : CommonViewModel
+    public class SettingViewModel : GenericViewModel<SettingFolder>
     {
         #region Constructors
 
@@ -48,11 +49,11 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingViewModel(SettingFolder Setting) : base(new Aggregator())
+        public SettingViewModel(SettingFolder settings, SynchronizationContext context) :
+            base(settings, new Aggregator(), context)
         {
-            Model  = Setting;
-            Local  = new BindableValue<LocalSetting>(Setting.Value, Setting.Dispatcher);
-            Shared = new BindableValue<SharedSetting>(Setting.Shared, Setting.Dispatcher);
+            Local  = new BindableValue<LocalSetting>(settings.Value, GetInvoker(false));
+            Shared = new BindableValue<SharedSetting>(settings.Shared, GetInvoker(false));
         }
 
         #endregion
@@ -103,7 +104,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Product => Model.Assembly.GetProduct();
+        public string Product => Facade.Assembly.GetProduct();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -114,7 +115,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Version => $"Version {Model.Version.ToString(true)}";
+        public string Version => $"Version {Facade.Version.ToString(true)}";
 
         /* ----------------------------------------------------------------- */
         ///
@@ -149,17 +150,6 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public string Copyright { get; } = Assembly.GetExecutingAssembly().GetCopyright();
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Model
-        ///
-        /// <summary>
-        /// ユーザ設定を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private SettingFolder Model { get; }
-
         #endregion
 
         #region Commands
@@ -188,7 +178,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Apply => Get(() => new DelegateCommand(() =>
         {
-            Send<UpdateSourcesMessage>();
+            Send<ApplyMessage>();
             Close.Execute();
         }));
 

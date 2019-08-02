@@ -51,7 +51,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Setup_Empty()
         {
-            var ctx = Dispatcher.Vanilla;
+            var ctx = Invoker.Vanilla;
             var asm = Assembly.GetExecutingAssembly();
             using (var m = new MainFacade(new SettingFolder(asm, Results, IO), ctx))
             {
@@ -193,8 +193,8 @@ namespace Cube.Net.Rss.Tests
 
             var asm        = Assembly.GetExecutingAssembly();
             var setting    = new SettingFolder(asm, RootDirectory(name), IO);
-            var dispatcher = Dispatcher.Vanilla;
-            var dest       = new MainFacade(setting, dispatcher);
+            var invoker = Invoker.Vanilla;
+            var dest       = new MainFacade(setting, invoker);
 
             setting.Shared.InitialDelay = TimeSpan.FromMinutes(1);
 

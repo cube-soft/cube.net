@@ -71,9 +71,9 @@
         <xb:DialogBehavior />
         <xb:OpenFileBehavior />
         <xb:SaveFileBehavior />
-        <my:ShowRegisterWindowBehavior />
-        <my:ShowPropertyWindowBehavior />
-        <my:ShowSettingWindowBehavior />
+        <my:ShowRegisterWindowBehavior Modal="True" />
+        <my:ShowPropertyWindowBehavior Modal="True" />
+        <my:ShowSettingWindowBehavior Modal="True" />
     </i:Interaction.Behaviors>
 
     <i:Interaction.Triggers>

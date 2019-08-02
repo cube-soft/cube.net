@@ -91,7 +91,7 @@ namespace Cube.Net.Rss.Tests
             setting.Load();
             Assert.That(setting.DataDirectory, Is.EqualTo(dest), nameof(SettingFolder));
 
-            var facade = new MainFacade(setting, Dispatcher.Vanilla);
+            var facade = new MainFacade(setting, Invoker.Vanilla);
             Assert.That(facade.Data.Root.Flatten().Count(), Is.EqualTo(0));
         }
 
@@ -148,7 +148,7 @@ namespace Cube.Net.Rss.Tests
                 dest     = e.Value;
             });
 
-            vm.Subscribe<UpdateSourcesMessage>(
+            vm.Subscribe<ApplyMessage>(
                 e => vm.Local.Value.DataDirectory = dest
             );
 
