@@ -85,7 +85,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected void Sync(Action action) => Track(action, DialogMessage.Create, true);
+        protected void Sync(Action action) => Track(action, true);
 
         /* ----------------------------------------------------------------- */
         ///
