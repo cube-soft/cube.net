@@ -52,7 +52,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void VM_NewEntry() => Execute(vm =>
         {
-            var host  = new Uri("https://clown.hatenablog.jp/");
+            var host  = new Uri("https://clown.cube-soft.jp/");
             var src   = new Uri(host, "/feed");
             var count = vm.Data.Root.Flatten().Count();
 
