@@ -108,9 +108,9 @@ namespace Cube.Net.Rss.Tests
 
             var s10 = s1.Children[0] as RssEntry;
             Assert.That(s10.Parent, Is.EqualTo(s1), s10.Title);
-            Assert.That(s10.Title,  Is.EqualTo("CubeSoft Blog"));
-            Assert.That(s10.Uri,    Is.EqualTo(new Uri("https://blog.cube-soft.jp/?feed=rss2")));
-            Assert.That(s10.Link,   Is.EqualTo(new Uri("https://blog.cube-soft.jp/")));
+            Assert.That(s10.Title,  Is.EqualTo("Life like a clown"));
+            Assert.That(s10.Uri,    Is.EqualTo(new Uri("https://clown.cube-soft.jp/feed")));
+            Assert.That(s10.Link,   Is.EqualTo(new Uri("https://clown.cube-soft.jp/")));
 
             var s2 = root.Children[2] as RssCategory;
             Assert.That(s2.Parent, Is.EqualTo(root), s2.Title);
