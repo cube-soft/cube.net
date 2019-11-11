@@ -110,7 +110,7 @@ namespace Cube.Net.Rss.Tests
             vm.Select.Execute(src);
             var dest = vm.Data.Current.Value as RssEntry;
 
-            Assert.That(dest.Title,               Is.EqualTo("CubeSoft Blog"));
+            Assert.That(dest.Title,               Is.EqualTo("Life like a clown"));
             Assert.That(dest.Selected,            Is.True);
             Assert.That(dest.SafeItems.Count(),   Is.EqualTo(10));
             Assert.That(dest.Count,               Is.EqualTo(9), nameof(RssEntry));
@@ -284,7 +284,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_Remove_Category() => Execute(vm =>
         {
             var src  = vm.Data.Root.OfType<RssCategory>().First();
-            var dest = CachePath("872e24035276c7104afd116c2052172b");
+            var dest = CachePath("f5acb23c3de871999c2034f864464c92");
 
             vm.Select.Execute(src);
 
@@ -323,7 +323,7 @@ namespace Cube.Net.Rss.Tests
             msg.Value = string.Empty;
 
             Assert.That(Wait.For(() => msg.Value.HasValue()), "Timeout");
-            Assert.That(dest.Count, Is.GreaterThan(count));
+            Assert.That(dest.Count, Is.GreaterThanOrEqualTo(count));
         });
 
         /* ----------------------------------------------------------------- */

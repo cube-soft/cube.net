@@ -53,7 +53,7 @@ namespace Cube.Net.Rss.Tests
         public void VM_NewEntry() => Execute(vm =>
         {
             var host  = new Uri("https://clown.cube-soft.jp/");
-            var src   = new Uri(host, "/feed");
+            var src   = new Uri(host, "/rss");
             var count = vm.Data.Root.Flatten().Count();
 
             vm.Subscribe<RegisterViewModel>(e => RegisterCommand(e, src).Wait());
@@ -99,7 +99,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void VM_NewEntry_Exists() => Execute(vm =>
         {
-            var src = new Uri("https://blog.cube-soft.jp/");
+            var src = new Uri("https://clown.cube-soft.jp/");
             var count = vm.Data.Root.Flatten().Count();
 
             vm.Subscribe<RegisterViewModel>(e => RegisterCommand(e, src).Wait());

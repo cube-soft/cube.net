@@ -166,7 +166,7 @@ namespace Cube.Net.Rss.Tests
         [TestCase(RssCheckFrequency.None)]
         public void Update_Frequency(RssCheckFrequency value)
         {
-            var uri = new Uri("https://blog.cube-soft.jp/?feed=rss2");
+            var uri = new Uri("https://clown.cube-soft.jp/feed");
 
             using (var src = Create())
             {

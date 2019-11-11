@@ -4,11 +4,11 @@
         "Categories": null,
         "Entries": [
             {
-                "Uri": "https://blog.cube-soft.jp/?feed=rss2",
-                "Link": "https://blog.cube-soft.jp/",
+                "Uri": "https://clown.cube-soft.jp/feed",
+                "Link": "https://clown.cube-soft.jp/",
                 "Count": 10,
                 "Frequency": 1,
-                "Title": "CubeSoft Blog"
+                "Title": "Life like a clown"
             }
         ]
     },

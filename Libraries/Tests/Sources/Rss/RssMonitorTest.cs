@@ -55,13 +55,13 @@ namespace Cube.Net.Tests
             var start = DateTime.Now;
             var uris  = new[]
             {
-                new Uri("https://blog.cube-soft.jp/?feed=rss2"),
+                new Uri("https://clown.cube-soft.jp/feed"),
                 new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
             };
 
             var files = new[]
             {
-                "872e24035276c7104afd116c2052172b",
+                "f5acb23c3de871999c2034f864464c92",
                 "3a9c5f4a720884dddb53fb356680ef82",
             };
 
@@ -97,7 +97,7 @@ namespace Cube.Net.Tests
                 foreach (var item in src) Assert.That(item.Value, Is.Not.Null);
 
                 Assert.That(src.TryGetValue(uris[0], out var feed0), Is.True);
-                Assert.That(feed0.Title,       Is.EqualTo("CubeSoft Blog"));
+                Assert.That(feed0.Title,       Is.EqualTo("Life like a clown"));
                 Assert.That(feed0.LastChecked, Is.GreaterThan(start), uris[0].ToString());
                 Assert.That(feed0.Items.Count, Is.GreaterThan(0), uris[0].ToString());
 
@@ -164,7 +164,7 @@ namespace Cube.Net.Tests
             var dest = new Dictionary<Uri, RssFeed>();
             var src  = new[]
             {
-                new Uri("https://blog.cube-soft.jp/?feed=rss2"),
+                new Uri("https://clown.cube-soft.jp/feed"),
                 new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
             };
 
