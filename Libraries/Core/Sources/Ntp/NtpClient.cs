@@ -70,10 +70,10 @@ namespace Cube.Net.Ntp
         /* ----------------------------------------------------------------- */
         public NtpClient(string server, int port)
         {
-            Timeout  = TimeSpan.FromSeconds(5);
-            Host     = Dns.GetHostEntry(server);
-            Port     = port;
             _dispose = new OnceAction<bool>(Dispose);
+            Timeout  = TimeSpan.FromSeconds(5);
+            Port     = port;
+            Host     = Dns.GetHostEntry(server);
         }
 
         #endregion

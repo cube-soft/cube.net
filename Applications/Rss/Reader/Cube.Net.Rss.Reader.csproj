@@ -24,7 +24,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\Libraries\Core\Cube.Net.csproj" />
-        <PackageReference Include="Cube.Forms" Version="1.15.0" />
+        <PackageReference Include="Cube.Forms" Version="1.15.1" />
         <PackageReference Include="Cube.Xui" Version="1.15.0" />
         <PackageReference Include="gong-wpf-dragdrop" Version="1.1.0" />
         <Reference Include="System.Web" />
