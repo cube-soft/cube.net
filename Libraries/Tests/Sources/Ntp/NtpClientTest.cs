@@ -52,7 +52,7 @@ namespace Cube.Net.Tests
         {
             using (var client = new NtpClient())
             {
-                Assert.That(client.Host.HostName, Is.EqualTo("www268.ziyu.net"));
+                Assert.That(client.Host.HostName, Does.StartWith("time.microsoft"));
                 Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
                 Assert.That(client.Port, Is.EqualTo(123));
                 Assert.That(client.Timeout, Is.EqualTo(TimeSpan.FromSeconds(5)));
@@ -155,7 +155,7 @@ namespace Cube.Net.Tests
                 yield return new TestCaseData(
                     "ntp.cube-soft.jp",
                     3u,
-                    4u,
+                    0u,
                     Stratum.SecondaryReference
                 );
             }
