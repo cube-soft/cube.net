@@ -441,6 +441,7 @@ namespace Cube.Net.Rss
         {
             foreach (var uri in src.ToArray())
             {
+                this.LogDebug($"TRY: {uri}");
                 try
                 {
                     if (State != TimerState.Run) return;

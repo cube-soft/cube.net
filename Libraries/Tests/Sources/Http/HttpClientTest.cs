@@ -43,58 +43,6 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetJsonAsync
-        ///
-        /// <summary>
-        /// JSON データを非同期で取得するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void GetJsonAsync()
-        {
-            var uri    = new Uri("http://dev.cielquis.net/tests/example.json");
-            var client = HttpClientFactory.Create();
-            var json   = client.GetJsonAsync<PeopleContainer>(uri).Result;
-
-            Assert.That(json.People,         Is.Not.Null);
-            Assert.That(json.People.Count,   Is.EqualTo(2));
-            Assert.That(json.People[0].Id,   Is.EqualTo("0001"));
-            Assert.That(json.People[0].Name, Is.EqualTo("Jack Daniel"));
-            Assert.That(json.People[0].Age,  Is.EqualTo(40));
-            Assert.That(json.People[1].Id,   Is.EqualTo("0002"));
-            Assert.That(json.People[1].Name, Is.EqualTo("山田 花子"));
-            Assert.That(json.People[1].Age,  Is.EqualTo(25));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetXmlAsync
-        ///
-        /// <summary>
-        /// XML データを非同期で取得するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void GetXmlAsync()
-        {
-            var uri    = new Uri("http://dev.cielquis.net/tests/example.xml");
-            var client = HttpClientFactory.Create();
-            var xml    = client.GetXmlAsync<PeopleContainer>(uri).Result;
-
-            Assert.That(xml.People, Is.Not.Null);
-            Assert.That(xml.People.Count,   Is.EqualTo(2));
-            Assert.That(xml.People[0].Id,   Is.EqualTo("0001"));
-            Assert.That(xml.People[0].Name, Is.EqualTo("Jack Daniel"));
-            Assert.That(xml.People[0].Age,  Is.EqualTo(40));
-            Assert.That(xml.People[1].Id,   Is.EqualTo("0002"));
-            Assert.That(xml.People[1].Name, Is.EqualTo("山田 花子"));
-            Assert.That(xml.People[1].Age,  Is.EqualTo(25));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// GetAsync
         ///
         /// <summary>

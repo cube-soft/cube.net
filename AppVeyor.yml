@@ -1,29 +1,32 @@
-version: 1.18.0.{build}
-image: Visual Studio 2019 Preview
-platform: Any CPU
-configuration: Release
+version: 2.0.1.{build}
 environment:
     PROJECT_NAME:   'Cube.Net'
-    PROJECT_BIN:    'bin\%PLATFORM%\%CONFIGURATION%\net45'
-    PROJECT_LIB:    '..\packages'
-    TEST_TOOL:      '$(PROJECT_LIB)\OpenCover\4.7.922\tools\OpenCover.Console.exe'
-    TEST_CORETOOL:  'nunit3-console.exe'
-    TEST_FILTERS:   '+[Cube*]* -[*]*NativeMethods -[*]*Properties.* -[*]*Window -[*]*Control -[*]*.App -[*]*Form -[*]*.Program'
-    TEST_RESULT:    'TestResult.xml'
-    TEST_COVERAGE:  'CoverResults.xml'
-    TEST_LOG:       'TestResults'
+    PROJECT_BIN:   'bin\%PLATFORM%\%CONFIGURATION%\net45'
+    TEST_TOOL:     '..\packages\OpenCover\4.7.922\tools\OpenCover.Console.exe'
+    TEST_ARGS:     'test --no-restore --no-build --logger:Appveyor'
+    TEST_FILTERS:  '+[Cube*]* -[*]*.NativeMethods -[*]*.Properties.* -[*]*.Program -[*]*.App -[*]*Window -[*]*Control'
+    TEST_COVERAGE: 'CoverResults.xml'
+    TEST_RESULTS:  'TestResults'
+clone_folder: 'C:\Cube\%PROJECT_NAME%'
+image: Visual Studio 2019
+platform: Any CPU
+configuration: Release
+skip_tags: true
 branches:
     only:
         - master
-skip_tags: true
 nuget:
     project_feed: true
     disable_publish_on_pr: true
-clone_folder: 'C:\Cube\%PROJECT_NAME%'
 before_build:
-    - nuget restore "%PROJECT_NAME%.Apps.sln"
+    - nuget sources add -name Cube.Core -source https://ci.appveyor.com/nuget/cube.core
+    - nuget sources add -name Cube.FileSystem -source https://ci.appveyor.com/nuget/cube.filesystem
+    - nuget sources add -name Cube.Xui -source https://ci.appveyor.com/nuget/cube.xui
+    - nuget sources add -name Cube.Images -source https://ci.appveyor.com/nuget/cube.images
+    - nuget sources add -name Cube.Forms -source https://ci.appveyor.com/nuget/cube.forms
+    - nuget restore "%PROJECT_NAME%.sln"
 build:
-    project: '%PROJECT_NAME%.Apps.sln'
+    project: '%PROJECT_NAME%.sln'
     parallel: true
     publish_nuget: true
     verbosity: minimal
@@ -31,21 +34,9 @@ test_script:
     - >
       "%TEST_TOOL%"
       -log:Error
-      -register:user
-      -target:"%TEST_CORETOOL%"
-      -targetargs:"%PROJECT_NAME%.Tests.dll"
-      -targetdir:"Libraries\Tests\%PROJECT_BIN%"
-      -returntargetcode
-      -hideskipped:All
-      -output:"%TEST_COVERAGE%"
-      -filter:"%TEST_FILTERS%"
-    - >
-      "%TEST_TOOL%"
-      -log:Error
-      -register:user
-      -target:"%TEST_CORETOOL%"
-      -targetargs:"%PROJECT_NAME%.Rss.Tests.dll"
-      -targetdir:"Applications\Rss\Tests\%PROJECT_BIN%"
+      -register:appveyor
+      -target:dotnet.exe
+      -targetargs:"%TEST_ARGS% %PROJECT_NAME%.sln"
       -returntargetcode
       -hideskipped:All
       -mergeoutput
@@ -53,9 +44,9 @@ test_script:
       -filter:"%TEST_FILTERS%"
 after_test:
     - xcopy /q /Y /I "Applications\Rss\Reader\%PROJECT_BIN%" "CubeRssReader"
-    - xcopy /q /Y /I "Libraries\Tests\%PROJECT_BIN%\*.log" "%TEST_LOG%\"
-    - xcopy /q /Y /I "Applications\Rss\Tests\%PROJECT_BIN%\*.log" "%TEST_LOG%\"
-    - xcopy /q /Y /I "%TEST_COVERAGE%" "%TEST_LOG%\"
+    - xcopy /q /Y /I "Libraries\Tests\%PROJECT_BIN%\*.log" "%TEST_RESULTS%\"
+    - xcopy /q /Y /I "Applications\Rss\Tests\%PROJECT_BIN%\*.log" "%TEST_RESULTS%\"
+    - xcopy /q /Y /I "%TEST_COVERAGE%" "%TEST_RESULTS%\"
 artifacts:
     - path: 'CubeRssReader'
-    - path: '%TEST_LOG%'
+    - path: '%TEST_RESULTS%'

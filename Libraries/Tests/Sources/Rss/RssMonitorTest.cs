@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Mixin.Assembly;
+using Cube.Mixin.Logging;
 using Cube.Net.Rss;
 using Cube.Tests;
 using NUnit.Framework;
@@ -56,13 +57,11 @@ namespace Cube.Net.Tests
             var uris  = new[]
             {
                 new Uri("https://clown.cube-soft.jp/feed"),
-                new Uri("https://blogs.msdn.microsoft.com/dotnet/feed"),
             };
 
             var files = new[]
             {
                 "f5acb23c3de871999c2034f864464c92",
-                "3a9c5f4a720884dddb53fb356680ef82",
             };
 
             using (var src = new RssCacheDictionary())
@@ -72,7 +71,6 @@ namespace Cube.Net.Tests
 
                 using (var mon = Create())
                 {
-                    var count = 0;
                     var cts   = new CancellationTokenSource();
                     var asm   = Assembly.GetExecutingAssembly();
                     var agent = $"CubeRssMonitorTest/{asm.GetVersion()}";
@@ -83,11 +81,11 @@ namespace Cube.Net.Tests
 
                     mon.Register(uris);
                     mon.Register(uris); // ignore
-                    mon.Subscribe(_ => throw new ArgumentException("Test"));
+                    mon.Subscribe(e => throw new ArgumentException("Test"));
                     mon.Subscribe(e =>
                     {
                         src[e.Uri] = e;
-                        if (++count >= 2) cts.Cancel();
+                        cts.Cancel();
                     });
                     mon.Start();
                     Assert.That(Wait.For(cts.Token), "Timeout");
@@ -100,17 +98,10 @@ namespace Cube.Net.Tests
                 Assert.That(feed0.Title,       Is.EqualTo("Life like a clown"));
                 Assert.That(feed0.LastChecked, Is.GreaterThan(start), uris[0].ToString());
                 Assert.That(feed0.Items.Count, Is.GreaterThan(0), uris[0].ToString());
-
-                Assert.That(src.TryGetValue(uris[1], out var feed1), Is.True);
-                Assert.That(feed1.Title,       Is.EqualTo(".NET Blog"));
-                Assert.That(feed1.LastChecked, Is.GreaterThan(start), uris[1].ToString());
-                Assert.That(feed1.Items.Count, Is.GreaterThan(0), uris[1].ToString());
-
-                Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out var feed2), Is.False);
+                Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out _), Is.False);
             }
 
             Assert.That(IO.Get(Get(files[0])).Length, Is.GreaterThan(0), files[0]);
-            Assert.That(IO.Get(Get(files[1])).Length, Is.GreaterThan(0), files[1]);
         }
 
         /* ----------------------------------------------------------------- */
