@@ -23,7 +23,7 @@
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Cube.FileSystem" Version="2.0.0" />
+        <PackageReference Include="Cube.FileSystem" Version="2.0.1" />
         <PackageReference Include="SgmlReader" Version="1.8.11" />
         <Reference Include="System.Net" />
         <Reference Include="System.Net.Http" />

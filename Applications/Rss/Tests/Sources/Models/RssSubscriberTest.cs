@@ -122,7 +122,7 @@ namespace Cube.Net.Rss.Tests
                 Task.Delay(200).Wait();
             }
 
-            Assert.That(IO.GetFiles(dir).Length, Is.EqualTo(31));
+            Assert.That(IO.GetFiles(dir).Count(), Is.EqualTo(31));
             Assert.That(IO.Exists(open), Is.True); // delete failed
             Assert.That(IO.Exists(IO.Combine(dir, "20010102.json")), Is.False);
             Assert.That(IO.Exists(IO.Combine(dir, "20010103.json")), Is.True);

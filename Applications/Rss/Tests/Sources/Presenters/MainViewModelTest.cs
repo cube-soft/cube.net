@@ -563,7 +563,7 @@ namespace Cube.Net.Rss.Tests
             }
 
             Assert.That(n, Is.AtMost(2), "Write only LocalSettings.json");
-            Assert.That(IO.GetFiles(CacheDirectory()).Length, Is.EqualTo(0), "Cache");
+            Assert.That(IO.GetFiles(CacheDirectory()).Count(), Is.EqualTo(0), "Cache");
             Assert.That(IO.Exists(dest), Is.True, dest);
         }
 

@@ -20,6 +20,7 @@ using Cube.Tests;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Cube.Net.Tests
 {
@@ -149,10 +150,10 @@ namespace Cube.Net.Tests
             {
                 src.Capacity = 3;
                 foreach (var feed in feeds) src.Add(feed);
-                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(3));
+                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(3));
             }
 
-            Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(6));
+            Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(6));
         }
 
         /* ----------------------------------------------------------------- */
@@ -174,16 +175,16 @@ namespace Cube.Net.Tests
             {
                 src.Capacity = 3;
                 foreach (var e in feeds) src.Add(e);
-                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(3));
+                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(3));
 
                 src.Remove(feeds[0].Uri);
-                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(3));
+                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(3));
 
                 src.Remove(feeds[1].Uri, true);
-                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(2));
+                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(2));
 
                 src.Remove(new KeyValuePair<Uri, RssFeed>(feeds[2].Uri, feeds[2]));
-                Assert.That(IO.GetFiles(cache).Length, Is.EqualTo(2));
+                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(2));
             }
         }
 
