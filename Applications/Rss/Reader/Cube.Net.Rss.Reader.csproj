@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
         <Version>0.2.1</Version>
         <Authors>clown;cube-soft</Authors>
@@ -10,40 +10,41 @@
         <AssemblyTitle>CubeRSS Reader</AssemblyTitle>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net35</TargetFramework>
+        <UseWpf>true</UseWpf>
+        <UseWindowsForms>true</UseWindowsForms>
         <LangVersion>latest</LangVersion>
         <IsPackable>false</IsPackable>
         <Optimize>true</Optimize>
         <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DefineConstants Condition=" '$(Configuration)' == 'Debug' ">DEBUG;TRACE</DefineConstants>
         <ApplicationIcon>App.ico</ApplicationIcon>
         <ApplicationManifest>App.manifest</ApplicationManifest>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+        <Prefer32Bit>true</Prefer32Bit>
         <OutputPath>bin\Any CPU\$(Configuration)\</OutputPath>
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\Libraries\Core\Cube.Net.csproj" />
-        <PackageReference Include="Cube.Forms" Version="1.15.1" />
-        <PackageReference Include="Cube.Xui" Version="1.15.0" />
+        <PackageReference Include="Cube.Forms" Version="1.15.10" />
+        <PackageReference Include="Cube.Xui" Version="1.15.10" />
         <PackageReference Include="gong-wpf-dragdrop" Version="1.1.0" />
-        <PackageReference Include="Expression.Blend.Sdk3" Version="1.0.1340" />
+        <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
         <PackageReference Include="WPFToolkit" Version="3.5.50211.1" />
         <Reference Include="System.Web" />
-        <Reference Include="System.Windows.Forms" />
-        <Reference Include="PresentationCore" />
-        <Reference Include="PresentationFramework" />
-        <Reference Include="WindowsBase" />
-        <Reference Include="WindowsFormsIntegration" />
     </ItemGroup>
     <ItemGroup>
-        <ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />
-        <Page Include="Views\**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
-        <Page Include="Themes\**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
+        <ApplicationDefinition Update="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />
+        <Page Update="Views\**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
+        <Page Update="Themes\**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
         <Compile Update="Views\**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
         <Compile Update="Properties\Resources.Designer.cs" DependentUpon="Resources.resx" AutoGen="True" DesignTime="True" />
         <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
         <Resource Include="Assets\**\*" />
+        <Resource Include="App.ico" />
         <None Include="App.config" />
+        <None Include="App.manifest" />
     </ItemGroup>
 </Project>

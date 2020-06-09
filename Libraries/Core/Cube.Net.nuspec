@@ -1,24 +1,31 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <version>1.15.1</version>
+        <version>1.15.10</version>
         <id>Cube.Net</id>
         <title>Cube.Net</title>
         <authors>clown,cube-soft</authors>
         <owners>clown,cube-soft</owners>
-        <description>Network library for CubeSoft libraries and applications.</description>
+        <description>Network library.</description>
         <copyright>Copyright © 2010 CubeSoft, Inc.</copyright>
         <tags>Cube Net HTTP NTP RSS Atom</tags>
+        <icon>images\Icon.png</icon>
         <license type="expression">Apache-2.0</license>
         <projectUrl>https://github.com/cube-soft/Cube.Net</projectUrl>
-        <iconUrl>https://github.com/cube-soft/Cube.Net/blob/master/Icon.png?raw=true</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <dependencies>
-            <dependency id="Cube.FileSystem" version="1.15.0" />
-            <dependency id="SgmlReader" version="1.8.11" />
+            <group targetFramework="net45">
+                <dependency id="Cube.FileSystem" version="1.15.10" />
+                <dependency id="SgmlReader" version="1.8.11" />
+            </group>
+            <group targetFramework="net35">
+                <dependency id="Cube.FileSystem" version="1.15.10" />
+                <dependency id="SgmlReader" version="1.8.11" />
+            </group>
         </dependencies>
     </metadata>
     <files>
+        <file src="..\..\Icon.png" target="images" />
         <file src="bin\Any CPU\Release\net45\Cube.Net.*" target="lib\net45" />
         <file src="bin\Any CPU\Release\net35\Cube.Net.*" target="lib\net35" />
         <file src="bin\Any CPU\Release\net35\Rackspace.Threading.dll" target="lib\net35" />
