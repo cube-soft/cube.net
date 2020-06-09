@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <version>2.0.1</version>
+        <version>2.0.2</version>
         <id>Cube.Net</id>
         <title>Cube.Net</title>
         <authors>clown,cube-soft</authors>
         <owners>clown,cube-soft</owners>
-        <description>Network library.</description>
+        <description>Network library for CubeSoft libraries and applications.</description>
         <copyright>Copyright © 2010 CubeSoft, Inc.</copyright>
         <tags>Cube Net HTTP NTP RSS Atom</tags>
         <icon>images\Icon.png</icon>

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net", "Libraries\Core\Cube.Net.csproj", "{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net.Tests", "Libraries\Tests\Cube.Net.Tests.csproj", "{03DB8859-93F8-4335-BBA1-0C04981A970A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net", "Libraries\Cube.Net.csproj", "{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net.Rss.Reader", "Applications\Rss\Reader\Cube.Net.Rss.Reader.csproj", "{C7742724-1786-4FDB-86C1-10090245D25E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net.Rss.Tests", "Applications\Rss\Tests\Cube.Net.Rss.Tests.csproj", "{91B9E559-B44B-4AF4-9401-13CA795AB9E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net.Tests", "Tests\Core\Cube.Net.Tests.csproj", "{03DB8859-93F8-4335-BBA1-0C04981A970A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube.Net.Rss.Tests", "Tests\Rss\Cube.Net.Rss.Tests.csproj", "{91B9E559-B44B-4AF4-9401-13CA795AB9E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,14 +21,14 @@ Global
 		{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03DB8859-93F8-4335-BBA1-0C04981A970A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03DB8859-93F8-4335-BBA1-0C04981A970A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03DB8859-93F8-4335-BBA1-0C04981A970A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03DB8859-93F8-4335-BBA1-0C04981A970A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C7742724-1786-4FDB-86C1-10090245D25E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C7742724-1786-4FDB-86C1-10090245D25E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7742724-1786-4FDB-86C1-10090245D25E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7742724-1786-4FDB-86C1-10090245D25E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03DB8859-93F8-4335-BBA1-0C04981A970A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03DB8859-93F8-4335-BBA1-0C04981A970A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03DB8859-93F8-4335-BBA1-0C04981A970A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03DB8859-93F8-4335-BBA1-0C04981A970A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{91B9E559-B44B-4AF4-9401-13CA795AB9E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{91B9E559-B44B-4AF4-9401-13CA795AB9E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91B9E559-B44B-4AF4-9401-13CA795AB9E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
