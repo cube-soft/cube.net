@@ -1,4 +1,4 @@
-version: 2.0.1.{build}
+version: 2.0.2.{build}
 environment:
     PROJECT_NAME:   'Cube.Net'
     PROJECT_BIN:   'bin\%PLATFORM%\%CONFIGURATION%\net45'
@@ -44,8 +44,8 @@ test_script:
       -filter:"%TEST_FILTERS%"
 after_test:
     - xcopy /q /Y /I "Applications\Rss\Reader\%PROJECT_BIN%" "CubeRssReader"
-    - xcopy /q /Y /I "Libraries\Tests\%PROJECT_BIN%\*.log" "%TEST_RESULTS%\"
-    - xcopy /q /Y /I "Applications\Rss\Tests\%PROJECT_BIN%\*.log" "%TEST_RESULTS%\"
+    - xcopy /q /Y /I "Tests\Core\%PROJECT_BIN%\*.log" "%TEST_RESULTS%\"
+    - xcopy /q /Y /I "Tests\Rss\%PROJECT_BIN%\*.log" "%TEST_RESULTS%\"
     - xcopy /q /Y /I "%TEST_COVERAGE%" "%TEST_RESULTS%\"
 artifacts:
     - path: 'CubeRssReader'
