@@ -52,7 +52,7 @@ namespace Cube.Net.Rss.Reader
             var io  = src.IO;
             var dir = Assembly.GetExecutingAssembly().GetDirectoryName();
 
-            FileName = io.Combine(dir, "UpdateChecker.exe");
+            FileName = io.Combine(dir, "CubeChecker.exe");
             Setting  = src;
 
             _timer.Interval = TimeSpan.FromDays(1);
