@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using NUnit.Framework;
 using System.Reflection;
+using NUnit.Framework;
 
 namespace Cube.Net.Rss.Tests
 {
@@ -46,6 +46,7 @@ namespace Cube.Net.Rss.Tests
         {
             Logger.ObserveTaskException();
             Logger.Info(typeof(GlobalSetup), Assembly.GetExecutingAssembly());
+            Network.Setup();
         }
     }
 }
