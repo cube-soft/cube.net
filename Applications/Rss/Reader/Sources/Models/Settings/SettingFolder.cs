@@ -226,13 +226,11 @@ namespace Cube.Net.Rss.Reader
         private DateTime? GetLastCheckUpdate() => this.LogWarn(() =>
         {
             var name = $@"Software\{Assembly.GetCompany()}\{Assembly.GetProduct()}";
-            using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false))
-            {
-                if (key == null) return default;
-                var s = key.GetValue("LastCheckUpdate") as string;
-                if (string.IsNullOrEmpty(s)) return default;
-                return DateTime.Parse(s).ToLocalTime();
-            }
+            using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false);
+            if (key == null) return default;
+
+            var s = key.GetValue("LastCheckUpdate") as string;
+            return s.HasValue() ? DateTime.Parse(s).ToLocalTime() : default;
         });
 
         /* ----------------------------------------------------------------- */

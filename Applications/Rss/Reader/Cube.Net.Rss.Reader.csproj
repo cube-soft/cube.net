@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
-        <Version>0.2.1</Version>
+        <Version>0.3.0</Version>
         <Authors>clown;cube-soft</Authors>
         <Company>CubeSoft</Company>
         <Product>CubeRssReader</Product>
@@ -28,8 +28,8 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\Libraries\Cube.Net.csproj" />
-        <PackageReference Include="Cube.Forms" Version="2.0.1" />
-        <PackageReference Include="Cube.Xui" Version="2.0.1" />
+        <PackageReference Include="Cube.Forms" Version="2.1.0" />
+        <PackageReference Include="Cube.Xui" Version="2.1.0" />
         <PackageReference Include="gong-wpf-dragdrop" Version="2.2.0" />
         <Reference Include="System.Web" />
     </ItemGroup>
