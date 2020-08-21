@@ -75,17 +75,19 @@ namespace Cube.Net
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DisableOptions
+        /// Setup
         ///
         /// <summary>
-        /// Disables some network options.
+        /// Setup some network settings.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static void DisableOptions()
+        public static void Setup()
         {
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.UseNagleAlgorithm = false;
+            ServicePointManager.SecurityProtocol  = SecurityProtocolType.Tls;
+
             WebRequest.DefaultWebProxy = null;
         }
 

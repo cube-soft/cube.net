@@ -46,6 +46,7 @@ namespace Cube.Net.Tests
         {
             Logger.ObserveTaskException();
             Logger.Info(typeof(GlobalSetup), Assembly.GetExecutingAssembly());
+            Network.Setup();
         }
     }
 }

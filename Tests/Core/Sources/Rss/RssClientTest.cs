@@ -47,7 +47,7 @@ namespace Cube.Net.Tests
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TestCase("https://blog.cube-soft.jp/?feed=rss2")]
+        [TestCase("https://clown.cube-soft.jp/feed")]
         public void GetAsync(string src)
         {
             var http  = Create();
@@ -68,6 +68,25 @@ namespace Cube.Net.Tests
             Assert.That(item.Link, Is.Not.Null, nameof(item.Link));
             Assert.That(item.PublishTime.HasValue, Is.True, nameof(item.PublishTime));
             Assert.That(item.Status, Is.EqualTo(RssItemStatus.Unread));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetAsync_Tsl12_Throws
+        ///
+        /// <summary>
+        /// Confirms the failure when trying to get an RSS feed that only
+        /// allows TLS 1.2 or later.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void GetAsync_Tsl12_Throws()
+        {
+            Assert.That(
+                () => Create().GetAsync(new Uri("https://news.yahoo.co.jp/pickup/rss.xml")).Result,
+                Throws.TypeOf<AggregateException>().And.InnerException.TypeOf<System.Net.WebException>()
+            );
         }
 
         /* ----------------------------------------------------------------- */
