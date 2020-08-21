@@ -2,9 +2,9 @@ CubeRSS Reader
 ====
 
 Copyright (c) 2010 CubeSoft Inc.
-
+Apache License, Version 2.0 (Apache 2.0)  
 support@cube-soft.jp  
-https://www.cube-soft.jp/
+https://www.cube-soft.jp/cuberssreader/
 
 ## はじめに
 
@@ -13,14 +13,11 @@ CubeRSS Reader は、RSS や Atom と呼ばれる情報を利用する事によ�
 カテゴリ機能や細かな挙動のカスタマイズなども可能で、とても便利な情報収集ツールと
 なっています。
 
-CubeRSS Reader を使用するためには、Microsoft .NET Framework 3.5 以上が
-インストールされている必要があります（4.5.2 以上を推奨）。
-.NET Framework は、以下のURL からダウンロードして下さい。
+CubeRSS Reader を使用するためには、.NET Framework 3.5 以降がインストールされている必要があります（4.5.2 以降を推奨）。
+.NET Framework は、以下の URL からダウンロードして下さい。
 
-* Microsoft .NET Framework 3.5  
-  https://www.microsoft.com/ja-jp/download/details.aspx?id=22
-* Microsoft .NET Framework 4.5.2  
-  https://www.microsoft.com/ja-JP/download/details.aspx?id=42643
+* Download .NET Framework  
+  https://dotnet.microsoft.com/download/dotnet-framework
 
 ## 利用方法
 
@@ -70,29 +67,33 @@ RSS フィード情報の閲覧は可能ですが、追加や削除などの操�
 CubeRSS Reader は、以下のライブラリを利用しています。
 それぞれのライブラリについては、記載した URL から取得することができます。
 
+* SgmlReader
+    - Apache 2.0 License
+    - https://github.com/MindTouch/SGMLReader
+    - https://www.nuget.org/packages/SgmlReader/
 * AlphaFS
     - MIT License
     - https://alphafs.alphaleonis.com/
     - https://www.nuget.org/packages/AlphaFS/
-* AsyncBridge
-    - MIT License
-    - https://omermor.github.io/AsyncBridge/
-    - https://www.nuget.org/packages/AsyncBridge.Net35/
+* NLog
+    - 3-clause BSD License
+    - https://nlog-project.org/
+    - https://www.nuget.org/packages/NLog/
 * gong-wpf-dragdrop
-    - BSD 3-Clause License
+    - 3-clause BSD License
     - https://github.com/punker76/gong-wpf-dragdrop/
     - https://www.nuget.org/packages/gong-wpf-dragdrop/
-* log4net
-    - Apache License, Version 2.0
-    - https://logging.apache.org/log4net/
-    - https://www.nuget.org/packages/log4net/
-* MVVM Light Toolkit
+* AsyncBridge (.NET Framework 3.5 のみ)
     - MIT License
-    - https://github.com/lbugnion/mvvmlight/
-    - https://www.nuget.org/packages/MvvmLight/
+    - https://omermor.github.io/AsyncBridge/
+    - https://www.nuget.org/packages/AsyncBridge/
 
 ## バージョン履歴
 
+* 2020/08/28 version 0.3.0β
+    - RSS フィード情報の取得に失敗する不都合を改善
+    - ログ出力用ライブラリを log4net から NLog に変更
+    - ライセンスを Apache 2.0 に統一
 * 2018/04/25 version 0.2.0β
     - データフォルダを変更できるように修正
     - メイン画面の各カラム幅を保持するように修正
