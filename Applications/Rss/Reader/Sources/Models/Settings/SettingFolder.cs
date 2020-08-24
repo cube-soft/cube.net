@@ -15,15 +15,15 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
+using System.Diagnostics;
+using System.Reflection;
 using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.Mixin.Assembly;
 using Cube.Mixin.Environment;
 using Cube.Mixin.Logging;
 using Cube.Mixin.String;
-using System;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace Cube.Net.Rss.Reader
 {
@@ -39,6 +39,17 @@ namespace Cube.Net.Rss.Reader
     public class SettingFolder : SettingFolder<LocalSetting>
     {
         #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SettingFolder
+        ///
+        /// <summary>
+        /// Initializes static resources of the SettingFolder class.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        static SettingFolder() { Network.Setup(); }
 
         /* ----------------------------------------------------------------- */
         ///

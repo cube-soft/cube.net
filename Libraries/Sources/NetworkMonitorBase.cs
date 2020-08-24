@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Logging;
 using System;
+using Cube.Mixin.Logging;
 
 namespace Cube.Net
 {

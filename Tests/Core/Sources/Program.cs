@@ -40,6 +40,6 @@ namespace Cube.Net.Tests
         ///
         /* ----------------------------------------------------------------- */
         [STAThread]
-        static void Main(string[] args) { }
+        static void Main() { }
     }
 }

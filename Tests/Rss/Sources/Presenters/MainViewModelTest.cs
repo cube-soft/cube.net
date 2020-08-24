@@ -15,15 +15,15 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using Cube.Mixin.Commands;
 using Cube.Mixin.String;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
 using NUnit.Framework;
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
 
 namespace Cube.Net.Rss.Tests
 {

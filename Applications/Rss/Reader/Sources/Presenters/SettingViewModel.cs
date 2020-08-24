@@ -15,15 +15,15 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Assembly;
-using Cube.Mixin.Commands;
-using Cube.Mixin.Drawing;
-using Cube.Xui;
 using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Cube.Mixin.Assembly;
+using Cube.Mixin.Commands;
+using Cube.Mixin.Drawing;
+using Cube.Xui;
 
 namespace Cube.Net.Rss.Reader
 {

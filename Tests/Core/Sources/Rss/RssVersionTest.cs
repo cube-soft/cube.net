@@ -15,10 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System.Xml.Linq;
 using Cube.Net.Rss;
 using Cube.Tests;
 using NUnit.Framework;
-using System.Xml.Linq;
 
 namespace Cube.Net.Tests
 {

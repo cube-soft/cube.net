@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xui;
 using System.Collections.Generic;
+using Cube.Xui;
 
 namespace Cube.Net.Rss.Reader
 {

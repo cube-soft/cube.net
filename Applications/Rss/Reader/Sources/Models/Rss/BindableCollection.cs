@@ -15,8 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Generics;
-using Cube.Mixin.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,6 +22,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using Cube.Mixin.Generics;
+using Cube.Mixin.Logging;
 
 namespace Cube.Net.Rss.Reader
 {

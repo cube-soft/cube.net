@@ -15,11 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Assembly;
-using NUnit.Framework;
 using System;
 using System.Net;
 using System.Reflection;
+using Cube.Mixin.Assembly;
+using NUnit.Framework;
 
 namespace Cube.Net.Tests
 {

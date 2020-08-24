@@ -15,9 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using GongSolutions.Wpf.DragDrop;
 using System;
 using System.Windows;
+using GongSolutions.Wpf.DragDrop;
 
 namespace Cube.Net.Rss.Reader
 {

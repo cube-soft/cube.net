@@ -15,12 +15,12 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Xml;
-using Cube.Net.Rss.Parsing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Cube.Mixin.Xml;
+using Cube.Net.Rss.Parsing;
 
 namespace Cube.Net.Rss
 {
