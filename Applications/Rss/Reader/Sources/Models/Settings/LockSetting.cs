@@ -15,13 +15,13 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
+using System.Runtime.Serialization;
+using System.Security;
 using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.Mixin.IO;
 using Microsoft.Win32;
-using System;
-using System.Runtime.Serialization;
-using System.Security;
 
 namespace Cube.Net.Rss.Reader
 {

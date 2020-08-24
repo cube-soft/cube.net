@@ -15,11 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Assembly;
-using Cube.Mixin.Logging;
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using Cube.Mixin.Assembly;
+using Cube.Mixin.Logging;
 
 namespace Cube.Net.Rss.Reader
 {
