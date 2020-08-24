@@ -39,9 +39,6 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public PropertyWindow()
-        {
-            InitializeComponent();
-        }
+        public PropertyWindow() { InitializeComponent(); }
     }
 }

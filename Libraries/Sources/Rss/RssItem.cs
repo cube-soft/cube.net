@@ -15,10 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Collections;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Cube.Mixin.Collections;
 
 namespace Cube.Net.Rss
 {

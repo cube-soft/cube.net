@@ -15,13 +15,13 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.Observing;
-using Cube.Xui;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Input;
+using Cube.Mixin.Observing;
+using Cube.Xui;
 
 namespace Cube.Net.Rss.Reader
 {

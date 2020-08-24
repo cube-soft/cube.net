@@ -15,15 +15,15 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Cube.Mixin.Assembly;
 using Cube.Net.Http;
 using Cube.Tests;
 using Microsoft.Win32;
 using NUnit.Framework;
-using System;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Cube.Net.Tests
 {

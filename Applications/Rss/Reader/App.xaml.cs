@@ -15,9 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Forms.Processes;
-using Cube.Mixin.Assembly;
-using Cube.Mixin.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,6 +22,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+using Cube.Forms.Processes;
+using Cube.Mixin.Assembly;
+using Cube.Mixin.Logging;
 
 namespace Cube.Net.Rss.Reader
 {

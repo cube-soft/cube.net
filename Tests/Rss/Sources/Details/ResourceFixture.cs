@@ -15,9 +15,9 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System.Runtime.CompilerServices;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
-using System.Runtime.CompilerServices;
 
 namespace Cube.Net.Rss.Tests
 {

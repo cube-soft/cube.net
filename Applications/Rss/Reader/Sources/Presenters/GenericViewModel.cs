@@ -16,7 +16,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Xui;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -24,6 +23,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Input;
+using Cube.Xui;
 
 namespace Cube.Net.Rss.Reader
 {
