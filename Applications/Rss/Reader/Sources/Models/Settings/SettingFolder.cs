@@ -162,7 +162,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string UserAgent => _userAgent ?? (_userAgent = GetUserAgent());
+        public string UserAgent => _userAgent ??= GetUserAgent();
 
         #endregion
 
