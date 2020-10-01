@@ -19,6 +19,7 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Cube.Mixin.IO;
 using Cube.Mixin.String;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;

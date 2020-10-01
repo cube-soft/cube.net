@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Cube.Mixin.Assembly;
+using Cube.Mixin.IO;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
 using NUnit.Framework;
