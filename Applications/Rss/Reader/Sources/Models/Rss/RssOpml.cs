@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Cube.FileSystem;
-using Cube.Mixin.IO;
+using Cube.Mixin.IO.Backports;
 using Cube.Mixin.Logging;
 using Cube.Mixin.Uri;
 using Cube.Mixin.Xml;
@@ -103,7 +103,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public IEnumerable<IRssEntry> Load(string path,
-            IDictionary<Uri, RssFeed> filter) => IO.LoadOrDefault35(
+            IDictionary<Uri, RssFeed> filter) => IO.LoadOrDefault(
             path,
             e =>
             {
@@ -132,7 +132,7 @@ namespace Cube.Net.Rss.Reader
         /// <param name="path">ファイルのパス</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Save(IEnumerable<IRssEntry> src, string path) => IO.Save35(
+        public void Save(IEnumerable<IRssEntry> src, string path) => IO.Save(
             path,
             e =>
             {

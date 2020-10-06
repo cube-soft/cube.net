@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Cube.Forms;
+using Cube.Forms.Controls;
 using Cube.Mixin.Logging;
 using Cube.Xui.Behaviors;
 

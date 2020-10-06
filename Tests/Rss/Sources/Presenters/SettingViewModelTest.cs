@@ -18,6 +18,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Cube.Mixin.IO;
 using Cube.Net.Rss.Reader;
 using NUnit.Framework;
 
