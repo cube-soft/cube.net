@@ -1,7 +1,6 @@
-version: 3.2.0.{build}
+version: 4.0.0.{build}
 environment:
-    PROJECT_NAME:   'Cube.Net'
-    PROJECT_BIN:   'bin\%PLATFORM%\%CONFIGURATION%\net45'
+    PROJECT_NAME:  'Cube.Net'
     TEST_TOOL:     '..\packages\OpenCover\4.7.922\tools\OpenCover.Console.exe'
     TEST_ARGS:     'test --no-restore --no-build --logger:Appveyor'
     TEST_FILTERS:  '+[Cube*]* -[*]*.NativeMethods -[*]*.Properties.* -[*]*.Program -[*]*.App -[*]*Window -[*]*Control'
@@ -43,10 +42,9 @@ test_script:
       -output:"%TEST_COVERAGE%"
       -filter:"%TEST_FILTERS%"
 after_test:
-    - xcopy /q /Y /I "Applications\Rss\Reader\%PROJECT_BIN%" "CubeRssReader"
-    - xcopy /q /Y /I "Tests\Core\%PROJECT_BIN%\*.log" "%TEST_RESULTS%\"
-    - xcopy /q /Y /I "Tests\Rss\%PROJECT_BIN%\*.log" "%TEST_RESULTS%\"
+    - choco install codecov
+    - codecov -f "%TEST_COVERAGE%"
     - xcopy /q /Y /I "%TEST_COVERAGE%" "%TEST_RESULTS%\"
+    - cmd: for /f "delims=" %%x in ('dir /b /s *.log') do xcopy /q /Y /I "%%x" "%TEST_RESULTS%\"
 artifacts:
-    - path: 'CubeRssReader'
     - path: '%TEST_RESULTS%'

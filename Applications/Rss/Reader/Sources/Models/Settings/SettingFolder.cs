@@ -63,7 +63,6 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public SettingFolder(Assembly assembly) : this(
-            assembly,
             System.IO.Path.Combine(
                 Environment.SpecialFolder.LocalApplicationData.GetName(),
                 assembly.GetCompany(),
@@ -80,19 +79,16 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="assembly">アセンブリ情報</param>
         /// <param name="root">設定用フォルダのルートパス</param>
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingFolder(Assembly assembly, string root, IO io) :
-            base(assembly, Format.Json, io)
+        public SettingFolder(string root, IO io) :
+            base(Format.Json, io.Combine(root, LocalSetting.FileName), io)
         {
             AutoSave       = true;
-            Location       = io.Combine(root, LocalSetting.FileName);
             RootDirectory  = root;
             DataDirectory  = root;
-            Version.Digit  = 3;
             Version.Suffix = "β";
             Reset(root);
         }
@@ -236,7 +232,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private DateTime? GetLastCheckUpdate() => this.LogWarn(() =>
         {
-            var name = $@"Software\{Assembly.GetCompany()}\{Assembly.GetProduct()}";
+            var name = $@"Software\CubeSoft\CubeRssReader";
             using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false);
             if (key == null) return default;
 
@@ -255,7 +251,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private string GetUserAgent()
         {
-            var app  = $"{Assembly.GetProduct()}/{Version.Number}";
+            var app  = $"CubeRssReader/{Version.Number}";
             var win  = Environment.OSVersion.VersionString;
             var net  = $".NET {Environment.Version}";
             var view = BrowserSetting.Version;

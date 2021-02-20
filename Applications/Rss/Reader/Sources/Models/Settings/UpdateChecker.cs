@@ -137,7 +137,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void WhenTick()
         {
-            try { Process.Start(FileName, Setting.Assembly.GetProduct()); }
+            try { Process.Start(FileName, "CubeRssReader"); }
             catch (Exception err) { this.LogWarn($"{FileName} ({err.Message})"); }
             finally { Setting.Shared.LastCheckUpdate = DateTime.Now; }
         }

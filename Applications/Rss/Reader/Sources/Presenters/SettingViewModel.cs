@@ -91,9 +91,8 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BitmapImage Logo => _logo ?? (
-            _logo = Properties.Resources.Logo.ToBitmapImage()
-        );
+        public BitmapImage Logo => _logo ??= Properties.Resources.Logo.ToBitmapImage()
+;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -104,7 +103,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Product => Facade.Assembly.GetProduct();
+        public string Product => "CubeRSS Reader";
 
         /* ----------------------------------------------------------------- */
         ///
@@ -115,7 +114,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Version => $"Version {Facade.Version.ToString(true)}";
+        public string Version => $"Version {Facade.Version.ToString(3, true)}";
 
         /* ----------------------------------------------------------------- */
         ///

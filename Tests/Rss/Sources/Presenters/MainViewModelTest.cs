@@ -524,11 +524,10 @@ namespace Cube.Net.Rss.Tests
             IO.Copy(GetSource("Sample.json"), FeedsPath(), true);
             IO.CreateDirectory(CacheDirectory());
 
-            var asm = Assembly.GetExecutingAssembly();
             var n   = 0;
 
             using (var fw = new System.IO.FileSystemWatcher())
-            using (var vm = new MainViewModel(new SettingFolder(asm, RootDirectory(), IO), new SynchronizationContext()))
+            using (var vm = new MainViewModel(new SettingFolder(RootDirectory(), IO), new SynchronizationContext()))
             {
                 fw.Path = RootDirectory();
                 fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;

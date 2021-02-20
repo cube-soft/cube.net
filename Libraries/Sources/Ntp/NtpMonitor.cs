@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using Cube.Mixin.Assembly;
 using Cube.Mixin.Logging;
 using Microsoft.Win32;
 
@@ -138,7 +139,7 @@ namespace Cube.Net.Ntp
         ///
         /* ----------------------------------------------------------------- */
         public SoftwareVersion Version { get; set; } =
-            new SoftwareVersion(Assembly.GetExecutingAssembly());
+            Assembly.GetExecutingAssembly().GetSoftwareVersion();
 
         /* ----------------------------------------------------------------- */
         ///
