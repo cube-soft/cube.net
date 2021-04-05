@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube.Net", "Libraries\Cube.Net.csproj", "{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube.Net", "Libraries\Core\Cube.Net.csproj", "{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube.Net.Rss.Reader", "Applications\Rss\Reader\Cube.Net.Rss.Reader.csproj", "{C7742724-1786-4FDB-86C1-10090245D25E}"
 EndProject
