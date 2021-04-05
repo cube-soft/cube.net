@@ -29,7 +29,7 @@
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Libraries\Core\Cube.Net.csproj" />
+        <ProjectReference Include="..\..\..\Libraries\Rss\Cube.Net.Rss.csproj" />
         <PackageReference Include="Cube.Forms" Version="4.0.0" />
         <PackageReference Include="Cube.Xui" Version="4.0.0" />
         <PackageReference Include="gong-wpf-dragdrop" Version="2.3.2" />

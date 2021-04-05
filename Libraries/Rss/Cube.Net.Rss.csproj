@@ -1,13 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Version>4.0.0</Version>
         <Authors>clown;cube-soft</Authors>
         <Company>CubeSoft</Company>
-        <Description>Network library for CubeSoft libraries and applications.</Description>
+        <Description>RSS library for CubeSoft libraries and applications.</Description>
         <Copyright>Copyright © 2010 CubeSoft, Inc.</Copyright>
-        <PackageTags>Cube;Net;HTTP;NTP</PackageTags>
+        <PackageTags>Cube;Net;RSS;Atom</PackageTags>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/cube-soft/$(AssemblyName)</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/cube-soft/Cube.Net</PackageProjectUrl>
         <PackageIcon>images\Icon.png</PackageIcon>
         <TargetFramework>net45</TargetFramework>
         <LangVersion>latest</LangVersion>
@@ -23,7 +23,8 @@
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Cube.FileSystem" Version="4.0.0" />
+        <ProjectReference Include="..\Core\Cube.Net.csproj" />
+        <PackageReference Include="SgmlReader" Version="1.8.11" />
         <Reference Include="System.Net" />
         <Reference Include="System.Net.Http" />
     </ItemGroup>
