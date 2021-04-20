@@ -39,10 +39,10 @@ namespace Cube.Net.Rss.Reader
         /// Initializes a new instance of the RegisterFacade class.
         /// </summary>
         ///
-        /// <param name="invoker">Invoker object.</param>
+        /// <param name="dispatcher">Invoker object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RegisterFacade(Invoker invoker) : base(invoker) { }
+        public RegisterFacade(Dispatcher dispatcher) : base(dispatcher) { }
 
         #endregion
 

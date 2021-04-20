@@ -55,10 +55,10 @@ namespace Cube.Net.Rss.Reader
         /// class.
         /// </summary>
         ///
-        /// <param name="invoker">Invoker object.</param>
+        /// <param name="dispatcher">Dispatcher object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection(Invoker invoker) : this(default, invoker) { }
+        public BindableCollection(Dispatcher dispatcher) : this(default, dispatcher) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -70,14 +70,14 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="collection">Collection to be copied.</param>
-        /// <param name="invoker">Invoker object.</param>
+        /// <param name="dispatcher">Dispatcher object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public BindableCollection(IEnumerable<T> collection, Invoker invoker) :
+        public BindableCollection(IEnumerable<T> collection, Dispatcher dispatcher) :
             base(collection ?? Enumerable.Empty<T>())
         {
             _dispose   = new OnceAction<bool>(Dispose);
-            Invoker = invoker;
+            Dispatcher = dispatcher;
             SetHandler(this);
         }
 
@@ -87,14 +87,14 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Invoker
+        /// Dispatcher
         ///
         /// <summary>
-        /// Gets or sets the invoker object.
+        /// Gets or sets the dispatcher object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Invoker Invoker { get; set; }
+        public Dispatcher Dispatcher { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -175,7 +175,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         protected override void OnPropertyChanged(PropertyChangedEventArgs e) =>
-            Invoker.Invoke(() => base.OnPropertyChanged(e));
+            Dispatcher.Invoke(() => base.OnPropertyChanged(e));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -187,7 +187,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e) =>
-            Invoker.Invoke(() => OnCollectionChangedCore(e));
+            Dispatcher.Invoke(() => OnCollectionChangedCore(e));
 
         /* ----------------------------------------------------------------- */
         ///

@@ -52,8 +52,8 @@ namespace Cube.Net.Rss.Reader
         public SettingViewModel(SettingFolder settings, SynchronizationContext context) :
             base(settings, new Aggregator(), context)
         {
-            Local  = new BindableValue<LocalSetting>(settings.Value, GetInvoker(false));
-            Shared = new BindableValue<SharedSetting>(settings.Shared, GetInvoker(false));
+            Local  = new BindableValue<LocalSetting>(settings.Value, GetDispatcher(false));
+            Shared = new BindableValue<SharedSetting>(settings.Shared, GetDispatcher(false));
         }
 
         #endregion

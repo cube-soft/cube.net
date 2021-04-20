@@ -55,7 +55,7 @@ namespace Cube.Net.Rss.Reader
         {
             var info = io.Get(src);
             var dir  = io.Combine(info.DirectoryName, "Backup");
-            var dest = io.Combine(dir, $"{DateTime.Now.ToString("yyyyMMdd")}{info.Extension}");
+            var dest = io.Combine(dir, $"{DateTime.Now:yyyyMMdd}{info.Extension}");
 
             if (io.Exists(dest)) return;
             io.Copy(src, dest, true);
@@ -75,20 +75,20 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="src">ファイルのパス</param>
-        /// <param name="invoker">同期用コンテキスト</param>
+        /// <param name="dispatcher">同期用コンテキスト</param>
         /// <param name="io">入出力用オブジェクト</param>
         ///
         /// <returns>RSS エントリ情報</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static IEnumerable<RssCategory> Load(string src,
-            Invoker invoker, IO io) =>
+            Dispatcher dispatcher, IO io) =>
             io.Exists(src) ?
             io.Load(
                 src,
                 ss => Format.Json
                     .Deserialize<List<RssCategory.Json>>(ss)
-                    .Select(e => e.Convert(invoker))
+                    .Select(e => e.Convert(dispatcher))
             ) :
             new RssCategory[0];
 

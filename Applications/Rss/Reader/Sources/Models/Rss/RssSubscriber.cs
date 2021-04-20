@@ -49,14 +49,14 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="invoker">同期用オブジェクト</param>
+        /// <param name="dispatcher">同期用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssSubscriber(Invoker invoker)
+        public RssSubscriber(Dispatcher dispatcher)
         {
-            _context = invoker;
+            _context = dispatcher;
 
-            _tree = new BindableCollection<IRssEntry>(invoker);
+            _tree = new BindableCollection<IRssEntry>(dispatcher);
             _tree.CollectionChanged += (s, e) =>
             {
                 AutoSaveCore();
@@ -253,7 +253,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Select(RssEntry from, RssEntry to)
         {
-            if (to   != null) _feeds.Get(to.Uri, true); // lock
+            if (to   != null) _ = _feeds.Get(to.Uri, true); // lock
             if (from != null) _feeds.Unlock(from.Uri);
         }
 
@@ -369,7 +369,7 @@ namespace Cube.Net.Rss.Reader
                          dest?.Parent as RssCategory;
             var di     = parent?.Children ?? _tree;
             src.Parent = parent;
-            si.Remove(src);
+            _ = si.Remove(src);
             if (index < 0 || index >= di.Count) di.Add(src);
             else di.Insert(index, src);
         }
@@ -597,7 +597,7 @@ namespace Cube.Net.Rss.Reader
             {
                 if (!mon.Contains(src.Uri)) continue;
                 if (mon == dest) return;
-                mon.Remove(src.Uri);
+                _ = mon.Remove(src.Uri);
                 break;
             }
 
@@ -727,8 +727,8 @@ namespace Cube.Net.Rss.Reader
                 else if (item is RssEntry e) RemoveCore(e);
             }
 
-            if (src.Parent is RssCategory rc) rc.Children.Remove(src);
-            else _tree.Remove(src);
+            if (src.Parent is RssCategory rc) _ = rc.Children.Remove(src);
+            else _ = _tree.Remove(src);
             src.Dispose();
         }
 
@@ -743,12 +743,12 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void RemoveCore(RssEntry src)
         {
-            foreach (var mon in _monitors) mon.Remove(src.Uri);
+            foreach (var mon in _monitors) _ = mon.Remove(src.Uri);
 
-            _feeds.Remove(src.Uri, true);
+            _ = _feeds.Remove(src.Uri, true);
 
-            if (src.Parent is RssCategory rc) rc.Children.Remove(src);
-            else _tree.Remove(src);
+            if (src.Parent is RssCategory rc) _ = rc.Children.Remove(src);
+            else _ = _tree.Remove(src);
             src.Dispose();
         }
 
@@ -791,11 +791,11 @@ namespace Cube.Net.Rss.Reader
 
         #region Fields
         private readonly BindableCollection<IRssEntry> _tree;
-        private readonly RssCacheDictionary _feeds = new RssCacheDictionary();
+        private readonly RssCacheDictionary _feeds = new();
         private readonly RssMonitor[] _monitors = new RssMonitor[3];
-        private readonly RssClient _client = new RssClient();
-        private readonly Invoker _context;
-        private readonly System.Timers.Timer _autosaver = new System.Timers.Timer();
+        private readonly RssClient _client = new();
+        private readonly Dispatcher _context;
+        private readonly System.Timers.Timer _autosaver = new();
         #endregion
     }
 }

@@ -41,10 +41,11 @@ namespace Cube.Net.Rss.Reader
         /// RssEntry
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssEntry class with the
+        /// specified dispatcher.
         /// </summary>
         ///
-        /// <param name="invoker">同期用コンテキスト</param>
+        /// <param name="dispatcher">Dispatcher object.</param>
         ///
         /// <remarks>
         /// 将来的に Items に対して ObservableCollection(T) を指定する
@@ -54,24 +55,22 @@ namespace Cube.Net.Rss.Reader
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(Invoker invoker)
-        {
-            Invoker = invoker;
-        }
+        public RssEntry(Dispatcher dispatcher) { Dispatcher = dispatcher; }
 
         /* ----------------------------------------------------------------- */
         ///
         /// RssEntry
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssEntry class with the
+        /// specified arguments.
         /// </summary>
         ///
-        /// <param name="cp">コピー元オブジェクト</param>
-        /// <param name="invoker">同期用コンテキスト</param>
+        /// <param name="cp">Source to be copied.</param>
+        /// <param name="dispatcher">Dispatcher object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry(RssFeed cp, Invoker invoker) : this(invoker)
+        public RssEntry(RssFeed cp, Dispatcher dispatcher) : this(dispatcher)
         {
             Title         = cp.Title;
             Uri           = cp.Uri;

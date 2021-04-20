@@ -42,16 +42,18 @@ namespace Cube.Net.Rss.Reader
         /// RssCategory
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssCategory class with the
+        /// specified dispatcher.
         /// </summary>
         ///
-        /// <param name="invoker">同期用コンテキスト</param>
+        /// <param name="dispatcher">Dispatcher object.
+        /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssCategory(Invoker invoker)
+        public RssCategory(Dispatcher dispatcher)
         {
-            Invoker = invoker;
-            Children   = new BindableCollection<IRssEntry>(invoker);
+            Dispatcher = dispatcher;
+            Children   = new BindableCollection<IRssEntry>(dispatcher);
             Children.CollectionChanged += WhenChildrenChanged;
         }
 
@@ -64,7 +66,7 @@ namespace Cube.Net.Rss.Reader
         /// Parent
         ///
         /// <summary>
-        /// 親要素を取得または設定します。
+        /// Gets or sets the parent element.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -79,7 +81,7 @@ namespace Cube.Net.Rss.Reader
         /// Title
         ///
         /// <summary>
-        /// タイトルを取得または設定します。
+        /// Gets or sets the title.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -94,7 +96,7 @@ namespace Cube.Net.Rss.Reader
         /// Count
         ///
         /// <summary>
-        /// 未読記事数を取得または設定します。
+        /// Gets the number of unread items.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -115,7 +117,8 @@ namespace Cube.Net.Rss.Reader
         /// Expanded
         ///
         /// <summary>
-        /// 子要素が表示状態かどうかを示す値を取得または設定します。
+        /// Gets or sets a value indicating whether the tree view is
+        /// expanded.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -130,7 +133,7 @@ namespace Cube.Net.Rss.Reader
         /// Editing
         ///
         /// <summary>
-        /// ユーザによる編集中かどうかを示す値を取得または設定します。
+        /// Gets or sets a value indicating whether to be editing or not.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -145,7 +148,7 @@ namespace Cube.Net.Rss.Reader
         /// Categories
         ///
         /// <summary>
-        /// サブカテゴリ一覧を取得または設定します。
+        /// Gets the sequence of sub-categories.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -156,7 +159,7 @@ namespace Cube.Net.Rss.Reader
         /// Entries
         ///
         /// <summary>
-        /// エントリ一覧を取得または設定します。
+        /// Gets the sequence of entries.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -167,7 +170,7 @@ namespace Cube.Net.Rss.Reader
         /// Items
         ///
         /// <summary>
-        /// 子要素一覧を取得します。
+        /// Gets the collection of child elements.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -189,7 +192,7 @@ namespace Cube.Net.Rss.Reader
         /// <returns>New RssEntry object.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public RssEntry CreateEntry() => new RssEntry(Invoker) { Parent = this };
+        public RssEntry CreateEntry() => new(Dispatcher) { Parent = this };
 
         /* ----------------------------------------------------------------- */
         ///
@@ -220,7 +223,7 @@ namespace Cube.Net.Rss.Reader
         /// OnPropertyChanged
         ///
         /// <summary>
-        /// プロパティ変更時に実行されます。
+        /// Raises the PropertyChanged event.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -239,7 +242,7 @@ namespace Cube.Net.Rss.Reader
         /// WhenChildrenChanged
         ///
         /// <summary>
-        /// 子要素の変更時に実行されるハンドラです。
+        /// Occurs when the condition of child elements are changed.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -253,7 +256,7 @@ namespace Cube.Net.Rss.Reader
         /// RssEntry.Json
         ///
         /// <summary>
-        /// JSON 解析用クラスです。
+        /// Represents the data structure for the target JSON.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -271,11 +274,11 @@ namespace Cube.Net.Rss.Reader
                 Categories = src.Categories?.Select(e => new Json(e));
             }
 
-            public  RssCategory Convert(Invoker invoker) => Convert(null, invoker);
-            public  RssCategory Convert(RssCategory src) => Convert(src, src.Invoker);
-            private RssCategory Convert(RssCategory src, Invoker invoker)
+            public  RssCategory Convert(Dispatcher dispatcher) => Convert(null, dispatcher);
+            public  RssCategory Convert(RssCategory src) => Convert(src, src.Dispatcher);
+            private RssCategory Convert(RssCategory src, Dispatcher dispatcher)
             {
-                var dest = new RssCategory(invoker)
+                var dest = new RssCategory(dispatcher)
                 {
                     Title  = Title,
                     Parent = src,
