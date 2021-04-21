@@ -28,28 +28,27 @@ namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// HeaderHandler
+    /// HttpHandler
     ///
     /// <summary>
-    /// HTTP 通信のリクエストヘッダおよびレスポンスヘッダを扱うための
-    /// ハンドラです。
+    /// Provides functionality to treat HTTP request/response headers.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class HeaderHandler : HttpClientHandler
+    public class HttpHandler : HttpClientHandler
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// HeaderHandler
+        /// HttpHandler
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the HttpHandler class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public HeaderHandler()
+        public HttpHandler()
         {
             Proxy    = null;
             UseProxy = false;
@@ -70,7 +69,7 @@ namespace Cube.Net.Http
         /// ConnectionClose
         ///
         /// <summary>
-        /// ConnectionClose ヘッダに設定する値を取得または設定します。
+        /// Gets or sets the value of ConnectionClose header.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -81,7 +80,7 @@ namespace Cube.Net.Http
         /// UseEntityTag
         ///
         /// <summary>
-        /// EntityTag (ETag) を利用するかどうかを示す値を取得します。
+        /// Gets or sets a value indicating whether to use EntityTag (ETag).
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -92,7 +91,7 @@ namespace Cube.Net.Http
         /// EntityTag
         ///
         /// <summary>
-        /// EntityTag (ETag) を取得します。
+        /// Gets or sets the value of EntityTag (ETag).
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -103,7 +102,7 @@ namespace Cube.Net.Http
         /// UserAgent
         ///
         /// <summary>
-        /// User-Agent を取得または設定します。
+        /// Gets or sets the user agent.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -118,7 +117,7 @@ namespace Cube.Net.Http
         /// SendAsync
         ///
         /// <summary>
-        /// HTTP リクエストを非同期で送信します。
+        /// Sends an HTTP request asynchronously.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -141,7 +140,7 @@ namespace Cube.Net.Http
         /// SetConnectionClose
         ///
         /// <summary>
-        /// リクエストヘッダに ConnectionClose を設定します。
+        /// Sets the ConnectionClose value to the HTTP request header.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -157,7 +156,7 @@ namespace Cube.Net.Http
         /// SetUserAgent
         ///
         /// <summary>
-        /// リクエストヘッダに User-Agent を設定します。
+        /// Sets the UserAgent value to the HTTP request header.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -172,7 +171,7 @@ namespace Cube.Net.Http
         /// SetEntityTag
         ///
         /// <summary>
-        /// リクエストヘッダに EntityTag を設定します。
+        /// Sets the EntityTag value to the HTTP request header.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -188,7 +187,7 @@ namespace Cube.Net.Http
         /// GetEntityTag
         ///
         /// <summary>
-        /// レスポンスヘッダから EntityTag を取得します。
+        /// Gets the EntityTag value from the HTTP response header.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -200,41 +199,42 @@ namespace Cube.Net.Http
 
     /* --------------------------------------------------------------------- */
     ///
-    /// ContentHandler(TValue)
+    /// HttpContentHandler(TValue)
     ///
     /// <summary>
-    /// HttpContent を TValue オブジェクトに変換するための HTTP
-    /// ハンドラです。
+    /// Provides functionality to convert from the HttpContent object to
+    /// the provided type.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ContentHandler<TValue> : HeaderHandler
+    public class HttpContentHandler<TValue> : HttpHandler
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ContentHandler
+        /// HttpContentHandler
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the HttpContentHandler class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ContentHandler() { }
+        public HttpContentHandler() { }
 
         /* ----------------------------------------------------------------- */
         ///
         /// ContentHandler
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the HttpContentHandler class
+        /// with the specified converter.
         /// </summary>
         ///
-        /// <param name="converter">変換用オブジェクト</param>
+        /// <param name="converter">Converter object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public ContentHandler(IContentConverter<TValue> converter) : this()
+        public HttpContentHandler(IContentConverter<TValue> converter) : this()
         {
             Converter = converter;
         }
@@ -244,13 +244,16 @@ namespace Cube.Net.Http
         /// ContentHandler
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the HttpContentHandler class
+        /// with the specified conversion function.
         /// </summary>
         ///
-        /// <param name="func">変換用オブジェクト</param>
+        /// <param name="func">
+        /// Function to convert the HttpContent object.
+        /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        public ContentHandler(Func<Stream, TValue> func) :
+        public HttpContentHandler(Func<Stream, TValue> func) :
             this(new ContentConverter<TValue>(func)) { }
 
         #endregion
@@ -262,7 +265,7 @@ namespace Cube.Net.Http
         /// Converter
         ///
         /// <summary>
-        /// 変換用オブジェクトを取得または設定します。
+        /// Gets or sets the converter object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -277,7 +280,7 @@ namespace Cube.Net.Http
         /// SendAsync
         ///
         /// <summary>
-        /// HTTP リクエストを非同期で送信します。
+        /// Sends an HTTP request asynchronously.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */

@@ -139,7 +139,7 @@ namespace Cube.Net.Tests.Rss
         private RssClient Create()
         {
             var asm = Assembly.GetExecutingAssembly();
-            var h   = new HeaderHandler { UserAgent = $"{asm.GetProduct()}/{asm.GetVersion()}" };
+            var h   = new HttpHandler { UserAgent = $"{asm.GetProduct()}/{asm.GetVersion()}" };
             return new RssClient(h);
         }
 

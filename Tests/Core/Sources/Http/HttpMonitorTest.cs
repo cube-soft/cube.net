@@ -243,7 +243,7 @@ namespace Cube.Net.Tests.Http
         ///
         /* ----------------------------------------------------------------- */
         private HttpMonitor<int> Create() =>
-            new(new ContentHandler<int>(s => s.ReadByte()) { UseEntityTag = false })
+            new(new HttpContentHandler<int>(s => s.ReadByte()) { UseEntityTag = false })
         {
             Interval  = TimeSpan.FromMinutes(1),
             Timeout   = TimeSpan.FromSeconds(2),

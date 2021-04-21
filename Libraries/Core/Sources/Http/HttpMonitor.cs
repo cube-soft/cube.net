@@ -54,7 +54,7 @@ namespace Cube.Net.Http
         /// <param name="handler">HTTP handler.</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected HttpMonitorBase(HeaderHandler handler)
+        protected HttpMonitorBase(HttpHandler handler)
         {
             Timeout = TimeSpan.FromSeconds(2);
             Handler = handler;
@@ -88,7 +88,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        protected HeaderHandler Handler { get; }
+        protected HttpHandler Handler { get; }
 
         /* --------------------------------------------------------------------- */
         ///
@@ -277,7 +277,7 @@ namespace Cube.Net.Http
         ///
         /* ----------------------------------------------------------------- */
         public HttpMonitor(IContentConverter<TValue> converter) :
-            this(new ContentHandler<TValue>(converter)) { }
+            this(new HttpContentHandler<TValue>(converter)) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -291,7 +291,7 @@ namespace Cube.Net.Http
         /// <param name="handler">HTTP handler.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public HttpMonitor(ContentHandler<TValue> handler) : base(handler)
+        public HttpMonitor(HttpContentHandler<TValue> handler) : base(handler)
         {
             _http = HttpClientFactory.Create(handler);
         }

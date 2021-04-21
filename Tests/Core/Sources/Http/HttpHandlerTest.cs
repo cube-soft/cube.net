@@ -57,7 +57,7 @@ namespace Cube.Net.Tests.Http
         public void GetAsync_ConnectionClose()
         {
             var uri = new Uri("http://www.cube-soft.jp/");
-            var h   = new Cube.Net.Http.HeaderHandler
+            var h   = new Cube.Net.Http.HttpHandler
             {
                 UserAgent       = GetUserAgent(),
                 ConnectionClose = true
@@ -83,7 +83,7 @@ namespace Cube.Net.Tests.Http
         public void GetAsync_EntityTag()
         {
             var uri = new Uri("https://www.cube-soft.jp/favicon.ico");
-            var h   = new Cube.Net.Http.HeaderHandler { UserAgent = GetUserAgent() };
+            var h   = new Cube.Net.Http.HttpHandler { UserAgent = GetUserAgent() };
 
             using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
             {
