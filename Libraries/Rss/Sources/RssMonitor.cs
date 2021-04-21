@@ -257,7 +257,7 @@ namespace Cube.Net.Rss
             if (!Contains(uri)) return;
 
             this.LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
-            var sw   = Stopwatch.StartNew();
+            var sw = Stopwatch.StartNew();
             var dest = await _http.GetAsync(uri).ConfigureAwait(false);
             this.LogDebug($"{uri} ({sw.Elapsed})");
 

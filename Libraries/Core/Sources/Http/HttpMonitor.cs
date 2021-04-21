@@ -350,7 +350,8 @@ namespace Cube.Net.Http
             {
                 foreach (var cb in Subscription)
                 {
-                    await cb(uri, cvt.Value).ConfigureAwait(false);
+                    try { await cb(uri, cvt.Value).ConfigureAwait(false); }
+                    catch (Exception err) { this.LogWarn(err); }
                 }
             }
             else throw new InvalidOperationException($"Convert failed ({(int)code} {code})");
