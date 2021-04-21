@@ -15,9 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using Cube.Net.Ntp;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Tests.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -45,7 +46,7 @@ namespace Cube.Net.Tests
         [Test]
         public void Create_ArgumentException()
         {
-            Assert.That(() => new Ntp.NtpPacket(new byte[47]), Throws.ArgumentException);
+            Assert.That(() => new NtpPacket(new byte[47]), Throws.ArgumentException);
         }
 
         #endregion

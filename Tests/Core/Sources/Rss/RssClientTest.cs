@@ -22,7 +22,7 @@ using Cube.Net.Http;
 using Cube.Net.Rss;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Tests.Rss
 {
     /* --------------------------------------------------------------------- */
     ///

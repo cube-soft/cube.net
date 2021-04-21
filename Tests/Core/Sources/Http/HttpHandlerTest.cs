@@ -21,7 +21,7 @@ using System.Reflection;
 using Cube.Mixin.Assembly;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Tests.Http
 {
     /* --------------------------------------------------------------------- */
     ///

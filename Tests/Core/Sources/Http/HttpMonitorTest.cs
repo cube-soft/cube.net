@@ -25,7 +25,7 @@ using Cube.Tests;
 using Microsoft.Win32;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Tests.Http
 {
     /* --------------------------------------------------------------------- */
     ///
