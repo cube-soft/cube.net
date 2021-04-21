@@ -63,14 +63,20 @@ namespace Cube.Net.Rss.Reader
                 CollectionChanged?.Invoke(this, e);
             };
 
+            Task task(RssFeed e)
+            {
+                Received?.Invoke(this, new(e));
+                return Task.FromResult(0);
+            }
+
             _monitors[0] = new RssMonitor { Interval = TimeSpan.FromHours(1) };
-            _monitors[0].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
+            _monitors[0].Subscribe((_, e) => task(e));
 
             _monitors[1] = new RssMonitor { Interval = TimeSpan.FromHours(24) };
-            _monitors[1].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
+            _monitors[1].Subscribe((_, e) => task(e));
 
             _monitors[2] = new RssMonitor(); // for RssCheckFrequency.None
-            _monitors[2].Subscribe(e => Received?.Invoke(this, ValueEventArgs.Create(e)));
+            _monitors[2].Subscribe((_, e) => task(e));
 
             _autosaver.AutoReset = false;
             _autosaver.Interval = 1000.0;

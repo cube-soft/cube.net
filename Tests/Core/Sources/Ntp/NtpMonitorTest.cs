@@ -62,7 +62,7 @@ namespace Cube.Net.Tests
                 mon.Timeout = TimeSpan.FromMilliseconds(500);
 
                 mon.Subscribe(_ => throw new ArgumentException("Test"));
-                mon.Subscribe(_ => { ++count; cts.Cancel(); });
+                mon.Subscribe(_ => { ++count; cts.Cancel(); return Task.FromResult(0); });
                 mon.Start();
                 mon.Start(); // ignore
                 Assert.That(Wait.For(cts.Token), "Timeout");
@@ -94,7 +94,7 @@ namespace Cube.Net.Tests
                 mon.Port    = 999;
                 mon.Timeout = TimeSpan.FromMilliseconds(100);
 
-                mon.Subscribe(_ => ++count);
+                mon.Subscribe(_ => { ++count; return Task.FromResult(0); });
                 mon.Start();
                 Task.Delay(150).Wait();
                 mon.Stop();
@@ -144,7 +144,7 @@ namespace Cube.Net.Tests
                 mon.Port    = 123;
                 mon.Timeout = TimeSpan.FromMilliseconds(500);
 
-                mon.Subscribe(_ => { ++count; cts.Cancel(); });
+                mon.Subscribe(_ => { ++count; cts.Cancel(); return Task.FromResult(0); });
                 mon.Start(mon.Interval);
                 mon.Reset();
                 Assert.That(Wait.For(cts.Token), "Timeout");

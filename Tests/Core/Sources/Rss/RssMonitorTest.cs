@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using Cube.Mixin.Assembly;
 using Cube.Net.Rss;
 using Cube.Tests;
@@ -80,11 +81,12 @@ namespace Cube.Net.Tests
 
                     mon.Register(uris);
                     mon.Register(uris); // ignore
-                    mon.Subscribe(e => throw new ArgumentException("Test"));
-                    mon.Subscribe(e =>
+                    mon.Subscribe((_, e) => throw new ArgumentException("Test"));
+                    mon.Subscribe((_, e) =>
                     {
                         src[e.Uri] = e;
                         cts.Cancel();
+                        return Task.FromResult(0);
                     });
                     mon.Start();
                     Assert.That(Wait.For(cts.Token), "Timeout");
@@ -124,7 +126,7 @@ namespace Cube.Net.Tests
 
                 mon.RetryCount = 0;
                 mon.Register(src);
-                mon.Subscribe(e => { dest = e; cts.Cancel(); });
+                mon.Subscribe((_, e) => { dest = e; cts.Cancel(); return Task.FromResult(0); });
                 mon.Start();
                 Assert.That(Wait.For(cts.Token), "Timeout");
                 mon.Stop();
@@ -163,7 +165,7 @@ namespace Cube.Net.Tests
                 var cts = new CancellationTokenSource();
 
                 mon.Register(src[0]);
-                mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
+                mon.Subscribe((_, e) => { dest.Add(e.Uri, e); cts.Cancel(); return Task.FromResult(0); });
                 mon.Update(src[1]);
                 mon.Update(src[0]);
                 Assert.That(Wait.For(cts.Token), "Timeout");
@@ -192,7 +194,7 @@ namespace Cube.Net.Tests
             {
                 var cts = new CancellationTokenSource();
                 mon.Register(src);
-                mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
+                mon.Subscribe((_, e) => { dest.Add(e.Uri, e); cts.Cancel(); return Task.FromResult(0); });
                 mon.Update(src);
                 Assert.That(Wait.For(cts.Token), "Timeout");
             }

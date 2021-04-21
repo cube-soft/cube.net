@@ -16,25 +16,26 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
-using Cube.Mixin.Assembly;
+using Cube.Collections;
 using Cube.Mixin.Logging;
 using Microsoft.Win32;
 
 namespace Cube.Net.Ntp
 {
+    #region NtpMonitor
+
     /* --------------------------------------------------------------------- */
     ///
     /// NtpMonitor
     ///
     /// <summary>
-    /// NTP サーバと定期的に通信を行い、時刻のずれを監視するクラスです。
+    /// Provides functionality to periodically communicate with the NTP
+    /// server.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class NtpMonitor : NetworkMonitorBase
+    public class NtpMonitor : NetworkMonitor
     {
         #region Constructors
 
@@ -43,7 +44,7 @@ namespace Cube.Net.Ntp
         /// NtpMonitor
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the NtpMonitor class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -54,10 +55,11 @@ namespace Cube.Net.Ntp
         /// NtpMonitor
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the NtpMonitor class with the
+        /// specified NTP server.
         /// </summary>
         ///
-        /// <param name="server">NTP サーバ</param>
+        /// <param name="server">NTP server.</param>
         ///
         /* ----------------------------------------------------------------- */
         public NtpMonitor(string server) : this(server, NtpClient.DefaultPort) { }
@@ -67,11 +69,14 @@ namespace Cube.Net.Ntp
         /// NtpMonitor
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the NtpMonitor class with the
+        /// specified arguments.
         /// </summary>
         ///
-        /// <param name="server">NTP サーバ</param>
-        /// <param name="port">ポート番号</param>
+        /// <param name="server">NTP server.</param>
+        /// <param name="port">
+        /// Port number to communicate with the NTP server.
+        /// </param>
         ///
         /* ----------------------------------------------------------------- */
         public NtpMonitor(string server, int port)
@@ -80,8 +85,7 @@ namespace Cube.Net.Ntp
             _server  = server;
             _port    = port;
 
-            Timer.Subscribe(WhenTick);
-            SystemEvents.TimeChanged += (s, e) => OnTimeChanged(e);
+            SystemEvents.TimeChanged += (s, e) => OnTimeChanged();
         }
 
         #endregion
@@ -93,8 +97,7 @@ namespace Cube.Net.Ntp
         /// Server
         ///
         /// <summary>
-        /// NTP サーバのアドレス (ホスト名または IP アドレス) を取得
-        /// または設定します。
+        /// Gets or sets the NTP server (host name or IP address).
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -114,7 +117,7 @@ namespace Cube.Net.Ntp
         /// Port
         ///
         /// <summary>
-        /// ポート番号を取得または設定します。
+        /// Gets or sets the port number.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -129,60 +132,9 @@ namespace Cube.Net.Ntp
             }
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Version
-        ///
-        /// <summary>
-        /// アプリケーションのバージョンを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SoftwareVersion Version { get; set; } =
-            Assembly.GetExecutingAssembly().GetSoftwareVersion();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Subscriptions
-        ///
-        /// <summary>
-        /// 購読者一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected IList<Func<TimeSpan, Task>> Subscriptions { get; } =
-            new List<Func<TimeSpan, Task>>();
-
         #endregion
 
         #region Events
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// TimeChanged
-        ///
-        /// <summary>
-        /// システムの時刻が変更された時に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public event EventHandler TimeChanged;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnTimeChanged
-        ///
-        /// <summary>
-        /// システムの時刻が変更された時に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void OnTimeChanged(EventArgs e)
-        {
-            if (Power.Mode == PowerModes.Suspend) return;
-            Reset();
-            TimeChanged?.Invoke(this, e);
-        }
 
         #endregion
 
@@ -190,51 +142,54 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SubscribeAsync
+        /// Subscribe
         ///
         /// <summary>
-        /// データ受信時に非同期で実行する処理を登録します。
+        /// Sets the specified asynchronous action to the monitor.
         /// </summary>
         ///
+        /// <param name="callback">Asynchronous user action.</param>
+        ///
+        /// <returns>Object to remove from the subscription.</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        public IDisposable SubscribeAsync(Func<TimeSpan, Task> action)
+        public IDisposable Subscribe(NtpAsyncAction callback) =>
+            _subscription.Subscribe(callback);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Publish
+        ///
+        /// <summary>
+        /// Publishes the time gap to the subscribers.
+        /// </summary>
+        ///
+        /// <param name="value">
+        /// Time difference between local and NTP server.
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual async Task Publish(TimeSpan value)
         {
-            Subscriptions.Add(action);
-            return Disposable.Create(() => Subscriptions.Remove(action));
+            foreach (var cb in _subscription)
+            {
+                try { await cb(value).ConfigureAwait(false); }
+                catch (Exception err) { this.LogWarn(err); }
+            }
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Subscribe
+        /// OnTimeChanged
         ///
         /// <summary>
-        /// データ受信時に実行する処理を登録します。
+        /// Occurs when the system clock is changed.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<TimeSpan> action) =>
-            SubscribeAsync(e =>
-            {
-                action(e);
-                return Task.FromResult(0);
-            });
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// PublishAsync
-        ///
-        /// <summary>
-        /// 新しい結果を発行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual async Task PublishAsync(TimeSpan value)
+        protected virtual void OnTimeChanged()
         {
-            foreach (var action in Subscriptions)
-            {
-                try { await action(value).ConfigureAwait(false); }
-                catch (Exception err) { this.LogWarn(err); }
-            }
+            if (Power.Mode != PowerModes.Suspend) Reset();
         }
 
         #endregion
@@ -243,10 +198,10 @@ namespace Cube.Net.Ntp
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WhenTick
+        /// OnTick
         ///
         /// <summary>
-        /// 一定間隔毎に実行されます。
+        /// Occurs when the timer is expired.
         /// </summary>
         ///
         /// <remarks>
@@ -256,16 +211,16 @@ namespace Cube.Net.Ntp
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task WhenTick()
+        protected override async Task OnTick()
         {
-            if (Subscriptions.Count <= 0) return;
+            if (_subscription.Count <= 0) return;
             if (!Network.Available)
             {
                 this.LogDebug("Network not available");
                 return;
             }
 
-            await Task.Delay(500).ConfigureAwait(false); // see ramarks
+            await Task.Delay(500).ConfigureAwait(false); // see remarks
 
             for (var i = 0; i < RetryCount; ++i)
             {
@@ -276,7 +231,7 @@ namespace Cube.Net.Ntp
                     var packet = await client.GetAsync();
                     if (packet != null && packet.IsValid)
                     {
-                        await PublishAsync(packet.LocalClockOffset).ConfigureAwait(false);
+                        await Publish(packet.LocalClockOffset).ConfigureAwait(false);
                     }
                     else throw new ArgumentException("InvalidPacket");
                     return;
@@ -292,8 +247,26 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Fields
+        private readonly Subscription<NtpAsyncAction> _subscription = new();
         private string _server = string.Empty;
         private int _port = NtpClient.DefaultPort;
         #endregion
     }
+
+    #endregion
+
+    #region NtpAsyncAction
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// NtpAsyncAction
+    ///
+    /// <summary>
+    /// Represents the method to invoke as an asynchronous method.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public delegate Task NtpAsyncAction(TimeSpan value);
+
+    #endregion
 }

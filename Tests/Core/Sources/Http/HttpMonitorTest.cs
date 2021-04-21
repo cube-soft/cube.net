@@ -76,6 +76,7 @@ namespace Cube.Net.Tests
                 {
                     count++;
                     if (count >= 3) cts.Cancel();
+                    return Task.FromResult(0);
                 });
 
                 mon.Start();
@@ -133,7 +134,7 @@ namespace Cube.Net.Tests
                 mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
                 mon.RetryCount = 0;
-                _ = mon.Subscribe((e, n) => count++);
+                _ = mon.Subscribe((e, n) => { count++; return Task.FromResult(0); });
 
                 mon.Start();
                 Task.Delay(mon.Timeout).Wait();
@@ -161,7 +162,7 @@ namespace Cube.Net.Tests
                 mon.Timeout = TimeSpan.FromMilliseconds(200);
                 mon.Interval = TimeSpan.FromMilliseconds(50);
                 mon.Uri = new Uri("http://www.example.com/");
-                _ = mon.Subscribe((e, n) => count++);
+                _ = mon.Subscribe((e, n) => { count++; return Task.FromResult(0); });
 
                 mon.Start();
                 Task.Delay(mon.Timeout).Wait();
@@ -192,7 +193,7 @@ namespace Cube.Net.Tests
 
                 mon.Interval = TimeSpan.FromMilliseconds(100);
                 mon.Uri = new Uri("http://www.example.com/");
-                _ = mon.Subscribe((e, n) => { count++; cts.Cancel(); });
+                _ = mon.Subscribe((e, n) => { count++; cts.Cancel(); return Task.FromResult(0); });
 
                 mon.Start(mon.Interval);
                 power.Mode = PowerModes.Suspend;
@@ -223,7 +224,7 @@ namespace Cube.Net.Tests
 
                 mon.Interval = TimeSpan.FromMinutes(1);
                 mon.Uri = new Uri("http://www.example.com/");
-                _ = mon.Subscribe((e, n) => { ++count; cts.Cancel(); });
+                _ = mon.Subscribe((e, n) => { ++count; cts.Cancel(); return Task.FromResult(0); });
 
                 mon.Reset();
                 mon.Start(mon.Interval);

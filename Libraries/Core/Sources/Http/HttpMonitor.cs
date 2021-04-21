@@ -16,18 +16,230 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Cube.Collections;
 using Cube.Mixin.Logging;
 
 namespace Cube.Net.Http
 {
+    #region HttpMonitorBase
+
     /* --------------------------------------------------------------------- */
     ///
-    /// HttpMonitor
+    /// HttpMonitorBase
     ///
     /// <summary>
-    /// 定期的に HTTP 通信を実行するためのクラスです。
+    /// Represents the base class for periodic communication with HTTP
+    /// servers.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public abstract class HttpMonitorBase<TValue> : NetworkMonitor
+    {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// HttpMonitorBase
+        ///
+        /// <summary>
+        /// Initializes a new instance of the HttpMonitorBase class with
+        /// the specified handler.
+        /// </summary>
+        ///
+        /// <param name="handler">HTTP handler.</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected HttpMonitorBase(HeaderHandler handler)
+        {
+            Timeout = TimeSpan.FromSeconds(2);
+            Handler = handler;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// UserAgent
+        ///
+        /// <summary>
+        /// Gets or sets the user agent.
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public string UserAgent
+        {
+            get => Handler.UserAgent;
+            set => Handler.UserAgent = value;
+        }
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Handler
+        ///
+        /// <summary>
+        /// Gets the HTTP handler.
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        protected HeaderHandler Handler { get; }
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Subscription
+        ///
+        /// <summary>
+        /// Gets the subscription.
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        protected Subscription<HttpAsyncAction<TValue>> Subscription { get; } = new();
+
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Subscribe
+        ///
+        /// <summary>
+        /// Sets the specified asynchronous action to the monitor.
+        /// </summary>
+        ///
+        /// <param name="callback">Asynchronous user action.</param>
+        ///
+        /// <returns>Object to remove from the subscription.</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IDisposable Subscribe(HttpAsyncAction<TValue> callback) =>
+            Subscription.Subscribe(callback);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Publish
+        ///
+        /// <summary>
+        /// Gets the HTTP response from the specified URL and publishes
+        /// the result.
+        /// </summary>
+        ///
+        /// <param name="uri">HTTP request URL.</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected abstract Task Publish(Uri uri);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnError
+        ///
+        /// <summary>
+        /// Occurs when some errors are detected.
+        /// </summary>
+        ///
+        /// <param name="errors">Error list.</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnError(IDictionary<Uri, Exception> errors)
+        {
+            foreach (var e in errors) this.LogWarn(e.Key.ToString(), e.Value.Message);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetRequests
+        ///
+        /// <summary>
+        /// Gets the sequence of HTTP request URLs.
+        /// </summary>
+        ///
+        /// <returns>Sequence of HTTP Request URLs</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected abstract IEnumerable<Uri> GetRequests();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// Releases the unmanaged resources used by the WakeableTimer
+        /// and optionally releases the managed resources.
+        /// </summary>
+        ///
+        /// <param name="disposing">
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) Handler.Dispose();
+        }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnTick
+        ///
+        /// <summary>
+        /// Occurs when the timer is expired.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override async Task OnTick()
+        {
+            if (Subscription.Count <= 0) return;
+            if (!Network.Available) { this.LogDebug("Network not available"); return; }
+
+            async Task task(IEnumerable<Uri> s, IDictionary<Uri, Exception> e)
+            {
+                foreach (var uri in s)
+                {
+                    try { await Publish(uri).ConfigureAwait(false); }
+                    catch (Exception err) { e.Add(uri, err); }
+                }
+            }
+
+            var src = GetRequests().ToList();
+            var errors = new Dictionary<Uri, Exception>();
+            await task(src, errors).ConfigureAwait(false);
+
+            for (var i = 0; i < RetryCount && errors.Count > 0; ++i)
+            {
+                await Task.Delay(RetryInterval).ConfigureAwait(false);
+                var retry = errors.Keys.ToList();
+                errors.Clear();
+                await task(retry, errors).ConfigureAwait(false);
+            }
+
+            if (errors.Count > 0) OnError(errors);
+        }
+
+        #endregion
+    }
+
+    #endregion
+
+    #region HttpMonitor
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// HttpMonitorBase
+    ///
+    /// <summary>
+    /// Provides functionality to periodically  communicate with the
+    /// provided HTTP server.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -40,10 +252,13 @@ namespace Cube.Net.Http
         /// HttpMonitor
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the HttpMonitor class with the
+        /// specified converting function.
         /// </summary>
         ///
-        /// <param name="func">変換用オブジェクト</param>
+        /// <param name="func">
+        /// Function to convert to the provided type.
+        /// </param>
         ///
         /* ----------------------------------------------------------------- */
         public HttpMonitor(Func<Stream, TValue> func) :
@@ -54,10 +269,11 @@ namespace Cube.Net.Http
         /// HttpMonitor
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the HttpMonitor class with the
+        /// specified converter object.
         /// </summary>
         ///
-        /// <param name="converter">変換用オブジェクト</param>
+        /// <param name="converter">Converter object.</param>
         ///
         /* ----------------------------------------------------------------- */
         public HttpMonitor(IContentConverter<TValue> converter) :
@@ -68,15 +284,16 @@ namespace Cube.Net.Http
         /// HttpMonitor
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the HttpMonitor class with the
+        /// specified handler.
         /// </summary>
         ///
-        /// <param name="handler">HTTP 通信用ハンドラ</param>
+        /// <param name="handler">HTTP handler.</param>
         ///
         /* ----------------------------------------------------------------- */
         public HttpMonitor(ContentHandler<TValue> handler) : base(handler)
         {
-            Timer.Subscribe(WhenTick);
+            _http = HttpClientFactory.Create(handler);
         }
 
         #endregion
@@ -88,7 +305,7 @@ namespace Cube.Net.Http
         /// Uri
         ///
         /// <summary>
-        /// Uris の最初の項目を取得します。
+        /// Gets or sets the HTTP request URL.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -100,57 +317,87 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GetRequestUri
+        /// GetRequests
         ///
         /// <summary>
-        /// リクエスト送信先 URL を取得します。
+        /// Gets the sequence of HTTP request URLs.
         /// </summary>
         ///
-        /// <returns>URL</returns>
+        /// <returns>Sequence of HTTP Request URLs.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual Uri GetRequestUri() => Uri;
-
-        #endregion
-
-        #region Implementations
+        protected override IEnumerable<Uri> GetRequests() => new[] { Uri };
 
         /* ----------------------------------------------------------------- */
         ///
-        /// WhenTick
+        /// Publish
         ///
         /// <summary>
-        /// 一定間隔で実行されます。
+        /// Gets the HTTP response from the specified URL and publishes
+        /// the result.
         /// </summary>
         ///
+        /// <param name="uri">HTTP request URL.</param>
+        ///
         /* ----------------------------------------------------------------- */
-        private async Task WhenTick()
+        protected override async Task Publish(Uri uri)
         {
-            if (Subscriptions.Count <= 0) return;
-            if (!Network.Available)
-            {
-                this.LogDebug("Network not available");
-                return;
-            }
+            this.LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
+            using var response = await _http.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
+            var code = response.StatusCode;
 
-            var uri = GetRequestUri();
-
-            for (var i = 0; i <= RetryCount; ++i)
+            if (response.Content is HttpValueContent<TValue> cvt)
             {
-                try
+                foreach (var cb in Subscription)
                 {
-                    if (State != TimerState.Run) return;
-                    await PublishAsync(uri);
-                    return;
-                }
-                catch (Exception err)
-                {
-                    this.LogWarn($"{uri}", $"{err.Message} ({i + 1}/{RetryCount})");
-                    await Task.Delay(RetryInterval).ConfigureAwait(false);
+                    await cb(uri, cvt.Value).ConfigureAwait(false);
                 }
             }
+            else throw new InvalidOperationException($"Convert failed ({(int)code} {code})");
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        ///
+        /// <summary>
+        /// Releases the unmanaged resources used by the WakeableTimer
+        /// and optionally releases the managed resources.
+        /// </summary>
+        ///
+        /// <param name="disposing">
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
+        /// </param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override void Dispose(bool disposing)
+        {
+            try { if (disposing) _http.Dispose(); }
+            finally { base.Dispose(disposing); }
         }
 
         #endregion
+
+        #region Fields
+        private readonly HttpClient _http;
+        #endregion
     }
+
+    #endregion
+
+    #region HttpAsyncAction
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// NtpAsyncAction
+    ///
+    /// <summary>
+    /// Represents the method to invoke as an asynchronous method.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public delegate Task HttpAsyncAction<TValue>(Uri uri, TValue value);
+
+    #endregion
 }

@@ -32,11 +32,12 @@ namespace Cube.Net.Rss
     /// RssMonitor
     ///
     /// <summary>
-    /// 定期的に登録した URL からフィードを取得するためのクラスです。
+    /// Provides functionality to periodically get RSS feeds from the
+    /// provided HTTP servers.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RssMonitor : NetworkMonitorBase
+    public class RssMonitor : HttpMonitorBase<RssFeed>
     {
         #region Constructors
 
@@ -45,73 +46,16 @@ namespace Cube.Net.Rss
         /// RssMonitor
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssMonitor class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RssMonitor()
+        public RssMonitor() : base(new() { UseEntityTag = false })
         {
-            Handler    = new HeaderHandler { UseEntityTag = false };
             _http      = new RssClient(Handler);
             Timeout    = _http.Timeout;
             RetryCount = 2;
-
-            Timer.Subscribe(WhenTick);
         }
-
-        #endregion
-
-        #region Properties
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// UserAgent
-        ///
-        /// <summary>
-        /// ユーザエージェントを取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public string UserAgent
-        {
-            get => Handler.UserAgent;
-            set => Handler.UserAgent = value;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Feeds
-        ///
-        /// <summary>
-        /// RSS フィードの管理用コレクションを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected IDictionary<Uri, DateTime?> Feeds { get; } =
-            new Dictionary<Uri, DateTime?>();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Handler
-        ///
-        /// <summary>
-        /// HTTP 通信用ハンドラを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected HeaderHandler Handler { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Subscriptions
-        ///
-        /// <summary>
-        /// 購読者一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected IList<Func<RssFeed, Task>> Subscriptions { get; } =
-            new List<Func<RssFeed, Task>>();
 
         #endregion
 
@@ -130,22 +74,7 @@ namespace Cube.Net.Rss
         /// <returns>監視対象かどうか</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Contains(Uri uri) => Feeds.ContainsKey(uri);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LastChecked
-        ///
-        /// <summary>
-        /// 指定された URL の最後チェック日時を取得します。
-        /// </summary>
-        ///
-        /// <param name="uri">RSS フィード URL</param>
-        ///
-        /// <returns>最後チェック日時</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public DateTime? LastChecked(Uri uri) => Feeds[uri];
+        public bool Contains(Uri uri) => _feeds.ContainsKey(uri);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -175,7 +104,7 @@ namespace Cube.Net.Rss
         public void Register(Uri uri, DateTime? last)
         {
             if (Contains(uri)) return;
-            Feeds.Add(uri, last);
+            _feeds.Add(uri, last);
         }
 
         /* ----------------------------------------------------------------- */
@@ -222,7 +151,7 @@ namespace Cube.Net.Rss
         /// <returns>削除に成功したかどうか</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public bool Remove(Uri uri) => Feeds.Remove(uri);
+        public bool Remove(Uri uri) => _feeds.Remove(uri);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -233,45 +162,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Clear() => Feeds.Clear();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SubscribeAsync
-        ///
-        /// <summary>
-        /// データ受信時に非同期実行する処理を登録します。
-        /// </summary>
-        ///
-        /// <param name="action">非同期実行する処理</param>
-        ///
-        /// <returns>登録解除用オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IDisposable SubscribeAsync(Func<RssFeed, Task> action)
-        {
-            Subscriptions.Add(action);
-            return Disposable.Create(() => Subscriptions.Remove(action));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Subscribe
-        ///
-        /// <summary>
-        /// データ受信時に実行する処理を登録します。
-        /// </summary>
-        ///
-        /// <param name="action">実行する処理</param>
-        ///
-        /// <returns>登録解除用オブジェクト</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IDisposable Subscribe(Action<RssFeed> action) => SubscribeAsync(e =>
-        {
-            action(e);
-            return Task.FromResult(0);
-        });
+        public void Clear() => _feeds.Clear();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -282,10 +173,10 @@ namespace Cube.Net.Rss
         /// メソッドを通じて結果が通知されます。
         /// </summary>
         ///
-        /// <param name="uris">対象とするフィード URL 一覧</param>
+        /// <param name="src">対象とするフィード URL 一覧</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Update(params Uri[] uris) => Update((IEnumerable<Uri>)uris);
+        public void Update(params Uri[] src) => Update((IEnumerable<Uri>)src);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -297,62 +188,39 @@ namespace Cube.Net.Rss
         /// 結果が通知されます。
         /// </summary>
         ///
-        /// <param name="uris">対象とするフィード URL 一覧</param>
+        /// <param name="src">対象とするフィード URL 一覧</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Update(IEnumerable<Uri> uris) => Task.Run(async () =>
+        public void Update(IEnumerable<Uri> src) => Task.Run(async () =>
         {
             Suspend();
-            foreach (var uri in uris)
+            foreach (var uri in src)
             {
-                try { await UpdateAsync(uri).ConfigureAwait(false); }
-                catch (Exception err) { await PublishErrorAsync(uri, err).ConfigureAwait(false); }
+                try { await Publish(uri).ConfigureAwait(false); }
+                catch (Exception err)
+                {
+                    await PublishError(new Dictionary<Uri, Exception> {
+                        { uri, err }
+                    }).ConfigureAwait(false);
+                }
             }
             if (State == TimerState.Suspend) Start();
         }).Forget();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// PublishAsync
+        /// LastChecked
         ///
         /// <summary>
-        /// 新しい結果を発行します。
+        /// 指定された URL の最後チェック日時を取得します。
         /// </summary>
         ///
-        /// <param name="feed">RSS フィード</param>
+        /// <param name="uri">RSS フィード URL</param>
+        ///
+        /// <returns>最後チェック日時</returns>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual async Task PublishAsync(RssFeed feed)
-        {
-            foreach (var action in Subscriptions)
-            {
-                try { await action(feed); }
-                catch (Exception err) { this.LogWarn(err); }
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを解放します。
-        /// </summary>
-        ///
-        /// <param name="disposing">
-        /// マネージリソースを解放するかどうかを示す値
-        /// </param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _http.Dispose();
-                Handler.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        public DateTime? LastChecked(Uri uri) => _feeds[uri];
 
         #endregion
 
@@ -360,30 +228,75 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// PublishErrorAsync
+        /// GetRequests
         ///
         /// <summary>
-        /// エラー内容を非同期で通知します。
+        /// Gets the sequence of HTTP request URLs.
         /// </summary>
         ///
+        /// <returns>Sequence of HTTP Request URLs</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        private Task PublishErrorAsync(Uri uri, Exception error) =>
-            PublishErrorAsync(new Dictionary<Uri, Exception> { { uri, error } });
+        protected override IEnumerable<Uri> GetRequests() =>
+            _feeds.OrderBy(e => e.Value).Select(e => e.Key).ToList();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// PublishErrorAsync
+        /// Publish
         ///
         /// <summary>
-        /// エラー内容を非同期で通知します。
+        /// Gets the HTTP response from the specified URL, parse it into
+        /// an RSS feed, and publishes the result.
+        /// </summary>
+        ///
+        /// <param name="uri">HTTP request URL.</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override async Task Publish(Uri uri)
+        {
+            if (!Contains(uri)) return;
+
+            this.LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
+            var sw   = Stopwatch.StartNew();
+            var dest = await _http.GetAsync(uri).ConfigureAwait(false);
+            this.LogDebug($"{uri} ({sw.Elapsed})");
+
+            _feeds[uri] = dest.LastChecked;
+            await Publish(uri, dest).ConfigureAwait(false);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Publish
+        ///
+        /// <summary>
+        /// Publishes the specified RSS feed.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private async Task PublishErrorAsync(IDictionary<Uri, Exception> errors)
+        private async Task Publish(Uri uri, RssFeed feed)
+        {
+            foreach (var cb in Subscription)
+            {
+                try { await cb(uri, feed); }
+                catch (Exception err) { this.LogWarn(err); }
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PublishError
+        ///
+        /// <summary>
+        /// Publishes error results.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        private async Task PublishError(IDictionary<Uri, Exception> errors)
         {
             foreach (var kv in errors)
             {
-                await PublishAsync(new RssFeed
+                await Publish(kv.Key, new()
                 {
                     Uri         = kv.Key,
                     LastChecked = DateTime.Now,
@@ -394,100 +307,44 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UpdateAsync
+        /// OnError
         ///
         /// <summary>
-        /// 指定された URL に対応する RSS フィードを非同期で更新します。
+        /// Occurs when some errors are detected.
         /// </summary>
         ///
+        /// <param name="errors">Error list.</param>
+        ///
         /* ----------------------------------------------------------------- */
-        private async Task UpdateAsync(Uri uri)
-        {
-            if (!Contains(uri)) return;
-
-            var sw   = Stopwatch.StartNew();
-            var dest = await GetAsync(uri).ConfigureAwait(false);
-            this.LogDebug($"{uri} ({sw.Elapsed})");
-
-            Feeds[uri] = dest.LastChecked;
-            await PublishAsync(dest).ConfigureAwait(false);
-        }
+        protected override void OnError(IDictionary<Uri, Exception> errors) =>
+            PublishError(errors).Forget();
 
         /* ----------------------------------------------------------------- */
         ///
-        ///  GetAsync
+        /// Dispose
         ///
         /// <summary>
-        /// 指定された URL から RSS フィードを非同期で取得します。
+        /// Releases the unmanaged resources used by the WakeableTimer
+        /// and optionally releases the managed resources.
         /// </summary>
         ///
+        /// <param name="disposing">
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
+        /// </param>
+        ///
         /* ----------------------------------------------------------------- */
-        private async Task<RssFeed> GetAsync(Uri uri)
+        protected override void Dispose(bool disposing)
         {
-            this.LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
-            return await _http.GetAsync(uri);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RunAsync
-        ///
-        /// <summary>
-        /// RSS の取得処理を実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task RunAsync(IList<Uri> src, IDictionary<Uri, Exception> errors)
-        {
-            foreach (var uri in src.ToArray())
-            {
-                this.LogDebug($"TRY: {uri}");
-                try
-                {
-                    if (State != TimerState.Run) return;
-                    await UpdateAsync(uri).ConfigureAwait(false);
-                }
-                catch (Exception err) { errors.Add(uri, err); }
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenTick
-        ///
-        /// <summary>
-        /// 一定間隔で実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task WhenTick()
-        {
-            if (Subscriptions.Count <= 0) return;
-            if (!Network.Available)
-            {
-                this.LogDebug("Network not available");
-                return;
-            }
-
-            var src    = Feeds.OrderBy(e => e.Value).Select(e => e.Key).ToList();
-            var errors = new Dictionary<Uri, Exception>();
-            await RunAsync(src, errors).ConfigureAwait(false);
-
-            for (var i = 0; i < RetryCount && errors.Count > 0; ++i)
-            {
-                await Task.Delay(RetryInterval).ConfigureAwait(false);
-                var retry = errors.Keys.ToList();
-                errors.Clear();
-                await RunAsync(retry, errors).ConfigureAwait(false);
-            }
-
-            await PublishErrorAsync(errors).ConfigureAwait(false);
+            try { if (disposing) _http.Dispose(); }
+            finally { base.Dispose(disposing); }
         }
 
         #endregion
 
         #region Fields
         private readonly RssClient _http;
+        private readonly Dictionary<Uri, DateTime?> _feeds = new();
         #endregion
     }
 }
