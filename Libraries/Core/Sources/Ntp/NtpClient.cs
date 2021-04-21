@@ -28,7 +28,7 @@ namespace Cube.Net.Ntp
     /// NtpClient
     ///
     /// <summary>
-    /// NTP サーバと通信するためのクラスです。
+    /// Provides functionality to communicate with the NTP server.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -41,7 +41,7 @@ namespace Cube.Net.Ntp
         /// NtpClient
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the NtpClient class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -52,8 +52,11 @@ namespace Cube.Net.Ntp
         /// NtpClient
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the NtpClient class with the
+        /// specified server.
         /// </summary>
+        ///
+        /// <param name="server">NTP server.</param>
         ///
         /* ----------------------------------------------------------------- */
         public NtpClient(string server) : this(server, DefaultPort) { }
@@ -63,8 +66,14 @@ namespace Cube.Net.Ntp
         /// NtpClient
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the NtpClient class with the
+        /// specified arguments.
         /// </summary>
+        ///
+        /// <param name="server">NTP server.</param>
+        /// <param name="port">
+        /// Port number to communicate with the NTP server.
+        /// </param>
         ///
         /* ----------------------------------------------------------------- */
         public NtpClient(string server, int port)
@@ -83,18 +92,18 @@ namespace Cube.Net.Ntp
         /// DefaultServer
         ///
         /// <summary>
-        /// NTP 通信のデフォルトサーバを取得します。
+        /// Gets the default NTP server.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static readonly string DefaultServer = "ntp.cube-soft.jp";
+        public static readonly string DefaultServer = "time.windows.com";
 
         /* ----------------------------------------------------------------- */
         ///
         /// DefaultPort
         ///
         /// <summary>
-        /// NTP 通信のデフォルトポート番号を取得します。
+        /// Gets the default NTP port number.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -105,7 +114,7 @@ namespace Cube.Net.Ntp
         /// Host
         ///
         /// <summary>
-        /// 通信する NTP サーバのホスト情報を取得します。
+        /// Gets the host information of the NTP server.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -116,7 +125,7 @@ namespace Cube.Net.Ntp
         /// Port
         ///
         /// <summary>
-        /// 通信する NTP サーバのポート番号を取得します。
+        /// Gets the port number to communicate with the NTP server.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -127,7 +136,7 @@ namespace Cube.Net.Ntp
         /// Timeout
         ///
         /// <summary>
-        /// NTP パケット受信時のタイムアウト時間を取得、または設定します。
+        /// Gets or sets the receive timeout for a NTP packet.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -142,7 +151,7 @@ namespace Cube.Net.Ntp
         /// GetAsync
         ///
         /// <summary>
-        /// NTP サーバと通信を行い、NTP パケットを取得します。
+        /// Gets the NTP response from the provided NTP server.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -157,11 +166,13 @@ namespace Cube.Net.Ntp
         /// Dispose
         ///
         /// <summary>
-        /// リソースを解放します。
+        /// Releases the unmanaged resources used by the WakeableTimer
+        /// and optionally releases the managed resources.
         /// </summary>
         ///
         /// <param name="disposing">
-        /// マネージリソースを解放するかどうかを示す値
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
@@ -179,7 +190,7 @@ namespace Cube.Net.Ntp
         /// SendTo
         ///
         /// <summary>
-        /// NTP サーバへパケットを送信します。
+        /// Sends the NTP request to the provided NTP server.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -199,7 +210,7 @@ namespace Cube.Net.Ntp
         /// ReceiveFrom
         ///
         /// <summary>
-        /// NTP サーバからパケットを受信します。
+        /// Receives the NTP response from the provided NTP server.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -217,7 +228,7 @@ namespace Cube.Net.Ntp
         #endregion
 
         #region Fields
-        private readonly Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         #endregion
     }
 }
