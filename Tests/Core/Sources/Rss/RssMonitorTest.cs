@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Cube.Mixin.Assembly;
+using Cube.Net.Http.Synchronous;
 using Cube.Net.Rss;
 using Cube.Tests;
 using NUnit.Framework;
@@ -81,12 +82,11 @@ namespace Cube.Net.Tests.Rss
 
                     mon.Register(uris);
                     mon.Register(uris); // ignore
-                    mon.Subscribe((_, e) => throw new ArgumentException("Test"));
-                    mon.Subscribe((_, e) =>
+                    mon.SubscribeSync((_, e) => throw new ArgumentException("Test"));
+                    mon.SubscribeSync((_, e) =>
                     {
                         src[e.Uri] = e;
                         cts.Cancel();
-                        return Task.FromResult(0);
                     });
                     mon.Start();
                     Assert.That(Wait.For(cts.Token), "Timeout");
@@ -126,7 +126,7 @@ namespace Cube.Net.Tests.Rss
 
                 mon.RetryCount = 0;
                 mon.Register(src);
-                mon.Subscribe((_, e) => { dest = e; cts.Cancel(); return Task.FromResult(0); });
+                mon.SubscribeSync((_, e) => { dest = e; cts.Cancel(); });
                 mon.Start();
                 Assert.That(Wait.For(cts.Token), "Timeout");
                 mon.Stop();
@@ -165,7 +165,7 @@ namespace Cube.Net.Tests.Rss
                 var cts = new CancellationTokenSource();
 
                 mon.Register(src[0]);
-                mon.Subscribe((_, e) => { dest.Add(e.Uri, e); cts.Cancel(); return Task.FromResult(0); });
+                mon.SubscribeSync((_, e) => { dest.Add(e.Uri, e); cts.Cancel(); });
                 mon.Update(src[1]);
                 mon.Update(src[0]);
                 Assert.That(Wait.For(cts.Token), "Timeout");
@@ -194,7 +194,7 @@ namespace Cube.Net.Tests.Rss
             {
                 var cts = new CancellationTokenSource();
                 mon.Register(src);
-                mon.Subscribe((_, e) => { dest.Add(e.Uri, e); cts.Cancel(); return Task.FromResult(0); });
+                mon.SubscribeSync((_, e) => { dest.Add(e.Uri, e); cts.Cancel(); });
                 mon.Update(src);
                 Assert.That(Wait.For(cts.Token), "Timeout");
             }
@@ -225,10 +225,10 @@ namespace Cube.Net.Tests.Rss
             {
                 mon.Register(uris[0]);
                 Assert.That(mon.Contains(uris[0]), Is.True);
-                Assert.That(mon.LastChecked(uris[0]).HasValue, Is.False);
+                Assert.That(mon.GetTimestamp(uris[0]).HasValue, Is.False);
                 mon.Register(uris[1]);
                 Assert.That(mon.Contains(uris[1]), Is.True);
-                Assert.That(mon.LastChecked(uris[1]).HasValue, Is.False);
+                Assert.That(mon.GetTimestamp(uris[1]).HasValue, Is.False);
 
                 mon.Remove(uris[0]);
                 Assert.That(mon.Contains(uris[0]), Is.False);

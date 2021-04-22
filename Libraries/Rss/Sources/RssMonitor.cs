@@ -209,18 +209,18 @@ namespace Cube.Net.Rss
 
         /* ----------------------------------------------------------------- */
         ///
-        /// LastChecked
+        /// GetTimestamp
         ///
         /// <summary>
-        /// 指定された URL の最後チェック日時を取得します。
+        /// Gets the last checked time of the specified URL.
         /// </summary>
         ///
-        /// <param name="uri">RSS フィード URL</param>
+        /// <param name="uri">RSS feed URL.</param>
         ///
-        /// <returns>最後チェック日時</returns>
+        /// <returns>Last checked time.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public DateTime? LastChecked(Uri uri) => _feeds[uri];
+        public DateTime? GetTimestamp(Uri uri) => _feeds[uri];
 
         #endregion
 

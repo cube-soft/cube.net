@@ -19,6 +19,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Cube.Net.Ntp;
+using Cube.Net.Ntp.Synchronous;
 using Cube.Tests;
 using NUnit.Framework;
 
@@ -62,8 +63,8 @@ namespace Cube.Net.Tests.Ntp
             mon.Port    = 123;
             mon.Timeout = TimeSpan.FromMilliseconds(500);
 
-            _ = mon.Subscribe(_ => throw new ArgumentException("Test"));
-            _ = mon.Subscribe(_ => { ++count; cts.Cancel(); return Task.FromResult(0); });
+            _ = mon.SubscribeSync(_ => throw new ArgumentException("Test"));
+            _ = mon.SubscribeSync(_ => { ++count; cts.Cancel(); });
             mon.Start();
             mon.Start(); // ignore
             Assert.That(Wait.For(cts.Token), "Timeout");
@@ -94,7 +95,7 @@ namespace Cube.Net.Tests.Ntp
             mon.Port    = 999;
             mon.Timeout = TimeSpan.FromMilliseconds(100);
 
-            _ = mon.Subscribe(_ => { ++count; return Task.FromResult(0); });
+            _ = mon.SubscribeSync(_ => ++count);
             mon.Start();
             Task.Delay(1000).Wait();
             mon.Stop();
@@ -142,7 +143,7 @@ namespace Cube.Net.Tests.Ntp
             mon.Port    = 123;
             mon.Timeout = TimeSpan.FromMilliseconds(500);
 
-            _ = mon.Subscribe(_ => { ++count; cts.Cancel(); return Task.FromResult(0); });
+            _ = mon.SubscribeSync(_ => { ++count; cts.Cancel(); });
             mon.Start(mon.Interval);
             mon.Reset();
             Assert.That(mon.State, Is.EqualTo(TimerState.Run));

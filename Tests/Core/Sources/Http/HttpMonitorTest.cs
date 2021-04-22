@@ -21,6 +21,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cube.Mixin.Assembly;
 using Cube.Net.Http;
+using Cube.Net.Http.Synchronous;
 using Cube.Tests;
 using Microsoft.Win32;
 using NUnit.Framework;
@@ -70,12 +71,11 @@ namespace Cube.Net.Tests.Http
             mon.Uri = new Uri("http://www.example.com/");
 
             var cts = new CancellationTokenSource();
-            _ = mon.Subscribe((u, x) => throw new ArgumentException("Test"));
-            _ = mon.Subscribe((u, x) =>
+            _ = mon.SubscribeSync((u, x) => throw new ArgumentException("Test"));
+            _ = mon.SubscribeSync((u, x) =>
             {
                 count++;
                 if (count >= 3) cts.Cancel();
-                return Task.FromResult(0);
             });
 
             mon.Start();
@@ -129,7 +129,7 @@ namespace Cube.Net.Tests.Http
             mon.Interval = TimeSpan.FromMilliseconds(50);
             mon.Uri = new Uri("http://www.cube-soft.jp/404.html");
             mon.RetryCount = 0;
-            _ = mon.Subscribe((e, n) => { count++; return Task.FromResult(0); });
+            _ = mon.SubscribeSync((e, n) => count++);
 
             mon.Start();
             Task.Delay(mon.Timeout).Wait();
@@ -156,7 +156,7 @@ namespace Cube.Net.Tests.Http
             mon.Timeout = TimeSpan.FromMilliseconds(200);
             mon.Interval = TimeSpan.FromMilliseconds(50);
             mon.Uri = new Uri("http://www.example.com/");
-            _ = mon.Subscribe((e, n) => { count++; return Task.FromResult(0); });
+            _ = mon.SubscribeSync((e, n) => count++);
 
             mon.Start();
             Task.Delay(mon.Timeout).Wait();
@@ -185,7 +185,7 @@ namespace Cube.Net.Tests.Http
 
             mon.Interval = TimeSpan.FromMilliseconds(100);
             mon.Uri = new Uri("http://www.example.com/");
-            _ = mon.Subscribe((e, n) => { count++; cts.Cancel(); return Task.FromResult(0); });
+            _ = mon.SubscribeSync((e, n) => { count++; cts.Cancel(); });
 
             mon.Start(mon.Interval);
             power.Mode = PowerModes.Suspend;
@@ -214,7 +214,7 @@ namespace Cube.Net.Tests.Http
 
             mon.Interval = TimeSpan.FromSeconds(1);
             mon.Uri = new Uri("http://www.example.com/");
-            _ = mon.Subscribe((e, n) => { ++count; cts.Cancel(); return Task.FromResult(0); });
+            _ = mon.SubscribeSync((e, n) => { ++count; cts.Cancel(); });
 
             mon.Reset();
             mon.Start(mon.Interval);

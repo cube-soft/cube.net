@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Cube.Mixin.Assembly;
 using Cube.Mixin.Logging;
+using Cube.Synchronous;
 
 namespace Cube.Net.Rss.Reader
 {
@@ -56,7 +57,7 @@ namespace Cube.Net.Rss.Reader
             Setting  = src;
 
             _timer.Interval = TimeSpan.FromDays(1);
-            _timer.Subscribe(Synchronous.AsTask(WhenTick));
+            _ = _timer.SubscribeSync(WhenTick);
 
             if (Setting.Shared.CheckUpdate) Start();
         }
