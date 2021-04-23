@@ -386,19 +386,4 @@ namespace Cube.Net.Http
     }
 
     #endregion
-
-    #region HttpAsyncAction
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// NtpAsyncAction
-    ///
-    /// <summary>
-    /// Represents the method to invoke as an asynchronous method.
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public delegate Task HttpAsyncAction<TValue>(Uri uri, TValue value);
-
-    #endregion
 }

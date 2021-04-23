@@ -71,18 +71,17 @@ namespace Cube.Net.Tests.Http
             mon.Uri = new Uri("http://www.example.com/");
 
             var cts = new CancellationTokenSource();
-            _ = mon.SubscribeSync((u, x) => throw new ArgumentException("Test"));
-            _ = mon.SubscribeSync((u, x) =>
-            {
+            using(mon.SubscribeSync((u, x) => throw new ArgumentException("Test")))
+            using(mon.SubscribeSync((u, x) => {
                 count++;
                 if (count >= 3) cts.Cancel();
-            });
-
-            mon.Start();
-            mon.Start(); // ignore
-            Assert.That(Wait.For(cts.Token), "Timeout");
-            mon.Stop();
-            mon.Stop(); // ignore
+            })) {
+                mon.Start();
+                mon.Start(); // ignore
+                Assert.That(Wait.For(cts.Token), "Timeout");
+                mon.Stop();
+                mon.Stop(); // ignore
+            }
 
             Assert.That(mon.Last.Value, Is.GreaterThan(start));
             Assert.That(count, Is.AtLeast(3));
