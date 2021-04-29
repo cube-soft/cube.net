@@ -26,7 +26,7 @@ namespace Cube.Net.Http
     /// IContentConverter
     ///
     /// <summary>
-    /// HttpContent を変換するためのインターフェースです。
+    /// Represents the interface to convert the HTTP response.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -37,14 +37,14 @@ namespace Cube.Net.Http
         /// IgnoreException
         ///
         /// <summary>
-        /// 例外を無視するかどうかを示す値を取得または設定します。
+        /// Gets or sets a value indicating whether to ignore exceptions.
         /// </summary>
         ///
         /// <remarks>
-        /// HttpMonitor のように、例外発生時に既定回数再試行するような
-        /// クラスで使用された場合、変換の失敗が原因で余分な通信を発生
-        /// させる可能性があります。そのような場合には IgnoreException を
-        /// true にして抑制します。
+        /// If used in a class that retries a default number of times
+        /// when an exception occurs, such as HttpMonitor, the failure
+        /// of the conversion may result in extra communication.
+        /// In such a case, set IgnoreException to true to suppress it.
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
@@ -55,12 +55,12 @@ namespace Cube.Net.Http
         /// Convert
         ///
         /// <summary>
-        /// 変換処理を実行します。
+        /// Invokes the conversion.
         /// </summary>
         ///
-        /// <param name="src">Stream オブジェクト</param>
+        /// <param name="src">Stream object.</param>
         ///
-        /// <returns>変換後のオブジェクト</returns>
+        /// <returns>Converted object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         TValue Convert(Stream src);
@@ -71,27 +71,12 @@ namespace Cube.Net.Http
     /// ContentConverterBase
     ///
     /// <summary>
-    /// HttpContent を変換するための基底クラスです。
+    /// Represetns the base class of the IContentConverter implementations.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public abstract class ContentConverterBase<TValue> : IContentConverter<TValue>
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ContentConverterBase
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected ContentConverterBase() { }
-
-        #endregion
-
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -99,7 +84,7 @@ namespace Cube.Net.Http
         /// IgnoreException
         ///
         /// <summary>
-        /// 例外を無視するかどうかを示す値を取得または設定します。
+        /// Gets or sets a value indicating whether to ignore exceptions.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -111,15 +96,15 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Invoke
+        /// Convert
         ///
         /// <summary>
-        /// 変換処理を実行します。
+        /// Invokes the conversion.
         /// </summary>
         ///
-        /// <param name="src">Stream オブジェクト</param>
+        /// <param name="src">Stream object.</param>
         ///
-        /// <returns>変換後のオブジェクト</returns>
+        /// <returns>Converted object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public TValue Convert(Stream src)
@@ -138,19 +123,15 @@ namespace Cube.Net.Http
         /// OnConvert
         ///
         /// <summary>
-        /// 変換処理を実行します。
+        /// Invokes the conversion.
         /// </summary>
         ///
-        /// <param name="src">Stream オブジェクト</param>
+        /// <param name="src">Stream object.</param>
         ///
-        /// <returns>変換後のオブジェクト</returns>
-        ///
-        /// <remarks>
-        /// 継承したクラスで実装する必要があります。
-        /// </remarks>
+        /// <returns>Converted object.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual TValue OnConvert(Stream src) => throw new NotImplementedException();
+        protected abstract TValue OnConvert(Stream src);
 
         #endregion
     }
@@ -160,7 +141,8 @@ namespace Cube.Net.Http
     /// ContentConverter(TValue)
     ///
     /// <summary>
-    /// 関数オブジェクトを IContentConverter に変換するためのクラスです。
+    /// Provides functionality to invoke the provided function as
+    /// IContentConverter interface.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -170,19 +152,17 @@ namespace Cube.Net.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GenericContentConverter
+        /// ContentConverter
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the ContentConverter class with
+        /// the specified function.
         /// </summary>
         ///
-        /// <param name="func">変換用オブジェクト</param>
+        /// <param name="func">Function object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public ContentConverter(Func<Stream, TValue> func)
-        {
-            _func = func;
-        }
+        public ContentConverter(Func<Stream, TValue> func) { _func = func; }
 
         #endregion
 
@@ -193,12 +173,12 @@ namespace Cube.Net.Http
         /// OnConvert
         ///
         /// <summary>
-        /// 変換処理を実行します。
+        /// Invokes the conversion.
         /// </summary>
         ///
-        /// <param name="src">Stream オブジェクト</param>
+        /// <param name="src">Stream object.</param>
         ///
-        /// <returns>変換後のオブジェクト</returns>
+        /// <returns>Converted object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         protected override TValue OnConvert(Stream src) => _func(src);
