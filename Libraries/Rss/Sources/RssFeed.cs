@@ -28,7 +28,7 @@ namespace Cube.Net.Rss
     /// RssFeed
     ///
     /// <summary>
-    /// RSS 情報を保持するクラスです。
+    /// Represents the RSS feed.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -41,7 +41,7 @@ namespace Cube.Net.Rss
         /// RssFeed
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssFeed class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -52,16 +52,13 @@ namespace Cube.Net.Rss
         /// RssFeed
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssFeed class.
         /// </summary>
         ///
-        /// <param name="items">Items 用バッファ</param>
+        /// <param name="items">Items buffer.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssFeed(IList<RssItem> items)
-        {
-            Items = items;
-        }
+        public RssFeed(IList<RssItem> items) { Items = items; }
 
         #endregion
 
@@ -72,14 +69,14 @@ namespace Cube.Net.Rss
         /// Title
         ///
         /// <summary>
-        /// Web サイトのタイトルを取得または設定します。
+        /// Gets or sets the Web site title.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public string Title
         {
-            get => _title;
-            set => SetProperty(ref _title, value);
+            get => Get(() => string.Empty);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -87,14 +84,14 @@ namespace Cube.Net.Rss
         /// Description
         ///
         /// <summary>
-        /// Web サイトの概要を取得または設定します。
+        /// Gets or sets the Web site description.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public string Description
         {
-            get => _description;
-            set => SetProperty(ref _description, value);
+            get => Get(() => string.Empty);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -102,14 +99,14 @@ namespace Cube.Net.Rss
         /// Link
         ///
         /// <summary>
-        /// Web サイトの URL を取得または設定します。
+        /// Gets or sets the Web site URL.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public Uri Link
         {
-            get => _link;
-            set => SetProperty(ref _link, value);
+            get => Get<Uri>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -117,14 +114,14 @@ namespace Cube.Net.Rss
         /// Uri
         ///
         /// <summary>
-        /// フィードの URL を取得または設定します。
+        /// Gets or sets the feed URL.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public Uri Uri
         {
-            get => _uri;
-            set => SetProperty(ref _uri, value);
+            get => Get<Uri>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -132,14 +129,14 @@ namespace Cube.Net.Rss
         /// LastChecked
         ///
         /// <summary>
-        /// RSS フィードを最後にチェックした日時を取得または設定します。
+        /// Gets or sets the date-time when the RSS feed was last checked.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public DateTime? LastChecked
         {
-            get => _lastChecked;
-            set => SetProperty(ref _lastChecked, value);
+            get => Get<DateTime?>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -147,14 +144,15 @@ namespace Cube.Net.Rss
         /// LastPublished
         ///
         /// <summary>
-        /// RSS フィードの最新記事の更新日時を取得または設定します。
+        /// Gets or sets the date-time of the latest article update in the
+        /// RSS feed.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public DateTime? LastPublished
         {
-            get => _lastPublished;
-            set => SetProperty(ref _lastPublished, value);
+            get => Get<DateTime?>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -162,7 +160,7 @@ namespace Cube.Net.Rss
         /// Items
         ///
         /// <summary>
-        /// 新着記事一覧を取得または設定します。
+        /// Gets or sets the list of new articles.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -173,7 +171,7 @@ namespace Cube.Net.Rss
         /// UnreadItems
         ///
         /// <summary>
-        /// 未読の新着記事一覧を取得します。
+        /// Get the list of unread articles.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -185,14 +183,14 @@ namespace Cube.Net.Rss
         /// Error
         ///
         /// <summary>
-        /// 操作時に発生したエラーを取得または設定します。
+        /// Gets or sets an exception object that occurs when handling.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public Exception Error
         {
-            get => _error;
-            set => SetProperty(ref _error, value);
+            get => Get<Exception>();
+            set => Set(value);
         }
 
         #endregion
@@ -260,16 +258,6 @@ namespace Cube.Net.Rss
             }
         }
 
-        #endregion
-
-        #region Fields
-        private string _title = string.Empty;
-        private string _description = string.Empty;
-        private Uri _link;
-        private Uri _uri;
-        private DateTime? _lastChecked;
-        private DateTime? _lastPublished;
-        private Exception _error;
         #endregion
     }
 }

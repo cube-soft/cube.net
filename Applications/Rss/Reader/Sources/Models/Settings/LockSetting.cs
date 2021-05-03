@@ -30,31 +30,13 @@ namespace Cube.Net.Rss.Reader
     /// LockSetting
     ///
     /// <summary>
-    /// ロック情報を保持するためのクラスです。
+    /// Represents the locking information.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
     public class LockSetting : SerializableBase
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LockSetting
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public LockSetting()
-        {
-            Reset();
-        }
-
-        #endregion
-
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -62,7 +44,7 @@ namespace Cube.Net.Rss.Reader
         /// FileName
         ///
         /// <summary>
-        /// 設定を保持するファイルの名前を取得します。
+        /// Get the name of the file that will hold the configuration.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -73,15 +55,15 @@ namespace Cube.Net.Rss.Reader
         /// Sid
         ///
         /// <summary>
-        /// 識別子を取得または設定します。
+        /// Gets or sets the SID of the user being logged on.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public string Sid
         {
-            get => _sid;
-            set => SetProperty(ref _sid, value);
+            get => Get(() => GetCurrentUserSid());
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -89,15 +71,15 @@ namespace Cube.Net.Rss.Reader
         /// UserName
         ///
         /// <summary>
-        /// ユーザ名を取得または設定します。
+        /// Gets or sets the user name.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public string UserName
         {
-            get => _userName;
-            set => SetProperty(ref _userName, value);
+            get => Get(() => Environment.UserName);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -105,15 +87,15 @@ namespace Cube.Net.Rss.Reader
         /// MachineName
         ///
         /// <summary>
-        /// マシン名を取得または設定します。
+        /// Gets or sets the machine name.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public string MachineName
         {
-            get => _machineName;
-            set => SetProperty(ref _machineName, value);
+            get => Get(() => Environment.MachineName);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -121,13 +103,11 @@ namespace Cube.Net.Rss.Reader
         /// IsReadOnly
         ///
         /// <summary>
-        /// 読み取り専用モードかどうかを示す値を取得します。
+        /// Gets a value indicating whether the device is in read-only.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsReadOnly => _isReadOnly ?? (
-            _isReadOnly = !Sid.Equals(GetCurrentUserSid())
-        ).Value;
+        public bool IsReadOnly => Get(() => !Sid.Equals(GetCurrentUserSid()));
 
         #endregion
 
@@ -138,13 +118,13 @@ namespace Cube.Net.Rss.Reader
         /// Load
         ///
         /// <summary>
-        /// 設定情報を読み込みます。
+        /// Loads the settings from the specified arguments.
         /// </summary>
         ///
-        /// <param name="directory">ディレクトリ</param>
-        /// <param name="io">入出力用オブジェクト</param>
+        /// <param name="directory">Dicretory path.</param>
+        /// <param name="io">I/O handler.</param>
         ///
-        /// <returns>LockSetting オブジェクト</returns>
+        /// <returns>LockSetting object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static LockSetting Load(string directory, IO io)
@@ -163,11 +143,11 @@ namespace Cube.Net.Rss.Reader
         /// Release
         ///
         /// <summary>
-        /// ロックを解除します。
+        /// Releses the lock.
         /// </summary>
         ///
-        /// <param name="directory">ディレクトリ</param>
-        /// <param name="io">入出力用オブジェクト</param>
+        /// <param name="directory">Dicretory path.</param>
+        /// <param name="io">I/O handler.</param>
         ///
         /* ----------------------------------------------------------------- */
         public void Release(string directory, IO io)
@@ -182,39 +162,10 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnDeserializing
-        ///
-        /// <summary>
-        /// デシリアライズ直前に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context) => Reset();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Reset
-        ///
-        /// <summary>
-        /// 値をリセットします。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Reset()
-        {
-            _sid         = GetCurrentUserSid();
-            _userName    = Environment.UserName;
-            _machineName = Environment.MachineName;
-            _isReadOnly  = default;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// GetCurrentUserSid
         ///
         /// <summary>
-        /// ログオン中のユーザの SID を初期化します。
+        /// Gets the SID of the user being logged on.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -228,25 +179,16 @@ namespace Cube.Net.Rss.Reader
             {
                 try
                 {
-                    using (var key = Registry.Users.OpenSubKey($@"{dest}\{keyword}", false))
-                    {
-                        if (key == null) continue;
-                        var user = key.GetValue("UserName", string.Empty) as string;
-                        if (user.Equals(cmp, option)) return dest;
-                    }
+                    using var key = Registry.Users.OpenSubKey($@"{dest}\{keyword}", false);
+                    if (key == null) continue;
+                    var user = key.GetValue("UserName", string.Empty) as string;
+                    if (user.Equals(cmp, option)) return dest;
                 }
                 catch (SecurityException) { /* Other's profile */ }
             }
             return string.Empty;
         }
 
-        #endregion
-
-        #region Fields
-        private string _sid;
-        private string _userName;
-        private string _machineName;
-        private bool? _isReadOnly;
         #endregion
     }
 }

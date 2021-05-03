@@ -29,7 +29,7 @@ namespace Cube.Net.Rss.Reader
     /// RssCategory
     ///
     /// <summary>
-    /// RSS エントリが属するカテゴリ情報を保持するクラスです。
+    /// Represents the category to which the RSS entry belongs.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -72,8 +72,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public IRssEntry Parent
         {
-            get => _parent;
-            set => SetProperty(ref _parent, value);
+            get => Get<IRssEntry>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -87,8 +87,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public string Title
         {
-            get => _title;
-            set => SetProperty(ref _title, value);
+            get => Get(() => string.Empty);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -124,8 +124,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public bool Expanded
         {
-            get => _expanded;
-            set => SetProperty(ref _expanded, value);
+            get => Get(() => false);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -139,8 +139,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public bool Editing
         {
-            get => _editing;
-            set => SetProperty(ref _editing, value);
+            get => Get(() => false);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -167,7 +167,7 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Items
+        /// Children
         ///
         /// <summary>
         /// Gets the collection of child elements.
@@ -300,11 +300,7 @@ namespace Cube.Net.Rss.Reader
         #endregion
 
         #region Fields
-        private string _title;
         private int? _count;
-        private IRssEntry _parent;
-        private bool _expanded = false;
-        private bool _editing = false;
         #endregion
     }
 }

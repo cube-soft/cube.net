@@ -59,8 +59,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public string Url
         {
-            get => GetProperty<string>();
-            set => SetProperty(value);
+            get => Get<string>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -75,8 +75,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public bool Busy
         {
-            get => GetProperty<bool>();
-            set => SetProperty(value);
+            get => Get<bool>();
+            set => Set(value);
         }
 
         #endregion

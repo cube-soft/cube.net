@@ -80,7 +80,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IElement<bool> Busy => Get(() => new BindableElement<bool>(
+        public IElement<bool> Busy => GetElement(() => new BindableElement<bool>(
             () => string.Empty,
             () => Facade.Busy,
             GetDispatcher(false)
@@ -95,7 +95,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IElement<string> Url => Get(() => new BindableElement<string>(
+        public IElement<string> Url => GetElement(() => new BindableElement<string>(
            () => string.Empty,
            () => Facade.Url,
            e  => Facade.Url = e,

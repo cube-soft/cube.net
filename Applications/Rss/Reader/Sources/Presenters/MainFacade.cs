@@ -133,8 +133,7 @@ namespace Cube.Net.Rss.Reader
                 entry.Parent.Expand();
             }
 
-            Debug.Assert(Setting.Shared.InitialDelay.HasValue);
-            _core.Start(Setting.Shared.InitialDelay.Value);
+            _core.Start(Setting.Shared.InitialDelay);
 
             Data.Message.Value = string.Empty;
         }

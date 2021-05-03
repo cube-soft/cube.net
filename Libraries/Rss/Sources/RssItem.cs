@@ -27,7 +27,7 @@ namespace Cube.Net.Rss
     /// RssItem
     ///
     /// <summary>
-    /// RSS の項目情報を保持するクラスです。
+    /// Represents the information of the RSS feed item.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -40,14 +40,14 @@ namespace Cube.Net.Rss
         /// Title
         ///
         /// <summary>
-        /// 記事タイトルを取得または設定します。
+        /// Gets or sets the article title.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public string Title
         {
-            get => _title;
-            set => SetProperty(ref _title, value);
+            get => Get(() => string.Empty);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -55,18 +55,19 @@ namespace Cube.Net.Rss
         /// Summary
         ///
         /// <summary>
-        /// 記事の概要を取得または設定します。
+        /// Gets or sets the article summary.
         /// </summary>
         ///
         /// <remarks>
-        /// RSS では description タグ、Atom では summary タグに相当します。
+        /// The property corresponds to the description tag in RSS and the
+        /// summary tag in Atom.
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         public string Summary
         {
-            get => _summary;
-            set => SetProperty(ref _summary, value);
+            get => Get(() => string.Empty);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -74,14 +75,14 @@ namespace Cube.Net.Rss
         /// Content
         ///
         /// <summary>
-        /// 記事の詳細内容を取得または設定します。
+        /// Gets or sets the article content.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public string Content
         {
-            get => _content;
-            set => SetProperty(ref _content, value);
+            get => Get(() => string.Empty);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -89,14 +90,14 @@ namespace Cube.Net.Rss
         /// Link
         ///
         /// <summary>
-        /// 記事の URL 一覧を取得または設定します。
+        /// Gets or sets the URL of the article.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public Uri Link
         {
-            get => _link;
-            set => SetProperty(ref _link, value);
+            get => Get<Uri>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -104,14 +105,14 @@ namespace Cube.Net.Rss
         /// PublishTime
         ///
         /// <summary>
-        /// 記事の発行日時を取得または設定します。
+        /// Gets or sets the publish date of the article.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public DateTime? PublishTime
         {
-            get => _publishTime;
-            set => SetProperty(ref _publishTime, value);
+            get => Get<DateTime?>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -119,14 +120,14 @@ namespace Cube.Net.Rss
         /// Status
         ///
         /// <summary>
-        /// オブジェクトの状態を取得または設定します。
+        /// Gets or sets the status of the object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public RssItemStatus Status
         {
-            get => _status;
-            set => SetProperty(ref _status, value);
+            get => Get(() => RssItemStatus.Uninitialized);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -134,7 +135,7 @@ namespace Cube.Net.Rss
         /// Categories
         ///
         /// <summary>
-        /// 記事の属するカテゴリ一覧を取得します。
+        /// Get the list of categories to which the article belongs.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -206,15 +207,6 @@ namespace Cube.Net.Rss
         }
 
         #endregion
-
-        #region Fields
-        private string _title = string.Empty;
-        private string _summary = string.Empty;
-        private string _content = string.Empty;
-        private Uri _link;
-        private DateTime? _publishTime;
-        private RssItemStatus _status = RssItemStatus.Uninitialized;
-        #endregion
     }
 
     /* --------------------------------------------------------------------- */
@@ -222,17 +214,17 @@ namespace Cube.Net.Rss
     /// RssItemStatus
     ///
     /// <summary>
-    /// RssItem オブジェクトの状態を表す列挙型です。
+    /// Specifies the status of the RssItem object.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public enum RssItemStatus
     {
-        /// <summary>未初期化</summary>
+        /// <summary>Uninitialized.</summary>
         Uninitialized,
-        /// <summary>未読</summary>
+        /// <summary>Unread.</summary>
         Unread,
-        /// <summary>既読</summary>
+        /// <summary>Read.</summary>
         Read,
     }
 }

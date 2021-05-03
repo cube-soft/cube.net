@@ -61,9 +61,9 @@ namespace Cube.Net.Rss.Tests
             Assert.That(src.Shared.EnableMonitorMessage, Is.True);
             Assert.That(src.Shared.LightMode,            Is.False);
             Assert.That(src.Shared.CheckUpdate,          Is.True);
-            Assert.That(src.Shared.HighInterval.Value,   Is.EqualTo(TimeSpan.FromHours(1)));
-            Assert.That(src.Shared.LowInterval.Value,    Is.EqualTo(TimeSpan.FromDays(1)));
-            Assert.That(src.Shared.InitialDelay.Value,   Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Shared.HighInterval,         Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(src.Shared.LowInterval,          Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(src.Shared.InitialDelay,         Is.EqualTo(TimeSpan.FromSeconds(3)));
             Assert.That(src.Lock.IsReadOnly,             Is.False);
             Assert.That(src.Lock.IsReadOnly,             Is.False);
             Assert.That(src.Lock.UserName,               Is.EqualTo(Environment.UserName));
@@ -97,9 +97,9 @@ namespace Cube.Net.Rss.Tests
             Assert.That(src.Shared.EnableMonitorMessage, Is.True);
             Assert.That(src.Shared.LightMode,            Is.False);
             Assert.That(src.Shared.CheckUpdate,          Is.True);
-            Assert.That(src.Shared.HighInterval.Value,   Is.EqualTo(TimeSpan.FromHours(1)));
-            Assert.That(src.Shared.LowInterval.Value,    Is.EqualTo(TimeSpan.FromDays(1)));
-            Assert.That(src.Shared.InitialDelay.Value,   Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Shared.HighInterval,         Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(src.Shared.LowInterval,          Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(src.Shared.InitialDelay,         Is.EqualTo(TimeSpan.FromSeconds(3)));
             Assert.That(src.Lock.IsReadOnly,             Is.False);
             Assert.That(src.Lock.IsReadOnly,             Is.False);
             Assert.That(src.Lock.UserName,               Is.EqualTo(Environment.UserName));

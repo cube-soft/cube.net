@@ -28,7 +28,8 @@ namespace Cube.Net.Rss.Reader
     /// RssEntry
     ///
     /// <summary>
-    /// RSS フィードを購読する Web サイトの情報を保持するクラスです。
+    /// Represents the information about Web sites that subscribe to RSS
+    /// feeds.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -92,14 +93,14 @@ namespace Cube.Net.Rss.Reader
         /// Parent
         ///
         /// <summary>
-        /// 親要素を取得または設定します。
+        /// Gets or sets the parent entry.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public IRssEntry Parent
         {
-            get => _parent;
-            set => SetProperty(ref _parent, value);
+            get => Get<IRssEntry>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -107,14 +108,14 @@ namespace Cube.Net.Rss.Reader
         /// Frequency
         ///
         /// <summary>
-        /// RSS フィードの確認頻度を取得または設定します。
+        /// Get or set the frequency of RSS feed confirmation.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public RssCheckFrequency Frequency
         {
-            get => _frequency;
-            set => SetProperty(ref _frequency, value);
+            get => Get(() => RssCheckFrequency.Auto);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -122,20 +123,14 @@ namespace Cube.Net.Rss.Reader
         /// Count
         ///
         /// <summary>
-        /// 未読記事数を取得または設定します。
+        /// Gets or sets the number of unread articles.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public int Count
         {
-            get => _count;
-            set
-            {
-                if (SetProperty(ref _count, value) && Parent is RssCategory rc)
-                {
-                    rc.Refresh(nameof(Count));
-                }
-            }
+            get => Get<int>();
+            set { if (Set(value) && Parent is RssCategory rc) rc.Refresh(nameof(Count)); }
         }
 
         /* ----------------------------------------------------------------- */
@@ -143,14 +138,14 @@ namespace Cube.Net.Rss.Reader
         /// Selected
         ///
         /// <summary>
-        /// 選択状態かどうかを示す値を取得または設定します。
+        /// Gets or sets a value indicating whether the entry is selected.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public bool Selected
         {
-            get => _selected;
-            set => SetProperty(ref _selected, value);
+            get => Get(() => false);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -158,9 +153,12 @@ namespace Cube.Net.Rss.Reader
         /// Expanded
         ///
         /// <summary>
-        /// 子要素が表示状態かどうかを示す値を取得します。このプロパティは
-        /// 常に false を返します。
+        /// Gets a value indicating whether the child element is visible.
         /// </summary>
+        ///
+        /// <remarks>
+        /// The property always returns false.
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         public bool Expanded
@@ -174,14 +172,15 @@ namespace Cube.Net.Rss.Reader
         /// Editing
         ///
         /// <summary>
-        /// ユーザによる編集中かどうかを示す値を取得または設定します。
+        /// Gets or sets a value indicating whether the entry is being
+        /// edited by the user or not.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public bool Editing
         {
-            get => _editing;
-            set => SetProperty(ref _editing, value);
+            get => Get(() => false);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -189,15 +188,15 @@ namespace Cube.Net.Rss.Reader
         /// SkipContent
         ///
         /// <summary>
-        /// Content の表示をスキップし、直接 Web ページを表示するかどうか
-        /// を示す値を取得または設定します。
+        /// Gets or sets a value indicating whether to skip the display
+        /// of Content.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         public bool SkipContent
         {
-            get => _skipContent;
-            set => SetProperty(ref _skipContent, value);
+            get => Get(() => false);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -205,7 +204,7 @@ namespace Cube.Net.Rss.Reader
         /// SafeItems
         ///
         /// <summary>
-        /// 新着記事一覧を取得します。
+        /// Get the list of new articles.
         /// </summary>
         ///
         /// <remarks>
@@ -265,15 +264,6 @@ namespace Cube.Net.Rss.Reader
         }
 
         #endregion
-
-        #region Fields
-        private IRssEntry _parent;
-        private RssCheckFrequency _frequency = RssCheckFrequency.Auto;
-        private int _count = 0;
-        private bool _selected = false;
-        private bool _editing = false;
-        private bool _skipContent = false;
-        #endregion
     }
 
     /* --------------------------------------------------------------------- */
@@ -281,19 +271,19 @@ namespace Cube.Net.Rss.Reader
     /// RssCheckFrequency
     ///
     /// <summary>
-    /// RSS フィードのチェック頻度を表した列挙型です。
+    /// Specifies the frequency of checking RSS feeds.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public enum RssCheckFrequency
     {
-        /// <summary>自動</summary>
+        /// <summary>Auto.</summary>
         Auto = 0,
-        /// <summary>高頻度</summary>
+        /// <summary>High frequency.</summary>
         High = 1,
-        /// <summary>低頻度</summary>
+        /// <summary>Low frequency.</summary>
         Low = 2,
-        /// <summary>チェックしない</summary>
+        /// <summary>Not checked.</summary>
         None = -1,
     }
 }
