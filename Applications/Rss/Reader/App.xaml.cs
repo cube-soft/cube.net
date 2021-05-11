@@ -22,6 +22,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+using Cube.Forms;
+using Cube.Forms.Controls;
 using Cube.Forms.Processes;
 using Cube.Mixin.Assembly;
 using Cube.Mixin.Logging;
@@ -80,9 +82,9 @@ namespace Cube.Net.Rss.Reader
             try
             {
                 System.Net.ServicePointManager.DefaultConnectionLimit = 10;
-                BrowserSetting.Version = BrowserVersion.Latest;
-                BrowserSetting.MaxConnections = 10;
-                BrowserSetting.NavigationSounds = false;
+                WebControl.EmulateVersion = WebControlVersion.Latest;
+                WebControl.MaxConnections = 10;
+                WebControl.NavigationSounds = false;
             }
             catch (Exception err) { this.LogWarn(err); }
 

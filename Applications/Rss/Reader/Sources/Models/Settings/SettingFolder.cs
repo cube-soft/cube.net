@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Cube.DataContract;
 using Cube.FileSystem;
+using Cube.Forms.Controls;
 using Cube.Mixin.Assembly;
 using Cube.Mixin.Environment;
 using Cube.Mixin.Logging;
@@ -254,7 +255,7 @@ namespace Cube.Net.Rss.Reader
             var app  = $"CubeRssReader/{Version.Number}";
             var win  = Environment.OSVersion.VersionString;
             var net  = $".NET {Environment.Version}";
-            var view = BrowserSetting.Version;
+            var view = WebControl.EmulateVersion;
             return $"{app} ({win}; {net}; {view})";
         }
 
