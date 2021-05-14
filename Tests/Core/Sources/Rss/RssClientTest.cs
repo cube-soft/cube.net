@@ -22,7 +22,7 @@ using Cube.Net.Http;
 using Cube.Net.Rss;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Tests.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
@@ -157,7 +157,7 @@ namespace Cube.Net.Tests
         private RssClient Create()
         {
             var asm = Assembly.GetExecutingAssembly();
-            var h   = new HeaderHandler { UserAgent = $"{asm.GetProduct()}/{asm.GetVersion()}" };
+            var h   = new HttpHandler { UserAgent = $"{asm.GetProduct()}/{asm.GetVersion()}" };
             return new RssClient(h);
         }
 

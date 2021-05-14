@@ -15,39 +15,44 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Net.Ntp;
-using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
 
-namespace Cube.Net.Tests.Ntp
+namespace Cube.Net.Ntp.Synchronous
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NtpPacketTest
+    /// NtpMonitorExtension
     ///
     /// <summary>
-    /// Ntp.Packet のテスト用クラスです。
+    /// Provides extended methods of NtpMonitor class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class NtpPacketTest
+    public static class NtpMonitorExtension
     {
-        #region Tests
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create_ArgumentException
+        /// SubscribeSync
         ///
         /// <summary>
-        /// NTP パケットの初期化に失敗するテストを行います。
+        /// Sets the specified action to the monitor.
         /// </summary>
         ///
+        /// <param name="src">NTP monitor object.</param>
+        /// <param name="callback">User action.</param>
+        ///
+        /// <returns>Object to remove from the subscription.</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        [Test]
-        public void Create_ArgumentException()
+        public static IDisposable SubscribeSync(this NtpMonitor src,
+            Action<TimeSpan> callback) => src.Subscribe(value =>
         {
-            Assert.That(() => new NtpPacket(new byte[47]), Throws.ArgumentException);
-        }
+            callback(value);
+            return TaskEx.FromResult(0);
+        });
 
         #endregion
     }

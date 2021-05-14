@@ -18,17 +18,19 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Cube.Net.Ntp;
+using Cube.Net.Ntp.Synchronous;
 using Cube.Tests;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Tests.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
     /// NtpMonitorTest
     ///
     /// <summary>
-    /// NtpMonitor のテスト用クラスです。
+    /// Tests the NtpMonitor class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -39,68 +41,66 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor_CubeNtpServer
+        /// Monitor
         ///
         /// <summary>
-        /// NTP サーバを監視するテストを行います。
+        /// Tests to communicate with the NTP server periodically.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Monitor_CubeNtpServer()
+        public void Monitor()
         {
-            using (var mon = new Ntp.NtpMonitor())
-            {
-                var start = DateTime.Now;
-                var count = 0;
-                var cts   = new CancellationTokenSource();
+            using var mon = new NtpMonitor();
 
-                mon.Server  = ""; // test
-                mon.Server  = "ntp.cube-soft.jp";
-                mon.Port    = 0; // test
-                mon.Port    = 123;
-                mon.Timeout = TimeSpan.FromMilliseconds(500);
+            var start = DateTime.Now;
+            var count = 0;
+            var cts   = new CancellationTokenSource();
 
-                mon.Subscribe(_ => throw new ArgumentException("Test"));
-                mon.Subscribe(_ => { ++count; cts.Cancel(); });
-                mon.Start();
-                mon.Start(); // ignore
-                Assert.That(Wait.For(cts.Token), "Timeout");
-                mon.Stop();
-                mon.Stop(); // ignore
+            mon.Server  = ""; // test
+            mon.Server  = "ntp.cube-soft.jp";
+            mon.Port    = 0; // test
+            mon.Port    = 123;
+            mon.Timeout = TimeSpan.FromMilliseconds(500);
 
-                Assert.That(count, Is.AtLeast(1));
-                Assert.That(mon.Last.Value, Is.GreaterThan(start));
-            }
+            _ = mon.SubscribeSync(_ => throw new ArgumentException("Test"));
+            _ = mon.SubscribeSync(_ => { ++count; cts.Cancel(); });
+            mon.Start();
+            mon.Start(); // ignore
+            Assert.That(Wait.For(cts.Token), "Timeout");
+            mon.Stop();
+            mon.Stop(); // ignore
+
+            Assert.That(count, Is.AtLeast(1));
+            Assert.That(mon.Last.Value, Is.GreaterThan(start));
+            Assert.That(mon.Interval, Is.EqualTo(TimeSpan.FromHours(1)));
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor_InvalidNtpServer
+        /// Monitor_NotFound
         ///
         /// <summary>
-        /// 無効な NTP サーバを指定した時の挙動を確認します。
+        /// Tests to monitor the inexistent NTP server.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Monitor_InvalidNtpServer()
+        public void Monitor_NotFound()
         {
-            using (var mon = new Ntp.NtpMonitor())
-            {
-                var count = 0;
+            using var mon = new NtpMonitor { Interval = TimeSpan.FromMilliseconds(100) };
+            var count = 0;
 
-                mon.Server  = "dummy";
-                mon.Port    = 999;
-                mon.Timeout = TimeSpan.FromMilliseconds(100);
+            mon.Server  = "dummy";
+            mon.Port    = 999;
+            mon.Timeout = TimeSpan.FromMilliseconds(100);
 
-                mon.Subscribe(_ => ++count);
-                mon.Start();
-                TaskEx.Delay(150).Wait();
-                mon.Stop();
+            _ = mon.SubscribeSync(_ => ++count);
+            mon.Start();
+            TaskEx.Delay(1000).Wait();
+            mon.Stop();
 
-                Assert.That(count, Is.EqualTo(0));
-            }
+            Assert.That(count, Is.EqualTo(0));
         }
 
         /* ----------------------------------------------------------------- */
@@ -108,19 +108,19 @@ namespace Cube.Net.Tests
         /// Monitor_NoSubscriptions
         ///
         /// <summary>
-        /// コールバック関数を指定しなかった時の挙動を確認します。
+        /// Tests to monitor the NTP server with no subscriptions.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
         public void Monitor_NoSubscriptions()
         {
-            using (var mon = new Ntp.NtpMonitor())
-            {
-                mon.Start();
-                TaskEx.Delay(150).Wait();
-                mon.Stop();
-            }
+            using var mon = new NtpMonitor { Interval = TimeSpan.FromMilliseconds(500) };
+
+            mon.Start();
+            TaskEx.Delay(1000).Wait();
+            mon.Stop();
+            Assert.That(mon.Last.HasValue, Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -128,30 +128,29 @@ namespace Cube.Net.Tests
         /// Reset
         ///
         /// <summary>
-        /// リセット処理のテストを実行します。
+        /// Tests the Reset method.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
         public void Reset()
         {
-            using (var mon = new Ntp.NtpMonitor())
-            {
-                var count = 0;
-                var cts   = new CancellationTokenSource();
+            using var mon = new NtpMonitor { Interval = TimeSpan.FromSeconds(1) };
+            var count = 0;
+            var cts   = new CancellationTokenSource();
 
-                mon.Server  = "ntp.cube-soft.jp";
-                mon.Port    = 123;
-                mon.Timeout = TimeSpan.FromMilliseconds(500);
+            mon.Server  = "ntp.cube-soft.jp";
+            mon.Port    = 123;
+            mon.Timeout = TimeSpan.FromMilliseconds(500);
 
-                mon.Subscribe(_ => { ++count; cts.Cancel(); });
-                mon.Start(mon.Interval);
-                mon.Reset();
-                Assert.That(Wait.For(cts.Token), "Timeout");
-                mon.Stop();
+            _ = mon.SubscribeSync(_ => { ++count; cts.Cancel(); });
+            mon.Start(mon.Interval);
+            mon.Reset();
+            Assert.That(mon.State, Is.EqualTo(TimerState.Run));
+            Assert.That(Wait.For(cts.Token), "Timeout");
+            mon.Stop();
 
-                Assert.That(count, Is.EqualTo(1));
-            }
+            Assert.That(count, Is.EqualTo(1));
         }
 
         #endregion

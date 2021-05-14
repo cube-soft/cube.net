@@ -15,40 +15,19 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Net.Ntp;
-using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
 
-namespace Cube.Net.Tests.Ntp
+namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NtpPacketTest
+    /// NtpAsyncAction
     ///
     /// <summary>
-    /// Ntp.Packet のテスト用クラスです。
+    /// Represents the method to invoke as an asynchronous method.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class NtpPacketTest
-    {
-        #region Tests
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Create_ArgumentException
-        ///
-        /// <summary>
-        /// NTP パケットの初期化に失敗するテストを行います。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void Create_ArgumentException()
-        {
-            Assert.That(() => new NtpPacket(new byte[47]), Throws.ArgumentException);
-        }
-
-        #endregion
-    }
+    public delegate Task HttpAsyncAction<TValue>(Uri uri, TValue value);
 }

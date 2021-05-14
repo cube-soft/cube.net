@@ -52,7 +52,7 @@ namespace Cube.Net.Rss.Tests
         [TestCase("Dummy.txt",          ExpectedResult = 0)]
         public int LoadOpml(string filename)
         {
-            var dest = new RssOpml(Invoker.Vanilla, IO)
+            var dest = new RssOpml(Dispatcher.Vanilla, IO)
                 .Load(GetSource(filename), new Dictionary<Uri, RssFeed>())
                 .Flatten();
 
@@ -87,7 +87,7 @@ namespace Cube.Net.Rss.Tests
                 { new Uri("https://blogs.msdn.microsoft.com/dotnet/feed/"), new RssFeed() },
             };
 
-            var ctx  = Invoker.Vanilla;
+            var ctx  = Dispatcher.Vanilla;
             var dest = new RssOpml(ctx, IO).Load(GetSource("Sample.opml"), filter).ToList();
             Assert.That(dest.Count, Is.EqualTo(1));
 

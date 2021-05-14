@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Linq;
-using System.Reflection;
 using Cube.Mixin.IO;
 using Cube.Net.Rss.Reader;
 using NUnit.Framework;
@@ -87,12 +86,11 @@ namespace Cube.Net.Rss.Tests
 
             Assert.That(IO.Exists(dest), Is.False);
 
-            var asm     = Assembly.GetExecutingAssembly();
-            var setting = new SettingFolder(asm, RootDirectory(), IO);
+            var setting = new SettingFolder(RootDirectory(), IO);
             setting.Load();
             Assert.That(setting.DataDirectory, Is.EqualTo(dest), nameof(SettingFolder));
 
-            var facade = new MainFacade(setting, Invoker.Vanilla);
+            var facade = new MainFacade(setting, Dispatcher.Vanilla);
             Assert.That(facade.Data.Root.Flatten().Count(), Is.EqualTo(0));
         }
 

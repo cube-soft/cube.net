@@ -3,13 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube.Net", "Libraries\Cube.Net.csproj", "{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube.Net", "Libraries\Core\Cube.Net.csproj", "{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube.Net.Rss", "Libraries\Rss\Cube.Net.Rss.csproj", "{55318A0A-A2B5-4518-A308-EC4912E2F8FA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube.Net.Rss.Reader", "Applications\Rss\Reader\Cube.Net.Rss.Reader.csproj", "{C7742724-1786-4FDB-86C1-10090245D25E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube.Net.Tests", "Tests\Core\Cube.Net.Tests.csproj", "{03DB8859-93F8-4335-BBA1-0C04981A970A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube.Net.Rss.Tests", "Tests\Rss\Cube.Net.Rss.Tests.csproj", "{91B9E559-B44B-4AF4-9401-13CA795AB9E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{A2450935-E693-4C91-90B0-25CAAE6C1EEF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{4C8B864F-7820-4D83-8D83-E0224E1111EC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{18F7697A-89DD-4038-9185-45EF0D9E0A9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +41,18 @@ Global
 		{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}.Release|x64.Build.0 = Release|Any CPU
 		{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}.Release|x86.ActiveCfg = Release|Any CPU
 		{06EDF5D3-6A49-445B-A605-B9A9EE2250E2}.Release|x86.Build.0 = Release|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Debug|x64.Build.0 = Debug|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Release|x64.ActiveCfg = Release|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Release|x64.Build.0 = Release|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA}.Release|x86.Build.0 = Release|Any CPU
 		{C7742724-1786-4FDB-86C1-10090245D25E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C7742724-1786-4FDB-86C1-10090245D25E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7742724-1786-4FDB-86C1-10090245D25E}.Debug|x64.ActiveCfg = Debug|x64
@@ -72,6 +92,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{06EDF5D3-6A49-445B-A605-B9A9EE2250E2} = {A2450935-E693-4C91-90B0-25CAAE6C1EEF}
+		{55318A0A-A2B5-4518-A308-EC4912E2F8FA} = {A2450935-E693-4C91-90B0-25CAAE6C1EEF}
+		{C7742724-1786-4FDB-86C1-10090245D25E} = {4C8B864F-7820-4D83-8D83-E0224E1111EC}
+		{03DB8859-93F8-4335-BBA1-0C04981A970A} = {18F7697A-89DD-4038-9185-45EF0D9E0A9B}
+		{91B9E559-B44B-4AF4-9401-13CA795AB9E8} = {18F7697A-89DD-4038-9185-45EF0D9E0A9B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2C9B3C8F-EC05-4793-B9B4-893B4BA1314A}

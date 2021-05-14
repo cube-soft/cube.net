@@ -20,18 +20,19 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using Cube.Mixin.Assembly;
+using Cube.Net.Http.Synchronous;
 using Cube.Net.Rss;
 using Cube.Tests;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Tests.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
     /// RssMonitorTest
     ///
     /// <summary>
-    /// RssMonitor のテスト用クラスです。
+    /// Tests the RssMonitor class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -45,7 +46,7 @@ namespace Cube.Net.Tests
         /// Monitor_RssCacheDictionary
         ///
         /// <summary>
-        /// RssCacheDirectory オブジェクトを利用した監視テストを実行します。
+        /// Tests with the RssCacheDirectory object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -80,8 +81,8 @@ namespace Cube.Net.Tests
 
                     mon.Register(uris);
                     mon.Register(uris); // ignore
-                    mon.Subscribe(e => throw new ArgumentException("Test"));
-                    mon.Subscribe(e =>
+                    _ = mon.SubscribeSync((_, e) => throw new ArgumentException("Test"));
+                    _ = mon.SubscribeSync((_, e) =>
                     {
                         src[e.Uri] = e;
                         cts.Cancel();
@@ -105,26 +106,25 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Monitor_Error
+        /// Monitor_NotFound
         ///
         /// <summary>
-        /// RSS の取得に失敗した時の挙動を確認します。
+        /// Tests for the case where the RSS feed does not exist.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Monitor_Error()
+        public void Monitor_NotFound()
         {
+            var cts  = new CancellationTokenSource();
             var src  = new Uri("http://www.cube-soft.jp/");
             var dest = default(RssFeed);
 
             using (var mon = Create())
+            using (mon.SubscribeSync((_, e) => { dest = e; cts.Cancel(); }))
             {
-                var cts = new CancellationTokenSource();
-
                 mon.RetryCount = 0;
                 mon.Register(src);
-                mon.Subscribe(e => { dest = e; cts.Cancel(); });
                 mon.Start();
                 Assert.That(Wait.For(cts.Token), "Timeout");
                 mon.Stop();
@@ -144,13 +144,14 @@ namespace Cube.Net.Tests
         /// Update
         ///
         /// <summary>
-        /// RssMonitor を用いて手動で更新するテストを実行します。
+        /// Tests the Update method.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
         public void Update()
         {
+            var cts  = new CancellationTokenSource();
             var dest = new Dictionary<Uri, RssFeed>();
             var src  = new[]
             {
@@ -159,11 +160,9 @@ namespace Cube.Net.Tests
             };
 
             using (var mon = Create())
+            using (mon.SubscribeSync((_, e) => { dest.Add(e.Uri, e); cts.Cancel(); }))
             {
-                var cts = new CancellationTokenSource();
-
                 mon.Register(src[0]);
-                mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
                 mon.Update(src[1]);
                 mon.Update(src[0]);
                 Assert.That(Wait.For(cts.Token), "Timeout");
@@ -178,21 +177,21 @@ namespace Cube.Net.Tests
         /// Update_Error
         ///
         /// <summary>
-        /// Update 失敗時の挙動を確認します。
+        /// Tests the error case of the Update method.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
         public void Update_Error()
         {
+            var cts  = new CancellationTokenSource();
             var dest = new Dictionary<Uri, RssFeed>();
             var src  = new Uri("https://wwww.cube-soft.jp/");
 
             using (var mon = Create())
+            using (mon.SubscribeSync((_, e) => { dest.Add(e.Uri, e); cts.Cancel(); }))
             {
-                var cts = new CancellationTokenSource();
                 mon.Register(src);
-                mon.Subscribe(e => { dest.Add(e.Uri, e); cts.Cancel(); });
                 mon.Update(src);
                 Assert.That(Wait.For(cts.Token), "Timeout");
             }
@@ -203,15 +202,15 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Register_Remove
+        /// Register_And_Remove
         ///
         /// <summary>
-        /// RSS フィード URL の登録および削除処理のテストを実行します。
+        /// Tests the Register and Remove methods.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [Test]
-        public void Register_Remove()
+        public void Register_And_Remove()
         {
             var uris = new[]
             {
@@ -219,20 +218,18 @@ namespace Cube.Net.Tests
                 new Uri("http://www.example.com/rss2"),
             };
 
-            using (var mon = Create())
-            {
-                mon.Register(uris[0]);
-                Assert.That(mon.Contains(uris[0]), Is.True);
-                Assert.That(mon.LastChecked(uris[0]).HasValue, Is.False);
-                mon.Register(uris[1]);
-                Assert.That(mon.Contains(uris[1]), Is.True);
-                Assert.That(mon.LastChecked(uris[1]).HasValue, Is.False);
+            using var mon = Create();
+            mon.Register(uris[0]);
+            Assert.That(mon.Contains(uris[0]), Is.True);
+            Assert.That(mon.GetTimestamp(uris[0]).HasValue, Is.False);
+            mon.Register(uris[1]);
+            Assert.That(mon.Contains(uris[1]), Is.True);
+            Assert.That(mon.GetTimestamp(uris[1]).HasValue, Is.False);
 
-                mon.Remove(uris[0]);
-                Assert.That(mon.Contains(uris[0]), Is.False);
-                mon.Clear();
-                Assert.That(mon.Contains(uris[1]), Is.False);
-            }
+            Assert.That(mon.Remove(uris[0]), Is.True);
+            Assert.That(mon.Contains(uris[0]), Is.False);
+            mon.Clear();
+            Assert.That(mon.Contains(uris[1]), Is.False);
         }
 
         #endregion
@@ -244,7 +241,7 @@ namespace Cube.Net.Tests
         /// Create
         ///
         /// <summary>
-        /// RssMonitor オブジェクトを生成します。
+        /// Creates a new instance of the RssMonitor class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */

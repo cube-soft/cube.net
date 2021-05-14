@@ -15,47 +15,46 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Runtime.InteropServices;
+using System;
+using System.Threading.Tasks;
 
-namespace Cube.Net.UrlMon
+namespace Cube.Net.Http.Synchronous
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// UrlMon.NativeMethods
+    /// HttpMonitorExtension
     ///
     /// <summary>
-    /// urlmon.dll に定義された関数を宣言するためのクラスです。
+    /// Provides extended methods of HttpMonitorBase(T) and inherited
+    /// classes.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class NativeMethods
+    public static class HttpMonitorExtension
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CoInternetIsFeatureEnabled
-        ///
-        /// <summary>
-        /// https://msdn.microsoft.com/ja-jp/library/ms537164.aspx
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DllImport(LibName)]
-        public static extern int CoInternetIsFeatureEnabled(int featureEntry, int dwFlags);
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// CoInternetSetFeatureEnabled
+        /// SubscribeSync
         ///
         /// <summary>
-        /// https://msdn.microsoft.com/ja-jp/library/ms537168.aspx
+        /// Sets the specified action to the monitor.
         /// </summary>
         ///
+        /// <param name="src">HTTP monitor object.</param>
+        /// <param name="callback">User action.</param>
+        ///
+        /// <returns>Object to remove from the subscription.</returns>
+        ///
         /* ----------------------------------------------------------------- */
-        [DllImport(LibName)]
-        public static extern int CoInternetSetFeatureEnabled(int FeatureEntry, int dwFlags, bool fEnable);
+        public static IDisposable SubscribeSync<TValue>(this HttpMonitorBase<TValue> src,
+            Action<Uri, TValue> callback) => src.Subscribe((uri, value) =>
+        {
+            callback(uri, value);
+            return TaskEx.FromResult(0);
+        });
 
-        #region Fields
-        const string LibName = "urlmon.dll";
         #endregion
     }
 }

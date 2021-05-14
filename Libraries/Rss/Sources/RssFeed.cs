@@ -16,33 +16,49 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using Cube.Mixin.Logging;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using Cube.Mixin.Collections;
 
-namespace Cube.Net
+namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NetworkMonitorBase
+    /// RssFeed
     ///
     /// <summary>
-    /// Represents the base class to invoke the transmission constantly.
+    /// Represents the RSS feed.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class NetworkMonitorBase : DisposableBase
+    public class RssFeed : ObservableBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// NetworkMonitorBase
+        /// RssFeed
         ///
         /// <summary>
-        /// Initializes a new instance of the NetworkMonitorBase class.
+        /// Initializes a new instance of the RssFeed class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected NetworkMonitorBase() { }
+        public RssFeed() : this(new List<RssItem>()) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RssFeed
+        ///
+        /// <summary>
+        /// Initializes a new instance of the RssFeed class.
+        /// </summary>
+        ///
+        /// <param name="items">Items buffer.</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RssFeed(IList<RssItem> items) { Items = items; }
 
         #endregion
 
@@ -50,166 +66,136 @@ namespace Cube.Net
 
         /* ----------------------------------------------------------------- */
         ///
-        /// State
+        /// Title
         ///
         /// <summary>
-        /// Gets the monitor state.
+        /// Gets or sets the Web site title.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TimerState State => Timer.State;
+        public string Title
+        {
+            get => Get(() => string.Empty);
+            set => Set(value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Description
+        ///
+        /// <summary>
+        /// Gets or sets the Web site description.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public string Description
+        {
+            get => Get(() => string.Empty);
+            set => Set(value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Link
+        ///
+        /// <summary>
+        /// Gets or sets the Web site URL.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Uri Link
+        {
+            get => Get<Uri>();
+            set => Set(value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Uri
+        ///
+        /// <summary>
+        /// Gets or sets the feed URL.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Uri Uri
+        {
+            get => Get<Uri>();
+            set => Set(value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LastChecked
+        ///
+        /// <summary>
+        /// Gets or sets the date-time when the RSS feed was last checked.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public DateTime? LastChecked
+        {
+            get => Get<DateTime?>();
+            set => Set(value);
+        }
 
         /* ----------------------------------------------------------------- */
         ///
         /// LastPublished
         ///
         /// <summary>
-        /// Gets the value of date-time when Publish method was last called.
+        /// Gets or sets the date-time of the latest article update in the
+        /// RSS feed.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public DateTime? Last => Timer.Last;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Interval
-        ///
-        /// <summary>
-        /// Gets or sets the transmission interval.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TimeSpan Interval
+        public DateTime? LastPublished
         {
-            get => Timer.Interval;
-            set => Timer.Interval = value;
+            get => Get<DateTime?>();
+            set => Set(value);
         }
 
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryCount
-        ///
-        /// <summary>
-        /// Gets or sets the retry count when the transmission was failed.
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public int RetryCount { get; set; } = 3;
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// RetryInterval
-        ///
-        /// <summary>
-        /// Gets or sets the retry interval when the transmission was failed.
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(10);
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Timeout
-        ///
-        /// <summary>
-        /// Gets or sets the timeout of the transmission.
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        public TimeSpan Timeout { get; set; } = TimeSpan.FromMilliseconds(500);
-
         /* ----------------------------------------------------------------- */
         ///
-        /// Timer
+        /// Items
         ///
         /// <summary>
-        /// Gets the timer object.
+        /// Gets or sets the list of new articles.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected WakeableTimer Timer { get; } = new WakeableTimer();
+        public IList<RssItem> Items { get; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// UnreadItems
+        ///
+        /// <summary>
+        /// Get the list of unread articles.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public IEnumerable<RssItem> UnreadItems =>
+            Items.Where(e => e.Status == RssItemStatus.Unread);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Error
+        ///
+        /// <summary>
+        /// Gets or sets an exception object that occurs when handling.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public Exception Error
+        {
+            get => Get<Exception>();
+            set => Set(value);
+        }
 
         #endregion
 
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Start
-        ///
-        /// <summary>
-        /// Starts to monitor.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Start() => Start(TimeSpan.Zero);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Start
-        ///
-        /// <summary>
-        /// Starts to monitor after waiting for the specified time.
-        /// </summary>
-        ///
-        /// <param name="delay">Initial delay.</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public virtual void Start(TimeSpan delay)
-        {
-            var state = Timer.State;
-            Timer.Start(delay);
-            if (state != TimerState.Stop) return;
-            this.LogDebug(nameof(Start), $"Interval:{Interval}", $"Delay:{delay}");
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Stop
-        ///
-        /// <summary>
-        /// Stops to monitor.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public virtual void Stop()
-        {
-            var state = Timer.State;
-            Timer.Stop();
-            if (state == TimerState.Stop) return;
-            this.LogDebug(nameof(Stop), $"{nameof(Timer.Last)}:{Timer.Last}");
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Suspend
-        ///
-        /// <summary>
-        /// Suspends to monitor.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Suspend() => Timer.Suspend();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Reset
-        ///
-        /// <summary>
-        /// Resets some properties.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public virtual void Reset()
-        {
-            var state = State;
-            Timer.Reset();
-            if (state == TimerState.Run)
-            {
-                Stop();
-                Start();
-            }
-        }
+        #region  Methods
 
         /* ----------------------------------------------------------------- */
         ///
@@ -226,9 +212,50 @@ namespace Cube.Net
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing) { }
+
+        #endregion
+
+        #region Json
+
+        [DataContract]
+        internal class Json
         {
-            if (disposing) Timer.Dispose();
+            [DataMember] public string Title { get; set; }
+            [DataMember] public string Description { get; set; }
+            [DataMember] public Uri Uri { get; set; }
+            [DataMember] public Uri Link { get; set; }
+            [DataMember] public DateTime? LastChecked { get; set; }
+            [DataMember] public DateTime? LastPublished { get; set; }
+            [DataMember] public IList<RssItem.Json> Items { get; set; }
+
+            public Json(RssFeed src)
+            {
+                Title         = src.Title;
+                Description   = src.Description;
+                Uri           = src.Uri;
+                Link          = src.Link;
+                LastChecked   = src.LastChecked;
+                LastPublished = src.LastPublished;
+                Items         = new List<RssItem.Json>();
+                foreach (var i in src.Items) Items.Add(new RssItem.Json(i));
+            }
+
+            public RssFeed Convert()
+            {
+                var dest = new RssFeed
+                {
+                    Title         = Title,
+                    Description   = Description,
+                    Uri           = Uri,
+                    Link          = Link,
+                    LastChecked   = LastChecked,
+                    LastPublished = LastPublished,
+                };
+
+                foreach (var i in Items.GetOrEmpty()) dest.Items.Add(i.Convert());
+                return dest;
+            }
         }
 
         #endregion

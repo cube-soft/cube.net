@@ -39,10 +39,10 @@ namespace Cube.Net.Rss.Reader
         /// Initializes a new instance of the RegisterFacade class.
         /// </summary>
         ///
-        /// <param name="invoker">Invoker object.</param>
+        /// <param name="dispatcher">Invoker object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RegisterFacade(Invoker invoker) : base(invoker) { }
+        public RegisterFacade(Dispatcher dispatcher) : base(dispatcher) { }
 
         #endregion
 
@@ -59,8 +59,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public string Url
         {
-            get => GetProperty<string>();
-            set => SetProperty(value);
+            get => Get<string>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -75,8 +75,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public bool Busy
         {
-            get => GetProperty<bool>();
-            set => SetProperty(value);
+            get => Get<bool>();
+            set => Set(value);
         }
 
         #endregion

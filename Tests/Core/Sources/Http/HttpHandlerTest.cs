@@ -19,16 +19,17 @@ using System;
 using System.Net;
 using System.Reflection;
 using Cube.Mixin.Assembly;
+using Cube.Net.Http;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+namespace Cube.Net.Tests.Http
 {
     /* --------------------------------------------------------------------- */
     ///
     /// HttpHandlerTest
     ///
     /// <summary>
-    /// 各種 HTTP ハンドラのテストを行うためのクラスです。
+    /// Tests the HttpHandler and inherited classes.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -39,10 +40,29 @@ namespace Cube.Net.Tests
 
         /* ----------------------------------------------------------------- */
         ///
+        /// GetProperties
+        ///
+        /// <summary>
+        /// Confirms the default values of properties.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Test]
+        public void GetProperties()
+        {
+            var src = new HttpHandler();
+            Assert.That(src.UserAgent,       Is.Null, nameof(src.UserAgent));
+            Assert.That(src.ConnectionClose, Is.True, nameof(src.ConnectionClose));
+            Assert.That(src.UseEntityTag,    Is.True, nameof(src.UseEntityTag));
+            Assert.That(src.EntityTag,       Is.Null, nameof(src.EntityTag));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// GetAsync_ConnectionClose
         ///
         /// <summary>
-        /// ConnectionClose を設定するテストを行います。
+        /// Test the ConnectionClose property.
         /// </summary>
         ///
         /// <remarks>
@@ -57,17 +77,16 @@ namespace Cube.Net.Tests
         public void GetAsync_ConnectionClose()
         {
             var uri = new Uri("http://www.cube-soft.jp/");
-            var h   = new Cube.Net.Http.HeaderHandler
+            var h   = new HttpHandler
             {
                 UserAgent       = GetUserAgent(),
                 ConnectionClose = true
             };
 
-            using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
-            using (var response = http.GetAsync(uri).Result)
-            {
-                Assert.That(response.Headers.ConnectionClose.Value, Is.True);
-            }
+            using var http = HttpClientFactory.Create(h);
+            using var response = http.GetAsync(uri).Result;
+
+            Assert.That(response.Headers.Connection.Contains("Close"));
         }
 
         /* ----------------------------------------------------------------- */
@@ -75,7 +94,7 @@ namespace Cube.Net.Tests
         /// GetAsync_EntityTag
         ///
         /// <summary>
-        /// EntityTag (ETag) のテストを行います。
+        /// Tests the EntityTag (ETag) property.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -83,17 +102,19 @@ namespace Cube.Net.Tests
         public void GetAsync_EntityTag()
         {
             var uri = new Uri("https://www.cube-soft.jp/favicon.ico");
-            var h   = new Cube.Net.Http.HeaderHandler { UserAgent = GetUserAgent() };
+            var h   = new HttpHandler { UserAgent = GetUserAgent() };
 
-            using (var http = Cube.Net.Http.HttpClientFactory.Create(h))
+            using var http = HttpClientFactory.Create(h);
+            using (var r = http.GetAsync(uri).Result)
             {
-                using (var r = http.GetAsync(uri).Result) Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                var tag = h.EntityTag;
-                using (var r = http.GetAsync(uri).Result)
-                {
-                    Assert.That(h.EntityTag,  Is.EqualTo(tag));
-                    Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
-                }
+                Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            }
+
+            var tag = h.EntityTag;
+            using (var r = http.GetAsync(uri).Result)
+            {
+                Assert.That(h.EntityTag,  Is.EqualTo(tag));
+                Assert.That(r.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
             }
         }
 
@@ -106,7 +127,7 @@ namespace Cube.Net.Tests
         /// GetUserAgent
         ///
         /// <summary>
-        /// User-Agent を表す文字列を取得します。
+        /// Gets the user agent from the current environment.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */

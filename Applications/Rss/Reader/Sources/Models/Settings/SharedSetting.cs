@@ -35,21 +35,6 @@ namespace Cube.Net.Rss.Reader
     [DataContract]
     public class SharedSetting : SerializableBase
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Setting
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SharedSetting() { Reset(); }
-
-        #endregion
-
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -57,7 +42,7 @@ namespace Cube.Net.Rss.Reader
         /// FileName
         ///
         /// <summary>
-        /// 設定を保持するファイルの名前を取得します。
+        /// Get the name of the file that will hold the configuration.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -68,16 +53,16 @@ namespace Cube.Net.Rss.Reader
         /// StartUri
         ///
         /// <summary>
-        /// 起動時に表示する RssEntry オブジェクトの URL を取得または
-        /// 設定します。
+        /// Gets or sets the URL of the RssEntry object to be displayed at
+        /// startup.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember(Name = "Start")]
         public Uri StartUri
         {
-            get => _startUri;
-            set => SetProperty(ref _startUri, value);
+            get => Get<Uri>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -85,16 +70,16 @@ namespace Cube.Net.Rss.Reader
         /// Capacity
         ///
         /// <summary>
-        /// メモリ上に保持する RSS フィードの最大項目数を取得または
-        /// 設定します。
+        /// Gets or sets the maximum number of RSS feed items to be retained
+        /// in memory.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public int Capacity
         {
-            get => _capacity;
-            set => SetProperty(ref _capacity, value);
+            get => Get(() => 100);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -102,15 +87,16 @@ namespace Cube.Net.Rss.Reader
         /// LightMode
         ///
         /// <summary>
-        /// 軽量モードを示す値を取得または設定します。
+        /// Gets or sets a value indicating whether to apply the lightweight
+        /// mode.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public bool LightMode
         {
-            get => _lightMode;
-            set => SetProperty(ref _lightMode, value);
+            get => Get(() => false);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -118,16 +104,16 @@ namespace Cube.Net.Rss.Reader
         /// EnableNewWindow
         ///
         /// <summary>
-        /// 新しいウィンドウで開くを有効にするかどうかを示す値を取得
-        /// または設定します。
+        /// Gets or sets a value indicating whether Open in new window is
+        /// enabled.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public bool EnableNewWindow
         {
-            get => _enableNewWindow;
-            set => SetProperty(ref _enableNewWindow, value);
+            get => Get(() => false);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -135,16 +121,16 @@ namespace Cube.Net.Rss.Reader
         /// EnableMonitorMessage
         ///
         /// <summary>
-        /// RSS フィードの取得状況をステータスバーに表示するかどうかを
-        /// 示す値を取得または設定します。
+        /// Gets or sets a value indicating whether the status of RSS feed
+        /// acquisition is displayed in the status bar.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public bool EnableMonitorMessage
         {
-            get => _enableMonitorMessage;
-            set => SetProperty(ref _enableMonitorMessage, value);
+            get => Get(() => true);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -152,16 +138,16 @@ namespace Cube.Net.Rss.Reader
         /// CheckUpdate
         ///
         /// <summary>
-        /// ソフトウェアのアップデートを確認するかどうかを示す値を取得
-        /// または設定します。
+        /// Gets or sets a value indicating whether or not to check for
+        /// software updates.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public bool CheckUpdate
         {
-            get => _checkUpdate;
-            set => SetProperty(ref _checkUpdate, value);
+            get => Get(() => true);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -169,15 +155,15 @@ namespace Cube.Net.Rss.Reader
         /// HighInterval
         ///
         /// <summary>
-        /// 高頻度モニタのチェック間隔を取得または設定します。
+        /// Gets or sets the check interval of the high frequency monitor.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public TimeSpan? HighInterval
+        public TimeSpan HighInterval
         {
-            get => _highInterval;
-            set => SetProperty(ref _highInterval, value);
+            get => Get(() => TimeSpan.FromHours(1));
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -185,30 +171,15 @@ namespace Cube.Net.Rss.Reader
         /// LowInterval
         ///
         /// <summary>
-        /// 低頻度モニタのチェック間隔を取得または設定します。
+        /// Gets or sets the check interval of the low frequency monitor.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
-        public TimeSpan? LowInterval
+        public TimeSpan LowInterval
         {
-            get => _lowInterval;
-            set => SetProperty(ref _lowInterval, value);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// LastCheckUpdate
-        ///
-        /// <summary>
-        /// ソフトウェアの最終アップデート確認日時を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public DateTime? LastCheckUpdate
-        {
-            get => _lastCheckUpdate;
-            set => SetProperty(ref _lastCheckUpdate, value);
+            get => Get(() => TimeSpan.FromHours(24));
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -216,14 +187,30 @@ namespace Cube.Net.Rss.Reader
         /// InitialDelay
         ///
         /// <summary>
-        /// モニタの初期遅延時間を取得または設定します。
+        /// Gets or sets the initial delay time for monitoring.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TimeSpan? InitialDelay
+        public TimeSpan InitialDelay
         {
-            get => _initialDelay;
-            set => SetProperty(ref _initialDelay, value);
+            get => Get(() => TimeSpan.FromSeconds(3));
+            set => Set(value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// LastCheckUpdate
+        ///
+        /// <summary>
+        /// Get or set the date and time of the last software update
+        /// confirmation.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public DateTime? LastCheckUpdate
+        {
+            get => Get<DateTime?>();
+            set => Set(value);
         }
 
         #endregion
@@ -235,13 +222,13 @@ namespace Cube.Net.Rss.Reader
         /// Load
         ///
         /// <summary>
-        /// 設定情報を読み込みます。
+        /// Loads the settings from the specified arguments.
         /// </summary>
         ///
-        /// <param name="directory">ディレクトリ</param>
-        /// <param name="io">入出力用オブジェクト</param>
+        /// <param name="directory">Dicretory path.</param>
+        /// <param name="io">I/O handler.</param>
         ///
-        /// <returns>SharedSetting オブジェクト</returns>
+        /// <returns>SharedSetting object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static SharedSetting Load(string directory, IO io) => io.LoadOrDefault(
@@ -255,11 +242,11 @@ namespace Cube.Net.Rss.Reader
         /// Save
         ///
         /// <summary>
-        /// 設定情報を保存します。
+        /// Saves the current settings to the specified path.
         /// </summary>
         ///
-        /// <param name="directory">ディレクトリ</param>
-        /// <param name="io">入出力用オブジェクト</param>
+        /// <param name="directory">Dicretory path.</param>
+        /// <param name="io">I/O handler.</param>
         ///
         /* ----------------------------------------------------------------- */
         public void Save(string directory, IO io) => io.Save(
@@ -267,58 +254,6 @@ namespace Cube.Net.Rss.Reader
             e => Format.Json.Serialize(e, this)
         );
 
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnDeserializing
-        ///
-        /// <summary>
-        /// デシリアライズ直前に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context) => Reset();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Reset
-        ///
-        /// <summary>
-        /// 値をリセットします。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Reset()
-        {
-            _startUri             = null;
-            _capacity             = 100;
-            _lightMode            = false;
-            _enableNewWindow      = false;
-            _enableMonitorMessage = true;
-            _checkUpdate          = true;
-            _lastCheckUpdate      = null;
-            _highInterval         = TimeSpan.FromHours(1);
-            _lowInterval          = TimeSpan.FromHours(24);
-            _initialDelay         = TimeSpan.FromSeconds(3);
-        }
-
-        #endregion
-
-        #region Fields
-        private Uri _startUri;
-        private int _capacity;
-        private bool _lightMode;
-        private bool _enableNewWindow;
-        private bool _enableMonitorMessage;
-        private bool _checkUpdate;
-        private DateTime? _lastCheckUpdate;
-        private TimeSpan? _highInterval;
-        private TimeSpan? _lowInterval;
-        private TimeSpan? _initialDelay;
         #endregion
     }
 }

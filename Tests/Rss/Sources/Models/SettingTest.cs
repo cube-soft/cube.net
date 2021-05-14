@@ -16,7 +16,6 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Reflection;
 using Cube.Net.Rss.Reader;
 using NUnit.Framework;
 
@@ -49,8 +48,7 @@ namespace Cube.Net.Rss.Tests
         public void Load()
         {
             Copy();
-            var asm = Assembly.GetExecutingAssembly();
-            var src = new SettingFolder(asm, RootDirectory(), IO);
+            var src = new SettingFolder(RootDirectory(), IO);
 
             Assert.That(src.TryLoad(),                   Is.True);
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
@@ -62,9 +60,9 @@ namespace Cube.Net.Rss.Tests
             Assert.That(src.Shared.EnableMonitorMessage, Is.True);
             Assert.That(src.Shared.LightMode,            Is.False);
             Assert.That(src.Shared.CheckUpdate,          Is.True);
-            Assert.That(src.Shared.HighInterval.Value,   Is.EqualTo(TimeSpan.FromHours(1)));
-            Assert.That(src.Shared.LowInterval.Value,    Is.EqualTo(TimeSpan.FromDays(1)));
-            Assert.That(src.Shared.InitialDelay.Value,   Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Shared.HighInterval,         Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(src.Shared.LowInterval,          Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(src.Shared.InitialDelay,         Is.EqualTo(TimeSpan.FromSeconds(3)));
             Assert.That(src.Lock.IsReadOnly,             Is.False);
             Assert.That(src.Lock.IsReadOnly,             Is.False);
             Assert.That(src.Lock.UserName,               Is.EqualTo(Environment.UserName));
@@ -86,8 +84,7 @@ namespace Cube.Net.Rss.Tests
         {
             IO.Copy(GetSource("SettingsEmpty.json"), LocalSettingPath(),  true);
             IO.Copy(GetSource("SettingsEmpty.json"), SharedSettingPath(), true);
-            var asm = Assembly.GetExecutingAssembly();
-            var src = new SettingFolder(asm, RootDirectory(), IO);
+            var src = new SettingFolder(RootDirectory(), IO);
 
             Assert.That(src.TryLoad(),                   Is.True);
             Assert.That(src.Value.Width,                 Is.EqualTo(1100));
@@ -99,9 +96,9 @@ namespace Cube.Net.Rss.Tests
             Assert.That(src.Shared.EnableMonitorMessage, Is.True);
             Assert.That(src.Shared.LightMode,            Is.False);
             Assert.That(src.Shared.CheckUpdate,          Is.True);
-            Assert.That(src.Shared.HighInterval.Value,   Is.EqualTo(TimeSpan.FromHours(1)));
-            Assert.That(src.Shared.LowInterval.Value,    Is.EqualTo(TimeSpan.FromDays(1)));
-            Assert.That(src.Shared.InitialDelay.Value,   Is.EqualTo(TimeSpan.FromSeconds(3)));
+            Assert.That(src.Shared.HighInterval,         Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(src.Shared.LowInterval,          Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(src.Shared.InitialDelay,         Is.EqualTo(TimeSpan.FromSeconds(3)));
             Assert.That(src.Lock.IsReadOnly,             Is.False);
             Assert.That(src.Lock.IsReadOnly,             Is.False);
             Assert.That(src.Lock.UserName,               Is.EqualTo(Environment.UserName));
@@ -121,8 +118,7 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Load_NotFound()
         {
-            var asm = Assembly.GetExecutingAssembly();
-            var src = new SettingFolder(asm, RootDirectory(), IO);
+            var src = new SettingFolder(RootDirectory(), IO);
 
             Assert.That(src.TryLoad(),     Is.False);
             Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));
@@ -145,8 +141,7 @@ namespace Cube.Net.Rss.Tests
         {
             IO.Copy(GetSource("Dummy.txt"), LocalSettingPath(),  true);
             IO.Copy(GetSource("Dummy.txt"), SharedSettingPath(), true);
-            var asm = Assembly.GetExecutingAssembly();
-            var src = new SettingFolder(asm, RootDirectory(), IO);
+            var src = new SettingFolder(RootDirectory(), IO);
 
             Assert.That(src.TryLoad(),     Is.False);
             Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));

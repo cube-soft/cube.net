@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Cube.FileSystem;
-using Cube.Mixin.IO.Backports;
+using Cube.Backports;
 using Cube.Mixin.Logging;
 using Cube.Mixin.Uri;
 using Cube.Mixin.Xml;
@@ -48,13 +48,13 @@ namespace Cube.Net.Rss.Reader
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="invoker">同期用コンテキスト</param>
+        /// <param name="dispatcher">同期用コンテキスト</param>
         /// <param name="io">入出力用のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssOpml(Invoker invoker, IO io)
+        public RssOpml(Dispatcher dispatcher, IO io)
         {
-            Invoker = invoker;
+            Dispatcher = dispatcher;
             IO = io;
         }
 
@@ -64,14 +64,14 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Invoker
+        /// Dispatcher
         ///
         /// <summary>
         /// 同期用コンテキストを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Invoker Invoker { get; }
+        public Dispatcher Dispatcher { get; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -191,7 +191,7 @@ namespace Cube.Net.Rss.Reader
             var uri = GetUri(src, "xmlUrl", null);
             return uri == null ?
                    default(IRssEntry) :
-                   new RssEntry(Invoker)
+                   new RssEntry(Dispatcher)
                    {
                        Parent = parent,
                        Uri    = uri,
@@ -212,7 +212,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private IRssEntry ToCategory(XElement src, IRssEntry parent, IDictionary<Uri, RssFeed> filter)
         {
-            var dest = new RssCategory(Invoker)
+            var dest = new RssCategory(Dispatcher)
             {
                 Parent = parent,
                 Title  = GetTitle(src, Properties.Resources.MessageNewCategory),

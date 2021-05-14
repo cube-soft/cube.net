@@ -54,7 +54,7 @@ namespace Cube.Net.Rss.Tests
             Copy(name);
 
             var asm     = Assembly.GetExecutingAssembly();
-            var setting = new SettingFolder(asm, RootDirectory(name), IO);
+            var setting = new SettingFolder(RootDirectory(name), IO);
             var dest    = new MainViewModel(setting, new SynchronizationContext());
             var msg     = dest.Data.Message;
 

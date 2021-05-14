@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Cube.Net.Rss.Reader;
@@ -51,19 +50,17 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Setup_Empty()
         {
-            var ctx = Invoker.Vanilla;
-            var asm = Assembly.GetExecutingAssembly();
-            using (var m = new MainFacade(new SettingFolder(asm, Results, IO), ctx))
-            {
-                m.Setup();
-                m.Stop();
+            var ctx = Dispatcher.Vanilla;
+            using var m = new MainFacade(new SettingFolder(Results, IO), ctx);
 
-                Assert.That(m.Data.Root.Count(),    Is.EqualTo(0));
-                Assert.That(m.Data.Current.Value,   Is.Null, nameof(m.Data.Current));
-                Assert.That(m.Data.LastEntry.Value, Is.Null, nameof(m.Data.LastEntry));
-                Assert.That(m.Data.Content.Value,   Is.Null, nameof(m.Data.Content));
-                Assert.That(m.Data.Message.Value,   Is.Empty, nameof(m.Data.Message));
-            }
+            m.Setup();
+            m.Stop();
+
+            Assert.That(m.Data.Root.Count(),    Is.EqualTo(0));
+            Assert.That(m.Data.Current.Value,   Is.Null, nameof(m.Data.Current));
+            Assert.That(m.Data.LastEntry.Value, Is.Null, nameof(m.Data.LastEntry));
+            Assert.That(m.Data.Content.Value,   Is.Null, nameof(m.Data.Content));
+            Assert.That(m.Data.Message.Value,   Is.Empty, nameof(m.Data.Message));
         }
 
         /* ----------------------------------------------------------------- */
@@ -78,21 +75,20 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Move()
         {
-            using (var m = Create())
-            {
-                m.Stop();
+            using var m = Create();
 
-                var src = m.Data.Current.Value;
-                var dest = m.Data.Root.OfType<RssCategory>().First();
+            m.Stop();
 
-                Assert.That(src.Parent, Is.Null);
-                Assert.That(dest.Entries.Count(), Is.EqualTo(1));
+            var src = m.Data.Current.Value;
+            var dest = m.Data.Root.OfType<RssCategory>().First();
 
-                m.Move(src, dest, 0);
+            Assert.That(src.Parent, Is.Null);
+            Assert.That(dest.Entries.Count(), Is.EqualTo(1));
 
-                Assert.That(src.Parent, Is.EqualTo(dest));
-                Assert.That(dest.Entries.Count(), Is.EqualTo(2));
-            }
+            m.Move(src, dest, 0);
+
+            Assert.That(src.Parent, Is.EqualTo(dest));
+            Assert.That(dest.Entries.Count(), Is.EqualTo(2));
         }
 
         /* ----------------------------------------------------------------- */
@@ -107,25 +103,24 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Move_SameCategory()
         {
-            using (var m = Create())
-            {
-                m.Stop();
+            using var m = Create();
 
-                var src = m.Data.Root.First(e => e.Title == "Microsoft") as RssCategory;
-                Assert.That(src.Children.Count,    Is.EqualTo(5));
-                Assert.That(src.Children[0].Title, Is.EqualTo("Windows"), "Before");
-                Assert.That(src.Children[1].Title, Is.EqualTo("Development"), "Before");
-                Assert.That(src.Children[2].Title, Is.EqualTo("Official Microsoft Blog"), "Before");
-                Assert.That(src.Children[3].Title, Is.EqualTo("Microsoft on the Issues"), "Before");
-                Assert.That(src.Children[4].Title, Is.EqualTo("Internet of Things"), "Before");
+            m.Stop();
 
-                m.Move(src.Children[2], src.Children[4], 4);
+            var src = m.Data.Root.First(e => e.Title == "Microsoft") as RssCategory;
+            Assert.That(src.Children.Count,    Is.EqualTo(5));
+            Assert.That(src.Children[0].Title, Is.EqualTo("Windows"), "Before");
+            Assert.That(src.Children[1].Title, Is.EqualTo("Development"), "Before");
+            Assert.That(src.Children[2].Title, Is.EqualTo("Official Microsoft Blog"), "Before");
+            Assert.That(src.Children[3].Title, Is.EqualTo("Microsoft on the Issues"), "Before");
+            Assert.That(src.Children[4].Title, Is.EqualTo("Internet of Things"), "Before");
 
-                var dest = src.Entries.ToList();
-                Assert.That(dest[0].Title, Is.EqualTo("Microsoft on the Issues"), "After");
-                Assert.That(dest[1].Title, Is.EqualTo("Official Microsoft Blog"), "After");
-                Assert.That(dest[2].Title, Is.EqualTo("Internet of Things"), "After");
-            }
+            m.Move(src.Children[2], src.Children[4], 4);
+
+            var dest = src.Entries.ToList();
+            Assert.That(dest[0].Title, Is.EqualTo("Microsoft on the Issues"), "After");
+            Assert.That(dest[1].Title, Is.EqualTo("Official Microsoft Blog"), "After");
+            Assert.That(dest[2].Title, Is.EqualTo("Internet of Things"), "After");
         }
 
         /* ----------------------------------------------------------------- */
@@ -140,18 +135,17 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void CheckUpdate()
         {
-            using (var m = Create())
-            {
-                m.Stop();
+            using var m = Create();
 
-                Assert.That(m.Data.Shared.Value.CheckUpdate, Is.True);
-                TaskEx.Delay(150).Wait();
-                m.Data.Shared.Value.CheckUpdate = false;
-                Assert.That(m.Data.Shared.Value.CheckUpdate, Is.False);
-                Assert.That(m.Data.Shared.Value.LastCheckUpdate.HasValue, Is.True);
-                m.Data.Shared.Value.CheckUpdate = true;
-                Assert.That(m.Data.Shared.Value.CheckUpdate, Is.True);
-            }
+            m.Stop();
+
+            Assert.That(m.Data.Shared.Value.CheckUpdate, Is.True);
+            TaskEx.Delay(150).Wait();
+            m.Data.Shared.Value.CheckUpdate = false;
+            Assert.That(m.Data.Shared.Value.CheckUpdate, Is.False);
+            Assert.That(m.Data.Shared.Value.LastCheckUpdate.HasValue, Is.True);
+            m.Data.Shared.Value.CheckUpdate = true;
+            Assert.That(m.Data.Shared.Value.CheckUpdate, Is.True);
         }
 
         /* ----------------------------------------------------------------- */
@@ -166,12 +160,10 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void Import_Error()
         {
-            using (var m = Create())
-            {
-                m.Stop();
-                m.Import("NotFound.opml");
-                Assert.That(m.Data.Root.Count(), Is.AtLeast(1));
-            }
+            using var m = Create();
+            m.Stop();
+            m.Import("NotFound.opml");
+            Assert.That(m.Data.Root.Count(), Is.AtLeast(1));
         }
 
         #endregion
@@ -191,10 +183,9 @@ namespace Cube.Net.Rss.Tests
         {
             Copy(name);
 
-            var asm        = Assembly.GetExecutingAssembly();
-            var setting    = new SettingFolder(asm, RootDirectory(name), IO);
-            var invoker = Invoker.Vanilla;
-            var dest       = new MainFacade(setting, invoker);
+            var setting = new SettingFolder(RootDirectory(name), IO);
+            var invoker = Dispatcher.Vanilla;
+            var dest    = new MainFacade(setting, invoker);
 
             setting.Shared.InitialDelay = TimeSpan.FromMinutes(1);
 

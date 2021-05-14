@@ -62,7 +62,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public MainViewModel(SettingFolder settings, SynchronizationContext context) : base(
-            new MainFacade(settings, new ContextInvoker(context, false)),
+            new MainFacade(settings, new ContextDispatcher(context, false)),
             new Aggregator(),
             context
         ) {

@@ -48,7 +48,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public RegisterViewModel(Func<string, Task> callback, SynchronizationContext context) : base(
-            new RegisterFacade(new ContextInvoker(context, false)),
+            new RegisterFacade(new ContextDispatcher(context, false)),
             new Aggregator(),
             context
         ) {
@@ -80,10 +80,10 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IElement<bool> Busy => Get(() => new BindableElement<bool>(
+        public IElement<bool> Busy => GetElement(() => new BindableElement<bool>(
             () => string.Empty,
             () => Facade.Busy,
-            GetInvoker(false)
+            GetDispatcher(false)
         ));
 
         /* ----------------------------------------------------------------- */
@@ -95,11 +95,11 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IElement<string> Url => Get(() => new BindableElement<string>(
+        public IElement<string> Url => GetElement(() => new BindableElement<string>(
            () => string.Empty,
            () => Facade.Url,
            e  => Facade.Url = e,
-           GetInvoker(false)
+           GetDispatcher(false)
         ));
 
         #endregion

@@ -24,28 +24,13 @@ namespace Cube.Net.Rss.Reader
     /// LocalSetting
     ///
     /// <summary>
-    /// ユーザ設定を保持するためのクラスです。
+    /// Represents the user settings.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [DataContract]
     public class LocalSetting : SerializableBase
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Setting
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public LocalSetting() { Reset(); }
-
-        #endregion
-
         #region Properties
 
         /* ----------------------------------------------------------------- */
@@ -53,7 +38,7 @@ namespace Cube.Net.Rss.Reader
         /// FileName
         ///
         /// <summary>
-        /// 設定を保持するファイルの名前を取得します。
+        /// Get the name of the file that will hold the configuration.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -64,7 +49,7 @@ namespace Cube.Net.Rss.Reader
         /// FeedFileName
         ///
         /// <summary>
-        /// 購読フィード一覧を保持するためのファイルの名前を取得します。
+        /// Gets the name of the file used to hold the feed list.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -75,7 +60,7 @@ namespace Cube.Net.Rss.Reader
         /// CacheDirectoryName
         ///
         /// <summary>
-        /// キャッシュファイルを格納するディレクトリの名前を取得します。
+        /// Get the name of the directory where the cache files are stored.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -86,15 +71,15 @@ namespace Cube.Net.Rss.Reader
         /// Width
         ///
         /// <summary>
-        /// メイン画面の幅を取得または設定します。
+        /// Gets or sets the width of the main window.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public int Width
         {
-            get => _width;
-            set => SetProperty(ref _width, value);
+            get => Get(() => 1100);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -102,15 +87,15 @@ namespace Cube.Net.Rss.Reader
         /// Height
         ///
         /// <summary>
-        /// メイン画面の高さを取得または設定します。
+        /// Gets or sets the height of the main window.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public int Height
         {
-            get => _height;
-            set => SetProperty(ref _height, value);
+            get => Get(() => 650);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -118,15 +103,15 @@ namespace Cube.Net.Rss.Reader
         /// EntryColumn
         ///
         /// <summary>
-        /// RSS エントリ一覧部分の幅を取得または設定します。
+        /// Gets or sets the width of the RSS entry display area.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public int EntryColumn
         {
-            get => _entryColumn;
-            set => SetProperty(ref _entryColumn, value);
+            get => Get(() => 230);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -134,15 +119,15 @@ namespace Cube.Net.Rss.Reader
         /// ArticleColumn
         ///
         /// <summary>
-        /// 新着記事一覧部分の幅を取得または設定します。
+        /// Gets or sets the width of the new articles display area.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public int ArticleColumn
         {
-            get => _articleColumn;
-            set => SetProperty(ref _articleColumn, value);
+            get => Get(() => 270);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -150,59 +135,17 @@ namespace Cube.Net.Rss.Reader
         /// DataDirectory
         ///
         /// <summary>
-        /// データ格納用ディレクトリのパスを取得または設定します。
+        /// Gets or sets the path of the directory for data storage.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DataMember]
         public string DataDirectory
         {
-            get => _dataDirectory;
-            set => SetProperty(ref _dataDirectory, value);
+            get => Get<string>();
+            set => Set(value);
         }
 
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnDeserializing
-        ///
-        /// <summary>
-        /// デシリアライズ直前に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context) => Reset();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Reset
-        ///
-        /// <summary>
-        /// 値をリセットします。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Reset()
-        {
-            _width         = 1100;
-            _height        = 650;
-            _entryColumn   = 230;
-            _articleColumn = 270;
-            _dataDirectory = null;
-        }
-
-        #endregion
-
-        #region Fields
-        private int _width;
-        private int _height;
-        private int _entryColumn;
-        private int _articleColumn;
-        private string _dataDirectory;
         #endregion
     }
 }

@@ -25,7 +25,7 @@ PROJECT     = "Cube.Net"
 CONFIG      = "Release"
 BRANCHES    = ["master", "net35"]
 PLATFORMS   = ["Any CPU", "x86", "x64"]
-PACKAGES    = ["Libraries/#{PROJECT}"]
+PACKAGES    = ["Libraries/Core/Cube.Net", "Libraries/Rss/Cube.Net.Rss"]
 
 # --------------------------------------------------------------------------- #
 # clean
