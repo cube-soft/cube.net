@@ -16,7 +16,6 @@
         <dependencies>
             <group targetFramework="net45">
                 <dependency id="Cube.FileSystem" version="4.0.0" />
-                <dependency id="SgmlReader" version="1.8.11" />
             </group>
             <group targetFramework="net35">
                 <dependency id="Cube.FileSystem" version="4.0.0" />
