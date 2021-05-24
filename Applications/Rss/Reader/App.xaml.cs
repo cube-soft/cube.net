@@ -23,8 +23,8 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using Cube.Forms.Controls;
-using Cube.Forms.Processes;
 using Cube.Mixin.Assembly;
+using Cube.Mixin.Forms;
 using Cube.Mixin.Logging;
 
 namespace Cube.Net.Rss.Reader
