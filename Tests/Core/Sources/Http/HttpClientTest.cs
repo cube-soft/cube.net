@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.IO;
+using Cube.Mixin.Net.Http;
 using Cube.Net.Http;
 using NUnit.Framework;
 
@@ -54,13 +55,10 @@ namespace Cube.Net.Tests.Http
         public void GetAsync_NullHandler()
         {
             var uri  = new Uri("http://www.example.com/");
-            var time = TimeSpan.FromSeconds(5);
-
-            using (var http = HttpClientFactory.Create(null, time))
-            using (var response = http.GetAsync(uri).Result)
-            {
-                Assert.That(response.IsSuccessStatusCode);
-            }
+            var time = TimeSpan.FromSeconds(10);
+            using var http = HttpClientFactory.Create(null, time);
+            using var response = http.GetAsync(uri).Result;
+            Assert.That(response.IsSuccessStatusCode);
         }
 
         /* ----------------------------------------------------------------- */
@@ -76,11 +74,10 @@ namespace Cube.Net.Tests.Http
         public void GetAsync_NotFound()
         {
             var uri = new Uri("https://www.cube-soft.jp/404.html");
-            using (var http = HttpClientFactory.Create())
-            {
-                var result = http.GetAsync(uri, s => s.ReadByte()).Result;
-                Assert.That(result, Is.EqualTo(0L));
-            }
+            var time = TimeSpan.FromSeconds(10);
+            using var http = HttpClientFactory.Create(time);
+            var result = http.GetAsync(uri, s => s.ReadByte()).Result;
+            Assert.That(result, Is.EqualTo(0L));
         }
 
         /* ----------------------------------------------------------------- */
@@ -96,16 +93,13 @@ namespace Cube.Net.Tests.Http
         public void GetAsync_ConverterThrows()
         {
             var uri = new Uri("http://www.example.com/");
-            using (var http = HttpClientFactory.Create())
-            {
-                Assert.That(
-                    () => http.GetAsync(uri, Throws).Result,
-                    NUnit.Framework.Throws.TypeOf<AggregateException>()
-                          .And
-                          .InnerException
-                          .InstanceOf<ArgumentException>()
-                );
-            }
+            using var http = HttpClientFactory.Create();
+            Assert.That(() => http.GetAsync(uri, Error).Result,
+                Throws.TypeOf<AggregateException>()
+                      .And
+                      .InnerException
+                      .InstanceOf<ArgumentException>()
+            );
         }
 
         /* ----------------------------------------------------------------- */
@@ -120,15 +114,14 @@ namespace Cube.Net.Tests.Http
         [Test]
         public void GetAsync_IgnoreException()
         {
-            var uri = new Uri("http://www.example.com/");
-            using (var http = HttpClientFactory.Create())
-            {
-                var result = http.GetAsync(
-                    uri,
-                    new ContentConverter<long>(Throws) { IgnoreException = true }
-                ).Result;
-                Assert.That(result, Is.EqualTo(0L));
-            }
+            var uri  = new Uri("http://www.example.com/");
+            var time = TimeSpan.FromSeconds(10);
+            using var http = HttpClientFactory.Create(time);
+            var result = http.GetAsync(
+                uri,
+                new ContentConverter<long>(Error) { IgnoreException = true }
+            ).Result;
+            Assert.That(result, Is.EqualTo(0L));
         }
 
         #endregion
@@ -137,14 +130,14 @@ namespace Cube.Net.Tests.Http
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Throws
+        /// Error
         ///
         /// <summary>
         /// 例外を発生させる関数オブジェクトです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private readonly Func<Stream, long> Throws = e => throw new ArgumentException("ErrorTest");
+        private readonly Func<Stream, long> Error = e => throw new ArgumentException("ErrorTest");
 
         #endregion
     }

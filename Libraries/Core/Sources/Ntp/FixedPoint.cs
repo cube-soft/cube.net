@@ -15,35 +15,42 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Xml.Serialization;
-
-namespace Cube.Net.Http
+namespace Cube.Net.Ntp
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// XmlContentConverter(TValue)
+    /// FixedPoint
     ///
     /// <summary>
-    /// Provides functionality to convert HttpContent in XML format.
+    /// Provides functionality to convert a signed 32-bit fixed-point number
+    /// to double.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class XmlContentConverter<TValue> : ContentConverter<TValue> where TValue : class
+    internal static class FixedPoint
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
-        /// XmlContentConverter
+        /// ToDouble
         ///
         /// <summary>
-        /// Initializes a new instance of the XmlContentConverter class.
+        /// Converts a signed 32-bit fixed-point number to a double.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public XmlContentConverter() : base(s =>
+        public static double ToDouble(int value)
         {
-            if (s == null) return default;
-            var xml = new XmlSerializer(typeof(TValue));
-            return xml.Deserialize(s) as TValue;
-        }) { }
+            var number = (short)(value >> 16);
+            var fraction = (ushort)(value & short.MaxValue);
+            return number + fraction / _CompensatingRate16;
+        }
+
+        #endregion
+
+        #region Fields
+        private static readonly double _CompensatingRate16 = 0x10000d;
+        #endregion
     }
 }

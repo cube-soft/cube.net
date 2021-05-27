@@ -229,7 +229,7 @@ namespace Cube.Net.Ntp
                     if (State != TimerState.Run) return;
                     var client = new NtpClient(Server, Port) { Timeout = Timeout };
                     var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid)
+                    if (packet != null && packet.Valid)
                     {
                         await Publish(packet.LocalClockOffset).ConfigureAwait(false);
                     }

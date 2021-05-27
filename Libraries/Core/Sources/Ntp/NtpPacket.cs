@@ -26,7 +26,7 @@ namespace Cube.Net.Ntp
     /// NtpPacket
     ///
     /// <summary>
-    /// NTP パケットを表すクラスです。
+    /// Represents the NTP packet.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -39,7 +39,7 @@ namespace Cube.Net.Ntp
         /// NtpPacket
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the NtpPacket class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -54,18 +54,21 @@ namespace Cube.Net.Ntp
         /// NtpPacket
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the NtpPacket class with the
+        /// specified raw data.
         /// </summary>
         ///
+        /// <param name="src">Raw data.</param>
+        ///
         /* ----------------------------------------------------------------- */
-        public NtpPacket(byte[] rawdata)
+        public NtpPacket(byte[] src)
         {
-            if (rawdata.Length < _MinimumPacketSize)
+            if (src.Length < _MinimumPacketSize)
             {
                 throw new ArgumentException($"packet should be more than {_MinimumPacketSize} bytes");
             }
             CreationTime = DateTime.Now;
-            RawData = rawdata;
+            RawData = src;
         }
 
         #endregion
@@ -77,98 +80,75 @@ namespace Cube.Net.Ntp
         /// LeapIndicator
         ///
         /// <summary>
-        /// 閏秒指示子を取得します。
+        /// Gets the leap indicator.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public LeapIndicator LeapIndicator
+        public LeapIndicator LeapIndicator => (byte)(RawData[0] >> 6) switch
         {
-            get
-            {
-                var value = (byte)(RawData[0] >> 6);
-                switch (value)
-                {
-                    case 0: return Ntp.LeapIndicator.NoWarning;
-                    case 1: return Ntp.LeapIndicator.LastMinute61;
-                    case 2: return Ntp.LeapIndicator.LastMinute59;
-                    case 3: return Ntp.LeapIndicator.Alarm;
-                    default: break;
-                }
-                return Ntp.LeapIndicator.Alarm;
-            }
-        }
+            0 => LeapIndicator.NoWarning,
+            1 => LeapIndicator.LastMinute61,
+            2 => LeapIndicator.LastMinute59,
+            3 => LeapIndicator.Alarm,
+            _ => LeapIndicator.Alarm,
+        };
 
         /* ----------------------------------------------------------------- */
         ///
         /// Version
         ///
         /// <summary>
-        /// バージョン番号を取得します。
+        /// Gets the version number.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public uint Version
-        {
-            get { return (uint)((RawData[0] & 0x38) >> 3); }
-        }
+        public uint Version => (uint)((RawData[0] & 0x38) >> 3);
 
         /* ----------------------------------------------------------------- */
         ///
         /// Mode
         ///
         /// <summary>
-        /// 動作モードを取得します。
+        /// Get the operation mode.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public NtpMode Mode
+        public NtpMode Mode => (byte)(RawData[0] & 0x7) switch
         {
-            get
-            {
-                var value = (byte)(RawData[0] & 0x7);
-                switch (value)
-                {
-                    case 0: return Ntp.NtpMode.Unknown;
-                    case 1: return Ntp.NtpMode.SymmetricActive;
-                    case 2: return Ntp.NtpMode.SymmetricPassive;
-                    case 3: return Ntp.NtpMode.Client;
-                    case 4: return Ntp.NtpMode.Server;
-                    case 5: return Ntp.NtpMode.Broadcast;
-                    case 6: return Ntp.NtpMode.Unknown;
-                    case 7: return Ntp.NtpMode.Unknown;
-                    default: break;
-                }
-                return Ntp.NtpMode.Unknown;
-            }
-        }
+            0 => NtpMode.Unknown,
+            1 => NtpMode.SymmetricActive,
+            2 => NtpMode.SymmetricPassive,
+            3 => NtpMode.Client,
+            4 => NtpMode.Server,
+            5 => NtpMode.Broadcast,
+            6 => NtpMode.Unknown,
+            7 => NtpMode.Unknown,
+            _ => NtpMode.Unknown
+        };
 
         /* ----------------------------------------------------------------- */
         ///
         /// Stratum
         ///
         /// <summary>
-        /// 階層を取得します。
+        /// Gets the Stratum value.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Stratum Stratum
+        public Stratum Stratum => RawData[1] switch
         {
-            get
-            {
-                var value = (byte)RawData[1];
-                if (value == 0) return Ntp.Stratum.Unspecified;
-                else if (value == 1) return Ntp.Stratum.PrimaryReference;
-                else if (value <= 15) return Ntp.Stratum.SecondaryReference;
-                else return Ntp.Stratum.Reserved;
-            }
-        }
+            0     => Stratum.Unspecified,
+            1     => Stratum.PrimaryReference,
+            <= 15 => Stratum.SecondaryReference,
+            _     => Stratum.Reserved
+        };
 
         /* ----------------------------------------------------------------- */
         ///
         /// PollInterval
         ///
         /// <summary>
-        /// 連続するメッセージの最大間隔を秒単位でを取得します。
+        /// Gets the polling interval in seconds.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -177,8 +157,7 @@ namespace Cube.Net.Ntp
             get
             {
                 int value = (sbyte)RawData[2];
-                if (value <= 0) return 0;
-                else return (uint)Math.Pow(2, value - 1);
+                return value > 0 ? (uint)Math.Pow(2, value - 1) : 0;
             }
         }
 
@@ -187,14 +166,11 @@ namespace Cube.Net.Ntp
         /// Precision
         ///
         /// <summary>
-        /// 時計の精度を秒単位で取得します。
+        /// Get the precision of the clock in seconds.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public double Precision
-        {
-            get { return Math.Pow(2, (sbyte)RawData[3]); }
-        }
+        public double Precision => Math.Pow(2, (sbyte)RawData[3]);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -219,102 +195,72 @@ namespace Cube.Net.Ntp
         /// RootDispersion
         ///
         /// <summary>
-        /// 一次参照源までの相対的な誤差を取得します。
+        /// Gets the relative error to the primary reference source.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public double RootDispersion
-        {
-            get
-            {
-                var value = BitConverter.ToInt32(RawData, 8);
-                return FixedPoint.ToDouble(IPAddress.NetworkToHostOrder(value));
-            }
-        }
+        public double RootDispersion => FixedPoint.ToDouble(
+            IPAddress.NetworkToHostOrder(BitConverter.ToInt32(RawData, 8))
+        );
 
         /* ----------------------------------------------------------------- */
         ///
         /// ReferenceID
         ///
         /// <summary>
-        /// 参照識別子 (Reference Identifier) を取得します。
+        /// Gets the reference identifier.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string ReferenceID
+        public string ReferenceID => Stratum switch
         {
-            get
-            {
-                switch (Stratum)
-                {
-                    case Ntp.Stratum.Unspecified:
-                    case Ntp.Stratum.PrimaryReference:
-                        return Encoding.ASCII.GetString(RawData, 12, 4).TrimEnd(new char());
-                    case Ntp.Stratum.SecondaryReference:
-                        return GetSecondaryReferenceID();
-                    default:
-                        break;
-                }
-                return string.Empty;
-            }
-        }
+            Stratum.Unspecified or
+            Stratum.PrimaryReference   => Encoding.ASCII.GetString(RawData, 12, 4).TrimEnd(new char()),
+            Stratum.SecondaryReference => GetSecondaryReferenceID(),
+            _ => string.Empty,
+        };
 
         /* ----------------------------------------------------------------- */
         ///
         /// ReferenceTimestamp
         ///
         /// <summary>
-        /// 参照タイムスタンプ（一次時刻情報源の最終時計参照時刻）を取得
-        /// します。
+        /// Get the reference timestamp (last clock reference time of the
+        /// primary time source).
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public DateTime ReferenceTimestamp
-        {
-            get
-            {
-                var value = BitConverter.ToInt64(RawData, 16);
-                return Timestamp.Convert(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
-            }
-        }
+        public DateTime ReferenceTimestamp => Timestamp.Convert(
+            IPAddress.NetworkToHostOrder(BitConverter.ToInt64(RawData, 16))
+        ).ToLocalTime();
 
         /* ----------------------------------------------------------------- */
         ///
         /// OriginateTimestamp
         ///
         /// <summary>
-        /// 開始タイムスタンプ（クライアントからサーバへリクエストを発信した
-        /// 時刻）を取得します。
+        /// Get the originate timestamp (the time the request was sent out
+        /// from the client to the server).
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public DateTime OriginateTimestamp
-        {
-            get
-            {
-                var value = BitConverter.ToInt64(RawData, 24);
-                return Timestamp.Convert(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
-            }
-        }
+        public DateTime OriginateTimestamp => Timestamp.Convert(
+            IPAddress.NetworkToHostOrder(BitConverter.ToInt64(RawData, 24))
+        ).ToLocalTime();
 
         /* ----------------------------------------------------------------- */
         ///
         /// ReceiveTimestamp
         ///
         /// <summary>
-        /// 受信タイムスタンプ（サーバへリクエストが到着した時刻）を取得
-        /// します。
+        /// Get the receive timestamp (the time when the request arrived
+        /// at the server).
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public DateTime ReceiveTimestamp
-        {
-            get
-            {
-                var value = BitConverter.ToInt64(RawData, 32);
-                return Timestamp.Convert(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
-            }
-        }
+        public DateTime ReceiveTimestamp => Timestamp.Convert(
+            IPAddress.NetworkToHostOrder(BitConverter.ToInt64(RawData, 32))
+        ).ToLocalTime();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -326,71 +272,54 @@ namespace Cube.Net.Ntp
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public DateTime TransmitTimestamp
-        {
-            get
-            {
-                var value = BitConverter.ToInt64(RawData, 40);
-                return Timestamp.Convert(IPAddress.NetworkToHostOrder(value)).ToLocalTime();
-            }
-        }
+        public DateTime TransmitTimestamp => Timestamp.Convert(
+            IPAddress.NetworkToHostOrder(BitConverter.ToInt64(RawData, 40))
+        ).ToLocalTime();
 
         /* ----------------------------------------------------------------- */
         ///
         /// KeyID
         ///
         /// <summary>
+        /// Gets the key ID.
         /// 鍵識別子を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string KeyID
-        {
-            get
-            {
-                if (RawData.Length < 52) return string.Empty;
-                else return Encoding.ASCII.GetString(RawData, 48, 4).TrimEnd(new char());
-            }
-        }
+        public string KeyID => RawData.Length >= 52 ?
+            Encoding.ASCII.GetString(RawData, 48, 4).TrimEnd(new char()) :
+            string.Empty;
 
         /* ----------------------------------------------------------------- */
         ///
         /// MessageDigest
         ///
         /// <summary>
-        /// メッセージダイジェストを取得します。
+        /// Gets the message digest.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string MessageDigest
-        {
-            get
-            {
-                if (RawData.Length < 68) return string.Empty;
-                else return Encoding.ASCII.GetString(RawData, 52, 16).TrimEnd(new char());
-            }
-        }
+        public string MessageDigest => RawData.Length >= 68 ?
+            Encoding.ASCII.GetString(RawData, 52, 16).TrimEnd(new char()) :
+            string.Empty;
 
         /* ----------------------------------------------------------------- */
         ///
-        /// IsValid
+        /// Valid
         ///
         /// <summary>
-        /// NTP パケットとして有効なものであるかどうか表す値を判別します。
+        /// Gets a value indicating whether it is a valid NTP packet.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public bool IsValid
-        {
-            get { return (RawData != null && LeapIndicator != Ntp.LeapIndicator.Alarm); }
-        }
+        public bool Valid => RawData != null && LeapIndicator != LeapIndicator.Alarm;
 
         /* ----------------------------------------------------------------- */
         ///
         /// RawData
         ///
         /// <summary>
-        /// 生のパケットデータを取得します。
+        /// Gets the raw packet data.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -401,7 +330,7 @@ namespace Cube.Net.Ntp
         /// CreationTime
         ///
         /// <summary>
-        /// この Packet オブジェクトが生成された時刻を取得します。
+        /// Get the creation time of the packet object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -412,49 +341,52 @@ namespace Cube.Net.Ntp
         /// NetworkDelay
         ///
         /// <summary>
-        /// 通信遅延時間 (RTT) を取得します。
+        /// Gets the communication delay time (RTT).
         /// </summary>
         ///
         /// <remarks>
-        /// クライアントがリクエストを送信した時刻を t_s 、サーバが
-        /// クライアントのリクエストを受信した時刻を T_r 、サーバが
-        /// レスポンスを送信した時刻を T_s 、クライアントがサーバの
-        /// レスポンスを受信した時刻を t_r とすると、通信遅延時間 δ は、
-        /// 以下の式で表されます。
+        /// If the time when the client sends the request is t_s,
+        /// the time when the server receives the client's request is T_r,
+        /// the time when the server sends the response is T_s, and
+        /// the time when the client receives the server's response is t_r,
+        /// the communication delay time δ is expressed by the following
+        /// equation:
         ///
         /// δ = (t_r - t_s) - (T_s - T_r)
         ///
-        /// これは、パケットの往復時間からサーバの処理時間を引いたものに
-        /// 相当します。
+        /// This is equivalent to the RTT of the packet minus the processing
+        /// time of the server.
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        public TimeSpan NetworkDelay
-        {
-            get { return (CreationTime - OriginateTimestamp) - (TransmitTimestamp - ReceiveTimestamp); }
-        }
+        public TimeSpan NetworkDelay =>
+            (CreationTime - OriginateTimestamp) - (TransmitTimestamp - ReceiveTimestamp);
 
         /* ----------------------------------------------------------------- */
         ///
         /// LocalClockOffset
         ///
         /// <summary>
-        /// NTP サーバーとの差異（遅延時刻）を取得します。
+        /// Gets the difference (delayed time) from the NTP server.
         /// </summary>
         ///
         /// <remarks>
-        /// クライアントがリクエストを送信した時刻を t_s 、サーバが
-        /// クライアントのリクエストを受信した時刻を T_r 、サーバが
-        /// レスポンスを送信した時刻を T_s 、クライアントがサーバの
-        /// レスポンスを受信した時刻を t_r とします。
-        /// この時、往路と復路の通信時間に差がないと仮定すれば、クライアント
-        /// の時計の遅延時間 θ は、以下の式で表される。
+        ///
+        /// The time when the client sent the request is t_s,
+        /// the time when the server received the client's request is T_r,
+        /// the time when the server sent the response is T_s, and
+        /// the time when the client received the server's response is t_r.
+        /// Assuming that there is no difference in the communication time
+        /// between the outward and the inward transmissions,
+        /// the delay time θ of the client's clock can be expressed by
+        /// the following equation:
         ///
         /// θ = (T_s + T_r) / 2 - (t_s + t_r) / 2
         ///
-        /// これは、サーバ、クライアントの、パケットの送信時刻、受信時刻の
-        /// 平均の差を表します。尚、実装上の都合として、以下のように式変形
-        /// して計算を行います。
+        /// This is the average difference between the sending and receiving
+        /// times of packets from the server and client.
+        /// For implementation purposes, we will transform the formula as
+        /// follows:
         ///
         /// θ = ((T_r - t_s) + (T_s - t_r)) / 2
         /// </remarks>
@@ -478,7 +410,7 @@ namespace Cube.Net.Ntp
         /// CreateNewPacket
         ///
         /// <summary>
-        /// 送信用の新しいパケットを生成します。
+        /// Creates a new packet for transmission.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -499,15 +431,9 @@ namespace Cube.Net.Ntp
         /// GetSecondaryReferenceID
         ///
         /// <summary>
-        /// 階層が 2-15 次参照 (NTP、SNTP サーバを経由して参照している) の
-        /// 場合の参照識別子 (Reference Identifier) を取得します。
+        /// Gets the Reference Identifier when the hierarchy is 2-15th order
+        /// reference (referenced via NTP or SNTP server).
         /// </summary>
-        ///
-        /// <remarks>
-        /// TODO: バージョン 4 の場合の変換を実装する。RFC 2030 によると、
-        /// NTP バージョン 4の従属的なサーバーでは基準源の最終送信タイム
-        /// スタンプの下位 32 ビットになるとの事。
-        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         private string GetSecondaryReferenceID()

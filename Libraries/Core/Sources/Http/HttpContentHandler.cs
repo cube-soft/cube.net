@@ -16,116 +16,116 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Net;
+using System.IO;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cube.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// HttpClientFactory
+    /// HttpContentHandler(TValue)
     ///
     /// <summary>
-    /// Provides functionality to create a HTTP client object.
+    /// Provides functionality to convert from the HttpContent object to
+    /// the provided type.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class HttpClientFactory
+    public class HttpContentHandler<TValue> : HttpHandler
     {
-        #region Methods
+        #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DefaultTimeout
+        /// HttpContentHandler
         ///
         /// <summary>
-        /// Gets the default timeout value.
+        /// Initializes a new instance of the HttpContentHandler class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(2);
+        public HttpContentHandler() { }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create
+        /// ContentHandler
         ///
         /// <summary>
-        /// Creates a new instance of the HttpClient class with the specified
-        /// arguments.
+        /// Initializes a new instance of the HttpContentHandler class
+        /// with the specified converter.
         /// </summary>
         ///
-        /// <param name="handler">HTTP handler.</param>
-        /// <param name="timeout">Timeout value.</param>
-        ///
-        /// <returns>HttpClient object.</returns>
+        /// <param name="converter">Converter object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static HttpClient Create(HttpClientHandler handler, TimeSpan timeout)
+        public HttpContentHandler(IContentConverter<TValue> converter) : this()
         {
-            var http = (handler != null) ? new HttpClient(handler, false) : new HttpClient();
-            http.Timeout = timeout;
-            return http;
+            Converter = converter;
         }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create
+        /// ContentHandler
         ///
         /// <summary>
-        /// Creates a new instance of the HttpClient class with the specified
-        /// arguments.
+        /// Initializes a new instance of the HttpContentHandler class
+        /// with the specified conversion function.
         /// </summary>
         ///
-        /// <param name="handler">HTTP handler.</param>
-        ///
-        /// <returns>HttpClient object.</returns>
+        /// <param name="func">
+        /// Function to convert the HttpContent object.
+        /// </param>
         ///
         /* ----------------------------------------------------------------- */
-        public static HttpClient Create(HttpClientHandler handler) => Create(handler, DefaultTimeout);
+        public HttpContentHandler(Func<Stream, TValue> func) :
+            this(new ContentConverter<TValue>(func)) { }
+
+        #endregion
+
+        #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create
+        /// Converter
         ///
         /// <summary>
-        /// Creates a new instance of the HttpClient class with the specified
-        /// arguments.
+        /// Gets or sets the converter object.
         /// </summary>
         ///
-        /// <param name="timeout">Timeout value.</param>
+        /* ----------------------------------------------------------------- */
+        public IContentConverter<TValue> Converter { get; set; }
+
+        #endregion
+
+        #region Implementations
+
+        /* ----------------------------------------------------------------- */
         ///
-        /// <returns>HttpClient object.</returns>
+        /// SendAsync
+        ///
+        /// <summary>
+        /// Sends an HTTP request asynchronously.
+        /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static HttpClient Create(TimeSpan timeout)
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var handler = new HttpClientHandler
+            var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            if (response == null || Converter == null) return response;
+            if (response.IsSuccessStatusCode)
             {
-                Proxy    = null,
-                UseProxy = false,
-            };
-
-            if (handler.SupportsAutomaticDecompression)
-            {
-                handler.AutomaticDecompression = DecompressionMethods.Deflate |
-                                                 DecompressionMethods.GZip;
+                await response.Content.LoadIntoBufferAsync();
+                var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                response.Content = new HttpValueContent<TValue>(
+                    response.Content,
+                    Converter.Convert(stream)
+                );
             }
-
-            return Create(handler, timeout);
+            return response;
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Create
-        ///
-        /// <summary>
-        /// Creates a new instance of the HttpClient class.
-        /// </summary>
-        ///
-        /// <returns>HttpClient object.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static HttpClient Create() => Create(DefaultTimeout);
 
         #endregion
     }

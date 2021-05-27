@@ -15,8 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -193,113 +191,6 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         private void GetEntityTag(HttpResponseHeaders headers) =>
             EntityTag = headers?.ETag?.Tag ?? string.Empty;
-
-        #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// HttpContentHandler(TValue)
-    ///
-    /// <summary>
-    /// Provides functionality to convert from the HttpContent object to
-    /// the provided type.
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public class HttpContentHandler<TValue> : HttpHandler
-    {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// HttpContentHandler
-        ///
-        /// <summary>
-        /// Initializes a new instance of the HttpContentHandler class.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public HttpContentHandler() { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ContentHandler
-        ///
-        /// <summary>
-        /// Initializes a new instance of the HttpContentHandler class
-        /// with the specified converter.
-        /// </summary>
-        ///
-        /// <param name="converter">Converter object.</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public HttpContentHandler(IContentConverter<TValue> converter) : this()
-        {
-            Converter = converter;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ContentHandler
-        ///
-        /// <summary>
-        /// Initializes a new instance of the HttpContentHandler class
-        /// with the specified conversion function.
-        /// </summary>
-        ///
-        /// <param name="func">
-        /// Function to convert the HttpContent object.
-        /// </param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public HttpContentHandler(Func<Stream, TValue> func) :
-            this(new ContentConverter<TValue>(func)) { }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Converter
-        ///
-        /// <summary>
-        /// Gets or sets the converter object.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IContentConverter<TValue> Converter { get; set; }
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SendAsync
-        ///
-        /// <summary>
-        /// Sends an HTTP request asynchronously.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override async Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-            if (response == null || Converter == null) return response;
-            if (response.IsSuccessStatusCode)
-            {
-                await response.Content.LoadIntoBufferAsync();
-                var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                response.Content = new HttpValueContent<TValue>(
-                    response.Content,
-                    Converter.Convert(stream)
-                );
-            }
-            return response;
-        }
 
         #endregion
     }

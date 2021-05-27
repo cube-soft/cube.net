@@ -220,7 +220,7 @@ namespace Cube.Net.Ntp
             var raw = new byte[48 + (32 + 128) / 8];
 
             _socket.ReceiveTimeout = (int)Timeout.TotalMilliseconds;
-            _socket.ReceiveFrom(raw, ref ep);
+            _ = _socket.ReceiveFrom(raw, ref ep);
 
             return new NtpPacket(raw);
         }
