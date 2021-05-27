@@ -156,14 +156,15 @@ namespace Cube.Net.Rss
         /* ----------------------------------------------------------------- */
         private static XDocument ToXDocument(System.IO.Stream src)
         {
-            using (var stream = new System.IO.StreamReader(src, System.Text.Encoding.UTF8))
-            using (var reader = new Sgml.SgmlReader
+            using var stream = new System.IO.StreamReader(src, System.Text.Encoding.UTF8);
+            using var reader = new Sgml.SgmlReader
             {
                 CaseFolding = Sgml.CaseFolding.ToLower,
-                DocType     = "HTML",
-                IgnoreDtd   = true,
+                DocType = "HTML",
+                IgnoreDtd = true,
                 InputStream = stream,
-            }) return XDocument.Load(reader);
+            };
+            return XDocument.Load(reader);
         }
 
         #endregion

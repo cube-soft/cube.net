@@ -48,7 +48,7 @@ namespace Cube.Net.Tests.Rss
         ///
         /* ----------------------------------------------------------------- */
         [TestCase("https://clown.cube-soft.jp/feed")]
-        [TestCase("https://news.yahoo.co.jp/pickup/rss.xml")]
+        [TestCase("https://news.yahoo.co.jp/rss/topics/top-picks.xml")]
         public void GetAsync(string src)
         {
             var http  = Create();
