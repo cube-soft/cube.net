@@ -154,7 +154,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Import => Get(() => new DelegateCommand(
-            () => Send(MessageFactory.Import(), e => Facade.Import(e.First())),
+            () => Track(MessageFactory.Import(), e => Facade.Import(e.First())),
             () => !Data.Lock.Value.IsReadOnly
         ).Associate(Data.Lock));
 
@@ -168,7 +168,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Export =>Get(() => new DelegateCommand(
-            () => Send(MessageFactory.Export(), e => Facade.Export(e))
+            () => Track(MessageFactory.Export(), e => Facade.Export(e))
         ));
 
         /* ----------------------------------------------------------------- */
@@ -209,9 +209,8 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Remove => Get(() => new DelegateCommand(
-            () => Send(MessageFactory.RemoveWarning(Data.Current.Value.Title),
-                e => Facade.Remove(),
-                e => e == DialogStatus.Yes),
+            () => Track(MessageFactory.RemoveWarning(Data.Current.Value.Title),
+                e => { if (e == DialogStatus.Yes) Facade.Remove(); }),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
         ).Associate(Data.Current).Associate(Data.Lock));
 

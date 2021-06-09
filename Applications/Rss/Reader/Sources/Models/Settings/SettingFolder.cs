@@ -18,8 +18,8 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
-using Cube.DataContract;
 using Cube.FileSystem;
+using Cube.FileSystem.DataContract;
 using Cube.Forms.Controls;
 using Cube.Mixin.Assembly;
 using Cube.Mixin.Environment;

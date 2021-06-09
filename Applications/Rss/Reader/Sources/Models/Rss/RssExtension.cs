@@ -18,9 +18,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cube.DataContract;
-using Cube.FileSystem;
+using Cube.FileSystem.DataContract;
 using Cube.Mixin.Collections;
+using Cube.FileSystem;
 using Cube.Mixin.IO;
 using Cube.Mixin.Logging;
 
