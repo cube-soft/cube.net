@@ -144,7 +144,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected virtual void OnError(IDictionary<Uri, Exception> errors)
         {
-            foreach (var e in errors) this.LogWarn(e.Key.ToString(), e.Value.Message);
+            foreach (var e in errors) GetType().LogWarn(e.Key.ToString(), e.Value.Message);
         }
 
         /* ----------------------------------------------------------------- */
@@ -196,7 +196,7 @@ namespace Cube.Net.Http
         protected override async Task OnTick()
         {
             if (Subscription.Count <= 0) return;
-            if (!Network.Available) { this.LogDebug("Network not available"); return; }
+            if (!Network.Available) { GetType().LogDebug("Network not available"); return; }
 
             async Task task(IEnumerable<Uri> s, IDictionary<Uri, Exception> e)
             {

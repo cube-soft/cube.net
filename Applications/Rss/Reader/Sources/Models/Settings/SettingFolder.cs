@@ -87,9 +87,9 @@ namespace Cube.Net.Rss.Reader
         public SettingFolder(string root, IO io) :
             base(Format.Json, io.Combine(root, LocalSetting.FileName), io)
         {
-            AutoSave       = true;
-            RootDirectory  = root;
-            DataDirectory  = root;
+            AutoSave = true;
+            RootDirectory = root;
+            DataDirectory = root;
             Version.Suffix = "β";
             Reset(root);
         }
@@ -196,7 +196,7 @@ namespace Cube.Net.Rss.Reader
         protected override void OnLoaded(ValueChangedEventArgs<LocalSetting> e)
         {
             Debug.Assert(e.NewValue != null);
-            var min  = 100;
+            var min = 100;
             var dest = e.NewValue;
             if (!dest.DataDirectory.HasValue()) dest.DataDirectory = RootDirectory;
             dest.EntryColumn = Math.Min(dest.EntryColumn, dest.Width - min * 2);
@@ -231,15 +231,20 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private DateTime? GetLastCheckUpdate() => this.LogWarn(() =>
+        private DateTime? GetLastCheckUpdate()
         {
-            var name = $@"Software\CubeSoft\CubeRssReader";
-            using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false);
-            if (key == null) return default;
+            try
+            {
+                var name = $@"Software\CubeSoft\CubeRssReader";
+                using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false);
+                if (key == null) return default;
 
-            var s = key.GetValue("LastCheckUpdate") as string;
-            return s.HasValue() ? DateTime.Parse(s).ToLocalTime() : default;
-        });
+                var s = key.GetValue("LastCheckUpdate") as string;
+                return s.HasValue()? DateTime.Parse(s).ToLocalTime() : default;
+            }
+            catch (Exception err) { GetType().LogWarn(err); }
+            return default;
+        }
 
         /* ----------------------------------------------------------------- */
         ///

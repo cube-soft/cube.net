@@ -118,7 +118,7 @@ namespace Cube.Net.Http
             try { return OnConvert(src); }
             catch (Exception err)
             {
-                if (IgnoreException) this.LogWarn(err);
+                if (IgnoreException) GetType().LogWarn(err);
                 else throw;
             }
             return default;

@@ -234,12 +234,11 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenBeforeNewWindow(object s, NavigatingEventArgs e) =>
-            this.LogWarn(() =>
+        private void WhenBeforeNewWindow(object s, NavigatingEventArgs e) => GetType().LogWarn(() =>
         {
             e.Cancel = true;
             var uri = new Uri(e.Url);
-            if (EnableNewWindow) System.Diagnostics.Process.Start(uri.ToString());
+            if (EnableNewWindow) _ = System.Diagnostics.Process.Start(uri.ToString());
             else Content = uri;
         });
 

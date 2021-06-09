@@ -142,7 +142,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetConnectionClose(HttpRequestHeaders headers) => this.LogWarn(() =>
+        private void SetConnectionClose(HttpRequestHeaders headers) => GetType().LogWarn(() =>
         {
             if (headers.ConnectionClose.HasValue &&
                 headers.ConnectionClose == ConnectionClose) return;
@@ -158,7 +158,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetUserAgent(HttpRequestHeaders headers) => this.LogWarn(() =>
+        private void SetUserAgent(HttpRequestHeaders headers) => GetType().LogWarn(() =>
         {
             if (string.IsNullOrEmpty(UserAgent)) return;
             headers.UserAgent.ParseAdd(UserAgent);
@@ -173,7 +173,7 @@ namespace Cube.Net.Http
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetEntityTag(HttpRequestHeaders headers) => this.LogWarn(() =>
+        private void SetEntityTag(HttpRequestHeaders headers) => GetType().LogWarn(() =>
         {
             if (!UseEntityTag || string.IsNullOrEmpty(EntityTag)) return;
             var etag = EntityTagHeaderValue.Parse(EntityTag);

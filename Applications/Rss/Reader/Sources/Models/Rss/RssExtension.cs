@@ -18,9 +18,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cube.FileSystem;
 using Cube.FileSystem.DataContract;
 using Cube.Mixin.Collections;
-using Cube.FileSystem;
 using Cube.Mixin.IO;
 using Cube.Mixin.Logging;
 
@@ -62,7 +62,7 @@ namespace Cube.Net.Rss.Reader
 
             foreach (var f in io.GetFiles(dir).OrderByDescending(e => e).Skip(30))
             {
-                Logger.Warn(typeof(RssExtension), () => io.Delete(f));
+                typeof(RssExtension).LogWarn(() => io.Delete(f));
             }
         }
 
@@ -170,7 +170,7 @@ namespace Cube.Net.Rss.Reader
 
             if (src.Error != null)
             {
-                dest.LogDebug($"{dest.Uri} ({src.Error.GetType().Name})");
+                dest.GetType().LogDebug($"{dest.Uri} ({src.Error.GetType().Name})");
                 src.Title = dest.Title;
                 return 0;
             }

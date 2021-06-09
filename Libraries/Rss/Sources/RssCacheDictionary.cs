@@ -468,7 +468,7 @@ namespace Cube.Net.Rss
         {
             if (!IsReadOnlyCache)
             {
-                foreach (var key in _memory.Keys.ToList()) this.LogWarn(() => Save(key, false));
+                foreach (var key in _memory.Keys.ToList()) GetType().LogWarn(() => Save(key, false));
                 _memory.Clear();
             }
         }

@@ -53,8 +53,8 @@ namespace Cube.Net.Rss.Reader
         public MainFacade(SettingFolder src, Dispatcher dispatcher)
         {
             _ = src.TryLoad();
-            this.LogInfo($"Owner:{src.Lock.UserName}@{src.Lock.MachineName} ({src.Lock.Sid})");
-            this.LogInfo($"User-Agent:{src.UserAgent}");
+            GetType().LogInfo($"Owner:{src.Lock.UserName}@{src.Lock.MachineName} ({src.Lock.Sid})");
+            GetType().LogInfo($"User-Agent:{src.UserAgent}");
 
             Setting = src;
             Setting.PropertyChanged += WhenSettingChanged;
@@ -123,7 +123,7 @@ namespace Cube.Net.Rss.Reader
         {
             Data.Message.Value = Properties.Resources.MessageLoading;
 
-            this.LogDebug(() => _core.Load());
+            GetType().LogWarn(() => _core.Load());
 
             var entry = _core.Find(Setting.Shared.StartUri) ??
                         _core.Flatten<RssEntry>().FirstOrDefault();
@@ -308,7 +308,7 @@ namespace Cube.Net.Rss.Reader
             try
             {
                 _core.Stop();
-                this.LogDebug(() => _core.Import(path));
+                GetType().LogWarn(() => _core.Import(path));
             }
             finally { _core.Start(TimeSpan.Zero); }
         }

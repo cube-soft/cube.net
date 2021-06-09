@@ -133,7 +133,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         protected override async Task Publish(Uri uri)
         {
-            this.LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
+            GetType().LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
             using var response = await _http.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
             var code = response.StatusCode;
 
@@ -142,7 +142,7 @@ namespace Cube.Net.Http
                 foreach (var cb in Subscription)
                 {
                     try { await cb(uri, cvt.Value).ConfigureAwait(false); }
-                    catch (Exception err) { this.LogWarn(err); }
+                    catch (Exception err) { GetType().LogWarn(err); }
                 }
             }
             else throw new InvalidOperationException($"Convert failed ({(int)code} {code})");

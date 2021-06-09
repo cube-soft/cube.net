@@ -69,11 +69,11 @@ namespace Cube.Mixin.Net.Http
                     var stream = await response.Content.ReadAsStreamAsync();
                     return converter.Convert(stream);
                 }
-                else client.LogWarn($"StatusCode:{response.StatusCode}");
+                else client.GetType().LogWarn($"StatusCode:{response.StatusCode}");
             }
             catch (Exception err)
             {
-                if (converter.IgnoreException) client.LogWarn(err);
+                if (converter.IgnoreException) client.GetType().LogWarn(err);
                 else throw;
             }
             return default;
