@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Runtime.Serialization;
+using Cube.FileSystem;
 
 namespace Cube.Net.Rss.Reader
 {

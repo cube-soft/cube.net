@@ -15,10 +15,7 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Net.Http;
 using System.Runtime.Serialization.Json;
-using System.Threading.Tasks;
 
 namespace Cube.Net.Http
 {
@@ -27,7 +24,7 @@ namespace Cube.Net.Http
     /// JsonContentConverter(TValue)
     ///
     /// <summary>
-    /// JSON 形式の HttpContent を変換するためのクラスです。
+    /// Provides functionality to convert HttpContent in JSON format.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -38,7 +35,7 @@ namespace Cube.Net.Http
         /// JsonContentConverter
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the JsonContentConverter class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -48,34 +45,5 @@ namespace Cube.Net.Http
             var json = new DataContractJsonSerializer(typeof(TValue));
             return json.ReadObject(s) as TValue;
         }) { }
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// JsonOperations
-    ///
-    /// <summary>
-    /// JSON に関する拡張用クラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public static class JsonOperations
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetJsonAsync
-        ///
-        /// <summary>
-        /// JSON 形式のデータを非同期で取得します。
-        /// </summary>
-        ///
-        /// <param name="client">HTTP クライアント</param>
-        /// <param name="uri">レスポンス取得 URL</param>
-        ///
-        /// <returns>JSON 形式データの変換結果</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static Task<T> GetJsonAsync<T>(this HttpClient client, Uri uri)
-            where T : class => client.GetAsync(uri, new JsonContentConverter<T>());
     }
 }

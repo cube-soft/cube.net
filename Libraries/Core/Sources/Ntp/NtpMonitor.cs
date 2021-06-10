@@ -174,7 +174,7 @@ namespace Cube.Net.Ntp
             foreach (var cb in _subscription)
             {
                 try { await cb(value).ConfigureAwait(false); }
-                catch (Exception err) { this.LogWarn(err); }
+                catch (Exception err) { GetType().LogWarn(err); }
             }
         }
 
@@ -216,7 +216,7 @@ namespace Cube.Net.Ntp
             if (_subscription.Count <= 0) return;
             if (!Network.Available)
             {
-                this.LogDebug("Network not available");
+                GetType().LogDebug("Network not available");
                 return;
             }
 
@@ -229,7 +229,7 @@ namespace Cube.Net.Ntp
                     if (State != TimerState.Run) return;
                     var client = new NtpClient(Server, Port) { Timeout = Timeout };
                     var packet = await client.GetAsync();
-                    if (packet != null && packet.IsValid)
+                    if (packet != null && packet.Valid)
                     {
                         await Publish(packet.LocalClockOffset).ConfigureAwait(false);
                     }
@@ -238,7 +238,7 @@ namespace Cube.Net.Ntp
                 }
                 catch (Exception err)
                 {
-                    this.LogWarn(Server, $"{err.Message} ({i + 1}/{RetryCount})");
+                    GetType().LogWarn(Server, $"{err.Message} ({i + 1}/{RetryCount})");
                     await TaskEx.Delay(RetryInterval).ConfigureAwait(false);
                 }
             }

@@ -109,7 +109,7 @@ namespace Cube.Net.Rss.Reader
                         _timer.Interval - past :
                         TimeSpan.FromMilliseconds(100);
             _timer.Start(delta);
-            this.LogDebug($"Start\tInterval:{_timer.Interval}\tInitialDelay:{delta}");
+            GetType().LogDebug(nameof(Start), "Interval:{_timer.Interval}", $"InitialDelay:{delta}");
         }
 
         /* ----------------------------------------------------------------- */
@@ -139,7 +139,7 @@ namespace Cube.Net.Rss.Reader
         private void WhenTick()
         {
             try { Process.Start(FileName, "CubeRssReader"); }
-            catch (Exception err) { this.LogWarn($"{FileName} ({err.Message})"); }
+            catch (Exception err) { GetType().LogWarn($"{FileName} ({err.Message})"); }
             finally { Setting.Shared.LastCheckUpdate = DateTime.Now; }
         }
 

@@ -15,9 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace Cube.Net.Http
@@ -27,7 +24,7 @@ namespace Cube.Net.Http
     /// XmlContentConverter(TValue)
     ///
     /// <summary>
-    /// XML 形式の HttpContent を変換するためのクラスです。
+    /// Provides functionality to convert HttpContent in XML format.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -38,7 +35,7 @@ namespace Cube.Net.Http
         /// XmlContentConverter
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the XmlContentConverter class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -48,34 +45,5 @@ namespace Cube.Net.Http
             var xml = new XmlSerializer(typeof(TValue));
             return xml.Deserialize(s) as TValue;
         }) { }
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// XmlOperations
-    ///
-    /// <summary>
-    /// XML に関する拡張用クラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    public static class XmlOperations
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetXmlAsync
-        ///
-        /// <summary>
-        /// XML 形式のデータを非同期で取得します。
-        /// </summary>
-        ///
-        /// <param name="client">HTTP クライアント</param>
-        /// <param name="uri">レスポンス取得 URL</param>
-        ///
-        /// <returns>XML 形式データの変換結果</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri)
-            where T : class => client.GetAsync(uri, new XmlContentConverter<T>());
     }
 }

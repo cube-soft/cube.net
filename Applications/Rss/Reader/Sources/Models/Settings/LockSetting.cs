@@ -18,8 +18,8 @@
 using System;
 using System.Runtime.Serialization;
 using System.Security;
-using Cube.DataContract;
 using Cube.FileSystem;
+using Cube.FileSystem.DataContract;
 using Cube.Mixin.IO;
 using Microsoft.Win32;
 

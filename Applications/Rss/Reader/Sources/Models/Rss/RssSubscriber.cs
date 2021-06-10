@@ -399,7 +399,7 @@ namespace Cube.Net.Rss.Reader
                 })
             );
 
-            this.LogDebug(string.Format("Load:{0} ({1}) -> {2}",
+            GetType().LogDebug(string.Format("Load:{0} ({1}) -> {2}",
                 FileName,
                 IO.Get(FileName).Length.ToPrettyBytes(),
                 dest.Count()
@@ -423,7 +423,7 @@ namespace Cube.Net.Rss.Reader
             var empty = new RssCategory(_context) { Title = string.Empty };
             foreach (var entry in Entries) empty.Children.Add(entry);
             Categories.Concat(new[] { empty }).Save(FileName, IO);
-            this.LogDebug(string.Format("Save:{0} ({1})",
+            GetType().LogDebug(string.Format("Save:{0} ({1})",
                 FileName, IO.Get(FileName).Length.ToPrettyBytes()
             ));
         }

@@ -24,23 +24,23 @@ namespace Cube.Net.Ntp
     /// NtpMode
     ///
     /// <summary>
-    /// 動作モードの状態を定義した列挙型です。
+    /// Specifies the NTP operation mode.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public enum NtpMode
     {
-        /// <summary>不明 (Reserved)</summary>
+        /// <summary>Unknown (Reserved).</summary>
         Unknown = 0,   // 0, 6, 7 - Reserved
         /// <summary>Symmetric active</summary>
         SymmetricActive = 1,
         /// <summary>Symmetric pasive</summary>
         SymmetricPassive = 2,
-        /// <summary>クライアント</summary>
+        /// <summary>Client.</summary>
         Client = 3,
-        /// <summary>サーバ</summary>
+        /// <summary>Server.</summary>
         Server = 4,
-        /// <summary>ブロードキャスト</summary>
+        /// <summary>Broadcast.</summary>
         Broadcast = 5,
     }
 
@@ -49,19 +49,19 @@ namespace Cube.Net.Ntp
     /// LeapIndicator
     ///
     /// <summary>
-    /// 閏秒指示子 (LI: Leap Indicator) の状態を定義した列挙型です。
+    /// Specifies the leap indicator (LI).
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public enum LeapIndicator : uint
     {
-        /// <summary>警告なし</summary>
+        /// <summary>No warning.</summary>
         NoWarning = 0,
-        /// <summary>61 秒ある分</summary>
+        /// <summary>There are 61 seconds in this minute.</summary>
         LastMinute61 = 1,
-        /// <summary>59 秒ある分</summary>
+        /// <summary>There are 59 seconds in this minute.</summary>
         LastMinute59 = 2,
-        /// <summary>警告</summary>
+        /// <summary>Alarm.</summary>
         Alarm = 3,
     }
 
@@ -70,7 +70,7 @@ namespace Cube.Net.Ntp
     /// Stratum
     ///
     /// <summary>
-    /// 階層の状態を定義した列挙型です。
+    /// Specifies the stratum.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -84,120 +84,5 @@ namespace Cube.Net.Ntp
         SecondaryReference,
         /// <summary>reserved (16-255)</summary>
         Reserved,
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// Timestamp
-    ///
-    /// <summary>
-    /// NTP タイムスタンプと DateTime タイムオブジェクトの相互変換機能を
-    /// 提供するためのクラスです。
-    /// </summary>
-    ///
-    /// <remarks>
-    /// NTP Timestamp Format (as described in RFC 2030)
-    ///                         1                   2                   3
-    ///     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-    /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    /// |                           Seconds                             |
-    /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    /// |                  Seconds Fraction (0-padded)                  |
-    /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    ///
-    /// 尚、RFC 4330 にしたがって最上位ビットが 0 の場合は時刻が 2036 年
-    /// から 2104 年の間であると見なして変換を行います。
-    /// </remarks>
-    ///
-    /* --------------------------------------------------------------------- */
-    public static class Timestamp
-    {
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Convert
-        ///
-        /// <summary>
-        /// NTP タイムスタンプから DateTime オブジェクトへ変換します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static DateTime Convert(long timestamp)
-        {
-            var seconds = (uint)(timestamp >> 32);
-            var fraction = (double)(timestamp & uint.MaxValue);
-
-            var milliseconds = (double)seconds * 1000 + (fraction * 1000) / (_CompensatingRate32);
-            var origin = ((seconds & _ConpensatingRate31) == 0) ? _ReverseTerm : _BaseTerm;
-
-            return origin + TimeSpan.FromMilliseconds(milliseconds);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Convert
-        ///
-        /// <summary>
-        /// DateTime オブジェクトから NTP タイムスタンプへ変換します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static long Convert(DateTime datetime)
-        {
-            var origin = (_ReverseTerm <= datetime) ? _ReverseTerm : _BaseTerm;
-            var ticks = (datetime - origin).TotalMilliseconds;
-
-            var seconds = (uint)((datetime - origin).TotalSeconds);
-            var fraction = (ulong)((ticks % 1000) * _CompensatingRate32 / 1000);
-
-            return (long)(((ulong)seconds << 32) | fraction);
-        }
-
-        #endregion
-
-        #region Fields
-        private static readonly ulong _CompensatingRate32 = 0x100000000L;
-        private static readonly uint _ConpensatingRate31 = 0x80000000u;
-        private static readonly DateTime _BaseTerm = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        private static readonly DateTime _ReverseTerm = new DateTime(2036, 2, 7, 6, 28, 16, 0, DateTimeKind.Utc);
-        #endregion
-    }
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// FixedPoint
-    ///
-    /// <summary>
-    /// 符号付き 32bit 固定小数点数から double への変換機能を提供するための
-    /// クラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    internal static class FixedPoint
-    {
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ToDouble
-        ///
-        /// <summary>
-        /// 符号付き 32bit 固定小数点数から double へ変換します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static double ToDouble(Int32 value)
-        {
-            var number = (Int16)(value >> 16);
-            var fraction = (UInt16)(value & Int16.MaxValue);
-            return number + fraction / _CompensatingRate16;
-        }
-
-        #endregion
-
-        #region Fields
-        private static readonly double _CompensatingRate16 = 0x10000d;
-        #endregion
     }
 }

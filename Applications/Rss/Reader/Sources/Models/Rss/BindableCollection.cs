@@ -198,7 +198,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void OnCollectionChangedCore(NotifyCollectionChangedEventArgs e) => this.LogWarn(() =>
+        private void OnCollectionChangedCore(NotifyCollectionChangedEventArgs e) => GetType().LogWarn(() =>
         {
             switch (e.Action)
             {

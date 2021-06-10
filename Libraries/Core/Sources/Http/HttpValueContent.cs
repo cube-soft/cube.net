@@ -27,7 +27,7 @@ namespace Cube.Net.Http
     /// HttpValueContent(TValue)
     ///
     /// <summary>
-    /// HttpContent を変換した結果を保持するためのクラスです。
+    /// Represents the result of converting HttpContent object.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -40,11 +40,12 @@ namespace Cube.Net.Http
         /// HttpValueContent
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the HttpValueContent class with
+        /// the specified arguments.
         /// </summary>
         ///
-        /// <param name="src">変換前の HttpContent オブジェクト</param>
-        /// <param name="value">変換後のオブジェクト</param>
+        /// <param name="src">Source HttpContent object.</param>
+        /// <param name="value">Converting result.</param>
         ///
         /* ----------------------------------------------------------------- */
         public HttpValueContent(HttpContent src, TValue value)
@@ -62,7 +63,7 @@ namespace Cube.Net.Http
         /// Source
         ///
         /// <summary>
-        /// 変換前のオブジェクトを取得します。
+        /// Gets the source HttpContent object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -73,7 +74,7 @@ namespace Cube.Net.Http
         /// Value
         ///
         /// <summary>
-        /// 変換後のオブジェクトを取得します。
+        /// Gets the converting result.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -81,15 +82,21 @@ namespace Cube.Net.Http
 
         #endregion
 
-        #region IDisposable
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
         /// Dispose
         ///
         /// <summary>
-        /// リソースを解放します。
+        /// Releases the unmanaged resources used by the WakeableTimer
+        /// and optionally releases the managed resources.
         /// </summary>
+        ///
+        /// <param name="disposing">
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
+        /// </param>
         ///
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
@@ -106,17 +113,13 @@ namespace Cube.Net.Http
             }
         }
 
-        #endregion
-
-        #region Implementations
-
         /* ----------------------------------------------------------------- */
         ///
         /// SerializeToStreamAsync
         ///
         /// <summary>
-        /// 非同期で HTTP コンテンツをシリアライズし Stream オブジェクトに
-        /// コピーします。
+        /// Asynchronously serializes HTTP content and copies it to the
+        /// Stream object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -128,7 +131,7 @@ namespace Cube.Net.Http
         /// TryComputeLength
         ///
         /// <summary>
-        /// HTTP コンテンツのバイト数の取得を試みます。
+        /// Tries to get the number of bytes in the HTTP content.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */

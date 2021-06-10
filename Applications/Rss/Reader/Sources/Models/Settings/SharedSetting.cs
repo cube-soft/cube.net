@@ -17,8 +17,8 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Runtime.Serialization;
-using Cube.DataContract;
 using Cube.FileSystem;
+using Cube.FileSystem.DataContract;
 using Cube.Mixin.IO;
 
 namespace Cube.Net.Rss.Reader

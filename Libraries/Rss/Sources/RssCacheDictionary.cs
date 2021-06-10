@@ -20,10 +20,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Cube.Collections;
-using Cube.DataContract;
 using Cube.FileSystem;
+using Cube.FileSystem.DataContract;
 using Cube.Mixin.IO;
 using Cube.Mixin.Logging;
+using Cube.Mixin.String;
 
 namespace Cube.Net.Rss
 {
@@ -32,7 +33,7 @@ namespace Cube.Net.Rss
     /// RssCacheDictionary
     ///
     /// <summary>
-    /// RSS フィードを保持するためのコレクションクラスです。
+    /// Provides functionality to preserve the RSS feeds.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -45,7 +46,7 @@ namespace Cube.Net.Rss
         /// RssCacheDictionary
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssCacheDictionary class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -56,10 +57,11 @@ namespace Cube.Net.Rss
         /// RssCacheDictionary
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssCacheDictionary class with
+        /// the specified collection.
         /// </summary>
         ///
-        /// <param name="inner">内部バッファ</param>
+        /// <param name="inner">Collection for inner buffer.</param>
         ///
         /* ----------------------------------------------------------------- */
         public RssCacheDictionary(IDictionary<Uri, RssFeed> inner)
@@ -76,7 +78,7 @@ namespace Cube.Net.Rss
         /// IO
         ///
         /// <summary>
-        /// 入出力用オブジェクトを取得または設定します。
+        /// Gets or sets the I/O handler.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -87,8 +89,7 @@ namespace Cube.Net.Rss
         /// Directory
         ///
         /// <summary>
-        /// キャッシュを保存するためのディレクトリのパスを取得または
-        /// 設定します。
+        /// Gets or sets the path of the directory for storing the cache.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -99,7 +100,7 @@ namespace Cube.Net.Rss
         /// Capacity
         ///
         /// <summary>
-        /// メモリ上に保持しておく要素数を取得または設定します。
+        /// Gets or sets the number of elements to be kept in memory.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -114,8 +115,8 @@ namespace Cube.Net.Rss
         /// IsReadOnlyCache
         ///
         /// <summary>
-        /// キャッシュファイルを読み込み専用で利用するかどうかを示す値を
-        /// 取得または設定します。
+        /// Gets or sets a value indicating whether the cache file should
+        /// be used as read-only.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -128,7 +129,7 @@ namespace Cube.Net.Rss
         /// Item
         ///
         /// <summary>
-        /// 指定したキーを持つ要素を取得または設定します。
+        /// Gets or sets the element with the specified key.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -143,7 +144,7 @@ namespace Cube.Net.Rss
         /// Keys
         ///
         /// <summary>
-        /// キー一覧を取得します。
+        /// Gets the collection of feed URLs that represent dictionary keys.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -154,7 +155,7 @@ namespace Cube.Net.Rss
         /// Values
         ///
         /// <summary>
-        /// 値一覧を取得します。
+        /// Gets the collection of RSS feeds.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -165,7 +166,7 @@ namespace Cube.Net.Rss
         /// Count
         ///
         /// <summary>
-        /// 要素の数を取得します。
+        /// Gets the number of elements.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -176,7 +177,7 @@ namespace Cube.Net.Rss
         /// IsReadOnly
         ///
         /// <summary>
-        /// 読み取り専用かどうかを示す値を取得します。
+        /// Gets a value indicating whether the collection is read-only.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -193,13 +194,13 @@ namespace Cube.Net.Rss
         /// Get
         ///
         /// <summary>
-        /// URL に対応するオブジェクトを取得します。
+        /// Gets the feed corresponding to the specified URL.
         /// </summary>
         ///
-        /// <param name="key">URL</param>
-        /// <param name="locked">メモリ上にロックするかどうか</param>
+        /// <param name="key">URL.</param>
+        /// <param name="locked">Whether to lock it in memory</param>
         ///
-        /// <returns>RssFeed オブジェクト</returns>
+        /// <returns>RssFeed object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public RssFeed Get(Uri key, bool locked) => MarkMemory(_inner[key], locked);
@@ -209,10 +210,10 @@ namespace Cube.Net.Rss
         /// Unlock
         ///
         /// <summary>
-        /// ロック状態を解除します。
+        /// Unlocks the value corresponding to the specified URL.
         /// </summary>
         ///
-        /// <param name="key">URL</param>
+        /// <param name="key">URL.</param>
         ///
         /* ----------------------------------------------------------------- */
         public void Unlock(Uri key)
@@ -226,10 +227,10 @@ namespace Cube.Net.Rss
         /// Delete
         ///
         /// <summary>
-        /// キャッシュファイルを削除します。
+        /// Delete the cache file.
         /// </summary>
         ///
-        /// <param name="uri">削除する RSS フィードの URL</param>
+        /// <param name="uri">URL of the RSS feed to delete.</param>
         ///
         /* ----------------------------------------------------------------- */
         public void Delete(Uri uri)
@@ -245,12 +246,12 @@ namespace Cube.Net.Rss
         /// Contains
         ///
         /// <summary>
-        /// 指定された要素が含まれているかどうかを判別します。
+        /// Determines whether the specified item is included.
         /// </summary>
         ///
-        /// <param name="item">要素</param>
+        /// <param name="item">Item to check.</param>
         ///
-        /// <returns>含まれているかどうか</returns>
+        /// <returns>true if contained.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public bool Contains(KeyValuePair<Uri, RssFeed> item) => _inner.Contains(item);
@@ -260,12 +261,12 @@ namespace Cube.Net.Rss
         /// ContainsKey
         ///
         /// <summary>
-        /// 指定されたキーを持つ要素が含まれているかどうかを判別します。
+        /// Determines whether an element with the specified key is included.
         /// </summary>
         ///
-        /// <param name="key">要素</param>
+        /// <param name="key">Key to check.</param>
         ///
-        /// <returns>含まれているかどうか</returns>
+        /// <returns>true if contained.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public bool ContainsKey(Uri key) => _inner.ContainsKey(key);
@@ -275,10 +276,10 @@ namespace Cube.Net.Rss
         /// Add
         ///
         /// <summary>
-        /// 要素を追加します。
+        /// Adds the specified RSS feed.
         /// </summary>
         ///
-        /// <param name="item">要素</param>
+        /// <param name="item">RSS feed to add.</param>
         ///
         /* ----------------------------------------------------------------- */
         public void Add(RssFeed item) => Add(item.Uri, item);
@@ -288,17 +289,17 @@ namespace Cube.Net.Rss
         /// Add
         ///
         /// <summary>
-        /// 要素を追加します。
+        /// Adds the specified item.
         /// </summary>
         ///
-        /// <param name="item">要素</param>
+        /// <param name="item">Item to add.</param>
         ///
         /* ----------------------------------------------------------------- */
         public void Add(KeyValuePair<Uri, RssFeed> item)
         {
             _inner.Add(item);
             var dest = CacheName(item.Key);
-            if (!string.IsNullOrEmpty(dest) && !IO.Exists(dest)) MarkMemory(item.Value, false);
+            if (dest.HasValue() && !IO.Exists(dest)) _ = MarkMemory(item.Value, false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -306,11 +307,11 @@ namespace Cube.Net.Rss
         /// Add
         ///
         /// <summary>
-        /// 指定したキーおよび値を持つ要素を追加します。
+        /// Adds an item with the specified key and value.
         /// </summary>
         ///
-        /// <param name="key">キー</param>
-        /// <param name="value">値</param>
+        /// <param name="key">URL.</param>
+        /// <param name="value">RSS feed.</param>
         ///
         /* ----------------------------------------------------------------- */
         public void Add(Uri key, RssFeed value) =>
@@ -321,12 +322,12 @@ namespace Cube.Net.Rss
         /// Remove
         ///
         /// <summary>
-        /// 指定したキーを持つ要素を削除します。
+        /// Removes the item with the specified key.
         /// </summary>
         ///
-        /// <param name="key">キー</param>
+        /// <param name="key">URL to remove.</param>
         ///
-        /// <returns>削除が成功したかどうか</returns>
+        /// <returns>true for success.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public bool Remove(Uri key) => Remove(key, false);
@@ -336,21 +337,21 @@ namespace Cube.Net.Rss
         /// Remove
         ///
         /// <summary>
-        /// 指定したキーを持つ要素を削除します。
+        /// Removes the item with the specified key.
         /// </summary>
         ///
-        /// <param name="key">キー</param>
+        /// <param name="key">URL to remove.</param>
         /// <param name="deleteCache">
-        /// キャッシュファイルを削除するかどうか
+        /// Whether to delete the cache file.
         /// </param>
         ///
-        /// <returns>削除が成功したかどうか</returns>
+        /// <returns>true for success.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public bool Remove(Uri key, bool deleteCache)
         {
             var result = _inner.Remove(key);
-            if (result) _memory.Remove(key);
+            if (result) _ = _memory.Remove(key);
             if (deleteCache) Delete(key);
             return result;
         }
@@ -360,12 +361,12 @@ namespace Cube.Net.Rss
         /// Remove
         ///
         /// <summary>
-        /// 指定した要素を削除します。
+        /// Removes the specified item.
         /// </summary>
         ///
-        /// <param name="item">要素</param>
+        /// <param name="item">Item to remove.</param>
         ///
-        /// <returns>削除が成功したかどうか</returns>
+        /// <returns>true for success.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public bool Remove(KeyValuePair<Uri, RssFeed> item) => Remove(item.Key);
@@ -375,7 +376,7 @@ namespace Cube.Net.Rss
         /// Clear
         ///
         /// <summary>
-        /// 全ての項目を削除します。
+        /// Clears the all of items.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -390,19 +391,19 @@ namespace Cube.Net.Rss
         /// TryGetValue
         ///
         /// <summary>
-        /// 指定したキーに対応する値を取得します。
+        /// Tries to get the value corresponding to the specified key.
         /// </summary>
         ///
-        /// <param name="key">キー</param>
-        /// <param name="value">値を格納するためのオブジェクト</param>
+        /// <param name="key">URL.</param>
+        /// <param name="value">Object for setting the value.</param>
         ///
-        /// <returns>取得が成功したかどうか</returns>
+        /// <returns>true for success.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public bool TryGetValue(Uri key, out RssFeed value)
         {
             var result = _inner.TryGetValue(key, out value);
-            if (result) MarkMemory(value, false);
+            if (result) _ = MarkMemory(value, false);
             return result;
         }
 
@@ -411,11 +412,11 @@ namespace Cube.Net.Rss
         /// CopyTo
         ///
         /// <summary>
-        /// 全ての要素を配列にコピーします。
+        /// Copies all items to the specified array.
         /// </summary>
         ///
         /// <remarks>
-        /// このメソッドはサポートされません。
+        /// The method does not be supported.
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
@@ -427,17 +428,17 @@ namespace Cube.Net.Rss
         /// GetEnumerator
         ///
         /// <summary>
-        /// コレクションを反復処理する列挙子を取得します。
+        /// Gets the enumerator to iterate over the collection.
         /// </summary>
         ///
-        /// <returns>列挙子</returns>
+        /// <returns>Enumerator to iterate.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public override IEnumerator<KeyValuePair<Uri, RssFeed>> GetEnumerator()
         {
             foreach (var kv in _inner)
             {
-                MarkMemory(kv.Value, false);
+                _ = MarkMemory(kv.Value, false);
                 yield return kv;
             }
         }
@@ -453,11 +454,13 @@ namespace Cube.Net.Rss
         /// Dispose
         ///
         /// <summary>
-        /// リソースを開放します。
+        /// Releases the unmanaged resources used by the WakeableTimer
+        /// and optionally releases the managed resources.
         /// </summary>
         ///
         /// <param name="disposing">
-        /// マネージオブジェクトを開放するかどうか
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
@@ -465,7 +468,7 @@ namespace Cube.Net.Rss
         {
             if (!IsReadOnlyCache)
             {
-                foreach (var key in _memory.Keys.ToList()) this.LogWarn(() => Save(key, false));
+                foreach (var key in _memory.Keys.ToList()) GetType().LogWarn(() => Save(key, false));
                 _memory.Clear();
             }
         }
@@ -475,9 +478,9 @@ namespace Cube.Net.Rss
         /// MarkMemory
         ///
         /// <summary>
-        /// メモリ上に展開されている事を記憶します。また、指定された RSS
-        /// フィードに対するキャッシュファイルが存在する場合、その内容を
-        /// 読み込みます。
+        /// Marks the specified RSS feed as existing in memory.
+        /// Also, if there is a cache file for the specified RSS feed,
+        /// it will be loaded.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -492,7 +495,7 @@ namespace Cube.Net.Rss
                                 locked | _memory[dest.Uri] :
                                 locked;
 
-                    if (exist) _memory.Remove(dest.Uri);
+                    if (exist) _ = _memory.Remove(dest.Uri);
                     else Load(dest);
 
                     _memory.Add(dest.Uri, value);
@@ -507,7 +510,7 @@ namespace Cube.Net.Rss
         /// Stash
         ///
         /// <summary>
-        /// 最も古い要素をファイルに保存します。
+        /// Saves the oldest element to a file.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -517,7 +520,7 @@ namespace Cube.Net.Rss
             var key = _memory.FirstOrDefault(e => !e.Value).Key;
             if (key == null) return;
             Save(key, true);
-            _memory.Remove(key);
+            _ = _memory.Remove(key);
         }
 
         /* ----------------------------------------------------------------- */
@@ -525,7 +528,7 @@ namespace Cube.Net.Rss
         /// Load
         ///
         /// <summary>
-        /// RSS フィードをキャッシュファイルから読み込みます。
+        /// Reads RSS feeds from a cache file.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -549,7 +552,7 @@ namespace Cube.Net.Rss
         /// Load
         ///
         /// <summary>
-        /// RSS フィードをキャッシュファイルから読み込みます。
+        /// Reads RSS feeds from a cache file.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -566,12 +569,12 @@ namespace Cube.Net.Rss
         /// Save
         ///
         /// <summary>
-        /// RSS フィードをキャッシュファイルに保存します。
+        /// Saves the RSS feed to a cache file.
         /// </summary>
         ///
-        /// <param name="uri">保存する RSS フィードの URL</param>
+        /// <param name="uri">URL of the RSS feed to save.</param>
         /// <param name="shrink">
-        /// 保存後にメモリ上の RSS フィードを軽量化するかどうか
+        /// Whether to lighten the RSS feed in memory after saving.
         /// </param>
         ///
         /* ----------------------------------------------------------------- */
@@ -596,12 +599,8 @@ namespace Cube.Net.Rss
         /// CacheName
         ///
         /// <summary>
-        /// キャッシュが保存されるファイルのパスを取得します。
+        /// Get the path to the file where the cache is saved.
         /// </summary>
-        ///
-        /// <param name="uri">URL</param>
-        ///
-        /// <returns>キャッシュファイルのパス</returns>
         ///
         /* ----------------------------------------------------------------- */
         private string CacheName(Uri uri)
@@ -619,7 +618,7 @@ namespace Cube.Net.Rss
 
         #region Fields
         private readonly IDictionary<Uri, RssFeed> _inner;
-        private readonly OrderedDictionary<Uri, bool> _memory = new OrderedDictionary<Uri, bool>();
+        private readonly OrderedDictionary<Uri, bool> _memory = new();
         private int _capacity = 100;
         #endregion
     }

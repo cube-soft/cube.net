@@ -89,7 +89,7 @@ namespace Cube.Net.Tests.Ntp
             using (var client = new NtpClient(src))
             {
                 var pkt = client.GetAsync().Result;
-                Assert.That(pkt.IsValid,            Is.True);
+                Assert.That(pkt.Valid,            Is.True);
                 Assert.That(pkt.LeapIndicator,      Is.EqualTo(LeapIndicator.NoWarning));
                 Assert.That(pkt.Version,            Is.EqualTo(version));
                 Assert.That(pkt.Mode,               Is.EqualTo(NtpMode.Server));

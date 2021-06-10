@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Reflection;
+using Cube.Mixin.Logging;
 using NUnit.Framework;
 
 namespace Cube.Net.Rss.Tests
@@ -44,8 +45,8 @@ namespace Cube.Net.Rss.Tests
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            Logger.ObserveTaskException();
-            Logger.Info(typeof(GlobalSetup), Assembly.GetExecutingAssembly());
+            _ = Logger.ObserveTaskException();
+            typeof(GlobalSetup).LogInfo(Assembly.GetExecutingAssembly());
             Network.Setup();
         }
     }

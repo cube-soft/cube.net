@@ -21,6 +21,8 @@ using Cube.Mixin.Logging;
 
 namespace Cube.Net.Http
 {
+    #region IContentConverter<TValue>
+
     /* --------------------------------------------------------------------- */
     ///
     /// IContentConverter
@@ -30,7 +32,7 @@ namespace Cube.Net.Http
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public interface IContentConverter<out TValue>
+    public interface IContentConverter<TValue>
     {
         /* ----------------------------------------------------------------- */
         ///
@@ -65,6 +67,10 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         TValue Convert(Stream src);
     }
+
+    #endregion
+
+    #region ContentConverterBase<TValue>
 
     /* --------------------------------------------------------------------- */
     ///
@@ -112,7 +118,7 @@ namespace Cube.Net.Http
             try { return OnConvert(src); }
             catch (Exception err)
             {
-                if (IgnoreException) this.LogWarn(err);
+                if (IgnoreException) GetType().LogWarn(err);
                 else throw;
             }
             return default;
@@ -135,6 +141,10 @@ namespace Cube.Net.Http
 
         #endregion
     }
+
+    #endregion
+
+    #region ContentConverter<TValue>
 
     /* --------------------------------------------------------------------- */
     ///
@@ -189,4 +199,6 @@ namespace Cube.Net.Http
         private readonly Func<Stream, TValue> _func;
         #endregion
     }
+
+    #endregion
 }

@@ -67,6 +67,7 @@ namespace Cube.Net.Tests.Http
 
             Assert.That(mon.UserAgent, Does.StartWith("Cube.Net.Tests"));
 
+            mon.Timeout = TimeSpan.FromSeconds(10);
             mon.Interval = TimeSpan.FromMilliseconds(50);
             mon.Uri = new Uri("http://www.example.com/");
 
@@ -100,6 +101,7 @@ namespace Cube.Net.Tests.Http
         public void Monitor_NoSubscriptions()
         {
             using var mon = Create();
+            mon.Timeout = TimeSpan.FromSeconds(10);
             mon.Interval = TimeSpan.FromMilliseconds(50);
             mon.Uri = new Uri("http://www.example.com/");
 

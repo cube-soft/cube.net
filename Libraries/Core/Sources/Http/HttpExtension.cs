@@ -20,15 +20,16 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cube.Mixin.Logging;
+using Cube.Net.Http;
 
-namespace Cube.Net.Http
+namespace Cube.Mixin.Net.Http
 {
     /* --------------------------------------------------------------------- */
     ///
     /// HttpExtension
     ///
     /// <summary>
-    /// HTTP 通信に関する拡張用クラスです。
+    /// Provides extended methods of the HttpClient class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -39,40 +40,40 @@ namespace Cube.Net.Http
         /// GetAsync(T)
         ///
         /// <summary>
-        /// HTTP 通信を実行し、変換結果を取得します。
+        /// Gets the result of HTTP transmission with the specified
+        /// conversion.
         /// </summary>
         ///
-        /// <param name="client">HTTP クライアント</param>
-        /// <param name="uri">レスポンス取得 URL</param>
-        /// <param name="converter">変換用オブジェクト</param>
+        /// <param name="client">HTTP client.</param>
+        /// <param name="uri">Request URL.</param>
+        /// <param name="converter">Converter object.</param>
         ///
-        /// <returns>変換結果</returns>
+        /// <returns>HTTP transmission and conversion result.</returns>
         ///
         /// <remarks>
-        /// 例外の扱いについては、IContentConverter(T).IgnoreException の
-        /// 設定に準じます。
+        /// If an exception is thrown, the method will follow the settings
+        /// of IContentConverter.IgnoreException property.
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         public static async Task<T> GetAsync<T>(this HttpClient client,
-            Uri uri, IContentConverter<T> converter)
-        {
+            System.Uri uri,
+            IContentConverter<T> converter
+        ) {
             try
             {
-                using (var response = await client.GetAsync(uri))
+                using var response = await client.GetAsync(uri);
+                if (response.IsSuccessStatusCode)
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await response.Content.LoadIntoBufferAsync();
-                        var stream = await response.Content.ReadAsStreamAsync();
-                        return converter.Convert(stream);
-                    }
-                    else client.LogWarn($"StatusCode:{response.StatusCode}");
+                    await response.Content.LoadIntoBufferAsync();
+                    var stream = await response.Content.ReadAsStreamAsync();
+                    return converter.Convert(stream);
                 }
+                else client.GetType().LogWarn($"StatusCode:{response.StatusCode}");
             }
             catch (Exception err)
             {
-                if (converter.IgnoreException) client.LogWarn(err);
+                if (converter.IgnoreException) client.GetType().LogWarn(err);
                 else throw;
             }
             return default;
@@ -83,18 +84,52 @@ namespace Cube.Net.Http
         /// GetAsync(T)
         ///
         /// <summary>
-        /// HTTP 通信を実行し、変換結果を取得します。
+        /// Gets the result of HTTP transmission with the specified
+        /// function.
         /// </summary>
         ///
-        /// <param name="client">HTTP クライアント</param>
-        /// <param name="uri">レスポンス取得 URL</param>
-        /// <param name="func">変換用の関数オブジェクト</param>
+        /// <param name="client">HTTP client.</param>
+        /// <param name="uri">Request URL.</param>
+        /// <param name="func">Function to convert.</param>
         ///
-        /// <returns>変換結果</returns>
+        /// <returns>HTTP transmission and conversion result.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static Task<T> GetAsync<T>(this HttpClient client,
-            Uri uri, Func<Stream, T> func) =>
+        public static Task<T> GetAsync<T>(this HttpClient client, System.Uri uri, Func<Stream, T> func) =>
             client.GetAsync(uri, new ContentConverter<T>(func));
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetJsonAsync
+        ///
+        /// <summary>
+        /// Gets data in JSON format asynchronously.
+        /// </summary>
+        ///
+        /// <param name="client">HTTP client.</param>
+        /// <param name="uri">Request URL.</param>
+        ///
+        /// <returns>Result in JSON format.</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static Task<T> GetJsonAsync<T>(this HttpClient client, System.Uri uri) where T : class =>
+            client.GetAsync(uri, new JsonContentConverter<T>());
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetXmlAsync
+        ///
+        /// <summary>
+        /// Gets data in XML format asynchronously.
+        /// </summary>
+        ///
+        /// <param name="client">HTTP client.</param>
+        /// <param name="uri">Request URL.</param>
+        ///
+        /// <returns>Result in XML format.</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static Task<T> GetXmlAsync<T>(this HttpClient client, System.Uri uri) where T : class =>
+            client.GetAsync(uri, new XmlContentConverter<T>());
     }
 }

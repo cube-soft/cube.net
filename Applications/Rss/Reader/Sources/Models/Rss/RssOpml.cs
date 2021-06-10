@@ -113,7 +113,7 @@ namespace Cube.Net.Rss.Reader
                 }
                 catch (Exception err)
                 {
-                    this.LogWarn(err);
+                    GetType().LogWarn(err);
                     return new IRssEntry[0];
                 }
             },

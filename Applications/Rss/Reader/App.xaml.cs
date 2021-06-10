@@ -23,8 +23,8 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using Cube.Forms.Controls;
-using Cube.Forms.Processes;
 using Cube.Mixin.Assembly;
+using Cube.Mixin.Forms;
 using Cube.Mixin.Logging;
 
 namespace Cube.Net.Rss.Reader
@@ -73,7 +73,7 @@ namespace Cube.Net.Rss.Reader
         {
             if (!Activate()) return;
 
-            this.LogInfo(Assembly.GetExecutingAssembly());
+            GetType().LogInfo(Assembly.GetExecutingAssembly());
 
             _resources.Add(Logger.ObserveTaskException());
             _resources.Add(this.ObserveUiException());
@@ -85,7 +85,7 @@ namespace Cube.Net.Rss.Reader
                 WebControl.MaxConnections = 10;
                 WebControl.NavigationSounds = false;
             }
-            catch (Exception err) { this.LogWarn(err); }
+            catch (Exception err) { GetType().LogWarn(err); }
 
             base.OnStartup(e);
         }

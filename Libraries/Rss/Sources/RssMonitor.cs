@@ -256,10 +256,10 @@ namespace Cube.Net.Rss
         {
             if (!Contains(uri)) return;
 
-            this.LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
+            GetType().LogWarn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
             var sw = Stopwatch.StartNew();
             var dest = await _http.GetAsync(uri).ConfigureAwait(false);
-            this.LogDebug($"{uri} ({sw.Elapsed})");
+            GetType().LogDebug($"{uri} ({sw.Elapsed})");
 
             _feeds[uri] = dest.LastChecked;
             await Publish(uri, dest).ConfigureAwait(false);
@@ -279,7 +279,7 @@ namespace Cube.Net.Rss
             foreach (var cb in Subscription)
             {
                 try { await cb(uri, feed); }
-                catch (Exception err) { this.LogWarn(err); }
+                catch (Exception err) { GetType().LogWarn(err); }
             }
         }
 
