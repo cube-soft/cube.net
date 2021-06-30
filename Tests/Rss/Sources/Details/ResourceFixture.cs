@@ -16,6 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Runtime.CompilerServices;
+using Cube.FileSystem;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
 
@@ -55,7 +56,7 @@ namespace Cube.Net.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string CacheDirectory([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), LocalSetting.CacheDirectoryName);
+            Io.Combine(RootDirectory(name), LocalSetting.CacheDirectoryName);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -67,7 +68,7 @@ namespace Cube.Net.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string FeedsPath([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), LocalSetting.FeedFileName);
+            Io.Combine(RootDirectory(name), LocalSetting.FeedFileName);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -79,7 +80,7 @@ namespace Cube.Net.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string LocalSettingPath([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), LocalSetting.FileName);
+            Io.Combine(RootDirectory(name), LocalSetting.FileName);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -91,7 +92,7 @@ namespace Cube.Net.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string SharedSettingPath([CallerMemberName] string name = null) =>
-            IO.Combine(RootDirectory(name), SharedSetting.FileName);
+            Io.Combine(RootDirectory(name), SharedSetting.FileName);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -103,7 +104,7 @@ namespace Cube.Net.Rss.Tests
         ///
         /* ----------------------------------------------------------------- */
         protected string CachePath(string filename, [CallerMemberName] string name = null) =>
-            IO.Combine(CacheDirectory(name), filename);
+            Io.Combine(CacheDirectory(name), filename);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -120,13 +121,13 @@ namespace Cube.Net.Rss.Tests
         /* ----------------------------------------------------------------- */
         protected void Copy([CallerMemberName] string name = null)
         {
-            IO.Copy(GetSource("LocalSettings.json"), LocalSettingPath(name), true);
-            IO.Copy(GetSource("Settings.json"), SharedSettingPath(name), true);
-            IO.Copy(GetSource("Sample.json"), FeedsPath(name), true);
+            Io.Copy(GetSource("LocalSettings.json"), LocalSettingPath(name), true);
+            Io.Copy(GetSource("Settings.json"), SharedSettingPath(name), true);
+            Io.Copy(GetSource("Sample.json"), FeedsPath(name), true);
 
-            foreach (var f in IO.GetFiles(GetSource("Cache")))
+            foreach (var f in Io.GetFiles(GetSource("Cache")))
             {
-                IO.Copy(f, CachePath(IO.Get(f).Name, name), true);
+                Io.Copy(f, CachePath(Io.Get(f).Name, name), true);
             }
         }
 

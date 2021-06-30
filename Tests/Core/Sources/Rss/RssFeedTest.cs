@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Cube.FileSystem;
 using Cube.Net.Rss;
 using Cube.Tests;
 using NUnit.Framework;
@@ -58,13 +59,7 @@ namespace Cube.Net.Tests.Rss
         /* ----------------------------------------------------------------- */
         [TestCase("Sample.html",      ExpectedResult = 2)]
         [TestCase("SampleNoRss.html", ExpectedResult = 0)]
-        public int GetRssUris(string src)
-        {
-            using (var stream = IO.OpenRead(GetSource(src)))
-            {
-                return stream.GetRssUris().Count();
-            }
-        }
+        public int GetRssUris(string src) => IoEx.Load(GetSource(src), e => e.GetRssUris().Count());
 
         /* ----------------------------------------------------------------- */
         ///
@@ -78,16 +73,14 @@ namespace Cube.Net.Tests.Rss
         [TestCaseSource(nameof(TestCases))]
         public int ParseFeed(string src, RssFeed expected)
         {
-            using (var stream = File.OpenRead(GetSource(src)))
-            {
-                var actual = RssParser.Parse(stream);
+            using var stream = File.OpenRead(GetSource(src));
+            var actual = RssParser.Parse(stream);
 
-                Assert.That(actual.Title, Is.EqualTo(expected.Title), "Title");
-                Assert.That(actual.Description, Is.EqualTo(expected.Description), "Description");
-                Assert.That(actual.Link, Is.EqualTo(expected.Link), "Link");
+            Assert.That(actual.Title, Is.EqualTo(expected.Title), "Title");
+            Assert.That(actual.Description, Is.EqualTo(expected.Description), "Description");
+            Assert.That(actual.Link, Is.EqualTo(expected.Link), "Link");
 
-                return actual.Items.Count();
-            }
+            return actual.Items.Count();
         }
 
         /* ----------------------------------------------------------------- */
@@ -102,13 +95,8 @@ namespace Cube.Net.Tests.Rss
         /* ----------------------------------------------------------------- */
         [TestCase("SampleRss20-02.xml", ExpectedResult = 873)]
         [TestCase("SampleAtom-01.xml",  ExpectedResult =  24)]
-        public int ParseFeed_Content(string filename)
-        {
-            using (var stream = File.OpenRead(GetSource(filename)))
-            {
-                return RssParser.Parse(stream).Items.First().Content.Length;
-            }
-        }
+        public int ParseFeed_Content(string filename) =>
+            IoEx.Load(GetSource(filename), e => RssParser.Parse(e).Items.First().Content.Length);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -122,15 +110,13 @@ namespace Cube.Net.Tests.Rss
         [Test]
         public void ParseFeed_UnreadItems()
         {
-            using (var stream = File.OpenRead(GetSource("SampleRss20-01.xml")))
-            {
-                var feed  = RssParser.Parse(stream);
-                var count = feed.Items.Count();
+            using var stream = File.OpenRead(GetSource("SampleRss20-01.xml"));
+            var feed = RssParser.Parse(stream);
+            var count = feed.Items.Count();
 
-                Assert.That(feed.UnreadItems.Count(), Is.EqualTo(count));
-                feed.Items[0].Status = RssItemStatus.Read;
-                Assert.That(feed.UnreadItems.Count(), Is.EqualTo(count - 1));
-            }
+            Assert.That(feed.UnreadItems.Count(), Is.EqualTo(count));
+            feed.Items[0].Status = RssItemStatus.Read;
+            Assert.That(feed.UnreadItems.Count(), Is.EqualTo(count - 1));
         }
 
         /* ----------------------------------------------------------------- */
@@ -145,12 +131,10 @@ namespace Cube.Net.Tests.Rss
         [Test]
         public void ParseFeed_Categories()
         {
-            using (var stream = File.OpenRead(GetSource("SampleRss20-01.xml")))
-            {
-                var feed = RssParser.Parse(stream);
-                var item = feed.Items[0];
-                Assert.That(item.Categories.Count, Is.EqualTo(0));
-            }
+            using var stream = File.OpenRead(GetSource("SampleRss20-01.xml"));
+            var feed = RssParser.Parse(stream);
+            var item = feed.Items[0];
+            Assert.That(item.Categories.Count, Is.EqualTo(0));
         }
 
         /* ----------------------------------------------------------------- */
@@ -166,10 +150,8 @@ namespace Cube.Net.Tests.Rss
         [Test]
         public void ParseFeed_NotRss()
         {
-            using (var stream = File.OpenRead(GetSource("Sample.xml")))
-            {
-                Assert.That(RssParser.Parse(stream), Is.Null);
-            }
+            using var stream = File.OpenRead(GetSource("Sample.xml"));
+            Assert.That(RssParser.Parse(stream), Is.Null);
         }
 
         /* ----------------------------------------------------------------- */
@@ -184,11 +166,9 @@ namespace Cube.Net.Tests.Rss
         [Test]
         public void Strip_Summary()
         {
-            using (var stream = File.OpenRead(GetSource("SampleRss20-03.xml")))
-            {
-                var dest = RssParser.Parse(stream);
-                Assert.That(dest.Items[0].Summary, Is.EqualTo("この画像はテスト画像です。"));
-            }
+            using var stream = File.OpenRead(GetSource("SampleRss20-03.xml"));
+            var dest = RssParser.Parse(stream);
+            Assert.That(dest.Items[0].Summary, Is.EqualTo("この画像はテスト画像です。"));
         }
 
         #endregion

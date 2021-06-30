@@ -18,6 +18,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using Cube.FileSystem;
 using Cube.Mixin.Assembly;
 using Cube.Mixin.Logging;
 using Cube.Synchronous;
@@ -50,10 +51,9 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public UpdateChecker(SettingFolder src)
         {
-            var io  = src.IO;
             var dir = Assembly.GetExecutingAssembly().GetDirectoryName();
 
-            FileName = io.Combine(dir, "CubeChecker.exe");
+            FileName = Io.Combine(dir, "CubeChecker.exe");
             Setting  = src;
 
             _timer.Interval = TimeSpan.FromDays(1);
@@ -138,7 +138,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void WhenTick()
         {
-            try { Process.Start(FileName, "CubeRssReader"); }
+            try { _ = Process.Start(FileName, "CubeRssReader"); }
             catch (Exception err) { GetType().LogWarn($"{FileName} ({err.Message})"); }
             finally { Setting.Shared.LastCheckUpdate = DateTime.Now; }
         }
@@ -146,7 +146,7 @@ namespace Cube.Net.Rss.Reader
         #endregion
 
         #region Fields
-        private readonly WakeableTimer _timer = new WakeableTimer();
+        private readonly WakeableTimer _timer = new();
         #endregion
     }
 }

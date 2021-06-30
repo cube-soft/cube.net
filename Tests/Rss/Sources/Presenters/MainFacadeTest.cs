@@ -51,7 +51,7 @@ namespace Cube.Net.Rss.Tests
         public void Setup_Empty()
         {
             var ctx = Dispatcher.Vanilla;
-            using var m = new MainFacade(new SettingFolder(Results, IO), ctx);
+            using var m = new MainFacade(new SettingFolder(Results, new()), ctx);
 
             m.Setup();
             m.Stop();
@@ -183,7 +183,7 @@ namespace Cube.Net.Rss.Tests
         {
             Copy(name);
 
-            var setting = new SettingFolder(RootDirectory(name), IO);
+            var setting = new SettingFolder(RootDirectory(name), new());
             var invoker = Dispatcher.Vanilla;
             var dest    = new MainFacade(setting, invoker);
 

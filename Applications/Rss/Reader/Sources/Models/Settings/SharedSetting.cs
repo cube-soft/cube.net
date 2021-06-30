@@ -19,7 +19,6 @@ using System;
 using System.Runtime.Serialization;
 using Cube.FileSystem;
 using Cube.FileSystem.DataContract;
-using Cube.Mixin.IO;
 
 namespace Cube.Net.Rss.Reader
 {
@@ -226,16 +225,15 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="directory">Dicretory path.</param>
-        /// <param name="io">I/O handler.</param>
         ///
         /// <returns>SharedSetting object.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static SharedSetting Load(string directory, IO io) => io.LoadOrDefault(
-            io.Combine(directory, FileName),
-            e => Format.Json.Deserialize<SharedSetting>(e),
-            new SharedSetting()
-        );
+        public static SharedSetting Load(string directory)
+        {
+            var src = Io.Combine(directory, FileName);
+            return Io.Exists(src) ? Format.Json.Deserialize<SharedSetting>(src) : new();
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -246,13 +244,9 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="directory">Dicretory path.</param>
-        /// <param name="io">I/O handler.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Save(string directory, IO io) => io.Save(
-            io.Combine(directory, FileName),
-            e => Format.Json.Serialize(e, this)
-        );
+        public void Save(string directory) => Format.Json.Serialize(Io.Combine(directory, FileName), this);
 
         #endregion
     }

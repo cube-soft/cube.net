@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Cube.FileSystem;
-using Cube.Mixin.IO;
 using Cube.Mixin.Logging;
 using Cube.Mixin.Uri;
 using Cube.Mixin.Xml;
@@ -49,14 +48,9 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="dispatcher">同期用コンテキスト</param>
-        /// <param name="io">入出力用のオブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public RssOpml(Dispatcher dispatcher, IO io)
-        {
-            Dispatcher = dispatcher;
-            IO = io;
-        }
+        public RssOpml(Dispatcher dispatcher) { Dispatcher = dispatcher; }
 
         #endregion
 
@@ -72,17 +66,6 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public Dispatcher Dispatcher { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IO
-        ///
-        /// <summary>
-        /// 入出力用オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IO IO { get; }
 
         #endregion
 
@@ -102,23 +85,19 @@ namespace Cube.Net.Rss.Reader
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public IEnumerable<IRssEntry> Load(string path,
-            IDictionary<Uri, RssFeed> filter) => IO.LoadOrDefault(
-            path,
-            e =>
+        public IEnumerable<IRssEntry> Load(string path, IDictionary<Uri, RssFeed> filter)
+        {
+            try
             {
-                try {
-                    var body = XDocument.Load(e).Root.GetElement("body");
-                    return Convert(body, null, filter);
-                }
-                catch (Exception err)
-                {
-                    GetType().LogWarn(err);
-                    return new IRssEntry[0];
-                }
-            },
-            new IRssEntry[0]
-        );
+                var body = XDocument.Load(path).Root.GetElement("body");
+                return Convert(body, null, filter);
+            }
+            catch (Exception err)
+            {
+                GetType().LogWarn(err);
+                return Enumerable.Empty<IRssEntry>();
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -132,24 +111,17 @@ namespace Cube.Net.Rss.Reader
         /// <param name="path">ファイルのパス</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Save(IEnumerable<IRssEntry> src, string path) => IO.Save(
-            path,
-            e =>
-            {
-                var doc = new XDocument(
-                    new XDeclaration("1.0", "utf-8", "true"),
-                    new XElement("opml",
-                        new XAttribute("version", "1.0"),
-                        new XElement("head",
-                            new XElement("title", "CubeRSS Reader subscriptions"),
-                            new XElement("dateCreated", DateTime.Now.ToUniversalTime().ToString("r"))
-                        ),
-                        CreateBody(src)
-                    )
-                );
-                doc.Save(e);
-            }
-        );
+        public void Save(IEnumerable<IRssEntry> src, string path) => new XDocument(
+            new XDeclaration("1.0", "utf-8", "true"),
+            new XElement("opml",
+                new XAttribute("version", "1.0"),
+                new XElement("head",
+                    new XElement("title", "CubeRSS Reader subscriptions"),
+                    new XElement("dateCreated", DateTime.Now.ToUniversalTime().ToString("r"))
+                ),
+                CreateBody(src)
+            )
+        ).Save(path);
 
         #endregion
 
@@ -313,7 +285,7 @@ namespace Cube.Net.Rss.Reader
         /// <returns>変換オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        private static XElement FromEntry(RssEntry src) => new XElement(
+        private static XElement FromEntry(RssEntry src) => new(
             "outline",
             new XAttribute("type", "rss"),
             new XAttribute("title", src.Title),

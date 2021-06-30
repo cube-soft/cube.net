@@ -22,7 +22,6 @@ using System.Security.Cryptography;
 using Cube.Collections;
 using Cube.FileSystem;
 using Cube.FileSystem.DataContract;
-using Cube.Mixin.IO;
 using Cube.Mixin.Logging;
 using Cube.Mixin.String;
 
@@ -72,17 +71,6 @@ namespace Cube.Net.Rss
         #endregion
 
         #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IO
-        ///
-        /// <summary>
-        /// Gets or sets the I/O handler.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IO IO { get; set; } = new IO();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -236,7 +224,7 @@ namespace Cube.Net.Rss
         public void Delete(Uri uri)
         {
             var dest = CacheName(uri);
-            if (!string.IsNullOrEmpty(dest)) IO.Delete(dest);
+            if (dest.HasValue()) Io.Delete(dest);
         }
 
         #region IDictionary<Uri, RssFeed>
@@ -299,7 +287,7 @@ namespace Cube.Net.Rss
         {
             _inner.Add(item);
             var dest = CacheName(item.Key);
-            if (dest.HasValue() && !IO.Exists(dest)) _ = MarkMemory(item.Value, false);
+            if (dest.HasValue() && !Io.Exists(dest)) _ = MarkMemory(item.Value, false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -559,8 +547,8 @@ namespace Cube.Net.Rss
         private RssFeed Load(Uri uri)
         {
             var src = CacheName(uri);
-            return IO.Exists(src) ?
-                   IO.LoadOrDefault(src, e => Format.Json.Deserialize<RssFeed.Json>(e).Convert(), null) :
+            return Io.Exists(src) ?
+                   Format.Json.Deserialize<RssFeed.Json>(src).Convert() :
                    null;
         }
 
@@ -581,17 +569,14 @@ namespace Cube.Net.Rss
         private void Save(Uri uri, bool shrink)
         {
             var dest = CacheName(uri);
-            if (string.IsNullOrEmpty(dest) || !_inner.ContainsKey(uri)) return;
+            if (!dest.HasValue() || !_inner.ContainsKey(uri)) return;
 
             var src = _inner[uri];
             if (src == null || !src.LastChecked.HasValue) return;
 
-            if (!IO.Exists(Directory)) IO.CreateDirectory(Directory);
-            IO.Save(dest, e =>
-            {
-                Format.Json.Serialize(e, new RssFeed.Json(src));
-                if (shrink) src.Items.Clear();
-            });
+            Io.CreateDirectory(Directory);
+            Format.Json.Serialize(dest, new RssFeed.Json(src));
+            if (shrink) src.Items.Clear();
         }
 
         /* ----------------------------------------------------------------- */
@@ -611,7 +596,7 @@ namespace Cube.Net.Rss
             var data = System.Text.Encoding.UTF8.GetBytes(uri.ToString());
             var hash = md5.ComputeHash(data);
             var name = BitConverter.ToString(hash).ToLowerInvariant().Replace("-", "");
-            return IO.Combine(Directory, name);
+            return Io.Combine(Directory, name);
         }
 
         #endregion

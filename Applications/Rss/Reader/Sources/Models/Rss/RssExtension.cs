@@ -21,7 +21,6 @@ using System.Linq;
 using Cube.FileSystem;
 using Cube.FileSystem.DataContract;
 using Cube.Mixin.Collections;
-using Cube.Mixin.IO;
 using Cube.Mixin.Logging;
 
 namespace Cube.Net.Rss.Reader
@@ -48,21 +47,20 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="src">ファイルのパス</param>
-        /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static void Backup(string src, IO io)
+        public static void Backup(string src)
         {
-            var info = io.Get(src);
-            var dir  = io.Combine(info.DirectoryName, "Backup");
-            var dest = io.Combine(dir, $"{DateTime.Now:yyyyMMdd}{info.Extension}");
+            var info = Io.Get(src);
+            var dir  = Io.Combine(info.DirectoryName, "Backup");
+            var dest = Io.Combine(dir, $"{DateTime.Now:yyyyMMdd}{info.Extension}");
 
-            if (io.Exists(dest)) return;
-            io.Copy(src, dest, true);
+            if (Io.Exists(dest)) return;
+            Io.Copy(src, dest, true);
 
-            foreach (var f in io.GetFiles(dir).OrderByDescending(e => e).Skip(30))
+            foreach (var f in Io.GetFiles(dir).OrderByDescending(e => e).Skip(30))
             {
-                typeof(RssExtension).LogWarn(() => io.Delete(f));
+                typeof(RssExtension).LogWarn(() => Io.Delete(f));
             }
         }
 
@@ -76,21 +74,14 @@ namespace Cube.Net.Rss.Reader
         ///
         /// <param name="src">ファイルのパス</param>
         /// <param name="dispatcher">同期用コンテキスト</param>
-        /// <param name="io">入出力用オブジェクト</param>
         ///
         /// <returns>RSS エントリ情報</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<RssCategory> Load(string src,
-            Dispatcher dispatcher, IO io) =>
-            io.Exists(src) ?
-            io.Load(
-                src,
-                ss => Format.Json
-                    .Deserialize<List<RssCategory.Json>>(ss)
-                    .Select(e => e.Convert(dispatcher))
-            ) :
-            new RssCategory[0];
+        public static IEnumerable<RssCategory> Load(string src, Dispatcher dispatcher) =>
+            Io.Exists(src) ?
+            Format.Json.Deserialize<List<RssCategory.Json>>(src).Select(e => e.Convert(dispatcher)) :
+            Enumerable.Empty<RssCategory>();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -102,14 +93,10 @@ namespace Cube.Net.Rss.Reader
         ///
         /// <param name="src">RSS エントリ情報</param>
         /// <param name="dest">ファイルのパス</param>
-        /// <param name="io">入出力用オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static void Save(this IEnumerable<RssCategory> src, string dest, IO io) =>
-            io.Save(
-                dest,
-                ms => Format.Json.Serialize(ms, src.Select(e => new RssCategory.Json(e)))
-            );
+        public static void Save(this IEnumerable<RssCategory> src, string dest) =>
+            Format.Json.Serialize(dest, src.Select(e => new RssCategory.Json(e)));
 
         /* ----------------------------------------------------------------- */
         ///
