@@ -231,8 +231,12 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public static SharedSetting Load(string directory)
         {
-            var src = Io.Combine(directory, FileName);
-            return Io.Exists(src) ? Format.Json.Deserialize<SharedSetting>(src) : new();
+            try
+            {
+                var src = Io.Combine(directory, FileName);
+                return Io.Exists(src) ? Format.Json.Deserialize<SharedSetting>(src) : new();
+            }
+            catch { return new(); }
         }
 
         /* ----------------------------------------------------------------- */

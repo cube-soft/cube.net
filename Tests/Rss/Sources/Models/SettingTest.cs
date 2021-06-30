@@ -122,7 +122,7 @@ namespace Cube.Net.Rss.Tests
         public void Load_NotFound()
         {
             var src = new SettingFolder(RootDirectory(), new());
-            GetType().LogWarn(src.Load);
+            src.Load();
 
             Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));
             Assert.That(src.Value,         Is.Not.Null, nameof(src.Value));
@@ -144,8 +144,13 @@ namespace Cube.Net.Rss.Tests
         {
             Io.Copy(GetSource("Dummy.txt"), LocalSettingPath(),  true);
             Io.Copy(GetSource("Dummy.txt"), SharedSettingPath(), true);
-            Assert.That(() => new SettingFolder(RootDirectory(), new()).Load(),
-                Throws.TypeOf<SerializationException>());
+            var src = new SettingFolder(RootDirectory(), new());
+            src.Load();
+
+            Assert.That(src.DataDirectory, Is.EqualTo(RootDirectory()));
+            Assert.That(src.Value,         Is.Not.Null, nameof(src.Value));
+            Assert.That(src.Shared,        Is.Not.Null, nameof(src.Shared));
+            Assert.That(src.Lock,          Is.Not.Null, nameof(src.Lock));
         }
 
         #endregion

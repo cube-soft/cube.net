@@ -192,7 +192,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void OnLoad()
         {
-            base.OnLoad();
+            GetType().LogWarn(base.OnLoad);
 
             var min = 100;
             var dest = Value;
