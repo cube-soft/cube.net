@@ -22,7 +22,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Cube.Forms;
 using Cube.Forms.Controls;
-using Cube.Mixin.Logging;
+using Cube.Logging;
 using Cube.Xui.Behaviors;
 
 namespace Cube.Net.Rss.Reader

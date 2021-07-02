@@ -21,7 +21,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Cube.FileSystem;
-using Cube.Mixin.Logging;
+using Cube.Logging;
 using Cube.Mixin.Uri;
 
 namespace Cube.Net.Rss.Reader

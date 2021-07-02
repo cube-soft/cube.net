@@ -16,9 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Runtime.Serialization;
 using Cube.FileSystem;
-using Cube.Mixin.Logging;
 using Cube.Net.Rss.Reader;
 using NUnit.Framework;
 

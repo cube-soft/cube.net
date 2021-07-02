@@ -22,8 +22,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using Cube.Logging;
 using Cube.Mixin.Generics;
-using Cube.Mixin.Logging;
 
 namespace Cube.Net.Rss.Reader
 {

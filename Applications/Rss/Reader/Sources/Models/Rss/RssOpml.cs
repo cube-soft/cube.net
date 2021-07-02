@@ -19,8 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Cube.FileSystem;
-using Cube.Mixin.Logging;
+using Cube.Logging;
 using Cube.Mixin.Uri;
 using Cube.Mixin.Xml;
 

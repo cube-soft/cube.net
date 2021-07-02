@@ -19,8 +19,8 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using Cube.FileSystem;
+using Cube.Logging;
 using Cube.Mixin.Assembly;
-using Cube.Mixin.Logging;
 using Cube.Synchronous;
 
 namespace Cube.Net.Rss.Reader

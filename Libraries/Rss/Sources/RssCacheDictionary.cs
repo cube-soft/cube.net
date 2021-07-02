@@ -22,7 +22,7 @@ using System.Security.Cryptography;
 using Cube.Collections;
 using Cube.FileSystem;
 using Cube.FileSystem.DataContract;
-using Cube.Mixin.Logging;
+using Cube.Logging;
 using Cube.Mixin.String;
 
 namespace Cube.Net.Rss

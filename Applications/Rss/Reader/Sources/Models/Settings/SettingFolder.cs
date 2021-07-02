@@ -21,9 +21,9 @@ using System.Reflection;
 using Cube.FileSystem;
 using Cube.FileSystem.DataContract;
 using Cube.Forms.Controls;
+using Cube.Logging;
 using Cube.Mixin.Assembly;
 using Cube.Mixin.Environment;
-using Cube.Mixin.Logging;
 using Cube.Mixin.String;
 
 namespace Cube.Net.Rss.Reader

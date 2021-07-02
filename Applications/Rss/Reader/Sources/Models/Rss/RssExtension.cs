@@ -20,8 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Cube.FileSystem;
 using Cube.FileSystem.DataContract;
+using Cube.Logging;
 using Cube.Mixin.Collections;
-using Cube.Mixin.Logging;
 
 namespace Cube.Net.Rss.Reader
 {
