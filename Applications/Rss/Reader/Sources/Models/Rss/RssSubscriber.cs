@@ -22,8 +22,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cube.Collections;
 using Cube.FileSystem;
+using Cube.Logging;
 using Cube.Mixin.ByteFormat;
-using Cube.Mixin.Logging;
 using Cube.Mixin.Tasks;
 using Cube.Net.Http.Synchronous;
 
@@ -93,21 +93,6 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public string FileName { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IO
-        ///
-        /// <summary>
-        /// 入出力用のオブジェクトを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IO IO
-        {
-            get => _feeds.IO;
-            set => _feeds.IO = value;
-        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -389,7 +374,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public void Load() {
-            var dest = RssExtension.Load(FileName, _context, IO).SelectMany(e =>
+            var dest = RssExtension.Load(FileName, _context).SelectMany(e =>
                 !string.IsNullOrEmpty(e.Title) ?
                 new[] { e as IRssEntry } :
                 e.Entries.Select(re =>
@@ -401,12 +386,12 @@ namespace Cube.Net.Rss.Reader
 
             GetType().LogDebug(string.Format("Load:{0} ({1}) -> {2}",
                 FileName,
-                IO.Get(FileName).Length.ToPrettyBytes(),
+                Io.Get(FileName).Length.ToPrettyBytes(),
                 dest.Count()
             ));
 
             Add(dest);
-            if (!IsReadOnly && _feeds.Count > 0) RssExtension.Backup(FileName, IO);
+            if (!IsReadOnly && _feeds.Count > 0) RssExtension.Backup(FileName);
         }
 
         /* ----------------------------------------------------------------- */
@@ -422,9 +407,9 @@ namespace Cube.Net.Rss.Reader
         {
             var empty = new RssCategory(_context) { Title = string.Empty };
             foreach (var entry in Entries) empty.Children.Add(entry);
-            Categories.Concat(new[] { empty }).Save(FileName, IO);
+            Categories.Concat(new[] { empty }).Save(FileName);
             GetType().LogDebug(string.Format("Save:{0} ({1})",
-                FileName, IO.Get(FileName).Length.ToPrettyBytes()
+                FileName, Io.Get(FileName).Length.ToPrettyBytes()
             ));
         }
 
@@ -441,7 +426,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public void Import(string path)
         {
-            var dest = new RssOpml(_context, IO).Load(path, _feeds);
+            var dest = new RssOpml(_context).Load(path, _feeds);
             if (dest.Count() > 0) Add(dest);
         }
 
@@ -456,7 +441,7 @@ namespace Cube.Net.Rss.Reader
         /// <param name="path">保存先のパス</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Export(string path) => new RssOpml(_context, IO).Save(this, path);
+        public void Export(string path) => new RssOpml(_context).Save(this, path);
 
         #endregion
 

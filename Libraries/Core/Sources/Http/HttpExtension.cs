@@ -19,7 +19,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Cube.Mixin.Logging;
+using Cube.Logging;
 using Cube.Net.Http;
 
 namespace Cube.Mixin.Net.Http

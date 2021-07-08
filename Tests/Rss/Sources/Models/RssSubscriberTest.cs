@@ -20,8 +20,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Cube.FileSystem;
 using Cube.Mixin.Assembly;
-using Cube.Mixin.IO;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
 using NUnit.Framework;
@@ -104,25 +104,25 @@ namespace Cube.Net.Rss.Tests
         public void Backup_Delete()
         {
             var dir  = Get(nameof(Backup_Delete), "Backup");
-            var open = IO.Combine(dir, "20010101.json");
+            var open = Io.Combine(dir, "20010101.json");
 
             for (var d = new DateTime(2001, 1, 1); d.Month < 2; d = d.AddDays(1))
             {
-                var backup = IO.Combine(dir, $"{d:yyyyMMdd}.json");
-                IO.Copy(GetSource("Sample.json"), backup, true);
+                var backup = Io.Combine(dir, $"{d:yyyyMMdd}.json");
+                Io.Copy(GetSource("Sample.json"), backup, true);
             }
 
-            using (IO.OpenRead(open))
+            using (Io.Open(open))
             using (var src = Create())
             {
                 src.Load();
                 TaskEx.Delay(200).Wait();
             }
 
-            Assert.That(IO.GetFiles(dir).Count(), Is.EqualTo(31));
-            Assert.That(IO.Exists(open), Is.True); // delete failed
-            Assert.That(IO.Exists(IO.Combine(dir, "20010102.json")), Is.False);
-            Assert.That(IO.Exists(IO.Combine(dir, "20010103.json")), Is.True);
+            Assert.That(Io.GetFiles(dir).Count(), Is.EqualTo(31));
+            Assert.That(Io.Exists(open), Is.True); // delete failed
+            Assert.That(Io.Exists(Io.Combine(dir, "20010102.json")), Is.False);
+            Assert.That(Io.Exists(Io.Combine(dir, "20010103.json")), Is.True);
         }
 
         /* ----------------------------------------------------------------- */

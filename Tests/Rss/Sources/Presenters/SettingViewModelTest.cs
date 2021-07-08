@@ -17,7 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Linq;
-using Cube.Mixin.IO;
+using Cube.FileSystem;
 using Cube.Net.Rss.Reader;
 using NUnit.Framework;
 
@@ -84,9 +84,9 @@ namespace Cube.Net.Rss.Tests
                 Assert.That(vm.Data.Local.Value.DataDirectory, Is.EqualTo(dest), nameof(SettingViewModel));
             });
 
-            Assert.That(IO.Exists(dest), Is.False);
+            Assert.That(Io.Exists(dest), Is.False);
 
-            var setting = new SettingFolder(RootDirectory(), IO);
+            var setting = new SettingFolder(RootDirectory(), new());
             setting.Load();
             Assert.That(setting.DataDirectory, Is.EqualTo(dest), nameof(SettingFolder));
 

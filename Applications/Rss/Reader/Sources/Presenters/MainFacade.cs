@@ -20,7 +20,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Cube.Mixin.Logging;
+using Cube.FileSystem;
+using Cube.Logging;
 using Cube.Mixin.Uri;
 
 namespace Cube.Net.Rss.Reader
@@ -52,7 +53,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public MainFacade(SettingFolder src, Dispatcher dispatcher)
         {
-            _ = src.TryLoad();
+            GetType().LogWarn(() => src.Load());
             GetType().LogInfo($"Owner:{src.Lock.UserName}@{src.Lock.MachineName} ({src.Lock.Sid})");
             GetType().LogInfo($"User-Agent:{src.UserAgent}");
 
@@ -60,12 +61,11 @@ namespace Cube.Net.Rss.Reader
             Setting.PropertyChanged += WhenSettingChanged;
             Setting.AutoSave = true;
 
-            var feeds = Setting.IO.Combine(Setting.DataDirectory, LocalSetting.FeedFileName);
-            var cache = Setting.IO.Combine(Setting.DataDirectory, LocalSetting.CacheDirectoryName);
+            var feeds = Io.Combine(Setting.DataDirectory, LocalSetting.FeedFileName);
+            var cache = Io.Combine(Setting.DataDirectory, LocalSetting.CacheDirectoryName);
 
             _core = new RssSubscriber(dispatcher)
             {
-                IO             = Setting.IO,
                 FileName       = feeds,
                 CacheDirectory = cache,
                 Capacity       = Setting.Shared.Capacity,

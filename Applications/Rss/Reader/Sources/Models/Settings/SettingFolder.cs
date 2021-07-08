@@ -21,9 +21,9 @@ using System.Reflection;
 using Cube.FileSystem;
 using Cube.FileSystem.DataContract;
 using Cube.Forms.Controls;
+using Cube.Logging;
 using Cube.Mixin.Assembly;
 using Cube.Mixin.Environment;
-using Cube.Mixin.Logging;
 using Cube.Mixin.String;
 
 namespace Cube.Net.Rss.Reader
@@ -63,13 +63,11 @@ namespace Cube.Net.Rss.Reader
         /// <param name="assembly">アセンブリ情報</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingFolder(Assembly assembly) : this(
-            System.IO.Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                $@"{assembly.GetCompany()}\{assembly.GetProduct()}"
-            ),
-            new IO()
-        ) { }
+        public SettingFolder(Assembly assembly) : this(Io.Combine(
+            Environment.SpecialFolder.LocalApplicationData.GetName(),
+            assembly.GetCompany(),
+            assembly.GetProduct()
+        ), assembly.GetSoftwareVersion()) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -80,11 +78,11 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="root">設定用フォルダのルートパス</param>
-        /// <param name="io">入出力用オブジェクト</param>
+        /// <param name="version">Software version.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SettingFolder(string root, IO io) :
-            base(Format.Json, io.Combine(root, LocalSetting.FileName), io)
+        public SettingFolder(string root, SoftwareVersion version) :
+            base(Format.Json, Io.Combine(root, LocalSetting.FileName), version)
         {
             AutoSave = true;
             RootDirectory = root;
@@ -175,7 +173,7 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
         {
-            Lock.Release(DataDirectory, IO);
+            Lock.Release(DataDirectory);
             base.Dispose(disposing);
         }
 
@@ -192,18 +190,17 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnLoaded(ValueChangedEventArgs<LocalSetting> e)
+        protected override void OnLoad()
         {
-            Debug.Assert(e.NewValue != null);
+            GetType().LogWarn(base.OnLoad);
+
             var min = 100;
-            var dest = e.NewValue;
+            var dest = Value;
             if (!dest.DataDirectory.HasValue()) dest.DataDirectory = RootDirectory;
             dest.EntryColumn = Math.Min(dest.EntryColumn, dest.Width - min * 2);
             dest.ArticleColumn = Math.Min(dest.ArticleColumn, dest.Width - dest.EntryColumn - min);
             DataDirectory = dest.DataDirectory;
             Reset(DataDirectory);
-
-            base.OnLoaded(e);
         }
 
         /* ----------------------------------------------------------------- */
@@ -215,10 +212,10 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnSaved(KeyValueEventArgs<Format, string> e)
+        protected override void OnSave()
         {
-            if (!Lock.IsReadOnly) Shared.Save(DataDirectory, IO);
-            base.OnSaved(e);
+            if (!Lock.IsReadOnly) Shared.Save(DataDirectory);
+            base.OnSave();
         }
 
         /* ----------------------------------------------------------------- */
@@ -274,11 +271,11 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         private void Reset(string directory)
         {
-            Lock = LockSetting.Load(directory, IO);
+            Lock = LockSetting.Load(directory);
             Debug.Assert(Lock != null);
             Lock.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
 
-            Shared = SharedSetting.Load(directory, IO);
+            Shared = SharedSetting.Load(directory);
             Debug.Assert(Shared != null);
             Shared.LastCheckUpdate = GetLastCheckUpdate();
             Shared.PropertyChanged += (s, ev) => OnPropertyChanged(ev);

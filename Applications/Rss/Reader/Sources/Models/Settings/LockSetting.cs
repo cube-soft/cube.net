@@ -20,7 +20,6 @@ using System.Runtime.Serialization;
 using System.Security;
 using Cube.FileSystem;
 using Cube.FileSystem.DataContract;
-using Cube.Mixin.IO;
 using Microsoft.Win32;
 
 namespace Cube.Net.Rss.Reader
@@ -122,19 +121,18 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="directory">Dicretory path.</param>
-        /// <param name="io">I/O handler.</param>
         ///
         /// <returns>LockSetting object.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static LockSetting Load(string directory, IO io)
+        public static LockSetting Load(string directory)
         {
-            var src = io.Combine(directory, FileName);
-            if (io.Exists(src)) return io.Load(src, e => Format.Json.Deserialize<LockSetting>(e));
+            var src = Io.Combine(directory, FileName);
+            if (Io.Exists(src)) return Format.Json.Deserialize<LockSetting>(src);
 
             var dest = new LockSetting();
-            io.Save(src, e => Format.Json.Serialize(e, dest));
-            io.SetAttributes(src, System.IO.FileAttributes.ReadOnly | System.IO.FileAttributes.Hidden);
+            Format.Json.Serialize(src, dest);
+            Io.SetAttributes(src, System.IO.FileAttributes.ReadOnly | System.IO.FileAttributes.Hidden);
             return dest;
         }
 
@@ -147,13 +145,12 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /// <param name="directory">Dicretory path.</param>
-        /// <param name="io">I/O handler.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Release(string directory, IO io)
+        public void Release(string directory)
         {
             if (IsReadOnly) return;
-            io.Delete(io.Combine(directory, FileName));
+            Io.Delete(Io.Combine(directory, FileName));
         }
 
         #endregion

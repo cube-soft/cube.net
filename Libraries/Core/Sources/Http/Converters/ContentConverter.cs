@@ -17,7 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.IO;
-using Cube.Mixin.Logging;
+using Cube.Logging;
 
 namespace Cube.Net.Http
 {

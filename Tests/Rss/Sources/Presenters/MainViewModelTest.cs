@@ -19,8 +19,8 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Cube.FileSystem;
 using Cube.Mixin.Commands;
-using Cube.Mixin.IO;
 using Cube.Mixin.String;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
@@ -260,7 +260,7 @@ namespace Cube.Net.Rss.Tests
             var dest = CachePath("7ae34cce28b4272e1170fb1e4c2c87ad");
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
-            Assert.That(IO.Exists(dest),                Is.True);
+            Assert.That(Io.Exists(dest),                Is.True);
             Assert.That(src.Title,                      Is.EqualTo("The GitHub Blog"));
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
@@ -268,7 +268,7 @@ namespace Cube.Net.Rss.Tests
             vm.Remove.Execute(null);
 
             Assert.That(Wait.For(() => vm.Data.Root.Flatten().Count() == 11), "Timeout");
-            Assert.That(IO.Exists(dest), Is.False);
+            Assert.That(Io.Exists(dest), Is.False);
         });
 
         /* ----------------------------------------------------------------- */
@@ -290,14 +290,14 @@ namespace Cube.Net.Rss.Tests
             vm.Select.Execute(src);
 
             Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(12));
-            Assert.That(IO.Exists(dest),                Is.True);
+            Assert.That(Io.Exists(dest),                Is.True);
             Assert.That(vm.Remove.CanExecute(null),     Is.True);
 
             vm.Subscribe<DialogMessage>(e => DialogMessageCommand(e, DialogStatus.Yes));
             vm.Remove.Execute(null);
 
             Assert.That(Wait.For(() => vm.Data.Root.Flatten().Count() == 10), "Timeout");
-            Assert.That(IO.Exists(dest), Is.False);
+            Assert.That(Io.Exists(dest), Is.False);
         });
 
         /* ----------------------------------------------------------------- */
@@ -502,7 +502,7 @@ namespace Cube.Net.Rss.Tests
             vm.Subscribe<SaveFileMessage>(e => ExportCommand(e, dest, done));
             vm.Export.Execute(null);
 
-            Assert.That(Wait.For(() => IO.Exists(dest) == expected), "Timeout");
+            Assert.That(Wait.For(() => Io.Exists(dest) == expected), "Timeout");
         });
 
         /* ----------------------------------------------------------------- */
@@ -517,17 +517,17 @@ namespace Cube.Net.Rss.Tests
         [Test]
         public void VM_ReadOnly()
         {
-            var dest = IO.Combine(RootDirectory(), LockSetting.FileName);
-            IO.Copy(GetSource("Sample.lockfile"), dest);
-            IO.Copy(GetSource("LocalSettings.json"), LocalSettingPath(), true);
-            IO.Copy(GetSource("Settings.json"), SharedSettingPath(), true);
-            IO.Copy(GetSource("Sample.json"), FeedsPath(), true);
-            IO.CreateDirectory(CacheDirectory());
+            var dest = Io.Combine(RootDirectory(), LockSetting.FileName);
+            Io.Copy(GetSource("Sample.lockfile"), dest, true);
+            Io.Copy(GetSource("LocalSettings.json"), LocalSettingPath(), true);
+            Io.Copy(GetSource("Settings.json"), SharedSettingPath(), true);
+            Io.Copy(GetSource("Sample.json"), FeedsPath(), true);
+            Io.CreateDirectory(CacheDirectory());
 
             var n   = 0;
 
             using (var fw = new System.IO.FileSystemWatcher())
-            using (var vm = new MainViewModel(new SettingFolder(RootDirectory(), IO), new SynchronizationContext()))
+            using (var vm = new MainViewModel(new SettingFolder(RootDirectory(), new()), new()))
             {
                 fw.Path = RootDirectory();
                 fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
@@ -563,8 +563,8 @@ namespace Cube.Net.Rss.Tests
             }
 
             Assert.That(n, Is.AtMost(2), "Write only LocalSettings.json");
-            Assert.That(IO.GetFiles(CacheDirectory()).Count(), Is.EqualTo(0), "Cache");
-            Assert.That(IO.Exists(dest), Is.True, dest);
+            Assert.That(Io.GetFiles(CacheDirectory()).Count(), Is.EqualTo(0), "Cache");
+            Assert.That(Io.Exists(dest), Is.True, dest);
         }
 
         #endregion

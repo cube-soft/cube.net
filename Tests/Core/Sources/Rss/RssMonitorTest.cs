@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using Cube.FileSystem;
 using Cube.Mixin.Assembly;
 using Cube.Net.Http.Synchronous;
 using Cube.Net.Rss;
@@ -101,7 +102,7 @@ namespace Cube.Net.Tests.Rss
                 Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out _), Is.False);
             }
 
-            Assert.That(IO.Get(Get(files[0])).Length, Is.GreaterThan(0), files[0]);
+            Assert.That(Io.Get(Get(files[0])).Length, Is.GreaterThan(0), files[0]);
         }
 
         /* ----------------------------------------------------------------- */

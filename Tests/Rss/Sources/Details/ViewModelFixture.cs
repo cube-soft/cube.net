@@ -19,7 +19,8 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Cube.Mixin.IO;
+using Cube.FileSystem;
+using Cube.Mixin.Assembly;
 using Cube.Mixin.String;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
@@ -54,7 +55,7 @@ namespace Cube.Net.Rss.Tests
             Copy(name);
 
             var asm     = Assembly.GetExecutingAssembly();
-            var setting = new SettingFolder(RootDirectory(name), IO);
+            var setting = new SettingFolder(RootDirectory(name), asm.GetSoftwareVersion());
             var dest    = new MainViewModel(setting, new SynchronizationContext());
             var msg     = dest.Data.Message;
 
@@ -80,31 +81,29 @@ namespace Cube.Net.Rss.Tests
         protected void Execute(Action<MainViewModel> action, bool stop = true,
             [CallerMemberName] string name = null)
         {
-            using (var fw = new System.IO.FileSystemWatcher())
+            using var fw = new System.IO.FileSystemWatcher();
+            var l = Io.Combine(RootDirectory(name), LockSetting.FileName);
+            var n = 0;
+
+            using (var vm = Create(name))
             {
-                var l = IO.Combine(RootDirectory(name), LockSetting.FileName);
-                var n = 0;
+                Assert.That(Io.Exists(l), Is.True, l);
+                Assert.That(vm.Data.Lock.Value, Is.Not.Null, nameof(vm.Data.Lock));
+                Assert.That(vm.Data.Lock.Value.IsReadOnly, Is.False, nameof(vm.Data.Lock));
 
-                using (var vm = Create(name))
-                {
-                    Assert.That(IO.Exists(l), Is.True, l);
-                    Assert.That(vm.Data.Lock.Value, Is.Not.Null, nameof(vm.Data.Lock));
-                    Assert.That(vm.Data.Lock.Value.IsReadOnly, Is.False, nameof(vm.Data.Lock));
+                var f = Io.Get(FeedsPath(name));
+                fw.Path = f.DirectoryName;
+                fw.Filter = f.Name;
+                fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
+                fw.Changed += (s, e) => ++n;
+                fw.EnableRaisingEvents = true;
 
-                    var f = IO.Get(FeedsPath(name));
-                    fw.Path = f.DirectoryName;
-                    fw.Filter = f.Name;
-                    fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
-                    fw.Changed += (s, e) => ++n;
-                    fw.EnableRaisingEvents = true;
-
-                    if (stop) vm.Stop.Execute(null);
-                    action(vm);
-                }
-
-                Assert.That(IO.Exists(l), Is.False, l);
-                Assert.That(Wait.For(() => n > 0), "Feeds.json is not changed");
+                if (stop) vm.Stop.Execute(null);
+                action(vm);
             }
+
+            Assert.That(Io.Exists(l), Is.False, l);
+            Assert.That(Wait.For(() => n > 0), "Feeds.json is not changed");
         }
 
         /* ----------------------------------------------------------------- */

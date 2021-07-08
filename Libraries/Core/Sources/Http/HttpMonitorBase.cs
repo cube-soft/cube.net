@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cube.Collections;
-using Cube.Mixin.Logging;
+using Cube.Logging;
 
 namespace Cube.Net.Http
 {

@@ -112,7 +112,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<Uri> GetRssUris(string src)
+        public static IEnumerable<Uri> GetRssUris(this System.IO.Stream src)
         {
             var doc = ToXDocument(src);
             var ns = doc.Root.GetDefaultNamespace();
@@ -154,7 +154,7 @@ namespace Cube.Net.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static XDocument ToXDocument(string src)
+        private static XDocument ToXDocument(System.IO.Stream src)
         {
             using var stream = new System.IO.StreamReader(src, System.Text.Encoding.UTF8);
             using var reader = new Sgml.SgmlReader

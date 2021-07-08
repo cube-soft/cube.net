@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cube.Collections;
+using Cube.FileSystem;
 using Cube.Net.Rss;
 using Cube.Tests;
 using NUnit.Framework;
@@ -120,15 +122,13 @@ namespace Cube.Net.Tests.Rss
             var feeds = Create();
             var cache = Get(nameof(Contains), "Cache");
 
-            using (var src = new RssCacheDictionary { Directory = cache })
-            {
-                foreach (var e in feeds) src.Add(e);
+            using var src = new RssCacheDictionary { Directory = cache };
+            foreach (var e in feeds) src.Add(e);
 
-                var q = feeds[0];
-                Assert.That(src.ContainsKey(q.Uri), Is.True);
-                Assert.That(src.Contains(new KeyValuePair<Uri, RssFeed>(q.Uri, q)), Is.True);
-                Assert.That(src.Contains(new KeyValuePair<Uri, RssFeed>(q.Uri, null)), Is.False);
-            }
+            var q = feeds[0];
+            Assert.That(src.ContainsKey(q.Uri), Is.True);
+            Assert.That(src.Contains(new KeyValuePair<Uri, RssFeed>(q.Uri, q)), Is.True);
+            Assert.That(src.Contains(new KeyValuePair<Uri, RssFeed>(q.Uri, null)), Is.False);
         }
 
         /* ----------------------------------------------------------------- */
@@ -150,10 +150,10 @@ namespace Cube.Net.Tests.Rss
             {
                 src.Capacity = 3;
                 foreach (var feed in feeds) src.Add(feed);
-                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(3));
+                Assert.That(Io.GetFiles(cache).Count(), Is.EqualTo(3));
             }
 
-            Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(6));
+            Assert.That(Io.GetFiles(cache).Count(), Is.EqualTo(6));
         }
 
         /* ----------------------------------------------------------------- */
@@ -171,21 +171,19 @@ namespace Cube.Net.Tests.Rss
             var feeds = Create();
             var cache = Get(nameof(Remove), "Cache");
 
-            using (var src = new RssCacheDictionary { Directory = cache })
-            {
-                src.Capacity = 3;
-                foreach (var e in feeds) src.Add(e);
-                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(3));
+            using var src = new RssCacheDictionary { Directory = cache };
+            src.Capacity = 3;
+            foreach (var e in feeds) src.Add(e);
+            Assert.That(Io.GetFiles(cache).Count(), Is.EqualTo(3));
 
-                src.Remove(feeds[0].Uri);
-                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(3));
+            Assert.That(src.Remove(feeds[0].Uri), Is.True);
+            Assert.That(Io.GetFiles(cache).Count(), Is.EqualTo(3));
 
-                src.Remove(feeds[1].Uri, true);
-                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(2));
+            Assert.That(src.Remove(feeds[1].Uri, true), Is.True);
+            Assert.That(Io.GetFiles(cache).Count(), Is.EqualTo(2));
 
-                src.Remove(new KeyValuePair<Uri, RssFeed>(feeds[2].Uri, feeds[2]));
-                Assert.That(IO.GetFiles(cache).Count(), Is.EqualTo(2));
-            }
+            Assert.That(src.Remove(KeyValuePair.Create(feeds[2].Uri, feeds[2])), Is.True);
+            Assert.That(Io.GetFiles(cache).Count(), Is.EqualTo(2));
         }
 
         /* ----------------------------------------------------------------- */
@@ -201,10 +199,8 @@ namespace Cube.Net.Tests.Rss
         public void Delete_Null() => Assert.DoesNotThrow(() =>
         {
             var cache = Get(nameof(Delete_Null), "Cache");
-            using (var src = new RssCacheDictionary { Directory = cache})
-            {
-                src.Delete(null);
-            }
+            using var src = new RssCacheDictionary { Directory = cache };
+            src.Delete(null);
         });
 
         #endregion
@@ -220,14 +216,14 @@ namespace Cube.Net.Tests.Rss
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private IList<RssFeed> Create() => new List<RssFeed>
+        private List<RssFeed> Create() => new()
         {
-            new RssFeed { Uri = new Uri("http://www.example.com/"),  Title = "Ex1", LastChecked = DateTime.Now },
-            new RssFeed { Uri = new Uri("http://www.example.jp"),    Title = "Ex2", LastChecked = DateTime.Now },
-            new RssFeed { Uri = new Uri("http://www.example.net"),   Title = "Ex3", LastChecked = DateTime.Now },
-            new RssFeed { Uri = new Uri("http://www.example.org/"),  Title = "Ex4", LastChecked = DateTime.Now },
-            new RssFeed { Uri = new Uri("http://www.example.co.jp"), Title = "Ex5", LastChecked = DateTime.Now },
-            new RssFeed { Uri = new Uri("http://www.example.ne.jp"), Title = "Ex6", LastChecked = DateTime.Now },
+            new() { Uri = new("http://www.example.com/"),  Title = "Ex1", LastChecked = DateTime.Now },
+            new() { Uri = new("http://www.example.jp"),    Title = "Ex2", LastChecked = DateTime.Now },
+            new() { Uri = new("http://www.example.net"),   Title = "Ex3", LastChecked = DateTime.Now },
+            new() { Uri = new("http://www.example.org/"),  Title = "Ex4", LastChecked = DateTime.Now },
+            new() { Uri = new("http://www.example.co.jp"), Title = "Ex5", LastChecked = DateTime.Now },
+            new() { Uri = new("http://www.example.ne.jp"), Title = "Ex6", LastChecked = DateTime.Now },
         };
 
         #endregion
