@@ -18,8 +18,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interactivity;
 using Cube.Xui;
+using Microsoft.Xaml.Behaviors;
 
 namespace Cube.Net.Rss.Reader
 {
