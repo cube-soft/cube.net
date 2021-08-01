@@ -16,6 +16,7 @@
         <dependencies>
             <group targetFramework="netstandard2.0">
                 <dependency id="Cube.FileSystem" version="4.0.0" />
+                <dependency id="System.Net.Http" version="4.3.4" />
             </group>
             <group targetFramework="net45">
                 <dependency id="Cube.FileSystem" version="4.0.0" />
