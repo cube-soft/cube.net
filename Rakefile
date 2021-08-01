@@ -23,7 +23,7 @@ require 'rake/clean'
 # --------------------------------------------------------------------------- #
 PROJECT     = "Cube.Net"
 CONFIG      = "Release"
-BRANCHES    = ["net45", "net35"]
+BRANCHES    = ["net45", "net50", "net35"]
 PLATFORMS   = ["Any CPU", "x86", "x64"]
 PACKAGES    = ["Libraries/Core/Cube.Net", "Libraries/Rss/Cube.Net.Rss"]
 
