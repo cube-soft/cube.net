@@ -9,7 +9,7 @@
         <AssemblyName>CubeRssReader</AssemblyName>
         <AssemblyTitle>CubeRSS Reader</AssemblyTitle>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net45</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <UseWpf>true</UseWpf>
         <UseWindowsForms>true</UseWindowsForms>
         <Platforms>AnyCPU;x64;x86</Platforms>
@@ -33,7 +33,6 @@
         <PackageReference Include="Cube.Forms" Version="4.0.0" />
         <PackageReference Include="Cube.Xui" Version="4.0.0" />
         <PackageReference Include="gong-wpf-dragdrop" Version="2.3.2" />
-        <Reference Include="System.Web" />
     </ItemGroup>
     <ItemGroup>
         <ApplicationDefinition Update="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />
