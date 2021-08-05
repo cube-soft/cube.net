@@ -22,7 +22,7 @@ namespace Cube.Net.Rss
     /// RssParseOptions
     ///
     /// <summary>
-    /// RSS 解析時のオプションを定義するためのクラスです。
+    /// Represents options when parsing the RSS feeds.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -33,7 +33,7 @@ namespace Cube.Net.Rss
         /// MaxSummaryLength
         ///
         /// <summary>
-        /// Summary の最大長を取得または設定します。
+        /// Gets or sets the maximum length of the Summary.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */

@@ -24,23 +24,23 @@ namespace Cube.Net.Rss
     /// RssVersion
     ///
     /// <summary>
-    /// RSS および Atom フィードの種類を表す列挙型です。
+    /// Specifies the type of RSS and Atom feeds.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public enum RssVersion
     {
-        /// <summary>RSS 0.91</summary>
+        /// <summary>RSS 0.91.</summary>
         Rss091,
-        /// <summary>RSS 0.92</summary>
+        /// <summary>RSS 0.92.</summary>
         Rss092,
-        /// <summary>RSS 1.0</summary>
+        /// <summary>RSS 1.0.</summary>
         Rss100,
-        /// <summary>RSS 2.0</summary>
+        /// <summary>RSS 2.0.</summary>
         Rss200,
-        /// <summary>Atom</summary>
+        /// <summary>Atom.</summary>
         Atom,
-        /// <summary>不明</summary>
+        /// <summary>Unknown.</summary>
         Unknown,
     }
 
@@ -49,7 +49,7 @@ namespace Cube.Net.Rss
     /// RssVersionConverter
     ///
     /// <summary>
-    /// RssVersion の拡張用クラスです。
+    /// Provides extended methods of the RssVersion enum.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -60,12 +60,13 @@ namespace Cube.Net.Rss
         /// GetRssVersion
         ///
         /// <summary>
-        /// XML から RssVersion オブジェクトを取得します。
+        /// Creates a new instance of the RssVersion class with the specified
+        /// XML element.
         /// </summary>
         ///
-        /// <param name="src">XML</param>
+        /// <param name="src">Source XML element.</param>
         ///
-        /// <returns>RssVersion</returns>
+        /// <returns>RssVersion object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static RssVersion GetRssVersion(this XElement src)

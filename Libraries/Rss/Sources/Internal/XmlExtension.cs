@@ -20,18 +20,18 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Cube.Mixin.Xml;
 
-namespace Cube.Net.Rss.Parsing
+namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FeedExtension
+    /// XmlExtension
     ///
     /// <summary>
-    /// RSS/Atom 解析時に使用する拡張メソッドを定義するクラスです。
+    /// Provides extended methods to parse the RSS and Atom feeds.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class FeedExtension
+    internal static class XmlExtension
     {
         #region Methods
 
@@ -40,13 +40,13 @@ namespace Cube.Net.Rss.Parsing
         /// GetValue
         ///
         /// <summary>
-        /// 値を取得します。
+        /// Gets the value from the specified XML element.
         /// </summary>
         ///
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="name">要素名</param>
+        /// <param name="e">Source XML element.</param>
+        /// <param name="name">Target name.</param>
         ///
-        /// <returns>文字列</returns>
+        /// <returns>String value.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static string GetValue(this XElement e, string name) =>
@@ -57,14 +57,14 @@ namespace Cube.Net.Rss.Parsing
         /// GetValue
         ///
         /// <summary>
-        /// 値を取得します。
+        /// Gets the value from the specified XML element.
         /// </summary>
         ///
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="ns">名前空間</param>
-        /// <param name="name">要素名</param>
+        /// <param name="e">Source XML element.</param>
+        /// <param name="ns">Target XML namespace.</param>
+        /// <param name="name">Target name.</param>
         ///
-        /// <returns>文字列</returns>
+        /// <returns>String value.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static string GetValue(this XElement e, string ns, string name) =>
@@ -75,15 +75,16 @@ namespace Cube.Net.Rss.Parsing
         /// GetTitle
         ///
         /// <summary>
-        /// タイトルを取得します。
+        /// Gets the title from the specified XML element.
         /// </summary>
         ///
-        /// <param name="e">XML オブジェクト</param>
+        /// <param name="e">Source XML element.</param>
         ///
-        /// <returns>タイトル</returns>
+        /// <returns>String value.</returns>
         ///
         /// <remarks>
-        /// title タグが存在しない場合、link タグの内容で代替します。
+        /// If the title tag does not exist, it will be replaced by the
+        /// content of the link tag.
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
@@ -101,13 +102,13 @@ namespace Cube.Net.Rss.Parsing
         /// GetDateTime
         ///
         /// <summary>
-        /// DateTime オブジェクトを取得します。
+        /// Gets the DateTime object from the specified XML element.
         /// </summary>
         ///
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="name">要素名</param>
+        /// <param name="e">Source XML element.</param>
+        /// <param name="name">Target name.</param>
         ///
-        /// <returns>DateTime オブジェクト</returns>
+        /// <returns>DateTime object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static DateTime? GetDateTime(this XElement e, string name) =>
@@ -118,12 +119,12 @@ namespace Cube.Net.Rss.Parsing
         /// GetDateTime
         ///
         /// <summary>
-        /// DateTime オブジェクトを取得します。
+        /// Gets the DateTime object from the specified XML element.
         /// </summary>
         ///
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="ns">名前空間</param>
-        /// <param name="name">要素名</param>
+        /// <param name="e">Source XML element.</param>
+        /// <param name="ns">Target XML namespace.</param>
+        /// <param name="name">Target name.</param>
         ///
         /// <returns>DateTime オブジェクト</returns>
         ///
@@ -139,13 +140,13 @@ namespace Cube.Net.Rss.Parsing
         /// GetUri
         ///
         /// <summary>
-        /// Uri オブジェクトを取得します。
+        /// Gets the Uri object from the specified XML element.
         /// </summary>
         ///
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="name">要素名</param>
+        /// <param name="e">Source XML element.</param>
+        /// <param name="name">Target name.</param>
         ///
-        /// <returns>Uri オブジェクト</returns>
+        /// <returns>Uri object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static Uri GetUri(this XElement e, string name) =>
@@ -156,14 +157,14 @@ namespace Cube.Net.Rss.Parsing
         /// GetUri
         ///
         /// <summary>
-        /// Uri オブジェクトを取得します。
+        /// Gets the Uri object from the specified XML element.
         /// </summary>
         ///
-        /// <param name="e">XML オブジェクト</param>
-        /// <param name="ns">名前空間</param>
-        /// <param name="name">要素名</param>
+        /// <param name="e">Source XML element.</param>
+        /// <param name="ns">Target XML namespace.</param>
+        /// <param name="name">Target name.</param>
         ///
-        /// <returns>Uri オブジェクト</returns>
+        /// <returns>Uri object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static Uri GetUri(this XElement e, string ns, string name)
@@ -181,13 +182,13 @@ namespace Cube.Net.Rss.Parsing
         /// Strip
         ///
         /// <summary>
-        /// HTML タグを除去する等して文字列を正規化します。
+        /// Normalizes the specified string by removing HTML tags, etc.
         /// </summary>
         ///
-        /// <param name="src">オリジナルの文字列</param>
-        /// <param name="n">最大文字長</param>
+        /// <param name="src">Source string.</param>
+        /// <param name="n">maximum string length.</param>
         ///
-        /// <returns>正規化後の文字列</returns>
+        /// <returns>Normalized string.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static string Strip(this string src, int n)
@@ -201,68 +202,5 @@ namespace Cube.Net.Rss.Parsing
         }
 
         #endregion
-    }
-
-
-    /* --------------------------------------------------------------------- */
-    ///
-    /// RssExtension
-    ///
-    /// <summary>
-    /// RSS 解析時に使用する拡張メソッドを定義するクラスです。
-    /// </summary>
-    ///
-    /* --------------------------------------------------------------------- */
-    internal static class RssExtension
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetRssSummary
-        ///
-        /// <summary>
-        /// Summary を取得します。
-        /// </summary>
-        ///
-        /// <remarks>
-        /// description タグが存在せず、かつ content:encoded タグが存在
-        /// する場合、content:encoded から html タグを除去した内容を
-        /// 返します。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static string GetRssSummary(this XElement src)
-        {
-            var n    = RssParseOptions.MaxSummaryLength;
-            var dest = src.GetValue("description").Strip(n);
-            return !string.IsNullOrEmpty(dest) ?
-                   dest :
-                   src.GetValue("content", "encoded").Strip(n);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetRssContent
-        ///
-        /// <summary>
-        /// Content を取得します。
-        /// </summary>
-        ///
-        /// <remarks>
-        /// RSS 1.0/2.0 ともに content:encoded タグを利用される事が多い
-        /// ため、該当タグが存在する場合はその内容を返します。
-        /// content:encoded タグが存在しない場合は description の内容を
-        /// 返します。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static string GetRssContent(this XElement src)
-        {
-            var enc  = src.GetValue("content", "encoded");
-            var dest = !string.IsNullOrEmpty(enc) ?
-                       enc :
-                       src.GetValue("description") ??
-                       string.Empty;
-            return dest.Trim();
-        }
     }
 }
