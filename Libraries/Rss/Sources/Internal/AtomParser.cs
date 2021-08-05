@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Cube.Net.Rss.Parsing;
 
 namespace Cube.Net.Rss
 {
@@ -28,11 +27,11 @@ namespace Cube.Net.Rss
     /// AtomParser
     ///
     /// <summary>
-    /// Atom を解析するクラスです。
+    /// Provides functionality to parse the Atom feed.
     /// </summary>
     ///
     /// <remarks>
-    /// このクラスでは Atom 0.3 で定義された一部のタグも解析します。
+    /// The class also parses some of the tags defined in Atom 0.3.
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
@@ -45,12 +44,13 @@ namespace Cube.Net.Rss
         /// Parse
         ///
         /// <summary>
-        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// Creates a new instance of the RssFeed class with the specified
+        /// XML element.
         /// </summary>
         ///
-        /// <param name="root">XML のルート要素</param>
+        /// <param name="root">Root XML element.</param>
         ///
-        /// <returns>RssFeed オブジェクト</returns>
+        /// <returns>RssFeed object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root)
@@ -74,12 +74,13 @@ namespace Cube.Net.Rss
         /// ParseItems
         ///
         /// <summary>
-        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// Creates the list of RssItem objects with the specified XML
+        /// element.
         /// </summary>
         ///
-        /// <param name="src">XML</param>
+        /// <param name="src">Source XML element.</param>
         ///
-        /// <returns>RssFeed オブジェクト</returns>
+        /// <returns>RssFeed object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         private static IList<RssItem> ParseItems(XElement src) => src
@@ -101,7 +102,7 @@ namespace Cube.Net.Rss
         /// GetSummary
         ///
         /// <summary>
-        /// Summary を取得します。
+        /// Gets the Summary from the specified XML element.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -117,7 +118,7 @@ namespace Cube.Net.Rss
         /// GetContent
         ///
         /// <summary>
-        /// Content を取得します。
+        /// Gets the Content from the specified XML element.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -133,7 +134,7 @@ namespace Cube.Net.Rss
         /// GetPublishTime
         ///
         /// <summary>
-        /// 公開日時を取得します。
+        /// Gets the published date-time from the specified XML element.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
