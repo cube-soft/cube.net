@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
         <id>Cube.Net.Rss</id>
         <title>Cube.Net.Rss</title>
         <authors>clown,cube-soft</authors>
