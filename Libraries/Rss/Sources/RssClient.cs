@@ -29,7 +29,7 @@ namespace Cube.Net.Rss
     /// RssClient
     ///
     /// <summary>
-    /// RSS フィードを取得するためのクラスです。
+    /// Provides functionality to get the RSS feed.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -42,7 +42,7 @@ namespace Cube.Net.Rss
         /// RssClient
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssClient class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -53,10 +53,11 @@ namespace Cube.Net.Rss
         /// RssClient
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initializes a new instance of the RssClient class with the
+        /// specified handler..
         /// </summary>
         ///
-        /// <param name="handler">HTTP 通信用ハンドラ</param>
+        /// <param name="handler">HTTP handler.</param>
         ///
         /* ----------------------------------------------------------------- */
         public RssClient(HttpClientHandler handler)
@@ -73,7 +74,7 @@ namespace Cube.Net.Rss
         /// Timeout
         ///
         /// <summary>
-        /// タイムアウト時間を取得または設定します。
+        /// Gets or setsh the timeout value.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -92,13 +93,9 @@ namespace Cube.Net.Rss
         /// Redirected
         ///
         /// <summary>
-        /// リダイレクト時に発生するイベントです。
+        /// Occurs when redirecting. The event occurs when the alternate
+        /// meta tag exists in the received HTML.
         /// </summary>
-        ///
-        /// <remarks>
-        /// 通信結果が HTML かつ alternate メタ情報が存在する場合に
-        /// 発生します。
-        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         public event ValueChangedEventHandler<Uri> Redirected;
@@ -108,13 +105,10 @@ namespace Cube.Net.Rss
         /// OnRedirected
         ///
         /// <summary>
-        /// リダイレクト時に発生するイベントです。
+        /// Raises the Redirected event.
         /// </summary>
         ///
-        /// <remarks>
-        /// 通信結果が HTML かつ alternate メタ情報が存在する場合に
-        /// 発生します。
-        /// </remarks>
+        /// <param name="e">Event arguments.</param>
         ///
         /* ----------------------------------------------------------------- */
         protected virtual void OnRedirected(ValueChangedEventArgs<Uri> e) =>
@@ -129,24 +123,23 @@ namespace Cube.Net.Rss
         /// GetAsync
         ///
         /// <summary>
-        /// RSS フィードを非同期で取得します。
+        /// Get RSS feeds asynchronously.
         /// </summary>
         ///
-        /// <param name="uri">フィード取得用 URL</param>
+        /// <param name="uri">URL to get feeds.</param>
         ///
-        /// <returns>RssFeed オブジェクト</returns>
+        /// <returns>RssFeed object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public async Task<RssFeed> GetAsync(Uri uri)
         {
             var opt = HttpCompletionOption.ResponseContentRead;
-            using (var response = await _http.GetAsync(uri, opt).ConfigureAwait(false))
-            {
-                if (!response.IsSuccessStatusCode) return null;
-                await response.Content.LoadIntoBufferAsync();
-                var stream = await response.Content.ReadAsStreamAsync();
-                return await ParseAsync(uri, stream).ConfigureAwait(false);
-            }
+            using var response = await _http.GetAsync(uri, opt).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode) return null;
+
+            await response.Content.LoadIntoBufferAsync();
+            var stream = await response.Content.ReadAsStreamAsync();
+            return await ParseAsync(uri, stream).ConfigureAwait(false);
         }
 
         /* ----------------------------------------------------------------- */
@@ -154,10 +147,14 @@ namespace Cube.Net.Rss
         /// Dispose
         ///
         /// <summary>
-        /// リソースを解放します。
+        /// Releases the unmanaged resources used by the object and
+        /// optionally releases the managed resources.
         /// </summary>
         ///
-        /// <param name="disposing">マネージリソースを解放するか</param>
+        /// <param name="disposing">
+        /// true to release both managed and unmanaged resources;
+        /// false to release only unmanaged resources.
+        /// </param>
         ///
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
@@ -174,12 +171,13 @@ namespace Cube.Net.Rss
         /// ParseAsync
         ///
         /// <summary>
-        /// RSS フィードを解析します。
+        /// Reads data from the specified stream and parses the RSS feeds.
         /// </summary>
         ///
         /// <remarks>
-        /// 通信結果が HTML かつ alternate メタ情報が存在する場合、
-        /// 該当の URL に対して再度 HTTP 通信を試みます。
+        /// If the communication result is HTML and the alternate meta tag
+        /// exists, HTTP communication is attempted again for the
+        /// corresponding URL.
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */

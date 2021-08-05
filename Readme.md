@@ -31,8 +31,8 @@ Dependencies of [Libraries](https://github.com/cube-soft/Cube.Net/blob/master/Li
 1. Fork [Cube.Net](https://github.com/cube-soft/Cube.Net/fork) repository.
 2. Create a feature branch from the master, net45, or net50 branch (e.g. git checkout -b my-new-feature origin/master). Note that the master branch may refer some pre-released NuGet packages. Try the [rake clobber](https://github.com/cube-soft/Cube.Net/blob/master/Rakefile) command when build errors occur.
 3. Commit your changes.
-4. Rebase your local changes against the master or stable branch.
-5. Run test suite with the [NUnit](https://nunit.org/) console or the Visual Studio (NUnit 3 test adapter) and confirm that it passes.
+4. Rebase your local changes to the corresponding branch.
+5. Run the dotnet test command or the Visual Studio and confirm that it passes.
 6. Create new Pull Request.
 
 ## License

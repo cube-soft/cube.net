@@ -28,7 +28,7 @@ namespace Cube.Net.Rss
     /// RssParser
     ///
     /// <summary>
-    /// RSS および Atom 情報を解析するクラスです。
+    /// Provides functionality to parse the RSS and Atom feeds.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -43,13 +43,13 @@ namespace Cube.Net.Rss
         /// Parse
         ///
         /// <summary>
-        /// ストリームからデータを読み込み、RssFeed オブジェクトを
-        /// 生成します。
+        /// Reads data from the stream and creates a new instance of the
+        /// RssFeed class.
         /// </summary>
         ///
-        /// <param name="src">ストリーム</param>
+        /// <param name="src">Source stream.</param>
         ///
-        /// <returns>RssFeed オブジェクト</returns>
+        /// <returns>RssFeed object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(System.IO.Stream src) =>
@@ -60,12 +60,13 @@ namespace Cube.Net.Rss
         /// Parse
         ///
         /// <summary>
-        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// Parses the specified XML object and creates a new instance of
+        /// the RssFeed class.
         /// </summary>
         ///
-        /// <param name="root">XML のルート要素</param>
+        /// <param name="root">Root XML element.</param>
         ///
-        /// <returns>RssFeed オブジェクト</returns>
+        /// <returns>RssFeed object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root) =>
@@ -76,13 +77,14 @@ namespace Cube.Net.Rss
         /// Parse
         ///
         /// <summary>
-        /// XML オブジェクトから RssFeed オブジェクトを生成します。
+        /// Parses the specified XML object and creates a new instance of
+        /// the RssFeed class.
         /// </summary>
         ///
-        /// <param name="root">XML のルート要素</param>
-        /// <param name="version">RSS バージョン</param>
+        /// <param name="root">Root XML element.</param>
+        /// <param name="version">RSS version.</param>
         ///
-        /// <returns>RssFeed オブジェクト</returns>
+        /// <returns>RssFeed object.</returns>
         ///
         /* ----------------------------------------------------------------- */
         public static RssFeed Parse(XElement root, RssVersion version)
@@ -108,7 +110,7 @@ namespace Cube.Net.Rss
         /// GetRssUris
         ///
         /// <summary>
-        /// RSS フィードの URL 一覧を取得します。
+        /// Gets the sequence of the RSS feed URLs.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -134,7 +136,7 @@ namespace Cube.Net.Rss
         /// IsRssLink
         ///
         /// <summary>
-        /// RSS のリンクを示す要素かどうかを判別します。
+        /// Determines if the specified element is an RSS link.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -150,7 +152,7 @@ namespace Cube.Net.Rss
         /// ToXDocument
         ///
         /// <summary>
-        /// XDocument オブジェクトを生成します。
+        /// Creates an XDocument object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
