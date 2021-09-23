@@ -37,8 +37,7 @@ CLOBBER.include("../packages/cube.*")
 # default
 # --------------------------------------------------------------------------- #
 desc "Clean, build, test, and create NuGet packages."
-task :default => [:clean] do
-    Rake::Task[:build_all].invoke(true)
+task :default => [:clean, :build_all] do
     checkout("net35") { Rake::Task[:pack].execute }
 end
 
@@ -70,14 +69,11 @@ end
 # build_all
 # --------------------------------------------------------------------------- #
 desc "Build projects in pre-defined branches and platforms."
-task :build_all, [:test] do |_, e|
-    e.with_defaults(:test => false)
-
-    BRANCHES.product(PLATFORMS).each do |bp|
-        checkout(bp[0]) do
+task :build_all do
+    BRANCHES.product(PLATFORMS).each do |e|
+        checkout(e[0]) do
             Rake::Task[:build].reenable
-            Rake::Task[:build].invoke(bp[1])
-            Rake::Task[:test].execute if (e.test)
+            Rake::Task[:build].invoke(e[1])
         end
     end
 end

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <version>4.0.2</version>
+        <version>5.0.0</version>
         <id>Cube.Net.Rss</id>
         <title>Cube.Net.Rss</title>
         <authors>clown,cube-soft</authors>
@@ -15,15 +15,15 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <dependencies>
             <group targetFramework="netstandard2.0">
-                <dependency id="Cube.Net" version="4.0.2" />
+                <dependency id="Cube.Net" version="5.0.0" />
                 <dependency id="Microsoft.Xml.SgmlReader" version="1.8.24" />
             </group>
             <group targetFramework="net45">
-                <dependency id="Cube.Net" version="4.0.2" />
+                <dependency id="Cube.Net" version="5.0.0" />
                 <dependency id="Microsoft.Xml.SgmlReader" version="1.8.24" />
             </group>
             <group targetFramework="net35">
-                <dependency id="Cube.Net" version="4.0.2" />
+                <dependency id="Cube.Net" version="5.0.0" />
                 <dependency id="SgmlReader" version="1.8.11" />
             </group>
         </dependencies>
