@@ -30,9 +30,9 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\Libraries\Rss\Cube.Net.Rss.csproj" />
-        <PackageReference Include="Cube.Forms" Version="4.0.2" />
-        <PackageReference Include="Cube.Xui" Version="4.0.2" />
-        <PackageReference Include="gong-wpf-dragdrop" Version="2.4.0" />
+        <PackageReference Include="Cube.Forms" Version="5.0.0" />
+        <PackageReference Include="Cube.Xui" Version="5.0.0" />
+        <PackageReference Include="gong-wpf-dragdrop" Version="2.4.2" />
         <Reference Include="System.Web" />
     </ItemGroup>
     <ItemGroup>
