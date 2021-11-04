@@ -45,7 +45,7 @@ namespace Cube.Net.Rss.Reader
         /// <returns>DialogMessage object.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DialogMessage Error(Exception err, string message) => new DialogMessage
+        public static DialogMessage Error(Exception err, string message) => new()
         {
             Text    = $"{message} ({err.GetType().Name})",
             Title   = Properties.Resources.TitleError,
@@ -67,7 +67,7 @@ namespace Cube.Net.Rss.Reader
         /// <returns>DialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static DialogMessage RemoveWarning(string name) => new DialogMessage
+        public static DialogMessage RemoveWarning(string name) => new()
         {
             Text    = string.Format(Properties.Resources.MessageRemove, name),
             Title   = Properties.Resources.TitleInformation,
@@ -86,12 +86,15 @@ namespace Cube.Net.Rss.Reader
         /// <returns>OpenFileDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static OpenFileMessage Import() => new OpenFileMessage
+        public static OpenFileMessage Import() => new()
         {
             CheckPathExists = true,
             Multiselect     = false,
             Text            = Properties.Resources.MessageImport,
-            Filter          = Properties.Resources.FilterOpml,
+            Filters         = new FileDialogFilter[] {
+                new(Properties.Resources.FilterOpml, ".opml", ".xml"),
+                new(Properties.Resources.FilterAll,  ".*"),
+            },
         };
 
         /* ----------------------------------------------------------------- */
@@ -105,12 +108,15 @@ namespace Cube.Net.Rss.Reader
         /// <returns>SaveFileDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static SaveFileMessage Export() => new SaveFileMessage
+        public static SaveFileMessage Export() => new()
         {
             CheckPathExists = false,
             OverwritePrompt = true,
             Text            = Properties.Resources.MessageExport,
-            Filter          = Properties.Resources.FilterOpml,
+            Filters         = new FileDialogFilter[] {
+                new(Properties.Resources.FilterOpml, ".opml", ".xml"),
+                new(Properties.Resources.FilterAll,  ".*"),
+            },
         };
 
         /* ----------------------------------------------------------------- */
@@ -126,7 +132,7 @@ namespace Cube.Net.Rss.Reader
         /// <returns>DirectoryDialogMessage オブジェクト</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static OpenDirectoryMessage DataDirectory(string src) => new OpenDirectoryMessage
+        public static OpenDirectoryMessage DataDirectory(string src) => new()
         {
             Value     = src,
             NewButton = true,

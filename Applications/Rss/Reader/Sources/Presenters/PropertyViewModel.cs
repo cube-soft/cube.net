@@ -34,7 +34,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class PropertyViewModel : GenericViewModel<RssEntry>
+    public class PropertyViewModel : ViewModelBase<RssEntry>
     {
         #region Constructors
 
@@ -58,8 +58,8 @@ namespace Cube.Net.Rss.Reader
         {
             Apply = Get(() => new DelegateCommand(() =>
             {
-                Send<ApplyMessage>();
-                Close.Execute();
+                Send(new ApplyMessage());
+                Quit.Execute();
                 callback?.Invoke(Value);
             }), nameof(Apply));
         }

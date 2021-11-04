@@ -178,7 +178,7 @@
         </Grid>
 
         <StackPanel Style="{StaticResource FooterButtonsStyle}" Grid.Row="1">
-            <Button Command="{Binding Close}" Style="{StaticResource CancelButtonStyle}" IsCancel="True"/>
+            <Button Command="{Binding Quit}" Style="{StaticResource CancelButtonStyle}" IsCancel="True"/>
             <Button Command="{Binding Apply}" Style="{StaticResource OkButtonStyle}" IsDefault="True"/>
         </StackPanel>
     </Grid>

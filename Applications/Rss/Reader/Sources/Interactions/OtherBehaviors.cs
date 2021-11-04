@@ -30,7 +30,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ShowRegisterWindowBehavior : ShowBehavior<RegisterWindow, RegisterViewModel> { }
+    public class ShowRegisterWindowBehavior : ShowDialogBehavior<RegisterWindow, RegisterViewModel> { }
 
     /* --------------------------------------------------------------------- */
     ///
@@ -41,7 +41,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ShowPropertyWindowBehavior : ShowBehavior<PropertyWindow, PropertyViewModel> { }
+    public class ShowPropertyWindowBehavior : ShowDialogBehavior<PropertyWindow, PropertyViewModel> { }
 
     /* --------------------------------------------------------------------- */
     ///
@@ -52,7 +52,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ShowSettingWindowBehavior : ShowBehavior<SettingWindow, SettingViewModel> { }
+    public class ShowSettingWindowBehavior : ShowDialogBehavior<SettingWindow, SettingViewModel> { }
 
     /* --------------------------------------------------------------------- */
     ///

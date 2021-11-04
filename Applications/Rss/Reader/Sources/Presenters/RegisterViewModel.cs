@@ -34,7 +34,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RegisterViewModel : GenericViewModel<RegisterFacade>
+    public class RegisterViewModel : ViewModelBase<RegisterFacade>
     {
         #region Constructors
 
@@ -58,13 +58,13 @@ namespace Cube.Net.Rss.Reader
                     {
                         Facade.Busy = true;
                         await callback?.Invoke(Url.Value);
-                        Close.Execute(null);
+                        Quit.Execute(null);
                     }
                     catch (Exception err) { Send(MessageFactory.Error(err, Properties.Resources.ErrorRegister)); }
                     finally { Facade.Busy = false; }
                 },
                 () => Facade.Url.HasValue() && !Facade.Busy
-            ).Associate(Facade, nameof(Facade.Busy), nameof(Facade.Url)), nameof(Execute));
+            ).Hook(Facade, nameof(Facade.Busy), nameof(Facade.Url)), nameof(Execute));
         }
 
         #endregion

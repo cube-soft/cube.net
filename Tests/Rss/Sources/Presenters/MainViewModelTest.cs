@@ -118,7 +118,7 @@ namespace Cube.Net.Rss.Tests
             Assert.That(dest.UnreadItems.Count(), Is.EqualTo(9));
             Assert.That(dest.Parent.Count,        Is.EqualTo(9), nameof(RssCategory));
 
-            vm.Close.Execute(null);
+            vm.Quit.Execute(null);
         });
 
         /* ----------------------------------------------------------------- */

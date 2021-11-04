@@ -67,7 +67,7 @@
             Grid.Row="1">
             <Button
                 Content="キャンセル"
-                Command="{Binding Close}"
+                Command="{Binding Quit}"
                 Style="{StaticResource CommonButtonStyle}"
                 Margin="20,0,0,0"
                 Width="125"

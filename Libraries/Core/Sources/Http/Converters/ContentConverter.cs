@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.IO;
-using Cube.Logging;
 
 namespace Cube.Net.Http
 {

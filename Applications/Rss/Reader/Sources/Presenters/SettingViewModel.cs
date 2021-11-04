@@ -36,7 +36,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class SettingViewModel : GenericViewModel<SettingFolder>
+    public class SettingViewModel : ViewModelBase<SettingFolder>
     {
         #region Constructors
 
@@ -177,8 +177,8 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Apply => Get(() => new DelegateCommand(() =>
         {
-            Send<ApplyMessage>();
-            Close.Execute();
+            Send(new ApplyMessage());
+            Quit.Execute();
         }));
 
         #endregion
