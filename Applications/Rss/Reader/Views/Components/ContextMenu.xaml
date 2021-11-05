@@ -43,6 +43,6 @@
         <Separator/>
         <MenuItem Command="{Binding Setting}" Header="設定"/>
         <Separator/>
-        <MenuItem Command="{Binding Quit}" Header="終了"/>
+        <MenuItem Command="{Binding Close}" Header="終了"/>
     </ContextMenu>
 </ResourceDictionary>

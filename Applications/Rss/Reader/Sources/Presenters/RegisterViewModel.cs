@@ -58,7 +58,7 @@ namespace Cube.Net.Rss.Reader
                     {
                         Facade.Busy = true;
                         await callback?.Invoke(Url.Value);
-                        Quit.Execute(null);
+                        Close.Execute(null);
                     }
                     catch (Exception err) { Send(MessageFactory.Error(err, Properties.Resources.ErrorRegister)); }
                     finally { Facade.Busy = false; }

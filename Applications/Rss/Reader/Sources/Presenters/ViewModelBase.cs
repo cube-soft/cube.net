@@ -63,14 +63,14 @@ namespace Cube.Net.Rss.Reader
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Quit
+        /// Close
         ///
         /// <summary>
-        /// Gets the quit command.
+        /// Gets the close command.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Quit => Get(() => new DelegateCommand(() => Send(new CloseMessage())));
+        public ICommand Close => Get(() => new DelegateCommand(() => Send(new CloseMessage())));
 
         #endregion
 

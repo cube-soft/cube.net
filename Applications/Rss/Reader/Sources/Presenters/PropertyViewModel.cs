@@ -59,7 +59,7 @@ namespace Cube.Net.Rss.Reader
             Apply = Get(() => new DelegateCommand(() =>
             {
                 Send(new ApplyMessage());
-                Quit.Execute();
+                Close.Execute();
                 callback?.Invoke(Value);
             }), nameof(Apply));
         }

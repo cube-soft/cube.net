@@ -178,7 +178,7 @@ namespace Cube.Net.Rss.Reader
         public ICommand Apply => Get(() => new DelegateCommand(() =>
         {
             Send(new ApplyMessage());
-            Quit.Execute();
+            Close.Execute();
         }));
 
         #endregion
