@@ -47,9 +47,6 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public HttpHandler()
         {
-            Proxy    = null;
-            UseProxy = false;
-
             if (SupportsAutomaticDecompression)
             {
                 AutomaticDecompression = DecompressionMethods.Deflate |

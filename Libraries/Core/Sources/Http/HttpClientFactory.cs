@@ -99,11 +99,7 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public static HttpClient Create(TimeSpan timeout)
         {
-            var handler = new HttpClientHandler
-            {
-                Proxy    = null,
-                UseProxy = false,
-            };
+            var handler = new HttpClientHandler();
 
             if (handler.SupportsAutomaticDecompression)
             {
