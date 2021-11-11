@@ -20,7 +20,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Cube.Logging;
 
 namespace Cube.Net.Http
 {
@@ -48,9 +47,6 @@ namespace Cube.Net.Http
         /* ----------------------------------------------------------------- */
         public HttpHandler()
         {
-            Proxy    = null;
-            UseProxy = false;
-
             if (SupportsAutomaticDecompression)
             {
                 AutomaticDecompression = DecompressionMethods.Deflate |

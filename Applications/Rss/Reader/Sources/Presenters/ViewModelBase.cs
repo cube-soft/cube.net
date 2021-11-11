@@ -29,23 +29,23 @@ namespace Cube.Net.Rss.Reader
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// GenericViewModel(TModel)
+    /// ViewModelBase(TModel)
     ///
     /// <summary>
     /// Represents the base class of ViewModels.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public abstract class GenericViewModel<TModel> : Presentable<TModel>
+    public abstract class ViewModelBase<TModel> : PresentableBase<TModel>
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// GenericViewModel
+        /// ViewModelBase
         ///
         /// <summary>
-        /// Initializes a new instance of the GenericViewModel class with
+        /// Initializes a new instance of the ViewModelBase class with
         /// the specified arguments.
         /// </summary>
         ///
@@ -54,7 +54,7 @@ namespace Cube.Net.Rss.Reader
         /// <param name="context">Synchronization context.</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected GenericViewModel(TModel model, Aggregator aggregator, SynchronizationContext context) :
+        protected ViewModelBase(TModel model, Aggregator aggregator, SynchronizationContext context) :
             base(model, aggregator, context) { }
 
         #endregion
@@ -70,22 +70,11 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Close => Get(() => new DelegateCommand(() => Send<CloseMessage>()));
+        public ICommand Close => Get(() => new DelegateCommand(() => Send(new CloseMessage())));
 
         #endregion
 
         #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Sync
-        ///
-        /// <summary>
-        /// Executes the specified action as a synchronous method.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected void Sync(Action action) => Track(action, true);
 
         /* ----------------------------------------------------------------- */
         ///

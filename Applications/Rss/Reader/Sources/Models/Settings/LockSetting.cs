@@ -18,8 +18,8 @@
 using System;
 using System.Runtime.Serialization;
 using System.Security;
+using Cube.DataContract;
 using Cube.FileSystem;
-using Cube.FileSystem.DataContract;
 using Microsoft.Win32;
 
 namespace Cube.Net.Rss.Reader

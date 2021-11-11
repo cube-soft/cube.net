@@ -161,7 +161,7 @@
     <value>新しいフォルダー</value>
   </data>
   <data name="FilterOpml" xml:space="preserve">
-    <value>OPML ファイル (*.opml, *.xml)|*.opml;*.OPML;*.xml;*.XML|すべてのファイル (*.*)|*.*</value>
+    <value>OPML ファイル</value>
   </data>
   <data name="MessageExport" xml:space="preserve">
     <value>ファイル名を指定して保存</value>
@@ -200,5 +200,8 @@
   </data>
   <data name="TitleError" xml:space="preserve">
     <value>CubeRSS Reader エラー</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>すべてのファイル</value>
   </data>
 </root>

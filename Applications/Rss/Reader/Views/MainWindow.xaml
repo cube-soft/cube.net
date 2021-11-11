@@ -66,13 +66,13 @@
 
     <i:Interaction.Behaviors>
         <xb:CloseBehavior />
-        <xb:DisposeBehavior />
+        <xb:ClosedToDispose />
         <xb:DialogBehavior />
         <xb:OpenFileBehavior />
         <xb:SaveFileBehavior />
-        <my:ShowRegisterWindowBehavior Modal="True" />
-        <my:ShowPropertyWindowBehavior Modal="True" />
-        <my:ShowSettingWindowBehavior Modal="True" />
+        <my:ShowRegisterWindowBehavior />
+        <my:ShowPropertyWindowBehavior />
+        <my:ShowSettingWindowBehavior />
     </i:Interaction.Behaviors>
 
     <i:Interaction.Triggers>
