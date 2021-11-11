@@ -24,7 +24,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Core\Cube.Net.csproj" />
-        <PackageReference Include="Microsoft.Xml.SgmlReader" Version="1.8.24" />
+        <PackageReference Include="Microsoft.Xml.SgmlReader" Version="1.8.25" />
         <Reference Include="System.Net" />
         <Reference Include="System.Net.Http" />
     </ItemGroup>

@@ -1,10 +1,10 @@
 Cube.Net
 ====
 
-[![NuGet](https://img.shields.io/nuget/v/Cube.Net.svg?label=net)](https://www.nuget.org/packages/Cube.Net/)
-[![NuGet](https://img.shields.io/nuget/v/Cube.Net.Rss.svg?label=rss)](https://www.nuget.org/packages/Cube.Net.Rss/)
-[![AppVeyor](https://img.shields.io/appveyor/ci/clown/cube-net/master.svg?label=master&logo=appveyor)](https://ci.appveyor.com/project/clown/cube-net)
-[![Codecov](https://codecov.io/gh/cube-soft/Cube.Net/branch/master/graph/badge.svg)](https://codecov.io/gh/cube-soft/Cube.Net)
+[![Net](https://badgen.net/nuget/v/cube.net?label=net)](https://www.nuget.org/packages/Cube.Net/)
+[![Rss](https://badgen.net/nuget/v/cube.net.rss?label=rss)](https://www.nuget.org/packages/Cube.Net.Rss/)
+[![AppVeyor](https://badgen.net/appveyor/ci/clown/cube-net)](https://ci.appveyor.com/project/clown/cube-net)
+[![Codecov](https://badgen.net/codecov/c/github/cube-soft/cube.net)](https://codecov.io/gh/cube-soft/Cube.Net)
 
 Cube.Net is a network library.
 The repository also has some implemented applications based on the Cube.Net project.
@@ -18,13 +18,6 @@ Libraries and applications are available for .NET Framework 3.5, 4.5, .NET Stand
 
 You can get the executable installer from the [download page](https://www.cube-soft.jp/cuberssreader/index.php) (Japanese), or [directly download link](https://www.cube-soft.jp/cuberssreader/dl.php).
 We currently show menus and other messages only in Japanese, and support for other languages are one of our future works...
-
-## Dependencies
-
-Dependencies of [Libraries](https://github.com/cube-soft/Cube.Net/blob/master/Libraries) are as follows. [Applications](https://github.com/cube-soft/Cube.Net/blob/master/Applications) may use some other third-party libraries.
-
-* [Cube.Core](https://github.com/cube-soft/Cube.Core)
-* [Microsoft.Xml.SgmlReader](https://www.nuget.org/packages/Microsoft.Xml.SgmlReader/)
 
 ## Contributing
 
