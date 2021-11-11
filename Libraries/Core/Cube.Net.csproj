@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Version>5.0.0</Version>
+        <Version>6.0.0</Version>
         <Authors>clown;cube-soft</Authors>
         <Company>CubeSoft</Company>
         <Description>Network library for CubeSoft libraries and applications.</Description>
         <Copyright>Copyright © 2010 CubeSoft, Inc.</Copyright>
         <PackageTags>Cube;Net;HTTP;NTP</PackageTags>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/cube-soft/$(AssemblyName)</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/cube-soft/Cube.Net</PackageProjectUrl>
+        <PackageReadmeFile>docs\Readme.md</PackageReadmeFile>
         <PackageIcon>images\Icon.png</PackageIcon>
         <TargetFramework>net35</TargetFramework>
         <LangVersion>latest</LangVersion>
@@ -23,13 +24,14 @@
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Cube.FileSystem" Version="5.0.0" />
+        <PackageReference Include="Cube.Core" Version="6.0.0" />
         <PackageReference Include="Rackspace.Threading" Version="2.0.0-alpha001" />
         <Reference Include="System.Net" />
         <Reference Include="System.Net.Http" HintPath="..\..\..\resources\net35\System.Net.Http.dll" />
         <Reference Include="System.ServiceModel.Web" />
     </ItemGroup>
     <ItemGroup>
+        <None Include="..\..\Readme.md" Pack="true" PackagePath="docs" />
         <None Include="..\..\Icon.png" Pack="true" PackagePath="images" />
     </ItemGroup>
 </Project>

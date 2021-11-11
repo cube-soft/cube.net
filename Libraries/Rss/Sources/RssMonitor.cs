@@ -20,8 +20,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Cube.Collections;
-using Cube.Logging;
 using Cube.Mixin.Tasks;
 using Cube.Net.Http;
 
@@ -119,7 +117,7 @@ namespace Cube.Net.Rss
         ///
         /* ----------------------------------------------------------------- */
         public void Register(IEnumerable<Uri> items) => Register(
-            items.Select(e => KeyValuePair.Create(e, default(DateTime?)))
+            items.Select(e => new KeyValuePair<Uri, DateTime?>(e, default))
         );
 
         /* ----------------------------------------------------------------- */

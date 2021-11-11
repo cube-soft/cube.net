@@ -20,9 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Cube.Collections;
+using Cube.DataContract;
 using Cube.FileSystem;
-using Cube.FileSystem.DataContract;
-using Cube.Logging;
 using Cube.Mixin.String;
 
 namespace Cube.Net.Rss

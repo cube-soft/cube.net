@@ -18,7 +18,6 @@
 using System;
 using System.Threading.Tasks;
 using Cube.Collections;
-using Cube.Logging;
 using Microsoft.Win32;
 
 namespace Cube.Net.Ntp

@@ -49,13 +49,11 @@ namespace Cube.Net.Tests.Ntp
         [Test]
         public void Create()
         {
-            using (var client = new NtpClient())
-            {
-                Assert.That(client.Host.HostName, Does.StartWith("time.microsoft"));
-                Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
-                Assert.That(client.Port, Is.EqualTo(123));
-                Assert.That(client.Timeout, Is.EqualTo(TimeSpan.FromSeconds(5)));
-            }
+            using var client = new NtpClient();
+            Assert.That(client.Host.HostName, Does.StartWith("twc.trafficmanager.net"));
+            Assert.That(client.Host.AddressList.Length, Is.AtLeast(1));
+            Assert.That(client.Port, Is.EqualTo(123));
+            Assert.That(client.Timeout, Is.EqualTo(TimeSpan.FromSeconds(5)));
         }
 
         /* ----------------------------------------------------------------- */
@@ -86,25 +84,24 @@ namespace Cube.Net.Tests.Ntp
         [TestCaseSource(nameof(TestCases))]
         public void GetAsync(string src, uint version, uint poll, Stratum stratum)
         {
-            using (var client = new NtpClient(src))
-            {
-                var pkt = client.GetAsync().Result;
-                Assert.That(pkt.Valid,            Is.True);
-                Assert.That(pkt.LeapIndicator,      Is.EqualTo(LeapIndicator.NoWarning));
-                Assert.That(pkt.Version,            Is.EqualTo(version));
-                Assert.That(pkt.Mode,               Is.EqualTo(NtpMode.Server));
-                Assert.That(pkt.Stratum,            Is.EqualTo(stratum));
-                Assert.That(pkt.PollInterval,       Is.EqualTo(poll));
-                Assert.That(pkt.Precision,          Is.GreaterThan(0.0).And.LessThan(1.0));
-                Assert.That(pkt.RootDelay,          Is.GreaterThanOrEqualTo(0.0));
-                Assert.That(pkt.RootDispersion,     Is.GreaterThanOrEqualTo(0.0));
-                Assert.That(pkt.ReferenceID,        Is.Not.Null.And.Not.Empty);
-                Assert.That(pkt.ReferenceTimestamp, Is.Not.Null);
-                Assert.That(pkt.KeyID,              Is.Empty);
-                Assert.That(pkt.MessageDigest,      Is.Empty);
-                Assert.That(pkt.NetworkDelay.TotalSeconds,     Is.GreaterThan(0.0).And.LessThan(1.0));
-                Assert.That(pkt.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(60));
-            }
+            using var client = new NtpClient(src);
+            var pkt = client.GetAsync().Result;
+
+            Assert.That(pkt.Valid,            Is.True);
+            Assert.That(pkt.LeapIndicator,      Is.EqualTo(LeapIndicator.NoWarning));
+            Assert.That(pkt.Version,            Is.EqualTo(version));
+            Assert.That(pkt.Mode,               Is.EqualTo(NtpMode.Server));
+            Assert.That(pkt.Stratum,            Is.EqualTo(stratum));
+            Assert.That(pkt.PollInterval,       Is.EqualTo(poll));
+            Assert.That(pkt.Precision,          Is.GreaterThan(0.0).And.LessThan(1.0));
+            Assert.That(pkt.RootDelay,          Is.GreaterThanOrEqualTo(0.0));
+            Assert.That(pkt.RootDispersion,     Is.GreaterThanOrEqualTo(0.0));
+            Assert.That(pkt.ReferenceID,        Is.Not.Null.And.Not.Empty);
+            Assert.That(pkt.ReferenceTimestamp, Is.Not.Null);
+            Assert.That(pkt.KeyID,              Is.Empty);
+            Assert.That(pkt.MessageDigest,      Is.Empty);
+            Assert.That(pkt.NetworkDelay.TotalSeconds,     Is.GreaterThan(0.0).And.LessThan(1.0));
+            Assert.That(pkt.LocalClockOffset.TotalSeconds, Is.EqualTo(0).Within(60));
         }
 
         /* ----------------------------------------------------------------- */
@@ -119,18 +116,16 @@ namespace Cube.Net.Tests.Ntp
         [Test]
         public void GetAsync_Timeout()
         {
-            using (var client = new NtpClient())
+            using var client = new NtpClient();
+            try
             {
-                try
-                {
-                    client.Timeout = TimeSpan.FromMilliseconds(1);
-                    client.GetAsync().Wait();
-                    Assert.Ignore("GetAsync success bofore timeout");
-                }
-                catch (AggregateException err)
-                {
-                    Assert.That(err.InnerException, Is.TypeOf<SocketException>());
-                }
+                client.Timeout = TimeSpan.FromMilliseconds(1);
+                client.GetAsync().Wait();
+                Assert.Ignore("GetAsync success bofore timeout");
+            }
+            catch (AggregateException err)
+            {
+                Assert.That(err.InnerException, Is.TypeOf<SocketException>());
             }
         }
 

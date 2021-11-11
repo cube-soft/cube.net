@@ -34,7 +34,7 @@ namespace Cube.Net.Rss.Reader
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public sealed class MainViewModel : GenericViewModel<MainFacade>
+    public sealed class MainViewModel : ViewModelBase<MainFacade>
     {
         #region Constructors
 
@@ -111,7 +111,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Setup => Get(() => new DelegateCommand(() => Track(Facade.Setup)));
+        public ICommand Setup => Get(() => new DelegateCommand(() => Run(Facade.Setup, false)));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -124,12 +124,12 @@ namespace Cube.Net.Rss.Reader
         /* ----------------------------------------------------------------- */
         public ICommand Property => Get(() => new DelegateCommand(
             () => Send(new PropertyViewModel(
-                e => Sync(() => Facade.Reschedule(e)),
+                e => Run(() => Facade.Reschedule(e), true),
                 Data.Current.Value as RssEntry,
                 Context
             )),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value is RssEntry
-        ).Associate(Data.Current).Associate(Data.Lock));
+        ).Hook(Data.Current).Hook(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -154,9 +154,9 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Import => Get(() => new DelegateCommand(
-            () => Track(MessageFactory.Import(), e => Facade.Import(e.First())),
+            () => Send(MessageFactory.Import(), e => Facade.Import(e.First()), false),
             () => !Data.Lock.Value.IsReadOnly
-        ).Associate(Data.Lock));
+        ).Hook(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -168,7 +168,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Export =>Get(() => new DelegateCommand(
-            () => Track(MessageFactory.Export(), e => Facade.Export(e))
+            () => Send(MessageFactory.Export(), e => Facade.Export(e), false)
         ));
 
         /* ----------------------------------------------------------------- */
@@ -183,7 +183,7 @@ namespace Cube.Net.Rss.Reader
         public ICommand NewEntry => Get(() => new DelegateCommand(
             () => Send(new RegisterViewModel(e => Facade.NewEntry(e), Context)),
             () => !Data.Lock.Value.IsReadOnly
-        ).Associate(Data.Lock));
+        ).Hook(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -195,9 +195,9 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand NewCategory => Get(() => new DelegateCommand(
-            () => Sync(Facade.NewCategory),
+            () => Run(Facade.NewCategory, true),
             () => !Data.Lock.Value.IsReadOnly
-        ).Associate(Data.Lock));
+        ).Hook(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -209,10 +209,13 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Remove => Get(() => new DelegateCommand(
-            () => Track(MessageFactory.RemoveWarning(Data.Current.Value.Title),
-                e => { if (e == DialogStatus.Yes) Facade.Remove(); }),
+            () => {
+                var m = MessageFactory.RemoveWarning(Data.Current.Value.Title);
+                Send(m);
+                if (m.Value == DialogStatus.Yes) Facade.Remove();
+            },
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
-        ).Associate(Data.Current).Associate(Data.Lock));
+        ).Hook(Data.Current).Hook(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -224,9 +227,9 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Rename => Get(() => new DelegateCommand(
-            () => Sync(Facade.Rename),
+            () => Run(Facade.Rename, true),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
-        ).Associate(Data.Current).Associate(Data.Lock));
+        ).Hook(Data.Current).Hook(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -238,9 +241,9 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Read => Get(() => new DelegateCommand(
-            () => Sync(Facade.Read),
+            () => Run(Facade.Read, true),
             () => Data.Current.Value != null
-        ).Associate(Data.Current));
+        ).Hook(Data.Current));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -252,9 +255,9 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Update => Get(() => new DelegateCommand(
-            () => Sync(Facade.Update),
+            () => Run(Facade.Update, true),
             () => Data.Current.Value != null
-        ).Associate(Data.Current));
+        ).Hook(Data.Current));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -266,9 +269,9 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Reset => Get(() => new DelegateCommand(
-            () => Sync(Facade.Reset),
+            () => Run(Facade.Reset, true),
             () => !Data.Lock.Value.IsReadOnly && Data.Current.Value != null
-        ).Associate(Data.Current).Associate(Data.Lock));
+        ).Hook(Data.Current).Hook(Data.Lock));
 
         /* ----------------------------------------------------------------- */
         ///
@@ -280,11 +283,11 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand Select => Get(() => new DelegateCommand<object>(
-            e => Sync(() =>
+            e => Run(() =>
             {
                 Facade.Select(e as IRssEntry);
-                if (e is RssEntry) Send<ScrollToTopMessage>();
-            }),
+                if (e is RssEntry) Send(new ScrollToTopMessage());
+            }, true),
             e => e is IRssEntry
         ));
 
@@ -298,7 +301,7 @@ namespace Cube.Net.Rss.Reader
         ///
         /* ----------------------------------------------------------------- */
         public ICommand SelectArticle => Get(() => new DelegateCommand<object>(
-            e => Sync(() => Facade.Select(e as RssItem)),
+            e => Run(() => Facade.Select(e as RssItem), true),
             e => e is RssItem
         ));
 
@@ -336,7 +339,7 @@ namespace Cube.Net.Rss.Reader
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ICommand Stop => Get(() => new DelegateCommand(() => Sync(Facade.Stop)));
+        public ICommand Stop => Get(() => new DelegateCommand(() => Run(Facade.Stop, true)));
 
         #endregion
 

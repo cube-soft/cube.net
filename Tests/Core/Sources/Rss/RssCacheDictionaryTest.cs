@@ -182,7 +182,7 @@ namespace Cube.Net.Tests.Rss
             Assert.That(src.Remove(feeds[1].Uri, true), Is.True);
             Assert.That(Io.GetFiles(cache).Count(), Is.EqualTo(2));
 
-            Assert.That(src.Remove(KeyValuePair.Create(feeds[2].Uri, feeds[2])), Is.True);
+            Assert.That(src.Remove(new KeyValuePair<Uri, RssFeed>(feeds[2].Uri, feeds[2])));
             Assert.That(Io.GetFiles(cache).Count(), Is.EqualTo(2));
         }
 
