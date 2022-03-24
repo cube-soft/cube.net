@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Version>6.0.0</Version>
+        <Version>7.0.0</Version>
         <Authors>clown;cube-soft</Authors>
         <Company>CubeSoft</Company>
         <Description>Network library for CubeSoft libraries and applications.</Description>
@@ -24,7 +24,7 @@
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Cube.Core" Version="6.0.0" />
+        <PackageReference Include="Cube.Core" Version="7.0.0" />
         <PackageReference Include="Rackspace.Threading" Version="2.0.0-alpha001" />
         <Reference Include="System.Net" />
         <Reference Include="System.Net.Http" HintPath="..\..\..\resources\net35\System.Net.Http.dll" />

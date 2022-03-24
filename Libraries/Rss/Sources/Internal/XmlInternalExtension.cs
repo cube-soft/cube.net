@@ -24,14 +24,14 @@ namespace Cube.Net.Rss
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// XmlExtension
+    /// XmlInternalExtension
     ///
     /// <summary>
     /// Provides extended methods to parse the RSS and Atom feeds.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class XmlExtension
+    internal static class XmlInternalExtension
     {
         #region Methods
 
