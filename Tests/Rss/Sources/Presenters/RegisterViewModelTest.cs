@@ -61,7 +61,7 @@ namespace Cube.Net.Rss.Tests
 
             var dest = vm.Data.Root.OfType<RssEntry>().FirstOrDefault(e => e.Uri == src);
 
-            Assert.That(dest.Title, Is.EqualTo("Life like a clown"));
+            Assert.That(dest.Title, Is.EqualTo("Cube Lilac"));
             Assert.That(dest.Link,  Is.EqualTo(host));
             Assert.That(dest.Count, Is.AtLeast(1));
             Assert.That(vm.Data.Root.Flatten().Count(), Is.GreaterThan(count));

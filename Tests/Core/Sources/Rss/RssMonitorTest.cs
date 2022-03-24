@@ -96,7 +96,7 @@ namespace Cube.Net.Tests.Rss
                 foreach (var item in src) Assert.That(item.Value, Is.Not.Null);
 
                 Assert.That(src.TryGetValue(uris[0], out var feed0), Is.True);
-                Assert.That(feed0.Title,       Is.EqualTo("Life like a clown"));
+                Assert.That(feed0.Title,       Is.EqualTo("Cube Lilac"));
                 Assert.That(feed0.LastChecked, Is.GreaterThan(start), uris[0].ToString());
                 Assert.That(feed0.Items.Count, Is.GreaterThan(0), uris[0].ToString());
                 Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out _), Is.False);
