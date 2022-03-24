@@ -8,7 +8,7 @@ Cube.Net
 
 Cube.Net is a network library.
 The repository also has some implemented applications based on the Cube.Net project.
-Libraries and applications are available for .NET Framework 3.5, 4.5, .NET Standard 2.0 (.NET Core 3.1 for applications), or later.
+Libraries and applications are available for .NET Framework 3.5, 4.7, .NET Standard 2.0 (.NET Core 3.1 for applications), or later.
 
 ### CubeRSS Reader
 
@@ -22,7 +22,7 @@ We currently show menus and other messages only in Japanese, and support for oth
 ## Contributing
 
 1. Fork [Cube.Net](https://github.com/cube-soft/Cube.Net/fork) repository.
-2. Create a feature branch from the master, net45, or net50 branch (e.g. git checkout -b my-new-feature origin/master). Note that the master branch may refer some pre-released NuGet packages. Try the [rake clobber](https://github.com/cube-soft/Cube.Net/blob/master/Rakefile) command when build errors occur.
+2. Create a feature branch from the master branch (e.g. git checkout -b my-new-feature origin/master). Note that the master branch may refer to some pre-release NuGet packages. Try the [rake clobber](https://github.com/cube-soft/Cube.Net/blob/master/Rakefile) and copy commands when build errors occur.
 3. Commit your changes.
 4. Rebase your local changes to the corresponding branch.
 5. Run the dotnet test command or the Visual Studio and confirm that it passes.
