@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Version>0.3.1</Version>
         <Authors>clown;cube-soft</Authors>
@@ -9,7 +9,7 @@
         <AssemblyName>CubeRssReader</AssemblyName>
         <AssemblyTitle>CubeRSS Reader</AssemblyTitle>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <UseWpf>true</UseWpf>
         <UseWindowsForms>true</UseWindowsForms>
         <Platforms>AnyCPU;x64;x86</Platforms>
