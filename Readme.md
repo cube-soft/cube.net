@@ -8,7 +8,7 @@ Cube.Net
 
 Cube.Net is a network library.
 The repository also has some implemented applications based on the Cube.Net project.
-Libraries and applications are available for .NET Framework 3.5, 4.7, .NET Standard 2.0 (.NET Core 3.1 for applications), or later.
+Libraries and applications are available for .NET Framework 3.5, 4.7, .NET Standard 2.0, .NET 6.0, or later.
 
 ### CubeRSS Reader
 
