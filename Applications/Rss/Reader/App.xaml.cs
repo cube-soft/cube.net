@@ -73,6 +73,7 @@ namespace Cube.Net.Rss.Reader
         {
             if (!Activate()) return;
 
+            Logger.Configure(new Logging.NLog.LoggerSource());
             GetType().LogInfo(Assembly.GetExecutingAssembly());
 
             _resources.Add(Logger.ObserveTaskException());

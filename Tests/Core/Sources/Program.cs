@@ -15,31 +15,30 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Tests;
+
 using System;
 
-namespace Cube.Net.Tests
+/* ------------------------------------------------------------------------- */
+///
+/// Program
+///
+/// <summary>
+/// Represents the main program.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+static class Program
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Program
+    /// Main
     ///
     /// <summary>
-    /// Represents the main program.
+    /// Represents the main method.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    static class Program
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Main
-        ///
-        /// <summary>
-        /// Represents the main method.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [STAThread]
-        static void Main() { }
-    }
+    [STAThread]
+    static void Main() { }
 }
