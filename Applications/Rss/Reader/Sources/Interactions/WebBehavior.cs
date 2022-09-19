@@ -15,6 +15,8 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss.Reader;
+
 using System;
 using System.Web;
 using System.Windows;
@@ -22,284 +24,281 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Cube.Forms;
 using Cube.Forms.Controls;
-using Cube.Logging;
 using Cube.Xui.Behaviors;
 
-namespace Cube.Net.Rss.Reader
+/* ------------------------------------------------------------------------- */
+///
+/// WebBehavior
+///
+/// <summary>
+/// Represents the behavior for extending WebControl.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public class WebBehavior : WindowsFormsBehavior<WebControl>
 {
+    #region Properties
+
+    #region Content
+
     /* --------------------------------------------------------------------- */
     ///
-    /// WebBehavior
+    /// Content
     ///
     /// <summary>
-    /// WebControl を拡張するための Behavior です。
+    /// Gets or sets the display content.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class WebBehavior : WindowsFormsBehavior<WebControl>
+    public object Content
     {
-        #region Properties
-
-        #region Content
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Content
-        ///
-        /// <summary>
-        /// 表示内容を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public object Content
+        get => _content;
+        set
         {
-            get => _content;
-            set
-            {
-                _content = value;
-                Source.DocumentCompleted -= WhenLoading;
-
-                if (value is Uri uri)
-                {
-                    if (Source.IsBusy) Source.Stop();
-                    Source.DocumentCompleted += WhenLoading;
-                    Source.DocumentText = Properties.Resources.Loading;
-                }
-                else if (value is RssItem src)
-                {
-                    Source.DocumentText = string.Format(
-                        Properties.Resources.Skeleton,
-                        Properties.Resources.SkeletonStyle,
-                        src.Link,
-                        HttpUtility.HtmlEncode(src.Title),
-                        src.PublishTime,
-                        !string.IsNullOrEmpty(src.Content) ? src.Content : HttpUtility.HtmlEncode(src.Summary)
-                    );
-                }
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ContentProperty
-        ///
-        /// <summary>
-        /// 表示内容を保持するための DependencyProperty です。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static readonly DependencyProperty ContentProperty =
-            DependencyProperty.RegisterAttached(
-                nameof(Content),
-                typeof(object),
-                typeof(WebBehavior),
-                new PropertyMetadata((s, e) =>
-                {
-                    if (s is WebBehavior wb) wb.Content = e.NewValue;
-                })
-            );
-
-        #endregion
-
-        #region EnableNewWindow
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// EnableNewWindow
-        ///
-        /// <summary>
-        /// 新しいウィンドウをで開くを有効するかどうかを示す値を取得または
-        /// 設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool EnableNewWindow
-        {
-            get => _enableNewWindow;
-            set { if (_enableNewWindow != value) _enableNewWindow = value; }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// EnableNewWindowProperty
-        ///
-        /// <summary>
-        /// EnableNewWindow を保持するための DependencyProperty です。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static readonly DependencyProperty EnableNewWindowProperty =
-            DependencyProperty.RegisterAttached(
-                nameof(EnableNewWindow),
-                typeof(bool),
-                typeof(WebBehavior),
-                new PropertyMetadata((s, e) =>
-                {
-                    if (s is WebBehavior wb) wb.EnableNewWindow = (bool)e.NewValue;
-                })
-            );
-
-        #endregion
-
-        #region Hover
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Hover
-        ///
-        /// <summary>
-        /// Hover 時に実行されるコマンドを取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ICommand Hover
-        {
-            get => _hover;
-            set { if (_hover != value) _hover = value; }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// HoverProperty
-        ///
-        /// <summary>
-        /// Hover を保持するための DependencyProperty です。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static readonly DependencyProperty HoverProperty =
-            DependencyProperty.RegisterAttached(
-                nameof(Hover),
-                typeof(ICommand),
-                typeof(WebBehavior),
-                new PropertyMetadata((s, e) =>
-                {
-                    if (s is WebBehavior wb) wb.Hover = (ICommand)e.NewValue;
-                })
-            );
-
-        #endregion
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnAttached
-        ///
-        /// <summary>
-        /// 要素へ接続された時に実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-            if (Source != null)
-            {
-                Source.ScriptErrorsSuppressed = true;
-                Source.BeforeNewWindow   -= WhenBeforeNewWindow;
-                Source.BeforeNewWindow   += WhenBeforeNewWindow;
-                Source.DocumentCompleted -= WhenDocumentCompleted;
-                Source.DocumentCompleted += WhenDocumentCompleted;
-            }
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnDetaching
-        ///
-        /// <summary>
-        /// 要素から解除された時に実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnDetaching()
-        {
-            if (Source != null)
-            {
-                Source.BeforeNewWindow   -= WhenBeforeNewWindow;
-                Source.DocumentCompleted -= WhenDocumentCompleted;
-            }
-            base.OnDetaching();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenBeforeNewWindow
-        ///
-        /// <summary>
-        /// 新しいウィンドウが開く直前に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenBeforeNewWindow(object s, NavigatingEventArgs e) => GetType().LogWarn(() =>
-        {
-            e.Cancel = true;
-            var uri = new Uri(e.Url);
-            if (EnableNewWindow) _ = System.Diagnostics.Process.Start(uri.ToString());
-            else Content = uri;
-        });
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenDocumentCompleted
-        ///
-        /// <summary>
-        /// Web ドキュメントの読み込み完了時に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenDocumentCompleted(object s, WebBrowserDocumentCompletedEventArgs e)
-        {
-            Source.Document.MouseOver -= WhenMouseOver;
-            Source.Document.MouseOver += WhenMouseOver;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenLoading
-        ///
-        /// <summary>
-        /// ローディング画面の読み込み完了時に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenLoading(object s, WebBrowserDocumentCompletedEventArgs e)
-        {
+            _content = value;
             Source.DocumentCompleted -= WhenLoading;
-            if (Content is Uri uri) Source.Navigate(uri);
-        }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenMouseOver
-        ///
-        /// <summary>
-        /// Web ドキュメントへのマウスオーバ時に実行されるハンドラです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenMouseOver(object s, HtmlElementEventArgs e)
-        {
-            if (s is HtmlDocument doc)
+            if (value is Uri uri)
             {
-                var node = doc.GetElementFromPoint(e.ClientMousePosition);
-                var link = node != null && node.TagName.ToLower() == "a" ?
-                           node.GetAttribute("href") :
-                           string.Empty;
-
-                if (Hover.CanExecute(link)) Hover.Execute(link);
+                if (Source.IsBusy) Source.Stop();
+                Source.DocumentCompleted += WhenLoading;
+                Source.DocumentText = Properties.Resources.Loading;
+            }
+            else if (value is RssItem src)
+            {
+                Source.DocumentText = string.Format(
+                    Properties.Resources.Skeleton,
+                    Properties.Resources.SkeletonStyle,
+                    src.Link,
+                    HttpUtility.HtmlEncode(src.Title),
+                    src.PublishTime,
+                    !string.IsNullOrEmpty(src.Content) ? src.Content : HttpUtility.HtmlEncode(src.Summary)
+                );
             }
         }
-
-        #endregion
-
-        #region Fields
-        private object _content;
-        private bool _enableNewWindow;
-        private ICommand _hover;
-        #endregion
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ContentProperty
+    ///
+    /// <summary>
+    /// Gets the DependencyProperty object to hold the Content property.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static readonly DependencyProperty ContentProperty =
+        DependencyProperty.RegisterAttached(
+            nameof(Content),
+            typeof(object),
+            typeof(WebBehavior),
+            new PropertyMetadata((s, e) =>
+            {
+                if (s is WebBehavior wb) wb.Content = e.NewValue;
+            })
+        );
+
+    #endregion
+
+    #region EnableNewWindow
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// EnableNewWindow
+    ///
+    /// <summary>
+    /// Gets or sets a value indicating whether or not open in new window
+    /// is enabled.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public bool EnableNewWindow
+    {
+        get => _enableNewWindow;
+        set { if (_enableNewWindow != value) _enableNewWindow = value; }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// EnableNewWindowProperty
+    ///
+    /// <summary>
+    /// Gets the DependencyProperty object to hold the EnableNewWindow
+    /// property.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static readonly DependencyProperty EnableNewWindowProperty =
+        DependencyProperty.RegisterAttached(
+            nameof(EnableNewWindow),
+            typeof(bool),
+            typeof(WebBehavior),
+            new PropertyMetadata((s, e) =>
+            {
+                if (s is WebBehavior wb) wb.EnableNewWindow = (bool)e.NewValue;
+            })
+        );
+
+    #endregion
+
+    #region Hover
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Hover
+    ///
+    /// <summary>
+    /// Gets or sets the command to be executed during Hover.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public ICommand Hover
+    {
+        get => _hover;
+        set { if (_hover != value) _hover = value; }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// HoverProperty
+    ///
+    /// <summary>
+    /// Gets the DependencyProperty object to hold the Hover property.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static readonly DependencyProperty HoverProperty =
+        DependencyProperty.RegisterAttached(
+            nameof(Hover),
+            typeof(ICommand),
+            typeof(WebBehavior),
+            new PropertyMetadata((s, e) =>
+            {
+                if (s is WebBehavior wb) wb.Hover = (ICommand)e.NewValue;
+            })
+        );
+
+    #endregion
+
+    #endregion
+
+    #region Implementations
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// OnAttached
+    ///
+    /// <summary>
+    /// Occurs when the component is attached.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    protected override void OnAttached()
+    {
+        base.OnAttached();
+        if (Source != null)
+        {
+            Source.ScriptErrorsSuppressed = true;
+            Source.BeforeNewWindow   -= WhenBeforeNewWindow;
+            Source.BeforeNewWindow   += WhenBeforeNewWindow;
+            Source.DocumentCompleted -= WhenDocumentCompleted;
+            Source.DocumentCompleted += WhenDocumentCompleted;
+        }
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// OnDetaching
+    ///
+    /// <summary>
+    /// Occurs before the component is detached.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    protected override void OnDetaching()
+    {
+        if (Source != null)
+        {
+            Source.BeforeNewWindow   -= WhenBeforeNewWindow;
+            Source.DocumentCompleted -= WhenDocumentCompleted;
+        }
+        base.OnDetaching();
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// WhenBeforeNewWindow
+    ///
+    /// <summary>
+    /// Occurs before a new window is open.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private void WhenBeforeNewWindow(object s, NavigatingEventArgs e) => Logger.Warn(() =>
+    {
+        e.Cancel = true;
+        var uri = new Uri(e.Url);
+        if (EnableNewWindow) _ = System.Diagnostics.Process.Start(uri.ToString());
+        else Content = uri;
+    });
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// WhenDocumentCompleted
+    ///
+    /// <summary>
+    /// Occurs when document loading is complete.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private void WhenDocumentCompleted(object s, WebBrowserDocumentCompletedEventArgs e)
+    {
+        Source.Document.MouseOver -= WhenMouseOver;
+        Source.Document.MouseOver += WhenMouseOver;
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// WhenLoading
+    ///
+    /// <summary>
+    /// Occurs when the loading.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private void WhenLoading(object s, WebBrowserDocumentCompletedEventArgs e)
+    {
+        Source.DocumentCompleted -= WhenLoading;
+        if (Content is Uri uri) Source.Navigate(uri);
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// WhenMouseOver
+    ///
+    /// <summary>
+    /// Occurs on mouse-over to a Web document.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private void WhenMouseOver(object s, HtmlElementEventArgs e)
+    {
+        if (s is HtmlDocument doc)
+        {
+            var node = doc.GetElementFromPoint(e.ClientMousePosition);
+            var link = node != null && node.TagName.ToLower() == "a" ?
+                       node.GetAttribute("href") :
+                       string.Empty;
+
+            if (Hover.CanExecute(link)) Hover.Execute(link);
+        }
+    }
+
+    #endregion
+
+    #region Fields
+    private object _content;
+    private bool _enableNewWindow;
+    private ICommand _hover;
+    #endregion
 }

@@ -15,275 +15,279 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss.Reader;
+
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using Cube.DataContract;
 using Cube.FileSystem;
 using Cube.Forms.Controls;
-using Cube.Mixin.Assembly;
-using Cube.Mixin.Environment;
-using Cube.Mixin.String;
+using Cube.Reflection.Extensions;
+using Cube.Text.Extensions;
 
-namespace Cube.Net.Rss.Reader
+/* ------------------------------------------------------------------------- */
+///
+/// SettingFolder
+///
+/// <summary>
+/// Represents the application and/or user settings.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public class SettingFolder : SettingFolder<LocalSetting>
 {
+    #region Constructors
+
     /* --------------------------------------------------------------------- */
     ///
     /// SettingFolder
     ///
     /// <summary>
-    /// ユーザ設定を保持するためのクラスです。
+    /// Initializes static resources of the SettingFolder class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class SettingFolder : SettingFolder<LocalSetting>
+    static SettingFolder() => Network.Setup();
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// SettingFolder
+    ///
+    /// <summary>
+    /// Initializes a new instance of the specified Assembly object.
+    /// </summary>
+    ///
+    /// <param name="asm">Assembly object.</param>
+    ///
+    /* --------------------------------------------------------------------- */
+    public SettingFolder(Assembly asm) : this(Io.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        asm.GetCompany(),
+        asm.GetProduct()
+    ), asm.GetSoftwareVersion()) { }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// SettingFolder
+    ///
+    /// <summary>
+    /// Initializes a new instance of the SettingFolder class with the
+    /// specified arguments.
+    /// </summary>
+    ///
+    /// <param name="root">Root path of the setting directory.</param>
+    /// <param name="version">Software version.</param>
+    ///
+    /* --------------------------------------------------------------------- */
+    public SettingFolder(string root, SoftwareVersion version) :
+        base(Format.Json, Io.Combine(root, LocalSetting.FileName), version)
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SettingFolder
-        ///
-        /// <summary>
-        /// Initializes static resources of the SettingFolder class.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        static SettingFolder() { Network.Setup(); }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SettingFolder
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /// <param name="assembly">アセンブリ情報</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SettingFolder(Assembly assembly) : this(Io.Combine(
-            Environment.SpecialFolder.LocalApplicationData.GetName(),
-            assembly.GetCompany(),
-            assembly.GetProduct()
-        ), assembly.GetSoftwareVersion()) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SettingFolder
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /// <param name="root">設定用フォルダのルートパス</param>
-        /// <param name="version">Software version.</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SettingFolder(string root, SoftwareVersion version) :
-            base(Format.Json, Io.Combine(root, LocalSetting.FileName), version)
-        {
-            AutoSave = true;
-            RootDirectory = root;
-            DataDirectory = root;
-            Version.Suffix = "β";
-            Reset(root);
-        }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Lock
-        ///
-        /// <summary>
-        /// ロック設定オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public LockSetting Lock { get; private set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Shared
-        ///
-        /// <summary>
-        /// ユーザ設定オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SharedSetting Shared { get; private set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RootDirectory
-        ///
-        /// <summary>
-        /// 各種ローカル設定を保持するディレクトリのルートとなるパスを
-        /// 取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string RootDirectory { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DataDirectory
-        ///
-        /// <summary>
-        /// 各種ユーザ設定を保持するディレクトリのパスを取得します。
-        /// </summary>
-        ///
-        /// <remarks>
-        /// LocalSetting.DataDirectory プロパティは GUI によるユーザ操作で
-        /// 値が変更される事があります。SettingFolder の初期化後、または
-        /// ローカル設定ファイルの読み込み後はこのプロパティから 取得して
-        /// 下さい。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string DataDirectory { get; private set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// UserAgent
-        ///
-        /// <summary>
-        /// ユーザエージェントを表す文字列を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string UserAgent => _userAgent ??= GetUserAgent();
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを開放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void Dispose(bool disposing)
-        {
-            Lock.Release(DataDirectory);
-            base.Dispose(disposing);
-        }
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnLoaded
-        ///
-        /// <summary>
-        /// 設定の読み込み時に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnLoad()
-        {
-            GetType().LogWarn(base.OnLoad);
-
-            var min = 100;
-            var dest = Value;
-            if (!dest.DataDirectory.HasValue()) dest.DataDirectory = RootDirectory;
-            dest.EntryColumn = Math.Min(dest.EntryColumn, dest.Width - min * 2);
-            dest.ArticleColumn = Math.Min(dest.ArticleColumn, dest.Width - dest.EntryColumn - min);
-            DataDirectory = dest.DataDirectory;
-            Reset(DataDirectory);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnSaved
-        ///
-        /// <summary>
-        /// 設定の保存時に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnSave()
-        {
-            if (!Lock.IsReadOnly) Shared.Save(DataDirectory);
-            base.OnSave();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetLastCheckUpdate
-        ///
-        /// <summary>
-        /// LastCheckUpdate の項目を読み込みます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private DateTime? GetLastCheckUpdate()
-        {
-            try
-            {
-                var name = $@"Software\CubeSoft\CubeRssReader";
-                using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false);
-                if (key == null) return default;
-
-                var s = key.GetValue("LastCheckUpdate") as string;
-                return s.HasValue()? DateTime.Parse(s).ToLocalTime() : default;
-            }
-            catch (Exception err) { GetType().LogWarn(err); }
-            return default;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetUserAgent
-        ///
-        /// <summary>
-        /// User-Agent を表す文字列を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private string GetUserAgent()
-        {
-            var app  = $"CubeRssReader/{Version.Number}";
-            var win  = Environment.OSVersion.VersionString;
-            var net  = $".NET {Environment.Version}";
-            var view = WebControl.EmulateVersion;
-            return $"{app} ({win}; {net}; {view})";
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Reset
-        ///
-        /// <summary>
-        /// Reloads the additional Setting.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void Reset(string directory)
-        {
-            Lock = LockSetting.Load(directory);
-            Debug.Assert(Lock != null);
-            Lock.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
-
-            Shared = SharedSetting.Load(directory);
-            Debug.Assert(Shared != null);
-            Shared.LastCheckUpdate = GetLastCheckUpdate();
-            Shared.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
-        }
-
-        #endregion
-
-        #region Fields
-        private string _userAgent;
-        #endregion
+        AutoSave = true;
+        RootDirectory = root;
+        DataDirectory = root;
+        Version.Suffix = "β";
+        Reset(root);
     }
+
+    #endregion
+
+    #region Properties
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Lock
+    ///
+    /// <summary>
+    /// Gets the settings for locking.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public LockSetting Lock { get; private set; }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Shared
+    ///
+    /// <summary>
+    /// Gets the shared user settings.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public SharedSetting Shared { get; private set; }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RootDirectory
+    ///
+    /// <summary>
+    /// Gets the path that is the root of the directory that holds the
+    /// local settings.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public string RootDirectory { get; }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// DataDirectory
+    ///
+    /// <summary>
+    /// Gets the path to the directory that holds user settings.
+    /// </summary>
+    ///
+    /// <remarks>
+    /// DataDirectory property may be changed by GUI user operations, and
+    /// should be retrieved from this property after initializing the
+    /// SettingFolder or after loading the local settings file.
+    /// </remarks>
+    ///
+    /* --------------------------------------------------------------------- */
+    public string DataDirectory { get; private set; }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// UserAgent
+    ///
+    /// <summary>
+    /// Gets the User-Agent string.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public string UserAgent => _userAgent ??= GetUserAgent();
+
+    #endregion
+
+    #region Methods
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Dispose
+    ///
+    /// <summary>
+    /// Releases the unmanaged resources used by the object and optionally
+    /// releases the managed resources.
+    /// </summary>
+    ///
+    /// <param name="disposing">
+    /// true to release both managed and unmanaged resources;
+    /// false to release only unmanaged resources.
+    /// </param>
+    ///
+    /* --------------------------------------------------------------------- */
+    protected override void Dispose(bool disposing)
+    {
+        Lock.Release(DataDirectory);
+        base.Dispose(disposing);
+    }
+
+    #endregion
+
+    #region Implementations
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// OnLoad
+    ///
+    /// <summary>
+    /// Occurs when the settings are loaded.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    protected override void OnLoad()
+    {
+        Logger.Warn(base.OnLoad);
+
+        var min = 100;
+        var dest = Value;
+        if (!dest.DataDirectory.HasValue()) dest.DataDirectory = RootDirectory;
+        dest.EntryColumn = Math.Min(dest.EntryColumn, dest.Width - min * 2);
+        dest.ArticleColumn = Math.Min(dest.ArticleColumn, dest.Width - dest.EntryColumn - min);
+        DataDirectory = dest.DataDirectory;
+        Reset(DataDirectory);
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// OnSave
+    ///
+    /// <summary>
+    /// Occurs when the settings are saved.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    protected override void OnSave()
+    {
+        if (!Lock.IsReadOnly) Shared.Save(DataDirectory);
+        base.OnSave();
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// GetLastCheckUpdate
+    ///
+    /// <summary>
+    /// Gets the LastCheckUpdate value.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private DateTime? GetLastCheckUpdate()
+    {
+        try
+        {
+            var name = $@"Software\CubeSoft\CubeRssReader";
+            using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(name, false);
+            if (key == null) return default;
+
+            var s = key.GetValue("LastCheckUpdate") as string;
+            return s.HasValue()? DateTime.Parse(s).ToLocalTime() : default;
+        }
+        catch (Exception err) { Logger.Warn(err); }
+        return default;
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// GetUserAgent
+    ///
+    /// <summary>
+    /// Gets a string representing the User-Agent.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private string GetUserAgent()
+    {
+        var app  = $"CubeRssReader/{Version.Number}";
+        var win  = Environment.OSVersion.VersionString;
+        var net  = $".NET {Environment.Version}";
+        var view = WebControl.EmulateVersion;
+        return $"{app} ({win}; {net}; {view})";
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Reset
+    ///
+    /// <summary>
+    /// Reloads the additional settings.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private void Reset(string directory)
+    {
+        Lock = LockSetting.Load(directory);
+        Debug.Assert(Lock != null);
+        Lock.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
+
+        Shared = SharedSetting.Load(directory);
+        Debug.Assert(Shared != null);
+        Shared.LastCheckUpdate = GetLastCheckUpdate();
+        Shared.PropertyChanged += (s, ev) => OnPropertyChanged(ev);
+    }
+
+    #endregion
+
+    #region Fields
+    private string _userAgent;
+    #endregion
 }

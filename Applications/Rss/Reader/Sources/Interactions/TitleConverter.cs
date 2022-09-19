@@ -15,74 +15,68 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss.Reader;
+
 using System;
 using System.Globalization;
-using System.Reflection;
 using System.Windows.Data;
 using System.Windows.Markup;
-using Cube.Mixin.Assembly;
+using Cube.Reflection.Extensions;
 
-namespace Cube.Net.Rss.Reader
+/* ------------------------------------------------------------------------- */
+///
+/// TitleConverter
+///
+/// <summary>
+/// Provides funtionality to convert to a main window title.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public class TitleConverter : MarkupExtension, IMultiValueConverter
 {
+    #region Methods
+
     /* --------------------------------------------------------------------- */
     ///
-    /// TitleConverter
+    /// Convert
     ///
     /// <summary>
-    /// メイン画面のタイトルに変換するためのクラスです。
+    /// Invokes the conversion.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class TitleConverter : MarkupExtension, IMultiValueConverter
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Convert
-        ///
-        /// <summary>
-        /// 変換処理を実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            var asm = Assembly.GetExecutingAssembly();
-            var ss  = new System.Text.StringBuilder();
-            if (values[0] is RssItem src) ss.Append($"{src.Title} - ");
-            ss.Append(asm.GetTitle());
-            if (values[1] is LockSetting x && x.IsReadOnly) ss.Append($" ({Properties.Resources.MessageReadOnly})");
-            return ss.ToString();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ConvertBack
-        ///
-        /// <summary>
-        /// 逆変換を実行します。
-        /// </summary>
-        ///
-        /// <remarks>
-        /// このメソッドはサポートされていません。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public object[] ConvertBack(object s, Type[] t, object p, CultureInfo c) =>
-            throw new NotSupportedException();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ProvideValue
-        ///
-        /// <summary>
-        /// 自身のオブジェクトを返します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public override object ProvideValue(IServiceProvider serviceProvider) => this;
-
-        #endregion
+        var asm = typeof(TitleConverter).Assembly;
+        var ss  = new System.Text.StringBuilder();
+        if (values[0] is RssItem src) _ = ss.Append($"{src.Title} - ");
+        _ = ss.Append(asm.GetTitle());
+        if (values[1] is LockSetting x && x.IsReadOnly) _ = ss.Append($" ({Properties.Resources.MessageReadOnly})");
+        return ss.ToString();
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ConvertBack
+    ///
+    /// <summary>
+    /// Invokes the reverse conversion. The method is not currently supported.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public object[] ConvertBack(object s, Type[] t, object p, CultureInfo c) =>
+        throw new NotSupportedException();
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ProvideValue
+    ///
+    /// <summary>
+    /// Returns the self object.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public override object ProvideValue(IServiceProvider serviceProvider) => this;
+
+    #endregion
 }

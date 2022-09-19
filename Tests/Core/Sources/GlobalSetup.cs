@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 namespace Cube.Net.Tests;
 
-using System.Reflection;
 using NUnit.Framework;
 
 /* ------------------------------------------------------------------------- */
@@ -45,8 +44,8 @@ public class GlobalSetup
     public void OneTimeSetup()
     {
         Logger.Configure(new Logging.NLog.LoggerSource());
-        _ = Logger.ObserveTaskException();
-        typeof(GlobalSetup).LogInfo(Assembly.GetExecutingAssembly());
+        Logger.ObserveTaskException();
+        Logger.Info(typeof(GlobalSetup).Assembly);
         Network.Setup();
     }
 }

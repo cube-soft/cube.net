@@ -15,112 +15,110 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss.Tests;
+
 using System;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Cube.FileSystem;
-using Cube.Mixin.Assembly;
-using Cube.Mixin.String;
 using Cube.Net.Rss.Reader;
+using Cube.Reflection.Extensions;
 using Cube.Tests;
+using Cube.Text.Extensions;
 using NUnit.Framework;
 
-namespace Cube.Net.Rss.Tests
+/* ------------------------------------------------------------------------- */
+///
+/// ViewModelFixture
+///
+/// <summary>
+/// Provides functionality to support tests of ViewModel classes.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public class ViewModelFixture : ResourceFixture
 {
+    #region Methods
+
     /* --------------------------------------------------------------------- */
     ///
-    /// ViewModelFixture
+    /// Create
     ///
     /// <summary>
-    /// 各種 ViewModel のテストを実行する際の補助クラスです。
+    /// Creates a new instance of the MainViewModel class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ViewModelFixture : ResourceFixture
+    protected MainViewModel Create([CallerMemberName] string name = null)
     {
-        #region Methods
+        Copy(name);
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Create
-        ///
-        /// <summary>
-        /// ViewModel オブジェクトを生成します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected MainViewModel Create([CallerMemberName] string name = null)
-        {
-            Copy(name);
+        var asm  = typeof(ViewModelFixture).Assembly;
+        var src  = new SettingFolder(RootDirectory(name), asm.GetSoftwareVersion());
+        var dest = new MainViewModel(src, new SynchronizationContext());
+        var msg  = dest.Data.Message;
 
-            var asm     = Assembly.GetExecutingAssembly();
-            var setting = new SettingFolder(RootDirectory(name), asm.GetSoftwareVersion());
-            var dest    = new MainViewModel(setting, new SynchronizationContext());
-            var msg     = dest.Data.Message;
+        src.Shared.InitialDelay = TimeSpan.FromMinutes(1);
+        src.Value.Width         = 1024;
+        src.Value.Height        = 768;
 
-            setting.Shared.InitialDelay = TimeSpan.FromMinutes(1);
-            setting.Value.Width         = 1024;
-            setting.Value.Height        = 768;
-
-            msg.Value = "Test";
-            dest.Setup.Execute(null);
-            Assert.That(Wait.For(() => !msg.Value.HasValue()), "Timeout");
-            return dest;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Execute
-        ///
-        /// <summary>
-        /// ViewModel のテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected void Execute(Action<MainViewModel> action, bool stop = true,
-            [CallerMemberName] string name = null)
-        {
-            using var fw = new System.IO.FileSystemWatcher();
-            var l = Io.Combine(RootDirectory(name), LockSetting.FileName);
-            var n = 0;
-
-            using (var vm = Create(name))
-            {
-                Assert.That(Io.Exists(l), Is.True, l);
-                Assert.That(vm.Data.Lock.Value, Is.Not.Null, nameof(vm.Data.Lock));
-                Assert.That(vm.Data.Lock.Value.IsReadOnly, Is.False, nameof(vm.Data.Lock));
-
-                var f = Io.Get(FeedsPath(name));
-                fw.Path = f.DirectoryName;
-                fw.Filter = f.Name;
-                fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
-                fw.Changed += (s, e) => ++n;
-                fw.EnableRaisingEvents = true;
-
-                if (stop) vm.Stop.Execute(null);
-                action(vm);
-            }
-
-            Assert.That(Io.Exists(l), Is.False, l);
-            Assert.That(Wait.For(() => n > 0), "Feeds.json is not changed");
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SetUp
-        ///
-        /// <summary>
-        /// テスト前処理を実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [SetUp]
-        protected void SetUp()
-        {
-            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-        }
-
-        #endregion
+        msg.Value = "Test";
+        dest.Setup.Execute(null);
+        Assert.That(Wait.For(() => !msg.Value.HasValue()), "Timeout");
+        return dest;
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Execute
+    ///
+    /// <summary>
+    /// Executes the test with the specified arguments.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    protected void Execute(Action<MainViewModel> action, bool stop = true,
+        [CallerMemberName] string name = null)
+    {
+        using var fw = new System.IO.FileSystemWatcher();
+        var l = Io.Combine(RootDirectory(name), LockSetting.FileName);
+        var n = 0;
+
+        using (var vm = Create(name))
+        {
+            Assert.That(Io.Exists(l), Is.True, l);
+            Assert.That(vm.Data.Lock.Value, Is.Not.Null, nameof(vm.Data.Lock));
+            Assert.That(vm.Data.Lock.Value.IsReadOnly, Is.False, nameof(vm.Data.Lock));
+
+            var f = Io.Get(FeedsPath(name));
+            fw.Path = f.DirectoryName;
+            fw.Filter = f.Name;
+            fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;
+            fw.Changed += (s, e) => ++n;
+            fw.EnableRaisingEvents = true;
+
+            if (stop) vm.Stop.Execute(null);
+            action(vm);
+        }
+
+        Assert.That(Io.Exists(l), Is.False, l);
+        Assert.That(Wait.For(() => n > 0), "Feeds.json is not changed");
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Setup
+    ///
+    /// <summary>
+    /// Executes in each test.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    [SetUp]
+    protected void SetUp()
+    {
+        SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+    }
+
+    #endregion
 }

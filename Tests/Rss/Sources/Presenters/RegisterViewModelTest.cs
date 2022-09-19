@@ -15,164 +15,164 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss.Tests;
+
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Cube.Mixin.Commands;
 using Cube.Net.Rss.Reader;
 using Cube.Tests;
+using Cube.Xui.Commands.Extensions;
 using NUnit.Framework;
 
-namespace Cube.Net.Rss.Tests
+/* ------------------------------------------------------------------------- */
+///
+/// RegisterViewModelTest
+///
+/// <summary>
+/// Tests the RegisterViewModel class.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+[TestFixture]
+class RegisterViewModelTest : ViewModelFixture
 {
+    #region Tests
+
     /* --------------------------------------------------------------------- */
     ///
-    /// RegisterViewModelTest
+    /// VM_NewEntry
     ///
     /// <summary>
-    /// RegisterViewModel のテスト用クラスです。
+    /// Tests the NewEntry command.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class RegisterViewModelTest : ViewModelFixture
+    [Test]
+    public void VM_NewEntry() => Execute(vm =>
     {
-        #region Tests
+        var host  = new Uri("https://clown.cube-soft.jp/");
+        var src   = new Uri(host, "/rss");
+        var count = vm.Data.Root.Flatten().Count();
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_NewEntry
-        ///
-        /// <summary>
-        /// 新しい RSS エントリを登録するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_NewEntry() => Execute(vm =>
-        {
-            var host  = new Uri("https://clown.cube-soft.jp/");
-            var src   = new Uri(host, "/rss");
-            var count = vm.Data.Root.Flatten().Count();
+        using var dc = vm.Subscribe<RegisterViewModel>(e => RegisterCommand(e, src).Wait());
+        vm.NewEntry.Execute();
 
-            vm.Subscribe<RegisterViewModel>(e => RegisterCommand(e, src).Wait());
-            vm.NewEntry.Execute();
+        var dest = vm.Data.Root.OfType<RssEntry>().FirstOrDefault(e => e.Uri == src);
 
-            var dest = vm.Data.Root.OfType<RssEntry>().FirstOrDefault(e => e.Uri == src);
+        Assert.That(dest.Title, Is.EqualTo("Cube Lilac"));
+        Assert.That(dest.Link,  Is.EqualTo(host));
+        Assert.That(dest.Count, Is.AtLeast(1));
+        Assert.That(vm.Data.Root.Flatten().Count(), Is.GreaterThan(count));
+    }, false);
 
-            Assert.That(dest.Title, Is.EqualTo("Cube Lilac"));
-            Assert.That(dest.Link,  Is.EqualTo(host));
-            Assert.That(dest.Count, Is.AtLeast(1));
-            Assert.That(vm.Data.Root.Flatten().Count(), Is.GreaterThan(count));
-        }, false);
+    /* --------------------------------------------------------------------- */
+    ///
+    /// VM_NewEntry_Error
+    ///
+    /// <summary>
+    /// Tests that fail to register new RSS entries.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    [Test]
+    public void VM_NewEntry_Error() => Execute(vm =>
+    {
+        var count = vm.Data.Root.Flatten().Count();
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_NewEntry_Error
-        ///
-        /// <summary>
-        /// 新しい RSS エントリの登録に失敗する時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_NewEntry_Error() => Execute(vm =>
-        {
-            var count = vm.Data.Root.Flatten().Count();
+        using var dc = vm.Subscribe<RegisterViewModel>(e => RegisterError(e).Wait());
+        vm.NewEntry.Execute(null);
 
-            vm.Subscribe<RegisterViewModel>(e => RegisterError(e).Wait());
-            vm.NewEntry.Execute(null);
+        Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
+    });
 
-            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
-        });
+    /* --------------------------------------------------------------------- */
+    ///
+    /// VM_NewEntry_Exists
+    ///
+    /// <summary>
+    /// Tests when an attempt is made to register an already existing RSS
+    /// entry.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    [Test]
+    public void VM_NewEntry_Exists() => Execute(vm =>
+    {
+        var src = new Uri("https://clown.cube-soft.jp/");
+        var count = vm.Data.Root.Flatten().Count();
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VM_NewEntry_Exists
-        ///
-        /// <summary>
-        /// 既に存在する RSS エントリの登録を試みた時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void VM_NewEntry_Exists() => Execute(vm =>
-        {
-            var src = new Uri("https://clown.cube-soft.jp/");
-            var count = vm.Data.Root.Flatten().Count();
+        using var dc = vm.Subscribe<RegisterViewModel>(e => RegisterCommand(e, src).Wait());
+        vm.NewEntry.Execute(null);
 
-            vm.Subscribe<RegisterViewModel>(e => RegisterCommand(e, src).Wait());
-            vm.NewEntry.Execute(null);
+        Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
+    });
 
-            Assert.That(vm.Data.Root.Flatten().Count(), Is.EqualTo(count));
-        });
+    #endregion
 
-        #endregion
+    #region Others
 
-        #region Others
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Setup
-        ///
-        /// <summary>
-        /// Setup some resources.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [SetUp]
-        public void Setup()
-        {
-            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RegisterCommand
-        ///
-        /// <summary>
-        /// Add コマンドを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task RegisterCommand(RegisterViewModel vm, Uri src)
-        {
-            Assert.That(vm.Execute.CanExecute(null), Is.False);
-            vm.Url.Value = src.ToString();
-            Assert.That(vm.Execute.CanExecute(null), Is.True);
-
-            Assert.That(vm.Busy.Value, Is.False);
-            vm.Execute.Execute(null);
-            Assert.That(await Wait.ForAsync(() => vm.Busy.Value), Is.True);
-            Assert.That(await Wait.ForAsync(() => !vm.Busy.Value), Is.True);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RegisterError
-        ///
-        /// <summary>
-        /// 無効な URL を登録しようとします。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private async Task RegisterError(RegisterViewModel vm)
-        {
-            var cts = new CancellationTokenSource();
-
-            vm.Url.Value = "error";
-            vm.Subscribe<DialogMessage>(e =>
-            {
-                e.Value = DialogStatus.Ok;
-                cts.Cancel();
-            });
-            vm.Execute.Execute(null);
-
-            try { await Task.Delay(1000, cts.Token).ConfigureAwait(false); }
-            catch (TaskCanceledException) { /* OK */ }
-        }
-
-        #endregion
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Setup
+    ///
+    /// <summary>
+    /// Setup some resources.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    [SetUp]
+    public void Setup()
+    {
+        SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RegisterCommand
+    ///
+    /// <summary>
+    /// Invokes the Add command.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private async Task RegisterCommand(RegisterViewModel vm, Uri src)
+    {
+        Assert.That(vm.Execute.CanExecute(null), Is.False);
+        vm.Url.Value = src.ToString();
+        Assert.That(vm.Execute.CanExecute(null), Is.True);
+
+        Assert.That(vm.Busy.Value, Is.False);
+        vm.Execute.Execute(null);
+        Assert.That(await Wait.ForAsync(() => vm.Busy.Value), Is.True);
+        Assert.That(await Wait.ForAsync(() => !vm.Busy.Value), Is.True);
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RegisterError
+    ///
+    /// <summary>
+    /// Invokes registration of invalid URLs.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private async Task RegisterError(RegisterViewModel vm)
+    {
+        var cts = new CancellationTokenSource();
+
+        vm.Url.Value = "error";
+        using var dc = vm.Subscribe<DialogMessage>(e =>
+        {
+            e.Value = DialogStatus.Ok;
+            cts.Cancel();
+        });
+        vm.Execute.Execute(null);
+
+        try { await Task.Delay(1000, cts.Token).ConfigureAwait(false); }
+        catch (TaskCanceledException) { /* OK */ }
+    }
+
+    #endregion
 }

@@ -192,7 +192,7 @@ public abstract class WakeableTimerBase : DisposableBase
         if (State != TimerState.Run) return;
         _inner.Stop();
         State = TimerState.Suspend;
-        GetType().LogDebug(nameof(Suspend), $"{nameof(Interval)}:{Interval}");
+        Logger.Debug($"{nameof(Suspend)} {nameof(Interval)}:{Interval}");
     }
 
     /* --------------------------------------------------------------------- */
@@ -264,11 +264,12 @@ public abstract class WakeableTimerBase : DisposableBase
         State = TimerState.Run;
         Next  = DateTime.Now + value;
 
-        GetType().LogDebug(nameof(Resume),
+        Logger.Debug(string.Join(" ",
+            nameof(Resume),
             $"{nameof(Interval)}:{Interval}",
             $"{nameof(Last)}:{Last}",
             $"{nameof(Next)}:{Next}"
-        );
+        ));
 
         _inner.Interval = Math.Max(value.TotalMilliseconds, 1);
         _inner.Start();
