@@ -15,138 +15,137 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss.Reader;
+
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using Cube.FileSystem;
-using Cube.Logging;
-using Cube.Mixin.Assembly;
+using Cube.Reflection.Extensions;
 using Cube.Synchronous;
 
-namespace Cube.Net.Rss.Reader
+/* ------------------------------------------------------------------------- */
+///
+/// UpdateChecker
+///
+/// <summary>
+/// Provides functionality to check for updates.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public class UpdateChecker
 {
+    #region Constructors
+
     /* --------------------------------------------------------------------- */
     ///
     /// UpdateChecker
     ///
     /// <summary>
-    /// アップデートの確認を行うためのクラスです。
+    /// Initializes a new instance of the UpdateChecker class with the
+    /// specified user settings.
+    /// </summary>
+    ///
+    /// <param name="src">User settings.</param>
+    ///
+    /* --------------------------------------------------------------------- */
+    public UpdateChecker(SettingFolder src)
+    {
+        var dir = Assembly.GetExecutingAssembly().GetDirectoryName();
+
+        FileName = Io.Combine(dir, "CubeChecker.exe");
+        Setting  = src;
+
+        _timer.Interval = TimeSpan.FromDays(1);
+        _ = _timer.SubscribeSync(WhenTick);
+
+        if (Setting.Shared.CheckUpdate) Start();
+    }
+
+    #endregion
+
+    #region Properties
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Setting
+    ///
+    /// <summary>
+    /// Gets the user settings.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class UpdateChecker
+    public SettingFolder Setting { get; }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// FileName
+    ///
+    /// <summary>
+    /// Gets the path to the update confirmation program.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public string FileName { get; }
+
+    #endregion
+
+    #region Methods
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Start
+    ///
+    /// <summary>
+    /// Starts periodic execution.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public void Start()
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// UpdateChecker
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /// <param name="src">設定用オブジェクト</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public UpdateChecker(SettingFolder src)
-        {
-            var dir = Assembly.GetExecutingAssembly().GetDirectoryName();
-
-            FileName = Io.Combine(dir, "CubeChecker.exe");
-            Setting  = src;
-
-            _timer.Interval = TimeSpan.FromDays(1);
-            _ = _timer.SubscribeSync(WhenTick);
-
-            if (Setting.Shared.CheckUpdate) Start();
-        }
-
-        #endregion
-
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Setting
-        ///
-        /// <summary>
-        /// 設定用オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public SettingFolder Setting { get; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// FileName
-        ///
-        /// <summary>
-        /// アップデート確認用プログラムのパスを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public string FileName { get; }
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Start
-        ///
-        /// <summary>
-        /// 定期実行を開始します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Start()
-        {
-            var time  = Setting.Shared.LastCheckUpdate ?? DateTime.MinValue;
-            var past  = DateTime.Now - time;
-            var delta = past < _timer.Interval ?
-                        _timer.Interval - past :
-                        TimeSpan.FromMilliseconds(100);
-            _timer.Start(delta);
-            GetType().LogDebug(nameof(Start), "Interval:{_timer.Interval}", $"InitialDelay:{delta}");
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Stop
-        ///
-        /// <summary>
-        /// 定期実行を停止します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Stop() => _timer.Stop();
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// WhenTick
-        ///
-        /// <summary>
-        /// 一定時間毎に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void WhenTick()
-        {
-            try { _ = Process.Start(FileName, "CubeRssReader"); }
-            catch (Exception err) { GetType().LogWarn($"{FileName} ({err.Message})"); }
-            finally { Setting.Shared.LastCheckUpdate = DateTime.Now; }
-        }
-
-        #endregion
-
-        #region Fields
-        private readonly WakeableTimer _timer = new();
-        #endregion
+        var time  = Setting.Shared.LastCheckUpdate ?? DateTime.MinValue;
+        var past  = DateTime.Now - time;
+        var delta = past < _timer.Interval ?
+                    _timer.Interval - past :
+                    TimeSpan.FromMilliseconds(100);
+        _timer.Start(delta);
+        Logger.Debug($"{nameof(Start)} Interval:{_timer.Interval} InitialDelay:{delta}");
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Stop
+    ///
+    /// <summary>
+    /// Stops periodic execution.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public void Stop() => _timer.Stop();
+
+    #endregion
+
+    #region Implementations
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// WhenTick
+    ///
+    /// <summary>
+    /// Executed at regular intervals.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private void WhenTick()
+    {
+        try { _ = Process.Start(FileName, "CubeRssReader"); }
+        catch (Exception err) { Logger.Warn($"{FileName} ({err.Message})"); }
+        finally { Setting.Shared.LastCheckUpdate = DateTime.Now; }
+    }
+
+    #endregion
+
+    #region Fields
+    private readonly WakeableTimer _timer = new();
+    #endregion
 }

@@ -15,189 +15,188 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Http;
+
 using System;
 using System.IO;
 
-namespace Cube.Net.Http
+#region IContentConverter<TValue>
+
+/* ------------------------------------------------------------------------- */
+///
+/// IContentConverter
+///
+/// <summary>
+/// Represents the interface to convert the HTTP response.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public interface IContentConverter<TValue>
 {
-    #region IContentConverter<TValue>
+    /* --------------------------------------------------------------------- */
+    ///
+    /// IgnoreException
+    ///
+    /// <summary>
+    /// Gets or sets a value indicating whether to ignore exceptions.
+    /// </summary>
+    ///
+    /// <remarks>
+    /// If used in a class that retries a default number of times
+    /// when an exception occurs, such as HttpMonitor, the failure
+    /// of the conversion may result in extra communication.
+    /// In such a case, set IgnoreException to true to suppress it.
+    /// </remarks>
+    ///
+    /* --------------------------------------------------------------------- */
+    bool IgnoreException { get; set; }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// IContentConverter
+    /// Convert
     ///
     /// <summary>
-    /// Represents the interface to convert the HTTP response.
+    /// Invokes the conversion.
+    /// </summary>
+    ///
+    /// <param name="src">Stream object.</param>
+    ///
+    /// <returns>Converted object.</returns>
+    ///
+    /* --------------------------------------------------------------------- */
+    TValue Convert(Stream src);
+}
+
+#endregion
+
+#region ContentConverterBase<TValue>
+
+/* ------------------------------------------------------------------------- */
+///
+/// ContentConverterBase
+///
+/// <summary>
+/// Represetns the base class of the IContentConverter implementations.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public abstract class ContentConverterBase<TValue> : IContentConverter<TValue>
+{
+    #region Properties
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// IgnoreException
+    ///
+    /// <summary>
+    /// Gets or sets a value indicating whether to ignore exceptions.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public interface IContentConverter<TValue>
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IgnoreException
-        ///
-        /// <summary>
-        /// Gets or sets a value indicating whether to ignore exceptions.
-        /// </summary>
-        ///
-        /// <remarks>
-        /// If used in a class that retries a default number of times
-        /// when an exception occurs, such as HttpMonitor, the failure
-        /// of the conversion may result in extra communication.
-        /// In such a case, set IgnoreException to true to suppress it.
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        bool IgnoreException { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Convert
-        ///
-        /// <summary>
-        /// Invokes the conversion.
-        /// </summary>
-        ///
-        /// <param name="src">Stream object.</param>
-        ///
-        /// <returns>Converted object.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        TValue Convert(Stream src);
-    }
+    public bool IgnoreException { get; set; }
 
     #endregion
 
-    #region ContentConverterBase<TValue>
+    #region Methods
 
     /* --------------------------------------------------------------------- */
     ///
-    /// ContentConverterBase
+    /// Convert
     ///
     /// <summary>
-    /// Represetns the base class of the IContentConverter implementations.
+    /// Invokes the conversion.
     /// </summary>
     ///
+    /// <param name="src">Stream object.</param>
+    ///
+    /// <returns>Converted object.</returns>
+    ///
     /* --------------------------------------------------------------------- */
-    public abstract class ContentConverterBase<TValue> : IContentConverter<TValue>
+    public TValue Convert(Stream src)
     {
-        #region Properties
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IgnoreException
-        ///
-        /// <summary>
-        /// Gets or sets a value indicating whether to ignore exceptions.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public bool IgnoreException { get; set; }
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Convert
-        ///
-        /// <summary>
-        /// Invokes the conversion.
-        /// </summary>
-        ///
-        /// <param name="src">Stream object.</param>
-        ///
-        /// <returns>Converted object.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public TValue Convert(Stream src)
+        try { return OnConvert(src); }
+        catch (Exception err)
         {
-            try { return OnConvert(src); }
-            catch (Exception err)
-            {
-                if (IgnoreException) GetType().LogWarn(err);
-                else throw;
-            }
-            return default;
+            if (IgnoreException) Logger.Warn(err);
+            else throw;
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnConvert
-        ///
-        /// <summary>
-        /// Invokes the conversion.
-        /// </summary>
-        ///
-        /// <param name="src">Stream object.</param>
-        ///
-        /// <returns>Converted object.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected abstract TValue OnConvert(Stream src);
-
-        #endregion
+        return default;
     }
-
-    #endregion
-
-    #region ContentConverter<TValue>
 
     /* --------------------------------------------------------------------- */
     ///
-    /// ContentConverter(TValue)
+    /// OnConvert
     ///
     /// <summary>
-    /// Provides functionality to invoke the provided function as
-    /// IContentConverter interface.
+    /// Invokes the conversion.
     /// </summary>
     ///
+    /// <param name="src">Stream object.</param>
+    ///
+    /// <returns>Converted object.</returns>
+    ///
     /* --------------------------------------------------------------------- */
-    public class ContentConverter<TValue> : ContentConverterBase<TValue>
-    {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ContentConverter
-        ///
-        /// <summary>
-        /// Initializes a new instance of the ContentConverter class with
-        /// the specified function.
-        /// </summary>
-        ///
-        /// <param name="func">Function object.</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ContentConverter(Func<Stream, TValue> func) { _func = func; }
-
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnConvert
-        ///
-        /// <summary>
-        /// Invokes the conversion.
-        /// </summary>
-        ///
-        /// <param name="src">Stream object.</param>
-        ///
-        /// <returns>Converted object.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override TValue OnConvert(Stream src) => _func(src);
-
-        #endregion
-
-        #region Fields
-        private readonly Func<Stream, TValue> _func;
-        #endregion
-    }
+    protected abstract TValue OnConvert(Stream src);
 
     #endregion
 }
+
+#endregion
+
+#region ContentConverter<TValue>
+
+/* ------------------------------------------------------------------------- */
+///
+/// ContentConverter(TValue)
+///
+/// <summary>
+/// Provides functionality to invoke the provided function as
+/// IContentConverter interface.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public class ContentConverter<TValue> : ContentConverterBase<TValue>
+{
+    #region Constructors
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ContentConverter
+    ///
+    /// <summary>
+    /// Initializes a new instance of the ContentConverter class with
+    /// the specified function.
+    /// </summary>
+    ///
+    /// <param name="func">Function object.</param>
+    ///
+    /* --------------------------------------------------------------------- */
+    public ContentConverter(Func<Stream, TValue> func) => _func = func;
+
+    #endregion
+
+    #region Methods
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// OnConvert
+    ///
+    /// <summary>
+    /// Invokes the conversion.
+    /// </summary>
+    ///
+    /// <param name="src">Stream object.</param>
+    ///
+    /// <returns>Converted object.</returns>
+    ///
+    /* --------------------------------------------------------------------- */
+    protected override TValue OnConvert(Stream src) => _func(src);
+
+    #endregion
+
+    #region Fields
+    private readonly Func<Stream, TValue> _func;
+    #endregion
+}
+
+#endregion

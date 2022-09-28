@@ -15,153 +15,133 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Tests.Rss;
+
 using System;
-using System.Reflection;
-using Cube.Mixin.Assembly;
 using Cube.Net.Http;
 using Cube.Net.Rss;
+using Cube.Reflection.Extensions;
 using NUnit.Framework;
 
-namespace Cube.Net.Tests.Rss
+/* ------------------------------------------------------------------------- */
+///
+/// RssClientTest
+///
+/// <summary>
+/// Tests the RssClient class.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+[TestFixture]
+class RssClientTest
 {
+    #region Tests
+
     /* --------------------------------------------------------------------- */
     ///
-    /// RssClientTest
+    /// GetAsync
     ///
     /// <summary>
-    /// RssClient のテスト用クラスです。
+    /// Tests the GetAsync extended method with the URL of RSS feed.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [TestFixture]
-    class RssClientTest
+    [TestCase("https://clown.cube-soft.jp/feed")]
+    [TestCase("https://news.yahoo.co.jp/rss/topics/top-picks.xml")]
+    public void GetAsync(string src)
     {
-        #region Methods
+        var http  = Create();
+        var now   = DateTime.Now;
+        var rss   = http.GetAsync(new Uri(src)).Result;
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync
-        ///
-        /// <summary>
-        /// RSS フィードを取得するテストを実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [TestCase("https://clown.cube-soft.jp/feed")]
-        [TestCase("https://news.yahoo.co.jp/rss/topics/top-picks.xml")]
-        public void GetAsync(string src)
-        {
-            var http  = Create();
-            var now   = DateTime.Now;
-            var rss   = http.GetAsync(new Uri(src)).Result;
+        Assert.That(rss, Is.Not.Null);
+        Assert.That(rss.Title.Length, Is.AtLeast(1), nameof(rss.Title));
+        Assert.That(rss.Uri, Is.Not.Null, nameof(rss.Uri));
+        Assert.That(rss.Link, Is.Not.Null, nameof(rss.Link));
+        Assert.That(rss.Items.Count, Is.AtLeast(1), nameof(rss.Items));
+        Assert.That(rss.LastChecked, Is.GreaterThanOrEqualTo(now), nameof(rss.LastChecked));
+        Assert.That(rss.LastPublished.HasValue, Is.True, nameof(rss.LastPublished));
 
-            Assert.That(rss, Is.Not.Null);
-            Assert.That(rss.Title.Length, Is.AtLeast(1), nameof(rss.Title));
-            Assert.That(rss.Uri, Is.Not.Null, nameof(rss.Uri));
-            Assert.That(rss.Link, Is.Not.Null, nameof(rss.Link));
-            Assert.That(rss.Items.Count, Is.AtLeast(1), nameof(rss.Items));
-            Assert.That(rss.LastChecked, Is.GreaterThanOrEqualTo(now), nameof(rss.LastChecked));
-            Assert.That(rss.LastPublished.HasValue, Is.True, nameof(rss.LastPublished));
+        var item = rss.Items[0];
 
-            var item = rss.Items[0];
-
-            Assert.That(item.Title.Length, Is.AtLeast(1), nameof(item.Title));
-            Assert.That(item.Link, Is.Not.Null, nameof(item.Link));
-            Assert.That(item.PublishTime.HasValue, Is.True, nameof(item.PublishTime));
-            Assert.That(item.Status, Is.EqualTo(RssItemStatus.Unread));
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync_Tsl12_Throws
-        ///
-        /// <summary>
-        /// Confirms the failure when trying to get an RSS feed that only
-        /// allows TLS 1.2 or later.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void GetAsync_Tsl12_Throws()
-        {
-            Assert.That(
-                () => Create().GetAsync(new Uri("https://news.yahoo.co.jp/pickup/rss.xml")).Result,
-                Throws.TypeOf<AggregateException>().And.InnerException.TypeOf<System.Net.WebException>()
-            );
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync_Redirect
-        ///
-        /// <summary>
-        /// HTML ページを示す URL を指定した時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [TestCase("https://clown.cube-soft.jp/", ExpectedResult = "https://clown.cube-soft.jp/feed")]
-        public string GetAsync_Redirect(string src)
-        {
-            var uri  = default(Uri);
-            var http = Create();
-            http.Redirected += (s, e) => uri = e.NewValue;
-
-            var rss = http.GetAsync(new Uri(src)).Result;
-            Assert.That(rss, Is.Not.Null);
-            return uri.ToString();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync_Redirect_NoHandlers
-        ///
-        /// <summary>
-        /// HTML ページを示す URL を指定した時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Test]
-        public void GetAsync_Recirect_NoHandlers() => Assert.That(
-            Create().GetAsync(new Uri("https://blog.cube-soft.jp/")).Result,
-            Is.Not.Null
-        );
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync_NotFound
-        ///
-        /// <summary>
-        /// RSS フィードが見つからない時の挙動を確認します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [TestCase("http://www.cube-soft.jp/")]
-        [TestCase("http://www.cube-soft.jp/404.html")]
-        public void GetAsync_NotFound(string src) => Assert.That(
-            Create().GetAsync(new Uri(src)).Result,
-            Is.Null
-        );
-
-        #endregion
-
-        #region Others
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Create
-        ///
-        /// <summary>
-        /// RssClient オブジェクトを生成します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private RssClient Create()
-        {
-            var asm = Assembly.GetExecutingAssembly();
-            var h   = new HttpHandler { UserAgent = $"{asm.GetProduct()}/{asm.GetVersion()}" };
-            return new RssClient(h);
-        }
-
-        #endregion
+        Assert.That(item.Title.Length, Is.AtLeast(1), nameof(item.Title));
+        Assert.That(item.Link, Is.Not.Null, nameof(item.Link));
+        Assert.That(item.PublishTime.HasValue, Is.True, nameof(item.PublishTime));
+        Assert.That(item.Status, Is.EqualTo(RssItemStatus.Unread));
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// GetAsync_Redirect
+    ///
+    /// <summary>
+    /// Tests the URL redirection.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    [TestCase("https://clown.cube-soft.jp/", ExpectedResult = "https://clown.cube-soft.jp/feed")]
+    public string GetAsync_Redirect(string src)
+    {
+        var uri  = default(Uri);
+        var http = Create();
+        http.Redirected += (s, e) => uri = e.NewValue;
+
+        var rss = http.GetAsync(new Uri(src)).Result;
+        Assert.That(rss, Is.Not.Null);
+        return uri.ToString();
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// GetAsync_Redirect_NoHandlers
+    ///
+    /// <summary>
+    /// Tests the URL redirection without handlers.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    [Test]
+    public void GetAsync_Recirect_NoHandlers() => Assert.That(
+        Create().GetAsync(new Uri("https://blog.cube-soft.jp/")).Result,
+        Is.Not.Null
+    );
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// GetAsync_NotFound
+    ///
+    /// <summary>
+    /// Test the GetAsync extended method on a URL where an RSS feed is not
+    /// found.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    [TestCase("http://www.cube-soft.jp/")]
+    [TestCase("http://www.cube-soft.jp/404.html")]
+    public void GetAsync_NotFound(string src) => Assert.That(
+        Create().GetAsync(new Uri(src)).Result,
+        Is.Null
+    );
+
+    #endregion
+
+    #region Others
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Create
+    ///
+    /// <summary>
+    /// Creates a new instance of the RssClient class.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private RssClient Create()
+    {
+        var asm = typeof(RssClientTest).Assembly;
+        var h   = new HttpHandler { UserAgent = $"{asm.GetProduct()}/{asm.GetVersion()}" };
+        return new RssClient(h);
+    }
+
+    #endregion
 }

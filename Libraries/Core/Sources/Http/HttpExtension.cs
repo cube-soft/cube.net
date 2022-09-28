@@ -15,120 +15,119 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Mixin.Net.Http;
+
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cube.Net.Http;
 
-namespace Cube.Mixin.Net.Http
+/* ------------------------------------------------------------------------- */
+///
+/// HttpExtension
+///
+/// <summary>
+/// Provides extended methods of the HttpClient class.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public static class HttpExtension
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// HttpExtension
+    /// GetAsync(T)
     ///
     /// <summary>
-    /// Provides extended methods of the HttpClient class.
+    /// Gets the result of HTTP transmission with the specified
+    /// conversion.
     /// </summary>
     ///
+    /// <param name="client">HTTP client.</param>
+    /// <param name="uri">Request URL.</param>
+    /// <param name="converter">Converter object.</param>
+    ///
+    /// <returns>HTTP transmission and conversion result.</returns>
+    ///
+    /// <remarks>
+    /// If an exception is thrown, the method will follow the settings
+    /// of IContentConverter.IgnoreException property.
+    /// </remarks>
+    ///
     /* --------------------------------------------------------------------- */
-    public static class HttpExtension
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync(T)
-        ///
-        /// <summary>
-        /// Gets the result of HTTP transmission with the specified
-        /// conversion.
-        /// </summary>
-        ///
-        /// <param name="client">HTTP client.</param>
-        /// <param name="uri">Request URL.</param>
-        /// <param name="converter">Converter object.</param>
-        ///
-        /// <returns>HTTP transmission and conversion result.</returns>
-        ///
-        /// <remarks>
-        /// If an exception is thrown, the method will follow the settings
-        /// of IContentConverter.IgnoreException property.
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static async Task<T> GetAsync<T>(this HttpClient client,
-            System.Uri uri,
-            IContentConverter<T> converter
-        ) {
-            try
+    public static async Task<T> GetAsync<T>(this HttpClient client,
+        System.Uri uri,
+        IContentConverter<T> converter
+    ) {
+        try
+        {
+            using var response = await client.GetAsync(uri);
+            if (response.IsSuccessStatusCode)
             {
-                using var response = await client.GetAsync(uri);
-                if (response.IsSuccessStatusCode)
-                {
-                    await response.Content.LoadIntoBufferAsync();
-                    var stream = await response.Content.ReadAsStreamAsync();
-                    return converter.Convert(stream);
-                }
-                else client.GetType().LogWarn($"StatusCode:{response.StatusCode}");
+                await response.Content.LoadIntoBufferAsync();
+                var stream = await response.Content.ReadAsStreamAsync();
+                return converter.Convert(stream);
             }
-            catch (Exception err)
-            {
-                if (converter.IgnoreException) client.GetType().LogWarn(err);
-                else throw;
-            }
-            return default;
+            else Logger.Warn($"StatusCode:{response.StatusCode}");
         }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetAsync(T)
-        ///
-        /// <summary>
-        /// Gets the result of HTTP transmission with the specified
-        /// function.
-        /// </summary>
-        ///
-        /// <param name="client">HTTP client.</param>
-        /// <param name="uri">Request URL.</param>
-        /// <param name="func">Function to convert.</param>
-        ///
-        /// <returns>HTTP transmission and conversion result.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static Task<T> GetAsync<T>(this HttpClient client, System.Uri uri, Func<Stream, T> func) =>
-            client.GetAsync(uri, new ContentConverter<T>(func));
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetJsonAsync
-        ///
-        /// <summary>
-        /// Gets data in JSON format asynchronously.
-        /// </summary>
-        ///
-        /// <param name="client">HTTP client.</param>
-        /// <param name="uri">Request URL.</param>
-        ///
-        /// <returns>Result in JSON format.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static Task<T> GetJsonAsync<T>(this HttpClient client, System.Uri uri) where T : class =>
-            client.GetAsync(uri, new JsonContentConverter<T>());
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetXmlAsync
-        ///
-        /// <summary>
-        /// Gets data in XML format asynchronously.
-        /// </summary>
-        ///
-        /// <param name="client">HTTP client.</param>
-        /// <param name="uri">Request URL.</param>
-        ///
-        /// <returns>Result in XML format.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static Task<T> GetXmlAsync<T>(this HttpClient client, System.Uri uri) where T : class =>
-            client.GetAsync(uri, new XmlContentConverter<T>());
+        catch (Exception err)
+        {
+            if (converter.IgnoreException) Logger.Warn(err);
+            else throw;
+        }
+        return default;
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// GetAsync(T)
+    ///
+    /// <summary>
+    /// Gets the result of HTTP transmission with the specified
+    /// function.
+    /// </summary>
+    ///
+    /// <param name="client">HTTP client.</param>
+    /// <param name="uri">Request URL.</param>
+    /// <param name="func">Function to convert.</param>
+    ///
+    /// <returns>HTTP transmission and conversion result.</returns>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static Task<T> GetAsync<T>(this HttpClient client, Uri uri, Func<Stream, T> func) =>
+        client.GetAsync(uri, new ContentConverter<T>(func));
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// GetJsonAsync
+    ///
+    /// <summary>
+    /// Gets data in JSON format asynchronously.
+    /// </summary>
+    ///
+    /// <param name="client">HTTP client.</param>
+    /// <param name="uri">Request URL.</param>
+    ///
+    /// <returns>Result in JSON format.</returns>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static Task<T> GetJsonAsync<T>(this HttpClient client, Uri uri) where T : class =>
+        client.GetAsync(uri, new JsonContentConverter<T>());
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// GetXmlAsync
+    ///
+    /// <summary>
+    /// Gets data in XML format asynchronously.
+    /// </summary>
+    ///
+    /// <param name="client">HTTP client.</param>
+    /// <param name="uri">Request URL.</param>
+    ///
+    /// <returns>Result in XML format.</returns>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static Task<T> GetXmlAsync<T>(this HttpClient client, Uri uri) where T : class =>
+        client.GetAsync(uri, new XmlContentConverter<T>());
 }

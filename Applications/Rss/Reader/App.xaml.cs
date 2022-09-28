@@ -15,182 +15,169 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss.Reader;
+
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows;
 using Cube.Forms.Controls;
-using Cube.Logging;
-using Cube.Mixin.Assembly;
-using Cube.Mixin.Forms;
+using Cube.Forms.Extensions;
+using Cube.Reflection.Extensions;
+using Cube.Xui.Logging.Extensions;
 
-namespace Cube.Net.Rss.Reader
+/* ------------------------------------------------------------------------- */
+///
+/// App
+///
+/// <summary>
+/// Represents the main program.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public partial class App : Application, IDisposable
 {
+    #region Constructors
+
     /* --------------------------------------------------------------------- */
     ///
     /// App
     ///
     /// <summary>
-    /// メインプログラムを表すクラスです。
+    /// Initializes a new instance of the App class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public partial class App : Application, IDisposable
+    public App() => _dispose = new(Dispose);
+
+    #endregion
+
+    #region Methods
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// OnStartup
+    ///
+    /// <summary>
+    /// Occurs when the process is launched.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    protected override void OnStartup(StartupEventArgs e)
     {
-        #region Constructors
+        if (!Activate()) return;
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// App
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public App()
+        Logger.Configure(new Logging.NLog.LoggerSource());
+        Logger.Info(typeof(App).Assembly);
+        Logger.ObserveTaskException();
+        this.ObserveUiException();
+
+        try
         {
-            _dispose = new OnceAction<bool>(Dispose);
+            System.Net.ServicePointManager.DefaultConnectionLimit = 10;
+            WebControl.EmulateVersion = WebControlVersion.Latest;
+            WebControl.MaxConnections = 10;
+            WebControl.NavigationSounds = false;
         }
+        catch (Exception err) { Logger.Warn(err); }
 
-        #endregion
-
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnStartup
-        ///
-        /// <summary>
-        /// 起動時に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            if (!Activate()) return;
-
-            GetType().LogInfo(Assembly.GetExecutingAssembly());
-
-            _resources.Add(Logger.ObserveTaskException());
-            _resources.Add(this.ObserveUiException());
-
-            try
-            {
-                System.Net.ServicePointManager.DefaultConnectionLimit = 10;
-                WebControl.EmulateVersion = WebControlVersion.Latest;
-                WebControl.MaxConnections = 10;
-                WebControl.NavigationSounds = false;
-            }
-            catch (Exception err) { GetType().LogWarn(err); }
-
-            base.OnStartup(e);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnExit
-        ///
-        /// <summary>
-        /// 終了時に実行されます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void OnExit(ExitEventArgs e)
-        {
-            _mutex?.ReleaseMutex();
-            base.OnExit(e);
-        }
-
-        #region IDisposable
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~App
-        ///
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~App() { _dispose.Invoke(false); }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを開放します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            _dispose.Invoke(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        ///
-        /// <summary>
-        /// リソースを開放します。
-        /// </summary>
-        ///
-        /// <param name="disposing">
-        /// マネージオブジェクトを開放するかどうか
-        /// </param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                foreach (var obj in _resources) obj.Dispose();
-                // _mutex?.Dispose();
-            }
-        }
-
-        #endregion
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Activate
-        ///
-        /// <summary>
-        /// アクティブ化を実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private bool Activate()
-        {
-            var asm  = Assembly.GetExecutingAssembly();
-            var name = $"{Environment.UserName}@{asm.GetProduct()}";
-            _mutex = new Mutex(true, name, out bool dest);
-            if (!dest)
-            {
-                _mutex = null;
-                var id = Process.GetCurrentProcess().Id;
-                Process.GetProcessesByName(name).FirstOrDefault(p => p.Id != id).Activate();
-                Current.Shutdown();
-            }
-            return dest;
-        }
-
-        #endregion
-
-        #region Fields
-        private readonly OnceAction<bool> _dispose;
-        private readonly IList<IDisposable> _resources = new List<IDisposable>();
-        private Mutex _mutex;
-        #endregion
+        base.OnStartup(e);
     }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// OnExit
+    ///
+    /// <summary>
+    /// Occurs when the process is terminated.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    protected override void OnExit(ExitEventArgs e)
+    {
+        _mutex?.ReleaseMutex();
+        base.OnExit(e);
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ~App
+    ///
+    /// <summary>
+    /// Finalizes the App.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    ~App() { _dispose.Invoke(false); }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Dispose
+    ///
+    /// <summary>
+    /// Releases all resources used by the object.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public void Dispose()
+    {
+        _dispose.Invoke(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /* ----------------------------------------------------------------- */
+    ///
+    /// Dispose
+    ///
+    /// <summary>
+    /// Releases the unmanaged resources used by the WakeableTimer
+    /// and optionally releases the managed resources.
+    /// </summary>
+    ///
+    /// <param name="disposing">
+    /// true to release both managed and unmanaged resources;
+    /// false to release only unmanaged resources.
+    /// </param>
+    ///
+    /* ----------------------------------------------------------------- */
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing) _mutex?.Close();
+    }
+
+    #endregion
+
+    #region Implementations
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Activate
+    ///
+    /// <summary>
+    /// Activates the current process.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private bool Activate()
+    {
+        var asm  = typeof(App).Assembly;
+        var name = $"{Environment.UserName}@{asm.GetProduct()}";
+        _mutex = new Mutex(true, name, out bool dest);
+        if (!dest)
+        {
+            _mutex = null;
+            var id = Process.GetCurrentProcess().Id;
+            Process.GetProcessesByName(name).FirstOrDefault(p => p.Id != id).Activate();
+            Current.Shutdown();
+        }
+        return dest;
+    }
+
+    #endregion
+
+    #region Fields
+    private readonly OnceAction<bool> _dispose;
+    private Mutex _mutex;
+    #endregion
 }

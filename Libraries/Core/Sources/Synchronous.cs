@@ -15,36 +15,43 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-namespace Cube.Net.Tests;
+namespace Cube.Synchronous;
 
-using System.Net.NetworkInformation;
-using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
 
 /* ------------------------------------------------------------------------- */
 ///
-/// NetworkTest
+/// WakeableTimerExtension
 ///
 /// <summary>
-/// Tests the Network class.
+/// Provides extended methods of the WakeableTimer class.
 /// </summary>
 ///
 /* ------------------------------------------------------------------------- */
-[TestFixture]
-class NetworkTest
+public static class WakeableTimerExtension
 {
+    #region Methods
+
     /* --------------------------------------------------------------------- */
     ///
-    /// Test
+    /// SubscribeSync
     ///
     /// <summary>
-    /// Checks the properties of the Network class.
+    /// Sets the specified action to the timer.
     /// </summary>
     ///
+    /// <param name="src">WakeableTimer object.</param>
+    /// <param name="callback">User action.</param>
+    ///
+    /// <returns>Object to remove from the subscription.</returns>
+    ///
     /* --------------------------------------------------------------------- */
-    [Test]
-    public void Test()
+    public static IDisposable SubscribeSync(this WakeableTimer src, Action callback) => src.Subscribe(() =>
     {
-        Assert.That(Network.Status,    Is.EqualTo(OperationalStatus.Up));
-        Assert.That(Network.Available, Is.True);
-    }
+        callback();
+        return TaskEx.FromResult(0);
+    });
+
+    #endregion
 }

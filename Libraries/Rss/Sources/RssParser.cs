@@ -15,160 +15,155 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Cube.Mixin.Uri;
+using Cube.Web.Extensions;
 
-namespace Cube.Net.Rss
+/* ------------------------------------------------------------------------- */
+///
+/// RssParser
+///
+/// <summary>
+/// Provides functionality to parse the RSS and Atom feeds.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public static class RssParser
 {
+    #region Methods
+
+    #region Parse
+
     /* --------------------------------------------------------------------- */
     ///
-    /// RssParser
+    /// Parse
     ///
     /// <summary>
-    /// Provides functionality to parse the RSS and Atom feeds.
+    /// Reads data from the stream and creates a new instance of the
+    /// RssFeed class.
+    /// </summary>
+    ///
+    /// <param name="src">Source stream.</param>
+    ///
+    /// <returns>RssFeed object.</returns>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static RssFeed Parse(System.IO.Stream src) =>
+        Parse(XDocument.Load(new System.IO.StreamReader(src, System.Text.Encoding.UTF8)).Root);
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Parse
+    ///
+    /// <summary>
+    /// Parses the specified XML object and creates a new instance of
+    /// the RssFeed class.
+    /// </summary>
+    ///
+    /// <param name="root">Root XML element.</param>
+    ///
+    /// <returns>RssFeed object.</returns>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static RssFeed Parse(XElement root) =>
+        Parse(root, root.GetRssVersion());
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Parse
+    ///
+    /// <summary>
+    /// Parses the specified XML object and creates a new instance of
+    /// the RssFeed class.
+    /// </summary>
+    ///
+    /// <param name="root">Root XML element.</param>
+    /// <param name="version">RSS version.</param>
+    ///
+    /// <returns>RssFeed object.</returns>
+    ///
+    /* --------------------------------------------------------------------- */
+    public static RssFeed Parse(XElement root, RssVersion version) => version switch
+    {
+        RssVersion.Atom   => AtomParser.Parse(root),
+        RssVersion.Rss091 => Rss200Parser.Parse(root),
+        RssVersion.Rss092 => Rss200Parser.Parse(root),
+        RssVersion.Rss100 => Rss100Parser.Parse(root),
+        RssVersion.Rss200 => Rss200Parser.Parse(root),
+        _ => default,
+    };
+
+    #endregion
+
+    #region GetRssUris
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// GetRssUris
+    ///
+    /// <summary>
+    /// Gets the sequence of the RSS feed URLs.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class RssParser
+    public static IEnumerable<Uri> GetRssUris(this System.IO.Stream src)
     {
-        #region Methods
+        var doc = ToXDocument(src);
+        var ns = doc.Root.GetDefaultNamespace();
 
-        #region Parse
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Parse
-        ///
-        /// <summary>
-        /// Reads data from the stream and creates a new instance of the
-        /// RssFeed class.
-        /// </summary>
-        ///
-        /// <param name="src">Source stream.</param>
-        ///
-        /// <returns>RssFeed object.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(System.IO.Stream src) =>
-            Parse(XDocument.Load(new System.IO.StreamReader(src, System.Text.Encoding.UTF8)).Root);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Parse
-        ///
-        /// <summary>
-        /// Parses the specified XML object and creates a new instance of
-        /// the RssFeed class.
-        /// </summary>
-        ///
-        /// <param name="root">Root XML element.</param>
-        ///
-        /// <returns>RssFeed object.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(XElement root) =>
-            Parse(root, root.GetRssVersion());
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Parse
-        ///
-        /// <summary>
-        /// Parses the specified XML object and creates a new instance of
-        /// the RssFeed class.
-        /// </summary>
-        ///
-        /// <param name="root">Root XML element.</param>
-        /// <param name="version">RSS version.</param>
-        ///
-        /// <returns>RssFeed object.</returns>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static RssFeed Parse(XElement root, RssVersion version)
-        {
-            switch (version)
-            {
-                case RssVersion.Atom:   return AtomParser.Parse(root);
-                case RssVersion.Rss091: return Rss200Parser.Parse(root);
-                case RssVersion.Rss092: return Rss200Parser.Parse(root);
-                case RssVersion.Rss100: return Rss100Parser.Parse(root);
-                case RssVersion.Rss200: return Rss200Parser.Parse(root);
-                default: break;
-            }
-            return default;
-        }
-
-        #endregion
-
-        #region GetRssUris
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// GetRssUris
-        ///
-        /// <summary>
-        /// Gets the sequence of the RSS feed URLs.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static IEnumerable<Uri> GetRssUris(this System.IO.Stream src)
-        {
-            var doc = ToXDocument(src);
-            var ns = doc.Root.GetDefaultNamespace();
-
-            return doc.Descendants(ns + "link")
-                      .Where(e => IsRssLink(e))
-                      .OrderBy(e => (string)e.Attribute("type"))
-                      .Select(e => ((string)e.Attribute("href")).ToUri());
-        }
-
-        #endregion
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// IsRssLink
-        ///
-        /// <summary>
-        /// Determines if the specified element is an RSS link.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static bool IsRssLink(XElement e)
-        {
-            if ((string)e.Attribute("rel") != "alternate") return false;
-            var dest = ((string)e.Attribute("type") ?? "").ToLowerInvariant();
-            return dest.Contains("rss") || dest.Contains("atom");
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ToXDocument
-        ///
-        /// <summary>
-        /// Creates an XDocument object.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private static XDocument ToXDocument(System.IO.Stream src)
-        {
-            using var stream = new System.IO.StreamReader(src, System.Text.Encoding.UTF8);
-            using var reader = new Sgml.SgmlReader
-            {
-                CaseFolding = Sgml.CaseFolding.ToLower,
-                DocType = "HTML",
-                IgnoreDtd = true,
-                InputStream = stream,
-            };
-            return XDocument.Load(reader);
-        }
-
-        #endregion
+        return doc.Descendants(ns + "link")
+                  .Where(e => IsRssLink(e))
+                  .OrderBy(e => (string)e.Attribute("type"))
+                  .Select(e => ((string)e.Attribute("href")).ToUri());
     }
+
+    #endregion
+
+    #endregion
+
+    #region Implementations
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// IsRssLink
+    ///
+    /// <summary>
+    /// Determines if the specified element is an RSS link.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private static bool IsRssLink(XElement e)
+    {
+        if ((string)e.Attribute("rel") != "alternate") return false;
+        var dest = ((string)e.Attribute("type") ?? "").ToLowerInvariant();
+        return dest.Contains("rss") || dest.Contains("atom");
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ToXDocument
+    ///
+    /// <summary>
+    /// Creates an XDocument object.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    private static XDocument ToXDocument(System.IO.Stream src)
+    {
+        using var stream = new System.IO.StreamReader(src, System.Text.Encoding.UTF8);
+        using var reader = new Sgml.SgmlReader
+        {
+            CaseFolding = Sgml.CaseFolding.ToLower,
+            DocType = "HTML",
+            IgnoreDtd = true,
+            InputStream = stream,
+        };
+        return XDocument.Load(reader);
+    }
+
+    #endregion
 }

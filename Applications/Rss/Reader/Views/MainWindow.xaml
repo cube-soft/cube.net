@@ -23,7 +23,7 @@
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dd="urn:gong-wpf-dragdrop"
-    xmlns:wf="clr-namespace:Cube.Forms.Controls;assembly=Cube.Forms"
+    xmlns:wf="clr-namespace:Cube.Forms.Controls;assembly=Cube.Forms.Controls"
     xmlns:xi="clr-namespace:Cube.Xui;assembly=Cube.Xui"
     xmlns:xc="clr-namespace:Cube.Xui.Converters;assembly=Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
