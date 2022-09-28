@@ -15,108 +15,111 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss.Reader;
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cube.Mixin.Observing;
-using Cube.Mixin.String;
+using Cube.Observable.Extensions;
+using Cube.Text.Extensions;
 using Cube.Xui;
 
-namespace Cube.Net.Rss.Reader
+/* ------------------------------------------------------------------------- */
+///
+/// RegisterViewModel
+///
+/// <summary>
+/// Represents the ViewModel for the RegisterWindow.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public class RegisterViewModel : ViewModelBase<RegisterFacade>
 {
+    #region Constructors
+
     /* --------------------------------------------------------------------- */
     ///
     /// RegisterViewModel
     ///
     /// <summary>
-    /// 新規 URL の登録画面とモデルを関連付けるための ViewModel です。
+    /// Initializes a new instance of the RegisterViewModel class with the
+    /// specified arguments.
+    /// </summary>
+    ///
+    /// <param name="callback">Callback action.</param>
+    /// <param name="context">Synchronization context.</param>
+    ///
+    /* --------------------------------------------------------------------- */
+    public RegisterViewModel(Func<string, Task> callback, SynchronizationContext context) : base(
+        new RegisterFacade(new ContextDispatcher(context, false)),
+        new Aggregator(),
+        context
+    ) {
+        Execute = Get(() => new DelegateCommand(
+            async () => {
+                try
+                {
+                    Facade.Busy = true;
+                    await callback?.Invoke(Url.Value);
+                    Close.Execute(null);
+                }
+                catch (Exception err) { Send(Message.Error(err, Properties.Resources.ErrorRegister)); }
+                finally { Facade.Busy = false; }
+            },
+            () => Facade.Url.HasValue() && !Facade.Busy
+        ).Hook(Facade, nameof(Facade.Busy), nameof(Facade.Url)), nameof(Execute));
+    }
+
+    #endregion
+
+    #region Properties
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Busy
+    ///
+    /// <summary>
+    /// Gets or sets a value indicating whether processing is in progress.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class RegisterViewModel : ViewModelBase<RegisterFacade>
-    {
-        #region Constructors
+    public IElement<bool> Busy => GetElement(() => new BindableElement<bool>(
+        () => string.Empty,
+        () => Facade.Busy,
+        GetDispatcher(false)
+    ));
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RegisterViewModel
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public RegisterViewModel(Func<string, Task> callback, SynchronizationContext context) : base(
-            new RegisterFacade(new ContextDispatcher(context, false)),
-            new Aggregator(),
-            context
-        ) {
-            Execute = Get(() => new DelegateCommand(
-                async () => {
-                    try
-                    {
-                        Facade.Busy = true;
-                        await callback?.Invoke(Url.Value);
-                        Close.Execute(null);
-                    }
-                    catch (Exception err) { Send(MessageFactory.Error(err, Properties.Resources.ErrorRegister)); }
-                    finally { Facade.Busy = false; }
-                },
-                () => Facade.Url.HasValue() && !Facade.Busy
-            ).Hook(Facade, nameof(Facade.Busy), nameof(Facade.Url)), nameof(Execute));
-        }
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Url
+    ///
+    /// <summary>
+    /// Gets or sets the URL of the feed to be registered.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public IElement<string> Url => GetElement(() => new BindableElement<string>(
+       () => string.Empty,
+       () => Facade.Url,
+       e  => Facade.Url = e,
+       GetDispatcher(false)
+    ));
 
-        #endregion
+    #endregion
 
-        #region Properties
+    #region Commands
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Busy
-        ///
-        /// <summary>
-        /// 処理中かどうかを示す値を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IElement<bool> Busy => GetElement(() => new BindableElement<bool>(
-            () => string.Empty,
-            () => Facade.Busy,
-            GetDispatcher(false)
-        ));
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Execute
+    ///
+    /// <summary>
+    /// Gets the command to add a new RSS feed.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public ICommand Execute { get; }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Url
-        ///
-        /// <summary>
-        /// 追加するフィードの URL を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IElement<string> Url => GetElement(() => new BindableElement<string>(
-           () => string.Empty,
-           () => Facade.Url,
-           e  => Facade.Url = e,
-           GetDispatcher(false)
-        ));
-
-        #endregion
-
-        #region Commands
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Execute
-        ///
-        /// <summary>
-        /// 新しい RSS フィードを登録するコマンドを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ICommand Execute { get; }
-
-        #endregion
-    }
+    #endregion
 }

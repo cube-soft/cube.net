@@ -15,38 +15,37 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Reflection;
+namespace Cube.Net.Tests;
+
 using NUnit.Framework;
 
-namespace Cube.Net.Tests
+/* ------------------------------------------------------------------------- */
+///
+/// GlobalSetup
+///
+/// <summary>
+/// Provides functionality to run at the beginning of the NUnit.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+[SetUpFixture]
+public class GlobalSetup
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// GlobalSetup
+    /// OneTimeSetup
     ///
     /// <summary>
-    /// NUnit で最初に実行する処理を記述するテストです。
+    /// Invokes the setup only once.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [SetUpFixture]
-    public class GlobalSetup
+    [OneTimeSetUp]
+    public void OneTimeSetup()
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OneTimeSetup
-        ///
-        /// <summary>
-        /// 一度だけ実行される初期化処理です。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            _ = Logger.ObserveTaskException();
-            typeof(GlobalSetup).LogInfo(Assembly.GetExecutingAssembly());
-            Network.Setup();
-        }
+        Logger.Configure(new Logging.NLog.LoggerSource());
+        Logger.ObserveTaskException();
+        Logger.Info(typeof(GlobalSetup).Assembly);
+        Network.Setup();
     }
 }

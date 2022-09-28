@@ -23,7 +23,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dd="urn:gong-wpf-dragdrop"
-    xmlns:wf="clr-namespace:Cube.Forms.Controls;assembly=Cube.Forms"
+    xmlns:wf="clr-namespace:Cube.Forms.Controls;assembly=Cube.Forms.Controls"
     xmlns:xc="clr-namespace:Cube.Xui.Converters;assembly=Cube.Xui"
     xmlns:xb="clr-namespace:Cube.Xui.Behaviors;assembly=Cube.Xui"
     xmlns:my="clr-namespace:Cube.Net.Rss.Reader"

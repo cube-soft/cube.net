@@ -15,97 +15,97 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+namespace Cube.Net.Rss.Reader;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Input;
-using Cube.Mixin.Commands;
+using Cube.Xui.Commands.Extensions;
 using Cube.Xui;
 
-namespace Cube.Net.Rss.Reader
+/* ------------------------------------------------------------------------- */
+///
+/// PropertyViewModel
+///
+/// <summary>
+/// Represents the ViewModel for the PropertyWindow.
+/// </summary>
+///
+/* ------------------------------------------------------------------------- */
+public class PropertyViewModel : ViewModelBase<RssEntry>
 {
+    #region Constructors
+
     /* --------------------------------------------------------------------- */
     ///
     /// PropertyViewModel
     ///
     /// <summary>
-    /// RSS フィードのプロパティ画面とモデルを関連付けるためのクラスです。
+    /// Initializes a new instance of the PropertyViewModel class with the
+    /// specified arguments.
+    /// </summary>
+    ///
+    /// <param name="callback">Callback action.</param>
+    /// <param name="entry">Source RSS entry.</param>
+    /// <param name="context">Synchronization context.</param>
+    ///
+    /* --------------------------------------------------------------------- */
+    public PropertyViewModel(Action<RssEntry> callback,
+        RssEntry entry,
+        SynchronizationContext context
+    ) : base(entry, new Aggregator(), context)
+    {
+        Apply = Get(() => new DelegateCommand(() =>
+        {
+            Send(new ApplyMessage());
+            Close.Execute();
+            callback?.Invoke(Value);
+        }), nameof(Apply));
+    }
+
+    #endregion
+
+    #region Properties
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Value
+    ///
+    /// <summary>
+    /// Gets the target RSS entry.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class PropertyViewModel : ViewModelBase<RssEntry>
-    {
-        #region Constructors
+    public RssEntry Value => Facade;
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// PropertyViewModel
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /// <param name="entry">RssEntry オブジェクト</param>
-        /// <param name="callback">コールバック関数</param>
-        /// <param name="context">Synchronization context.</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public PropertyViewModel(Action<RssEntry> callback,
-            RssEntry entry,
-            SynchronizationContext context
-        ) : base(entry, new Aggregator(), context)
-        {
-            Apply = Get(() => new DelegateCommand(() =>
-            {
-                Send(new ApplyMessage());
-                Close.Execute();
-                callback?.Invoke(Value);
-            }), nameof(Apply));
-        }
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Frequencies
+    ///
+    /// <summary>
+    /// Gets a list of objects representing update frequency.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public IEnumerable<RssCheckFrequency> Frequencies { get; } =
+        Enum.GetValues(typeof(RssCheckFrequency)).Cast<RssCheckFrequency>();
 
-        #endregion
+    #endregion
 
-        #region Properties
+    #region Commands
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Value
-        ///
-        /// <summary>
-        /// 対象となる RssEntry オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public RssEntry Value => Facade;
+    /* --------------------------------------------------------------------- */
+    ///
+    /// Apply
+    ///
+    /// <summary>
+    /// Gets the apply command.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public ICommand Apply { get; }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Frequencies
-        ///
-        /// <summary>
-        /// 更新頻度を表すオブジェクト一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public IEnumerable<RssCheckFrequency> Frequencies { get; } =
-            Enum.GetValues(typeof(RssCheckFrequency)).Cast<RssCheckFrequency>();
-
-        #endregion
-
-        #region Commands
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Apply
-        ///
-        /// <summary>
-        /// Gets the apply command.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ICommand Apply { get; }
-
-        #endregion
-    }
+    #endregion
 }
