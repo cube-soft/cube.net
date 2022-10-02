@@ -50,6 +50,21 @@ task :restore do
 end
 
 # --------------------------------------------------------------------------- #
+# pack
+# --------------------------------------------------------------------------- #
+desc "Create NuGet packages."
+task :pack do
+    PACKAGES.each do |e|
+        spec = File.exists?("#{e}.nuspec")
+        pack = spec ?
+               %(nuget pack -Properties "Configuration=Release;Platform=AnyCPU") :
+               "dotnet pack -c Release --no-restore --no-build -o ."
+        ext  = spec ? "nuspec" : "csproj"
+        cmd("#{pack} #{e}.#{ext}")
+    end
+end
+
+# --------------------------------------------------------------------------- #
 # build
 # --------------------------------------------------------------------------- #
 desc "Build projects in the current branch."
@@ -84,23 +99,8 @@ end
 # test
 # --------------------------------------------------------------------------- #
 desc "Test projects in the current branch."
-task :test do
+task :test => [:build] do
     cmd("dotnet test -c Release --no-restore --no-build #{PROJECT}.sln")
-end
-
-# --------------------------------------------------------------------------- #
-# pack
-# --------------------------------------------------------------------------- #
-desc "Create NuGet packages."
-task :pack do
-    PACKAGES.each do |e|
-        spec = File.exists?("#{e}.nuspec")
-        pack = spec ?
-               %(nuget pack -Properties "Configuration=Release;Platform=AnyCPU") :
-               "dotnet pack -c Release --no-restore --no-build -o ."
-        ext  = spec ? "nuspec" : "csproj"
-        cmd("#{pack} #{e}.#{ext}")
-    end
 end
 
 # --------------------------------------------------------------------------- #
