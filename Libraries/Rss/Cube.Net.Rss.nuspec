@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <version>8.0.0</version>
+        <version>8.1.0</version>
         <id>Cube.Net.Rss</id>
         <title>Cube.Net.Rss</title>
         <authors>clown,cube-soft</authors>
@@ -11,19 +11,19 @@
         <tags>Cube Net RSS Atom</tags>
         <icon>images\Icon.png</icon>
         <license type="expression">Apache-2.0</license>
-        <projectUrl>https://github.com/cube-soft/Cube.Net</projectUrl>
+        <projectUrl>https://github.com/cube-soft/cube.net</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <dependencies>
             <group targetFramework="netstandard2.0">
-                <dependency id="Cube.Net" version="8.0.0" />
-                <dependency id="Microsoft.Xml.SgmlReader" version="1.8.25" />
+                <dependency id="Cube.Net" version="8.1.0" />
+                <dependency id="Microsoft.Xml.SgmlReader" version="1.8.29" />
             </group>
             <group targetFramework="net47">
-                <dependency id="Cube.Net" version="8.0.0" />
-                <dependency id="Microsoft.Xml.SgmlReader" version="1.8.25" />
+                <dependency id="Cube.Net" version="8.1.0" />
+                <dependency id="Microsoft.Xml.SgmlReader" version="1.8.29" />
             </group>
             <group targetFramework="net35">
-                <dependency id="Cube.Net" version="8.0.0" />
+                <dependency id="Cube.Net" version="8.1.0" />
                 <dependency id="SgmlReader" version="1.8.11" />
             </group>
         </dependencies>

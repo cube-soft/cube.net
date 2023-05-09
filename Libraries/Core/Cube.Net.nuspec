@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <version>8.0.0</version>
+        <version>8.1.0</version>
         <id>Cube.Net</id>
         <title>Cube.Net</title>
         <authors>clown,cube-soft</authors>
@@ -12,19 +12,19 @@
         <readme>docs\Readme.md</readme>
         <icon>images\Icon.png</icon>
         <license type="expression">Apache-2.0</license>
-        <projectUrl>https://github.com/cube-soft/Cube.Net</projectUrl>
+        <projectUrl>https://github.com/cube-soft/cube.net</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <dependencies>
             <group targetFramework="netstandard2.0">
-                <dependency id="Cube.Core" version="8.0.0" />
+                <dependency id="Cube.Core" version="8.1.0" />
                 <dependency id="System.Net.Http" version="4.3.4" />
-                <dependency id="Microsoft.Win32.SystemEvents" version="6.0.1" />
+                <dependency id="Microsoft.Win32.SystemEvents" version="7.0.0" />
             </group>
             <group targetFramework="net47">
-                <dependency id="Cube.Core" version="8.0.0" />
+                <dependency id="Cube.Core" version="8.1.0" />
             </group>
             <group targetFramework="net35">
-                <dependency id="Cube.Core" version="8.0.0" />
+                <dependency id="Cube.Core" version="8.1.0" />
             </group>
         </dependencies>
     </metadata>
