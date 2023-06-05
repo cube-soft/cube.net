@@ -196,7 +196,7 @@ public class SettingFolder : SettingFolder<LocalSetting>
     /* --------------------------------------------------------------------- */
     protected override void OnLoad()
     {
-        Logger.Warn(base.OnLoad);
+        Logger.Try(base.OnLoad);
 
         var min = 100;
         var dest = Value;
