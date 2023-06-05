@@ -200,7 +200,7 @@ public class BindableCollection<T> : ObservableCollection<T>, IDisposable
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    private void OnCollectionChangedCore(NotifyCollectionChangedEventArgs e) => Logger.Warn(() =>
+    private void OnCollectionChangedCore(NotifyCollectionChangedEventArgs e) => Logger.Try(() =>
     {
         switch (e.Action)
         {

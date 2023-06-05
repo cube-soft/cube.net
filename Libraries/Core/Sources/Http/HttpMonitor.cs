@@ -132,7 +132,7 @@ public class HttpMonitor<TValue> : HttpMonitorBase<TValue>
     /* --------------------------------------------------------------------- */
     protected override async Task Publish(Uri uri)
     {
-        Logger.Warn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
+        Logger.Try(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
         using var response = await _http.GetAsync(uri, HttpCompletionOption.ResponseContentRead);
         var code = response.StatusCode;
 

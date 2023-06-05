@@ -101,7 +101,7 @@ class RssMonitorTest : FileFixture
             Assert.That(src.TryGetValue(new Uri("http://www.example.com/"), out _), Is.False);
         }
 
-        Assert.That(Io.Get(Get(files[0])).Length, Is.GreaterThan(0), files[0]);
+        Assert.That(new Entity(Get(files[0])).Length, Is.GreaterThan(0), files[0]);
     }
 
     /* --------------------------------------------------------------------- */

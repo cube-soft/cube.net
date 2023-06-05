@@ -234,7 +234,7 @@ public class WebBehavior : WindowsFormsBehavior<WebControl>
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    private void WhenBeforeNewWindow(object s, NavigatingEventArgs e) => Logger.Warn(() =>
+    private void WhenBeforeNewWindow(object s, NavigatingEventArgs e) => Logger.Try(() =>
     {
         e.Cancel = true;
         var uri = new Uri(e.Url);
