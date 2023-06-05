@@ -90,7 +90,7 @@ public class ViewModelFixture : ResourceFixture
             Assert.That(vm.Data.Lock.Value, Is.Not.Null, nameof(vm.Data.Lock));
             Assert.That(vm.Data.Lock.Value.IsReadOnly, Is.False, nameof(vm.Data.Lock));
 
-            var f = Io.Get(FeedsPath(name));
+            var f = new Entity(FeedsPath(name));
             fw.Path = f.DirectoryName;
             fw.Filter = f.Name;
             fw.NotifyFilter = System.IO.NotifyFilters.LastWrite;

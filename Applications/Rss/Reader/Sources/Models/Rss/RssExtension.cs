@@ -50,7 +50,7 @@ public static class RssExtension
     /* --------------------------------------------------------------------- */
     public static void Backup(string src)
     {
-        var info = Io.Get(src);
+        var info = new Entity(src);
         var dir  = Io.Combine(info.DirectoryName, "Backup");
         var dest = Io.Combine(dir, $"{DateTime.Now:yyyyMMdd}{info.Extension}");
 
@@ -59,7 +59,7 @@ public static class RssExtension
 
         foreach (var f in Io.GetFiles(dir).OrderByDescending(e => e).Skip(30))
         {
-            Logger.Warn(() => Io.Delete(f));
+            Logger.Try(() => Io.Delete(f));
         }
     }
 

@@ -53,7 +53,7 @@ public sealed class MainFacade : DisposableBase
     /* --------------------------------------------------------------------- */
     public MainFacade(SettingFolder src, Dispatcher dispatcher)
     {
-        Logger.Warn(src.Load);
+        Logger.Try(src.Load);
         Logger.Info($"Owner:{src.Lock.UserName}@{src.Lock.MachineName} ({src.Lock.Sid})");
         Logger.Info($"User-Agent:{src.UserAgent}");
 
@@ -123,7 +123,7 @@ public sealed class MainFacade : DisposableBase
     {
         Data.Message.Value = Properties.Resources.MessageLoading;
 
-        Logger.Warn(_core.Load);
+        Logger.Try(_core.Load);
 
         var entry = _core.Find(Setting.Shared.StartUri) ??
                     _core.Flatten<RssEntry>().FirstOrDefault();
@@ -309,7 +309,7 @@ public sealed class MainFacade : DisposableBase
         try
         {
             _core.Stop();
-            Logger.Warn(() => _core.Import(src));
+            Logger.Try(() => _core.Import(src));
         }
         finally { _core.Start(TimeSpan.Zero); }
     }

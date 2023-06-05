@@ -389,7 +389,7 @@ public sealed class RssSubscriber : EnumerableBase<IRssEntry>, INotifyCollection
 
         Logger.Debug(string.Format("Load:{0} ({1}) -> {2}",
             FileName,
-            Io.Get(FileName).Length.ToPrettyBytes(),
+            new Entity(FileName).Length.ToPrettyBytes(),
             dest.Count()
         ));
 
@@ -412,7 +412,7 @@ public sealed class RssSubscriber : EnumerableBase<IRssEntry>, INotifyCollection
         foreach (var entry in Entries) empty.Children.Add(entry);
         Categories.Concat(new[] { empty }).Save(FileName);
         Logger.Debug(string.Format("Save:{0} ({1})",
-            FileName, Io.Get(FileName).Length.ToPrettyBytes()
+            FileName, new Entity(FileName).Length.ToPrettyBytes()
         ));
     }
 

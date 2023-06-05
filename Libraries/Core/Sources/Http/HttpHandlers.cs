@@ -138,7 +138,7 @@ public class HttpHandler : HttpClientHandler
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    private void SetConnectionClose(HttpRequestHeaders headers) => Logger.Warn(() =>
+    private void SetConnectionClose(HttpRequestHeaders headers) => Logger.Try(() =>
     {
         if (headers.ConnectionClose.HasValue &&
             headers.ConnectionClose == ConnectionClose) return;
@@ -154,7 +154,7 @@ public class HttpHandler : HttpClientHandler
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    private void SetUserAgent(HttpRequestHeaders headers) => Logger.Warn(() =>
+    private void SetUserAgent(HttpRequestHeaders headers) => Logger.Try(() =>
     {
         if (string.IsNullOrEmpty(UserAgent)) return;
         headers.UserAgent.ParseAdd(UserAgent);
@@ -169,7 +169,7 @@ public class HttpHandler : HttpClientHandler
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    private void SetEntityTag(HttpRequestHeaders headers) => Logger.Warn(() =>
+    private void SetEntityTag(HttpRequestHeaders headers) => Logger.Try(() =>
     {
         if (!UseEntityTag || string.IsNullOrEmpty(EntityTag)) return;
         var etag = EntityTagHeaderValue.Parse(EntityTag);

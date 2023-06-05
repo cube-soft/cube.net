@@ -30,10 +30,10 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\Libraries\Rss\Cube.Net.Rss.csproj" />
-        <PackageReference Include="Cube.Xui" Version="8.1.0" />
-        <PackageReference Include="Cube.Forms.Controls" Version="8.1.0" />
-        <PackageReference Include="Cube.Logging.NLog" Version="8.1.0" />
-        <PackageReference Include="Cube.Trick" Version="8.1.0" />
+        <PackageReference Include="Cube.Xui" Version="8.2.0" />
+        <PackageReference Include="Cube.Forms.Controls" Version="8.2.0" />
+        <PackageReference Include="Cube.Logging.NLog" Version="8.2.0" />
+        <PackageReference Include="Cube.Trick" Version="8.2.0" />
         <PackageReference Include="gong-wpf-dragdrop" Version="2.4.3" />
     </ItemGroup>
     <ItemGroup>

@@ -258,7 +258,7 @@ public class RssMonitor : HttpMonitorBase<RssFeed>
     {
         if (!Contains(uri)) return;
 
-        Logger.Warn(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
+        Logger.Try(() => { if (_http.Timeout != Timeout) _http.Timeout = Timeout; });
         var sw = Stopwatch.StartNew();
         var dest = await _http.GetAsync(uri).ConfigureAwait(false);
         Logger.Debug($"{uri} ({sw.Elapsed})");

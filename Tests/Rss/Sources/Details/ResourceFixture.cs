@@ -127,7 +127,7 @@ namespace Cube.Net.Rss.Tests
 
             foreach (var f in Io.GetFiles(GetSource("Cache")))
             {
-                Io.Copy(f, CachePath(Io.Get(f).Name, name), true);
+                Io.Copy(f, CachePath(Io.GetFileName(f), name), true);
             }
         }
 

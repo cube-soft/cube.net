@@ -452,7 +452,7 @@ public class RssCacheDictionary : EnumerableBase<KeyValuePair<Uri, RssFeed>>, ID
     {
         if (!IsReadOnlyCache)
         {
-            foreach (var key in _memory.Keys.ToList()) Logger.Warn(() => Save(key, false));
+            foreach (var key in _memory.Keys.ToList()) Logger.Try(() => Save(key, false));
             _memory.Clear();
         }
     }
