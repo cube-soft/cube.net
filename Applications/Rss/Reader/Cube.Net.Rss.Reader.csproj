@@ -19,9 +19,10 @@
         <Optimize>true</Optimize>
         <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <DefineConstants Condition=" '$(Configuration)' == 'Debug' ">DEBUG;TRACE</DefineConstants>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
         <ApplicationIcon>App.ico</ApplicationIcon>
         <ApplicationManifest>App.manifest</ApplicationManifest>
+        <DefineConstants Condition=" '$(Configuration)' == 'Debug' ">DEBUG;TRACE</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
         <Prefer32Bit>true</Prefer32Bit>
@@ -30,12 +31,11 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\Libraries\Rss\Cube.Net.Rss.csproj" />
-        <PackageReference Include="Cube.Xui" Version="8.2.0" />
-        <PackageReference Include="Cube.Forms.Controls" Version="8.2.0" />
-        <PackageReference Include="Cube.Logging.NLog" Version="8.2.0" />
-        <PackageReference Include="Cube.Trick" Version="8.2.0" />
+        <PackageReference Include="Cube.Xui" Version="8.6.0" />
+        <PackageReference Include="Cube.Forms.Controls" Version="8.6.0" />
+        <PackageReference Include="Cube.Logging.NLog" Version="8.6.0" />
+        <PackageReference Include="Cube.Trick" Version="8.6.0" />
         <PackageReference Include="gong-wpf-dragdrop" Version="1.1.0" />
-        <PackageReference Include="WPFToolkit" Version="3.5.50211.1" />
         <Reference Include="System.Web" />
     </ItemGroup>
     <ItemGroup>
